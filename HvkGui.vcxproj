@@ -162,7 +162,7 @@
     <ClInclude Include="imgui\hvkgui_internal.h" />
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="imgui\\hvkstb_truetype.h" />
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -7,9 +7,9 @@
 // - Introduction, links and more at the top of HvkGui.cpp
 
 #include "hvkgui.h"
-#include "HvkGui_impl_win32.h"
-#include "HvkGui_impl_dx12.h"
-#include "HvkGui_impl_dx11.h"
+#include "hvkgui_impl_win32.h"
+#include "hvkgui_impl_dx11.h"
+#include "hvkgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_5.h>
 #include <tchar.h>

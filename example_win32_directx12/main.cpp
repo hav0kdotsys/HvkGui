@@ -52,7 +52,7 @@ struct ExampleDescriptorHeapAllocator
 
 	void Create(ID3D12Device* device, ID3D12DescriptorHeap* heap)
 	{
-		IM_ASSERT(Heap == nullptr && FreeIndices.empty());
+		Hvk_ASSERT(Heap == nullptr && FreeIndices.empty());
 		Heap = heap;
 		D3D12_DESCRIPTOR_HEAP_DESC desc = heap->GetDesc();
 		HeapType = desc.Type;
@@ -70,7 +70,7 @@ struct ExampleDescriptorHeapAllocator
 	}
 	void Alloc(D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_desc_handle)
 	{
-		IM_ASSERT(FreeIndices.Size > 0);
+		Hvk_ASSERT(FreeIndices.Size > 0);
 		int idx = FreeIndices.back();
 		FreeIndices.pop_back();
 		out_cpu_desc_handle->ptr = HeapStartCpu.ptr + (idx * HeapHandleIncrement);
@@ -80,7 +80,7 @@ struct ExampleDescriptorHeapAllocator
 	{
 		int cpu_idx = (int)((out_cpu_desc_handle.ptr - HeapStartCpu.ptr) / HeapHandleIncrement);
 		int gpu_idx = (int)((out_gpu_desc_handle.ptr - HeapStartGpu.ptr) / HeapHandleIncrement);
-		IM_ASSERT(cpu_idx == gpu_idx);
+		Hvk_ASSERT(cpu_idx == gpu_idx);
 		FreeIndices.push_back(cpu_idx);
 	}
 };
@@ -629,7 +629,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			DXGI_SWAP_CHAIN_DESC1 desc = {};
 			g_pSwapChain->GetDesc1(&desc);
 			HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), desc.Format, desc.Flags);
-			IM_ASSERT(SUCCEEDED(result) && "Failed to resize swapchain.");
+			Hvk_ASSERT(SUCCEEDED(result) && "Failed to resize swapchain.");
 			CreateRenderTarget();
 		}
 		return 0;

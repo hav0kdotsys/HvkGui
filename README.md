@@ -1,5 +1,5 @@
 # HvkGui
-Custom ImGui Framework.
+Custom HvkGui Framework.
 
 ## Build helper
 Use `build.ps1` to build one or more configurations via MSBuild, matching Visual Studio's build process.

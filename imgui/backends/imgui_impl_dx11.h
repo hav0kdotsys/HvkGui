@@ -1,23 +1,23 @@
-// dear imgui: Renderer Backend for DirectX11
+// dear HvkGui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
-// Implemented features:
-//  [X] Renderer: User texture binding. Use 'ID3D11ShaderResourceView*' as texture identifier. Read the FAQ about ImTextureID/ImTextureRef!
-//  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (ImGuiBackendFlags_RendererHasVtxOffset).
-//  [X] Renderer: Texture updates support for dynamic font atlas (ImGuiBackendFlags_RendererHasTextures).
-//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(ImGui_ImplXXXX_RenderState*)GetPlatformIO().Renderer_RenderState'.
+// Hvkplemented features:
+//  [X] Renderer: User texture binding. Use 'ID3D11ShaderResourceView*' as texture identifier. Read the FAQ about HvkTextureID/HvkTextureRef!
+//  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (HvkGuiBackendFlags_RendererHasVtxOffset).
+//  [X] Renderer: Texture updates support for dynamic font atlas (HvkGuiBackendFlags_RendererHasTextures).
+//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(HvkGui_ImplXXXX_RenderState*)GetPlatformIO().Renderer_RenderState'.
 
-// You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
-// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
+// You can use unmodified HvkGui_impl_* files in your project. See examples/ folder for examples of using this.
+// Prefer including the entire HvkGui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
+// Learn about Dear HvkGui:
+// - FAQ                  https://dearHvkGui.com/faq
+// - Getting Started      https://dearHvkGui.com/getting-started
+// - Documentation        https://dearHvkGui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of HvkGui.cpp
 
 #pragma once
-#include "hvkgui.h"      // IMGUI_IMPL_API
-#ifndef IMGUI_DISABLE
+#include "hvkgui.h"      // HvkGui_IMPL_API
+#ifndef HvkGui_DISABLE
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -25,22 +25,22 @@ struct ID3D11SamplerState;
 struct ID3D11Buffer;
 
 // Follow "Getting Started" link and check examples/ folder to learn about using backends!
-IMGUI_IMPL_API bool     ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context);
-IMGUI_IMPL_API void     ImGui_ImplDX11_Shutdown();
-IMGUI_IMPL_API void     ImGui_ImplDX11_NewFrame();
-IMGUI_IMPL_API void     ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data);
+HvkGui_IMPL_API bool     HvkGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context);
+HvkGui_IMPL_API void     HvkGui_ImplDX11_Shutdown();
+HvkGui_IMPL_API void     HvkGui_ImplDX11_NewFrame();
+HvkGui_IMPL_API void     HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data);
 
-// Use if you want to reset your rendering device without losing Dear ImGui state.
-IMGUI_IMPL_API bool     ImGui_ImplDX11_CreateDeviceObjects();
-IMGUI_IMPL_API void     ImGui_ImplDX11_InvalidateDeviceObjects();
+// Use if you want to reset your rendering device without losing Dear HvkGui state.
+HvkGui_IMPL_API bool     HvkGui_ImplDX11_CreateDeviceObjects();
+HvkGui_IMPL_API void     HvkGui_ImplDX11_InvalidateDeviceObjects();
 
-// (Advanced) Use e.g. if you need to precisely control the timing of texture updates (e.g. for staged rendering), by setting ImDrawData::Textures = NULL to handle this manually.
-IMGUI_IMPL_API void     ImGui_ImplDX11_UpdateTexture(ImTextureData* tex);
+// (Advanced) Use e.g. if you need to precisely control the timing of texture updates (e.g. for staged rendering), by setting HvkDrawData::Textures = NULL to handle this manually.
+HvkGui_IMPL_API void     HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex);
 
 // [BETA] Selected render state data shared with callbacks.
-// This is temporarily stored in GetPlatformIO().Renderer_RenderState during the ImGui_ImplDX11_RenderDrawData() call.
+// This is temporarily stored in GetPlatformIO().Renderer_RenderState during the HvkGui_ImplDX11_RenderDrawData() call.
 // (Please open an issue if you feel you need access to more data)
-struct ImGui_ImplDX11_RenderState
+struct HvkGui_ImplDX11_RenderState
 {
     ID3D11Device*           Device;
     ID3D11DeviceContext*    DeviceContext;
@@ -48,4 +48,4 @@ struct ImGui_ImplDX11_RenderState
     ID3D11Buffer*           VertexConstantBuffer;
 };
 
-#endif // #ifndef IMGUI_DISABLE
+#endif // #ifndef HvkGui_DISABLE

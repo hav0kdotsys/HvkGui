@@ -123,7 +123,7 @@ struct ImGui_ImplDX12_Data
 // It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
 static ImGui_ImplDX12_Data* ImGui_ImplDX12_GetBackendData()
 {
-    return ImGui::GetCurrentContext() ? (ImGui_ImplDX12_Data*)ImGui::GetIO().BackendRendererUserData : nullptr;
+    return HvkGui::GetCurrentContext() ? (ImGui_ImplDX12_Data*)HvkGui::GetIO().BackendRendererUserData : nullptr;
 }
 
 // Buffers used during the rendering of a frame
@@ -211,7 +211,7 @@ void ImGui_ImplDX12_RenderDrawData(ImDrawData* draw_data, ID3D12GraphicsCommandL
         return;
 
     // Catch up with texture updates. Most of the times, the list will have 1 element with an OK status, aka nothing to do.
-    // (This almost always points to ImGui::GetPlatformIO().Textures[] but is part of ImDrawData to allow overriding or disabling texture updates).
+    // (This almost always points to HvkGui::GetPlatformIO().Textures[] but is part of ImDrawData to allow overriding or disabling texture updates).
     if (draw_data->Textures != nullptr)
         for (ImTextureData* tex : *draw_data->Textures)
             if (tex->Status != ImTextureStatus_OK)
@@ -296,7 +296,7 @@ void ImGui_ImplDX12_RenderDrawData(ImDrawData* draw_data, ID3D12GraphicsCommandL
     ImGui_ImplDX12_SetupRenderState(draw_data, command_list, fr);
 
     // Setup render state structure (for callbacks and custom texture bindings)
-    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+    ImGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
     ImGui_ImplDX12_RenderState render_state;
     render_state.Device = bd->pd3dDevice;
     render_state.CommandList = command_list;
@@ -829,7 +829,7 @@ void    ImGui_ImplDX12_InvalidateDeviceObjects()
     bd->FenceEvent = nullptr;
 
     // Destroy all textures
-    for (ImTextureData* tex : ImGui::GetPlatformIO().Textures)
+    for (ImTextureData* tex : HvkGui::GetPlatformIO().Textures)
         if (tex->RefCount == 1)
             ImGui_ImplDX12_DestroyTexture(tex);
 
@@ -865,7 +865,7 @@ static void ImGui_ImplDX12_InitLegacySingleDescriptorMode(ImGui_ImplDX12_InitInf
 
 bool ImGui_ImplDX12_Init(ImGui_ImplDX12_InitInfo* init_info)
 {
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = HvkGui::GetIO();
     IMGUI_CHECKVERSION();
     IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
 
@@ -932,7 +932,7 @@ bool ImGui_ImplDX12_Init(ID3D12Device* device, int num_frames_in_flight, DXGI_FO
     bool ret = ImGui_ImplDX12_Init(&init_info);
     ImGui_ImplDX12_Data* bd = ImGui_ImplDX12_GetBackendData();
     bd->commandQueueOwned = true;
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = HvkGui::GetIO();
     io.BackendFlags &= ~ImGuiBackendFlags_RendererHasTextures; // Using legacy ImGui_ImplDX12_Init() call with 1 SRV descriptor we cannot support multiple textures.
 
     return ret;
@@ -943,8 +943,8 @@ void ImGui_ImplDX12_Shutdown()
 {
     ImGui_ImplDX12_Data* bd = ImGui_ImplDX12_GetBackendData();
     IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
-    ImGuiIO& io = ImGui::GetIO();
-    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+    ImGuiIO& io = HvkGui::GetIO();
+    ImGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
 
     ImGui_ImplDX12_InvalidateDeviceObjects();
     delete[] bd->pFrameResources;

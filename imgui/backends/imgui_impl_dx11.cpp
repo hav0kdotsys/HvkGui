@@ -1,49 +1,49 @@
-// dear imgui: Renderer Backend for DirectX11
+// dear HvkGui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
-// Implemented features:
-//  [X] Renderer: User texture binding. Use 'ID3D11ShaderResourceView*' as texture identifier. Read the FAQ about ImTextureID/ImTextureRef!
-//  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (ImGuiBackendFlags_RendererHasVtxOffset).
-//  [X] Renderer: Texture updates support for dynamic font atlas (ImGuiBackendFlags_RendererHasTextures).
-//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(ImGui_ImplXXXX_RenderState*)GetPlatformIO().Renderer_RenderState'.
+// Hvkplemented features:
+//  [X] Renderer: User texture binding. Use 'ID3D11ShaderResourceView*' as texture identifier. Read the FAQ about HvkTextureID/HvkTextureRef!
+//  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (HvkGuiBackendFlags_RendererHasVtxOffset).
+//  [X] Renderer: Texture updates support for dynamic font atlas (HvkGuiBackendFlags_RendererHasTextures).
+//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(HvkGui_ImplXXXX_RenderState*)GetPlatformIO().Renderer_RenderState'.
 
-// You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
-// Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
+// You can use unmodified HvkGui_impl_* files in your project. See examples/ folder for examples of using this.
+// Prefer including the entire HvkGui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
+// Learn about Dear HvkGui:
+// - FAQ                  https://dearHvkGui.com/faq
+// - Getting Started      https://dearHvkGui.com/getting-started
+// - Documentation        https://dearHvkGui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of HvkGui.cpp
 
 // CHANGELOG
 // (minor and older changes stripped away, please see git history for details)
 //  2025-09-18: Call platform_io.ClearRendererHandlers() on shutdown.
-//  2025-06-11: DirectX11: Added support for ImGuiBackendFlags_RendererHasTextures, for dynamic font atlas.
+//  2025-06-11: DirectX11: Added support for HvkGuiBackendFlags_RendererHasTextures, for dynamic font atlas.
 //  2025-05-07: DirectX11: Honor draw_data->FramebufferScale to allow for custom backends and experiment using it (consistently with other renderer backends, even though in normal condition it is not set under Windows).
-//  2025-01-06: DirectX11: Expose VertexConstantBuffer in ImGui_ImplDX11_RenderState. Reset projection matrix in ImDrawCallback_ResetRenderState handler.
+//  2025-01-06: DirectX11: Expose VertexConstantBuffer in HvkGui_ImplDX11_RenderState. Reset projection matrix in HvkDrawCallback_ResetRenderState handler.
 //  2024-10-07: DirectX11: Changed default texture sampler to Clamp instead of Repeat/Wrap.
-//  2024-10-07: DirectX11: Expose selected render state in ImGui_ImplDX11_RenderState, which you can access in 'void* platform_io.Renderer_RenderState' during draw callbacks.
+//  2024-10-07: DirectX11: Expose selected render state in HvkGui_ImplDX11_RenderState, which you can access in 'void* platform_io.Renderer_RenderState' during draw callbacks.
 //  2022-10-11: Using 'nullptr' instead of 'NULL' as per our switch to C++11.
 //  2021-06-29: Reorganized backend to pull data from a single structure to facilitate usage with multiple-contexts (all g_XXXX access changed to bd->XXXX).
-//  2021-05-19: DirectX11: Replaced direct access to ImDrawCmd::TextureId with a call to ImDrawCmd::GetTexID(). (will become a requirement)
+//  2021-05-19: DirectX11: Replaced direct access to HvkDrawCmd::TextureId with a call to HvkDrawCmd::GetTexID(). (will become a requirement)
 //  2021-02-18: DirectX11: Change blending equation to preserve alpha in output buffer.
 //  2019-08-01: DirectX11: Fixed code querying the Geometry Shader state (would generally error with Debug layer enabled).
-//  2019-07-21: DirectX11: Backup, clear and restore Geometry Shader is any is bound when calling ImGui_ImplDX11_RenderDrawData. Clearing Hull/Domain/Compute shaders without backup/restore.
-//  2019-05-29: DirectX11: Added support for large mesh (64K+ vertices), enable ImGuiBackendFlags_RendererHasVtxOffset flag.
-//  2019-04-30: DirectX11: Added support for special ImDrawCallback_ResetRenderState callback to reset render state.
+//  2019-07-21: DirectX11: Backup, clear and restore Geometry Shader is any is bound when calling HvkGui_ImplDX11_RenderDrawData. Clearing Hull/Domain/Compute shaders without backup/restore.
+//  2019-05-29: DirectX11: Added support for large mesh (64K+ vertices), enable HvkGuiBackendFlags_RendererHasVtxOffset flag.
+//  2019-04-30: DirectX11: Added support for special HvkDrawCallback_ResetRenderState callback to reset render state.
 //  2018-12-03: Misc: Added #pragma comment statement to automatically link with d3dcompiler.lib when using D3DCompile().
 //  2018-11-30: Misc: Setting up io.BackendRendererName so it can be displayed in the About Window.
 //  2018-08-01: DirectX11: Querying for IDXGIFactory instead of IDXGIFactory1 to increase compatibility.
 //  2018-07-13: DirectX11: Fixed unreleased resources in Init and Shutdown functions.
-//  2018-06-08: Misc: Extracted imgui_impl_dx11.cpp/.h away from the old combined DX11+Win32 example.
+//  2018-06-08: Misc: Extracted HvkGui_impl_dx11.cpp/.h away from the old combined DX11+Win32 example.
 //  2018-06-08: DirectX11: Use draw_data->DisplayPos and draw_data->DisplaySize to setup projection matrix and clipping rectangle.
-//  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed ImGui_ImplDX11_RenderDrawData() in the .h file so you can call it yourself.
+//  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed HvkGui_ImplDX11_RenderDrawData() in the .h file so you can call it yourself.
 //  2018-02-06: Misc: Removed call to HvkGui::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
 //  2016-05-07: DirectX11: Disabling depth-write.
 
 #include "hvkgui.h"
-#ifndef IMGUI_DISABLE
-#include "imgui_impl_dx11.h"
+#ifndef HvkGui_DISABLE
+#include "HvkGui_impl_dx11.h"
 
 // DirectX
 #include <stdio.h>
@@ -56,17 +56,17 @@
 // Clang/GCC warnings with -Weverything
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wold-style-cast"         // warning: use of old-style cast                            // yes, they are more terse.
-#pragma clang diagnostic ignored "-Wsign-conversion"        // warning: implicit conversion changes signedness
+#pragma clang diagnostic ignored "-Wsign-conversion"        // warning: Hvkplicit conversion changes signedness
 #endif
 
 // DirectX11 data
-struct ImGui_ImplDX11_Texture
+struct HvkGui_ImplDX11_Texture
 {
     ID3D11Texture2D*            pTexture;
     ID3D11ShaderResourceView*   pTextureView;
 };
 
-struct ImGui_ImplDX11_Data
+struct HvkGui_ImplDX11_Data
 {
     ID3D11Device*               pd3dDevice;
     ID3D11DeviceContext*        pd3dDeviceContext;
@@ -84,7 +84,7 @@ struct ImGui_ImplDX11_Data
     int                         VertexBufferSize;
     int                         IndexBufferSize;
 
-    ImGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; }
+    HvkGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; }
 };
 
 struct VERTEX_CONSTANT_BUFFER_DX11
@@ -92,17 +92,17 @@ struct VERTEX_CONSTANT_BUFFER_DX11
     float   mvp[4][4];
 };
 
-// Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
-// It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
-static ImGui_ImplDX11_Data* ImGui_ImplDX11_GetBackendData()
+// Backend data stored in io.BackendRendererUserData to allow support for multiple Dear HvkGui contexts
+// It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear HvkGui context + multiple windows) instead of multiple Dear HvkGui contexts.
+static HvkGui_ImplDX11_Data* HvkGui_ImplDX11_GetBackendData()
 {
-    return HvkGui::GetCurrentContext() ? (ImGui_ImplDX11_Data*)HvkGui::GetIO().BackendRendererUserData : nullptr;
+    return HvkGui::GetCurrentContext() ? (HvkGui_ImplDX11_Data*)HvkGui::GetIO().BackendRendererUserData : nullptr;
 }
 
 // Functions
-static void ImGui_ImplDX11_SetupRenderState(const ImDrawData* draw_data, ID3D11DeviceContext* device_ctx)
+static void HvkGui_ImplDX11_SetupRenderState(const HvkDrawData* draw_data, ID3D11DeviceContext* device_ctx)
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
 
     // Setup viewport
     D3D11_VIEWPORT vp = {};
@@ -114,7 +114,7 @@ static void ImGui_ImplDX11_SetupRenderState(const ImDrawData* draw_data, ID3D11D
     device_ctx->RSSetViewports(1, &vp);
 
     // Setup orthographic projection matrix into our constant buffer
-    // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
+    // Our visible HvkGui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
     D3D11_MAPPED_SUBRESOURCE mapped_resource;
     if (device_ctx->Map(bd->pVertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource) == S_OK)
     {
@@ -135,11 +135,11 @@ static void ImGui_ImplDX11_SetupRenderState(const ImDrawData* draw_data, ID3D11D
     }
 
     // Setup shader and vertex buffers
-    unsigned int stride = sizeof(ImDrawVert);
+    unsigned int stride = sizeof(HvkDrawVert);
     unsigned int offset = 0;
     device_ctx->IASetInputLayout(bd->pInputLayout);
     device_ctx->IASetVertexBuffers(0, 1, &bd->pVB, &stride, &offset);
-    device_ctx->IASetIndexBuffer(bd->pIB, sizeof(ImDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
+    device_ctx->IASetIndexBuffer(bd->pIB, sizeof(HvkDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
     device_ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     device_ctx->VSSetShader(bd->pVertexShader, nullptr, 0);
     device_ctx->VSSetConstantBuffers(0, 1, &bd->pVertexConstantBuffer);
@@ -158,21 +158,21 @@ static void ImGui_ImplDX11_SetupRenderState(const ImDrawData* draw_data, ID3D11D
 }
 
 // Render function
-void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
+void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
 {
     // Avoid rendering when minimized
     if (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f)
         return;
 
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
     ID3D11DeviceContext* device = bd->pd3dDeviceContext;
 
     // Catch up with texture updates. Most of the times, the list will have 1 element with an OK status, aka nothing to do.
-    // (This almost always points to HvkGui::GetPlatformIO().Textures[] but is part of ImDrawData to allow overriding or disabling texture updates).
+    // (This almost always points to HvkGui::GetPlatformIO().Textures[] but is part of HvkDrawData to allow overriding or disabling texture updates).
     if (draw_data->Textures != nullptr)
-        for (ImTextureData* tex : *draw_data->Textures)
-            if (tex->Status != ImTextureStatus_OK)
-                ImGui_ImplDX11_UpdateTexture(tex);
+        for (HvkTextureData* tex : *draw_data->Textures)
+            if (tex->Status != HvkTextureStatus_OK)
+                HvkGui_ImplDX11_UpdateTexture(tex);
 
     // Create and grow vertex/index buffers if needed
     if (!bd->pVB || bd->VertexBufferSize < draw_data->TotalVtxCount)
@@ -181,7 +181,7 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
         bd->VertexBufferSize = draw_data->TotalVtxCount + 5000;
         D3D11_BUFFER_DESC desc = {};
         desc.Usage = D3D11_USAGE_DYNAMIC;
-        desc.ByteWidth = bd->VertexBufferSize * sizeof(ImDrawVert);
+        desc.ByteWidth = bd->VertexBufferSize * sizeof(HvkDrawVert);
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         desc.MiscFlags = 0;
@@ -194,7 +194,7 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
         bd->IndexBufferSize = draw_data->TotalIdxCount + 10000;
         D3D11_BUFFER_DESC desc = {};
         desc.Usage = D3D11_USAGE_DYNAMIC;
-        desc.ByteWidth = bd->IndexBufferSize * sizeof(ImDrawIdx);
+        desc.ByteWidth = bd->IndexBufferSize * sizeof(HvkDrawIdx);
         desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         if (bd->pd3dDevice->CreateBuffer(&desc, nullptr, &bd->pIB) < 0)
@@ -207,12 +207,12 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
         return;
     if (device->Map(bd->pIB, 0, D3D11_MAP_WRITE_DISCARD, 0, &idx_resource) != S_OK)
         return;
-    ImDrawVert* vtx_dst = (ImDrawVert*)vtx_resource.pData;
-    ImDrawIdx* idx_dst = (ImDrawIdx*)idx_resource.pData;
-    for (const ImDrawList* draw_list : draw_data->CmdLists)
+    HvkDrawVert* vtx_dst = (HvkDrawVert*)vtx_resource.pData;
+    HvkDrawIdx* idx_dst = (HvkDrawIdx*)idx_resource.pData;
+    for (const HvkDrawList* draw_list : draw_data->CmdLists)
     {
-        memcpy(vtx_dst, draw_list->VtxBuffer.Data, draw_list->VtxBuffer.Size * sizeof(ImDrawVert));
-        memcpy(idx_dst, draw_list->IdxBuffer.Data, draw_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+        memcpy(vtx_dst, draw_list->VtxBuffer.Data, draw_list->VtxBuffer.Size * sizeof(HvkDrawVert));
+        memcpy(idx_dst, draw_list->IdxBuffer.Data, draw_list->IdxBuffer.Size * sizeof(HvkDrawIdx));
         vtx_dst += draw_list->VtxBuffer.Size;
         idx_dst += draw_list->IdxBuffer.Size;
     }
@@ -265,11 +265,11 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
     device->IAGetInputLayout(&old.InputLayout);
 
     // Setup desired DX state
-    ImGui_ImplDX11_SetupRenderState(draw_data, device);
+    HvkGui_ImplDX11_SetupRenderState(draw_data, device);
 
     // Setup render state structure (for callbacks and custom texture bindings)
-    ImGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
-    ImGui_ImplDX11_RenderState render_state;
+    HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
+    HvkGui_ImplDX11_RenderState render_state;
     render_state.Device = bd->pd3dDevice;
     render_state.DeviceContext = bd->pd3dDeviceContext;
     render_state.SamplerDefault = bd->pTexSamplerLinear;
@@ -280,27 +280,27 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
     // (Because we merged all buffers into a single one, we maintain our own offset into them)
     int global_idx_offset = 0;
     int global_vtx_offset = 0;
-    ImVec2 clip_off = draw_data->DisplayPos;
-    ImVec2 clip_scale = draw_data->FramebufferScale;
-    for (const ImDrawList* draw_list : draw_data->CmdLists)
+    HvkVec2 clip_off = draw_data->DisplayPos;
+    HvkVec2 clip_scale = draw_data->FramebufferScale;
+    for (const HvkDrawList* draw_list : draw_data->CmdLists)
     {
         for (int cmd_i = 0; cmd_i < draw_list->CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawCmd* pcmd = &draw_list->CmdBuffer[cmd_i];
+            const HvkDrawCmd* pcmd = &draw_list->CmdBuffer[cmd_i];
             if (pcmd->UserCallback != nullptr)
             {
-                // User callback, registered via ImDrawList::AddCallback()
-                // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
-                if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                    ImGui_ImplDX11_SetupRenderState(draw_data, device);
+                // User callback, registered via HvkDrawList::AddCallback()
+                // (HvkDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
+                if (pcmd->UserCallback == HvkDrawCallback_ResetRenderState)
+                    HvkGui_ImplDX11_SetupRenderState(draw_data, device);
                 else
                     pcmd->UserCallback(draw_list, pcmd);
             }
             else
             {
                 // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
-                ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
+                HvkVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
+                HvkVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
                 if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
                     continue;
 
@@ -339,9 +339,9 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
     device->IASetInputLayout(old.InputLayout); if (old.InputLayout) old.InputLayout->Release();
 }
 
-static void ImGui_ImplDX11_DestroyTexture(ImTextureData* tex)
+static void HvkGui_ImplDX11_DestroyTexture(HvkTextureData* tex)
 {
-    if (ImGui_ImplDX11_Texture* backend_tex = (ImGui_ImplDX11_Texture*)tex->BackendUserData)
+    if (HvkGui_ImplDX11_Texture* backend_tex = (HvkGui_ImplDX11_Texture*)tex->BackendUserData)
     {
         IM_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
         backend_tex->pTextureView->Release();
@@ -349,23 +349,23 @@ static void ImGui_ImplDX11_DestroyTexture(ImTextureData* tex)
         IM_DELETE(backend_tex);
 
         // Clear identifiers and mark as destroyed (in order to allow e.g. calling InvalidateDeviceObjects while running)
-        tex->SetTexID(ImTextureID_Invalid);
+        tex->SetTexID(HvkTextureID_Invalid);
         tex->BackendUserData = nullptr;
     }
-    tex->SetStatus(ImTextureStatus_Destroyed);
+    tex->SetStatus(HvkTextureStatus_Destroyed);
 }
 
-void ImGui_ImplDX11_UpdateTexture(ImTextureData* tex)
+void HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex)
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
-    if (tex->Status == ImTextureStatus_WantCreate)
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
+    if (tex->Status == HvkTextureStatus_WantCreate)
     {
         // Create and upload new texture to graphics system
-        //IMGUI_DEBUG_LOG("UpdateTexture #%03d: WantCreate %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
-        IM_ASSERT(tex->TexID == ImTextureID_Invalid && tex->BackendUserData == nullptr);
-        IM_ASSERT(tex->Format == ImTextureFormat_RGBA32);
+        //HvkGui_DEBUG_LOG("UpdateTexture #%03d: WantCreate %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
+        IM_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == nullptr);
+        IM_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
         unsigned int* pixels = (unsigned int*)tex->GetPixels();
-        ImGui_ImplDX11_Texture* backend_tex = IM_NEW(ImGui_ImplDX11_Texture)();
+        HvkGui_ImplDX11_Texture* backend_tex = IM_NEW(HvkGui_ImplDX11_Texture)();
 
         // Create texture
         D3D11_TEXTURE2D_DESC desc;
@@ -397,39 +397,39 @@ void ImGui_ImplDX11_UpdateTexture(ImTextureData* tex)
         IM_ASSERT(backend_tex->pTextureView != nullptr && "Backend failed to create texture!");
 
         // Store identifiers
-        tex->SetTexID((ImTextureID)(intptr_t)backend_tex->pTextureView);
-        tex->SetStatus(ImTextureStatus_OK);
+        tex->SetTexID((HvkTextureID)(intptr_t)backend_tex->pTextureView);
+        tex->SetStatus(HvkTextureStatus_OK);
         tex->BackendUserData = backend_tex;
     }
-    else if (tex->Status == ImTextureStatus_WantUpdates)
+    else if (tex->Status == HvkTextureStatus_WantUpdates)
     {
         // Update selected blocks. We only ever write to textures regions which have never been used before!
         // This backend choose to use tex->Updates[] but you can use tex->UpdateRect to upload a single region.
-        ImGui_ImplDX11_Texture* backend_tex = (ImGui_ImplDX11_Texture*)tex->BackendUserData;
+        HvkGui_ImplDX11_Texture* backend_tex = (HvkGui_ImplDX11_Texture*)tex->BackendUserData;
         IM_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
-        for (ImTextureRect& r : tex->Updates)
+        for (HvkTextureRect& r : tex->Updates)
         {
             D3D11_BOX box = { (UINT)r.x, (UINT)r.y, (UINT)0, (UINT)(r.x + r.w), (UINT)(r.y + r .h), (UINT)1 };
             bd->pd3dDeviceContext->UpdateSubresource(backend_tex->pTexture, 0, &box, tex->GetPixelsAt(r.x, r.y), (UINT)tex->GetPitch(), 0);
         }
-        tex->SetStatus(ImTextureStatus_OK);
+        tex->SetStatus(HvkTextureStatus_OK);
     }
-    if (tex->Status == ImTextureStatus_WantDestroy && tex->UnusedFrames > 0)
-        ImGui_ImplDX11_DestroyTexture(tex);
+    if (tex->Status == HvkTextureStatus_WantDestroy && tex->UnusedFrames > 0)
+        HvkGui_ImplDX11_DestroyTexture(tex);
 }
 
-bool    ImGui_ImplDX11_CreateDeviceObjects()
+bool    HvkGui_ImplDX11_CreateDeviceObjects()
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
     if (!bd->pd3dDevice)
         return false;
-    ImGui_ImplDX11_InvalidateDeviceObjects();
+    HvkGui_ImplDX11_InvalidateDeviceObjects();
 
     // By using D3DCompile() from <d3dcompiler.h> / d3dcompiler.lib, we introduce a dependency to a given version of d3dcompiler_XX.dll (see D3DCOMPILER_DLL_A)
     // If you would like to use this DX11 sample code but remove this dependency you can:
     //  1) compile once, save the compiled shader blobs into a file or source code and pass them to CreateVertexShader()/CreatePixelShader() [preferred solution]
     //  2) use code to detect any version of the DLL and grab a pointer to D3DCompile from the DLL.
-    // See https://github.com/ocornut/imgui/pull/638 for sources and details.
+    // See https://github.com/ocornut/HvkGui/pull/638 for sources and details.
 
     // Create the vertex shader
     {
@@ -473,9 +473,9 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         // Create the input layout
         D3D11_INPUT_ELEMENT_DESC local_layout[] =
         {
-            { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(ImDrawVert, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(ImDrawVert, uv),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)offsetof(ImDrawVert, col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(HvkDrawVert, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(HvkDrawVert, uv),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)offsetof(HvkDrawVert, col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         if (bd->pd3dDevice->CreateInputLayout(local_layout, 3, vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &bd->pInputLayout) != S_OK)
         {
@@ -567,7 +567,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
     }
 
     // Create texture sampler
-    // (Bilinear sampling is required by default. Set 'io.Fonts->Flags |= ImFontAtlasFlags_NoBakedLines' or 'style.AntiAliasedLinesUseTex = false' to allow point/nearest sampling)
+    // (Bilinear sampling is required by default. Set 'io.Fonts->Flags |= HvkFontAtlasFlags_NoBakedLines' or 'style.AntiAliasedLinesUseTex = false' to allow point/nearest sampling)
     {
         D3D11_SAMPLER_DESC desc;
         ZeroMemory(&desc, sizeof(desc));
@@ -585,16 +585,16 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
     return true;
 }
 
-void    ImGui_ImplDX11_InvalidateDeviceObjects()
+void    HvkGui_ImplDX11_InvalidateDeviceObjects()
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
     if (!bd->pd3dDevice)
         return;
 
     // Destroy all textures
-    for (ImTextureData* tex : HvkGui::GetPlatformIO().Textures)
+    for (HvkTextureData* tex : HvkGui::GetPlatformIO().Textures)
         if (tex->RefCount == 1)
-            ImGui_ImplDX11_DestroyTexture(tex);
+            HvkGui_ImplDX11_DestroyTexture(tex);
 
     if (bd->pTexSamplerLinear)      { bd->pTexSamplerLinear->Release(); bd->pTexSamplerLinear = nullptr; }
     if (bd->pIB)                    { bd->pIB->Release(); bd->pIB = nullptr; }
@@ -608,20 +608,20 @@ void    ImGui_ImplDX11_InvalidateDeviceObjects()
     if (bd->pVertexShader)          { bd->pVertexShader->Release(); bd->pVertexShader = nullptr; }
 }
 
-bool    ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context)
+bool    HvkGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context)
 {
-    ImGuiIO& io = HvkGui::GetIO();
-    IMGUI_CHECKVERSION();
+    HvkGuiIO& io = HvkGui::GetIO();
+    HvkGui_CHECKVERSION();
     IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
 
     // Setup backend capabilities flags
-    ImGui_ImplDX11_Data* bd = IM_NEW(ImGui_ImplDX11_Data)();
+    HvkGui_ImplDX11_Data* bd = IM_NEW(HvkGui_ImplDX11_Data)();
     io.BackendRendererUserData = (void*)bd;
-    io.BackendRendererName = "imgui_impl_dx11";
-    io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
-    io.BackendFlags |= ImGuiBackendFlags_RendererHasTextures;   // We can honor ImGuiPlatformIO::Textures[] requests during render.
+    io.BackendRendererName = "HvkGui_impl_dx11";
+    io.BackendFlags |= HvkGuiBackendFlags_RendererHasVtxOffset;  // We can honor the HvkDrawCmd::VtxOffset field, allowing for large meshes.
+    io.BackendFlags |= HvkGuiBackendFlags_RendererHasTextures;   // We can honor HvkGuiPlatformIO::Textures[] requests during render.
 
-    ImGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
+    HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
     platform_io.Renderer_TextureMaxWidth = platform_io.Renderer_TextureMaxHeight = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 
     // Get factory from device
@@ -645,35 +645,35 @@ bool    ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_co
     return true;
 }
 
-void ImGui_ImplDX11_Shutdown()
+void HvkGui_ImplDX11_Shutdown()
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
     IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
-    ImGuiIO& io = HvkGui::GetIO();
-    ImGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
+    HvkGuiIO& io = HvkGui::GetIO();
+    HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
 
-    ImGui_ImplDX11_InvalidateDeviceObjects();
+    HvkGui_ImplDX11_InvalidateDeviceObjects();
     if (bd->pFactory)             { bd->pFactory->Release(); }
     if (bd->pd3dDevice)           { bd->pd3dDevice->Release(); }
     if (bd->pd3dDeviceContext)    { bd->pd3dDeviceContext->Release(); }
 
     io.BackendRendererName = nullptr;
     io.BackendRendererUserData = nullptr;
-    io.BackendFlags &= ~(ImGuiBackendFlags_RendererHasVtxOffset | ImGuiBackendFlags_RendererHasTextures);
+    io.BackendFlags &= ~(HvkGuiBackendFlags_RendererHasVtxOffset | HvkGuiBackendFlags_RendererHasTextures);
     platform_io.ClearRendererHandlers();
     IM_DELETE(bd);
 }
 
-void ImGui_ImplDX11_NewFrame()
+void HvkGui_ImplDX11_NewFrame()
 {
-    ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call ImGui_ImplDX11_Init()?");
+    HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
+    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call HvkGui_ImplDX11_Init()?");
 
     if (!bd->pVertexShader)
-        if (!ImGui_ImplDX11_CreateDeviceObjects())
-            IM_ASSERT(0 && "ImGui_ImplDX11_CreateDeviceObjects() failed!");
+        if (!HvkGui_ImplDX11_CreateDeviceObjects())
+            IM_ASSERT(0 && "HvkGui_ImplDX11_CreateDeviceObjects() failed!");
 }
 
 //-----------------------------------------------------------------------------
 
-#endif // #ifndef IMGUI_DISABLE
+#endif // #ifndef HvkGui_DISABLE

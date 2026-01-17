@@ -175,17 +175,17 @@ int main(int, char**)
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	HvkGui::CreateContext();
+	ImGuiIO& io = HvkGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
+	HvkGui::StyleColorsDark();
+	//HvkGui::StyleColorsLight();
 
 	// Setup scaling
-	ImGuiStyle& style = ImGui::GetStyle();
+	ImGuiStyle& style = HvkGui::GetStyle();
 	style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
 	style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
 
@@ -209,7 +209,7 @@ int main(int, char**)
 	//ImGui_ImplDX12_Init(g_pd3dDevice, APP_NUM_FRAMES_IN_FLIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap, g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
 
 	// Load Fonts
-	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
+	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use HvkGui::PushFont()/PopFont() to select them.
 	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
 	// - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
 	// - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
@@ -257,18 +257,18 @@ int main(int, char**)
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		HvkGui::NewFrame();
 
-		ImGui::SetWindowPos(ImVec2(0, 10), ImGuiCond_Once);
-		ImGui::SetWindowSize(ImVec2(1920, 1070), ImGuiCond_Once);
-		ImGui::Begin("Main Window");
+		HvkGui::SetWindowPos(ImVec2(0, 10), ImGuiCond_Once);
+		HvkGui::SetWindowSize(ImVec2(1920, 1070), ImGuiCond_Once);
+		HvkGui::Begin("Main Window");
 
-		ImGui::Text(g_render_backend == RenderBackend::DX12 ? "Render Backend: DX12" : "Render Backend: DX11");
+		HvkGui::Text(g_render_backend == RenderBackend::DX12 ? "Render Backend: DX12" : "Render Backend: DX11");
 
-		ImGui::End();
+		HvkGui::End();
 
 		// Rendering
-		ImGui::Render();
+		HvkGui::Render();
 
 		FrameContext* frameCtx = WaitForNextFrameContext();
 		UINT backBufferIdx = g_pSwapChain->GetCurrentBackBufferIndex();
@@ -289,7 +289,7 @@ int main(int, char**)
 		g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
 		g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
 		g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), g_pd3dCommandList);
+		ImGui_ImplDX12_RenderDrawData(HvkGui::GetDrawData(), g_pd3dCommandList);
 		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 		g_pd3dCommandList->ResourceBarrier(1, &barrier);
@@ -316,7 +316,7 @@ int main(int, char**)
 		ImGui_ImplDX11_Shutdown();
 
 	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	HvkGui::DestroyContext();
 
 	if (g_render_backend == RenderBackend::DX12)
 		CleanupDeviceD3D();

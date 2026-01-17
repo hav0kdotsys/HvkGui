@@ -4178,4 +4178,6 @@ typedef ImFontAtlasRect ImFontAtlasCustomRect;
 #endif
 #endif
 
+namespace HvkGui = ImGui;
+
 #endif // #ifndef IMGUI_DISABLE

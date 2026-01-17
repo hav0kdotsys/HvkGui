@@ -3,7 +3,7 @@
 
 // Help:
 // - Read FAQ at http://dearimgui.com/faq
-// - Call and read ImGui::ShowDemoWindow() in imgui_demo.cpp. All applications in examples/ are doing that.
+// - Call and read HvkGui::ShowDemoWindow() in imgui_demo.cpp. All applications in examples/ are doing that.
 // - Need help integrating Dear ImGui in your codebase?
 //   - Read Getting Started https://github.com/ocornut/imgui/wiki/Getting-Started
 //   - Read 'Programmer guide' in imgui.cpp for notes on how to setup Dear ImGui in your codebase.
@@ -20,11 +20,11 @@
 //---------------------------------------------------
 // Message to the person tempted to delete this file when integrating Dear ImGui into their codebase:
 // Think again! It is the most useful reference code that you and other coders will want to refer to and call.
-// Have the ImGui::ShowDemoWindow() function wired in an always-available debug menu of your game/app!
+// Have the HvkGui::ShowDemoWindow() function wired in an always-available debug menu of your game/app!
 // Also include Metrics! ItemPicker! DebugLog! and other debug features.
 // Removing this file from your project is hindering access to documentation for everyone in your team,
 // likely leading you to poorer usage of the library.
-// Everything in this file will be stripped out by the linker if you don't call ImGui::ShowDemoWindow().
+// Everything in this file will be stripped out by the linker if you don't call HvkGui::ShowDemoWindow().
 // If you want to link core Dear ImGui in your shipped builds but want a thorough guarantee that the demo will not be
 // linked, you can setup your imconfig.h with #define IMGUI_DISABLE_DEMO_WINDOWS and those functions will be empty.
 // In another situation, whenever you have Dear ImGui available you probably want this to be available for reference.
@@ -50,7 +50,7 @@
 //-----------------------------------------
 // The Demo code in this file is designed to be easy to copy-and-paste into your application!
 // Because of this:
-// - We never omit the ImGui:: prefix when calling functions, even though most code here is in the same namespace.
+// - We never omit the HvkGui:: prefix when calling functions, even though most code here is in the same namespace.
 // - We try to declare static variables in the local scope, as close as possible to the code using them.
 // - We never use any of the helpers/facilities used internally by Dear ImGui, unless available in the public API.
 // - We never use maths operators on ImVec2/ImVec4. For our other sources files we use them, and they are provided
@@ -272,13 +272,13 @@ static void             ExampleTree_DestroyNode(ExampleTreeNode* node);
 // In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
 static void HelpMarker(const char* desc)
 {
-    ImGui::TextDisabled("(?)");
-    if (ImGui::BeginItemTooltip())
+    HvkGui::TextDisabled("(?)");
+    if (HvkGui::BeginItemTooltip())
     {
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
+        HvkGui::PushTextWrapPos(HvkGui::GetFontSize() * 35.0f);
+        HvkGui::TextUnformatted(desc);
+        HvkGui::PopTextWrapPos();
+        HvkGui::EndTooltip();
     }
 }
 
@@ -330,11 +330,11 @@ struct ImGuiDemoWindowData
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void ImGui::ShowDemoWindow(bool* p_open)
+void HvkGui::ShowDemoWindow(bool* p_open)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just assert/crash if the context is missing.
-    IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing Dear ImGui context. Refer to examples app!");
+    IM_ASSERT(HvkGui::GetCurrentContext() != NULL && "Missing Dear ImGui context. Refer to examples app!");
 
     // Verify ABI compatibility between caller code and compiled version of Dear ImGui. This helps detects some build issues.
     IMGUI_CHECKVERSION();
@@ -359,15 +359,15 @@ void ImGui::ShowDemoWindow(bool* p_open)
     if (demo_data.ShowAppWindowTitles)      { ShowExampleAppWindowTitles(&demo_data.ShowAppWindowTitles); }
 
     // Dear ImGui Tools (accessible from the "Tools" menu)
-    if (demo_data.ShowMetrics)              { ImGui::ShowMetricsWindow(&demo_data.ShowMetrics); }
-    if (demo_data.ShowDebugLog)             { ImGui::ShowDebugLogWindow(&demo_data.ShowDebugLog); }
-    if (demo_data.ShowIDStackTool)          { ImGui::ShowIDStackToolWindow(&demo_data.ShowIDStackTool); }
-    if (demo_data.ShowAbout)                { ImGui::ShowAboutWindow(&demo_data.ShowAbout); }
+    if (demo_data.ShowMetrics)              { HvkGui::ShowMetricsWindow(&demo_data.ShowMetrics); }
+    if (demo_data.ShowDebugLog)             { HvkGui::ShowDebugLogWindow(&demo_data.ShowDebugLog); }
+    if (demo_data.ShowIDStackTool)          { HvkGui::ShowIDStackToolWindow(&demo_data.ShowIDStackTool); }
+    if (demo_data.ShowAbout)                { HvkGui::ShowAboutWindow(&demo_data.ShowAbout); }
     if (demo_data.ShowStyleEditor)
     {
-        ImGui::Begin("Dear ImGui Style Editor", &demo_data.ShowStyleEditor);
-        ImGui::ShowStyleEditor();
-        ImGui::End();
+        HvkGui::Begin("Dear ImGui Style Editor", &demo_data.ShowStyleEditor);
+        HvkGui::ShowStyleEditor();
+        HvkGui::End();
     }
 
     // Demonstrate the various window flags. Typically you would just use the default!
@@ -398,15 +398,15 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
     // We specify a default position/size in case there's no data in the .ini file.
     // We only do it to make the demo applications a little more welcoming, but typically this isn't required.
-    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
+    const ImGuiViewport* main_viewport = HvkGui::GetMainViewport();
+    HvkGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
+    HvkGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
 
     // Main body of the Demo window starts here.
-    if (!ImGui::Begin("Dear ImGui Demo", p_open, window_flags))
+    if (!HvkGui::Begin("Dear ImGui Demo", p_open, window_flags))
     {
         // Early out if the window is collapsed, as an optimization.
-        ImGui::End();
+        HvkGui::End();
         return;
     }
 
@@ -416,220 +416,220 @@ void ImGui::ShowDemoWindow(bool* p_open)
     // - The default value is about GetWindowWidth() * 0.65f.
     // - See 'Demo->Layout->Widgets Width' for details.
     // Here we change the frame width based on how much width we want to give to the label.
-    const float label_width_base = ImGui::GetFontSize() * 12;               // Some amount of width for label, based on font size.
-    const float label_width_max = ImGui::GetContentRegionAvail().x * 0.40f; // ...but always leave some room for framed widgets.
+    const float label_width_base = HvkGui::GetFontSize() * 12;               // Some amount of width for label, based on font size.
+    const float label_width_max = HvkGui::GetContentRegionAvail().x * 0.40f; // ...but always leave some room for framed widgets.
     const float label_width = IM_MIN(label_width_base, label_width_max);
-    ImGui::PushItemWidth(-label_width);                                     // Right-align: framed items will leave 'label_width' available for the label.
-    //ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.40f);       // e.g. Use 40% width for framed widgets, leaving 60% width for labels.
-    //ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.40f);      // e.g. Use 40% width for labels, leaving 60% width for framed widgets.
-    //ImGui::PushItemWidth(ImGui::GetFontSize() * -12);                     // e.g. Use XXX width for labels, leaving the rest for framed widgets.
+    HvkGui::PushItemWidth(-label_width);                                     // Right-align: framed items will leave 'label_width' available for the label.
+    //HvkGui::PushItemWidth(HvkGui::GetContentRegionAvail().x * 0.40f);       // e.g. Use 40% width for framed widgets, leaving 60% width for labels.
+    //HvkGui::PushItemWidth(-HvkGui::GetContentRegionAvail().x * 0.40f);      // e.g. Use 40% width for labels, leaving 60% width for framed widgets.
+    //HvkGui::PushItemWidth(HvkGui::GetFontSize() * -12);                     // e.g. Use XXX width for labels, leaving the rest for framed widgets.
 
     // Menu Bar
     DemoWindowMenuBar(&demo_data);
 
-    ImGui::Text("dear imgui says hello! (%s) (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
-    ImGui::Spacing();
+    HvkGui::Text("dear imgui says hello! (%s) (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
+    HvkGui::Spacing();
 
     IMGUI_DEMO_MARKER("Help");
-    if (ImGui::CollapsingHeader("Help"))
+    if (HvkGui::CollapsingHeader("Help"))
     {
-        ImGui::SeparatorText("ABOUT THIS DEMO:");
-        ImGui::BulletText("Sections below are demonstrating many aspects of the library.");
-        ImGui::BulletText("The \"Examples\" menu above leads to more demo contents.");
-        ImGui::BulletText("The \"Tools\" menu above gives access to: About Box, Style Editor,\n"
+        HvkGui::SeparatorText("ABOUT THIS DEMO:");
+        HvkGui::BulletText("Sections below are demonstrating many aspects of the library.");
+        HvkGui::BulletText("The \"Examples\" menu above leads to more demo contents.");
+        HvkGui::BulletText("The \"Tools\" menu above gives access to: About Box, Style Editor,\n"
                           "and Metrics/Debugger (general purpose Dear ImGui debugging tool).");
 
-        ImGui::SeparatorText("PROGRAMMER GUIDE:");
-        ImGui::BulletText("See the ShowDemoWindow() code in imgui_demo.cpp. <- you are here!");
-        ImGui::BulletText("See comments in imgui.cpp.");
-        ImGui::BulletText("See example applications in the examples/ folder.");
-        ImGui::BulletText("Read the FAQ at ");
-        ImGui::SameLine(0, 0);
-        ImGui::TextLinkOpenURL("https://www.dearimgui.com/faq/");
-        ImGui::BulletText("Set 'io.ConfigFlags |= NavEnableKeyboard' for keyboard controls.");
-        ImGui::BulletText("Set 'io.ConfigFlags |= NavEnableGamepad' for gamepad controls.");
+        HvkGui::SeparatorText("PROGRAMMER GUIDE:");
+        HvkGui::BulletText("See the ShowDemoWindow() code in imgui_demo.cpp. <- you are here!");
+        HvkGui::BulletText("See comments in imgui.cpp.");
+        HvkGui::BulletText("See example applications in the examples/ folder.");
+        HvkGui::BulletText("Read the FAQ at ");
+        HvkGui::SameLine(0, 0);
+        HvkGui::TextLinkOpenURL("https://www.dearimgui.com/faq/");
+        HvkGui::BulletText("Set 'io.ConfigFlags |= NavEnableKeyboard' for keyboard controls.");
+        HvkGui::BulletText("Set 'io.ConfigFlags |= NavEnableGamepad' for gamepad controls.");
 
-        ImGui::SeparatorText("USER GUIDE:");
-        ImGui::ShowUserGuide();
+        HvkGui::SeparatorText("USER GUIDE:");
+        HvkGui::ShowUserGuide();
     }
 
     IMGUI_DEMO_MARKER("Configuration");
-    if (ImGui::CollapsingHeader("Configuration"))
+    if (HvkGui::CollapsingHeader("Configuration"))
     {
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& io = HvkGui::GetIO();
 
-        if (ImGui::TreeNode("Configuration##2"))
+        if (HvkGui::TreeNode("Configuration##2"))
         {
-            ImGui::SeparatorText("General");
-            ImGui::CheckboxFlags("io.ConfigFlags: NavEnableKeyboard",    &io.ConfigFlags, ImGuiConfigFlags_NavEnableKeyboard);
-            ImGui::SameLine(); HelpMarker("Enable keyboard controls.");
-            ImGui::CheckboxFlags("io.ConfigFlags: NavEnableGamepad",     &io.ConfigFlags, ImGuiConfigFlags_NavEnableGamepad);
-            ImGui::SameLine(); HelpMarker("Enable gamepad controls. Require backend to set io.BackendFlags |= ImGuiBackendFlags_HasGamepad.\n\nRead instructions in imgui.cpp for details.");
-            ImGui::CheckboxFlags("io.ConfigFlags: NoMouse",              &io.ConfigFlags, ImGuiConfigFlags_NoMouse);
-            ImGui::SameLine(); HelpMarker("Instruct dear imgui to disable mouse inputs and interactions.");
+            HvkGui::SeparatorText("General");
+            HvkGui::CheckboxFlags("io.ConfigFlags: NavEnableKeyboard",    &io.ConfigFlags, ImGuiConfigFlags_NavEnableKeyboard);
+            HvkGui::SameLine(); HelpMarker("Enable keyboard controls.");
+            HvkGui::CheckboxFlags("io.ConfigFlags: NavEnableGamepad",     &io.ConfigFlags, ImGuiConfigFlags_NavEnableGamepad);
+            HvkGui::SameLine(); HelpMarker("Enable gamepad controls. Require backend to set io.BackendFlags |= ImGuiBackendFlags_HasGamepad.\n\nRead instructions in imgui.cpp for details.");
+            HvkGui::CheckboxFlags("io.ConfigFlags: NoMouse",              &io.ConfigFlags, ImGuiConfigFlags_NoMouse);
+            HvkGui::SameLine(); HelpMarker("Instruct dear imgui to disable mouse inputs and interactions.");
 
             // The "NoMouse" option can get us stuck with a disabled mouse! Let's provide an alternative way to fix it:
             if (io.ConfigFlags & ImGuiConfigFlags_NoMouse)
             {
-                if (fmodf((float)ImGui::GetTime(), 0.40f) < 0.20f)
+                if (fmodf((float)HvkGui::GetTime(), 0.40f) < 0.20f)
                 {
-                    ImGui::SameLine();
-                    ImGui::Text("<<PRESS SPACE TO DISABLE>>");
+                    HvkGui::SameLine();
+                    HvkGui::Text("<<PRESS SPACE TO DISABLE>>");
                 }
                 // Prevent both being checked
-                if (ImGui::IsKeyPressed(ImGuiKey_Space) || (io.ConfigFlags & ImGuiConfigFlags_NoKeyboard))
+                if (HvkGui::IsKeyPressed(ImGuiKey_Space) || (io.ConfigFlags & ImGuiConfigFlags_NoKeyboard))
                     io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
             }
 
-            ImGui::CheckboxFlags("io.ConfigFlags: NoMouseCursorChange",  &io.ConfigFlags, ImGuiConfigFlags_NoMouseCursorChange);
-            ImGui::SameLine(); HelpMarker("Instruct backend to not alter mouse cursor shape and visibility.");
-            ImGui::CheckboxFlags("io.ConfigFlags: NoKeyboard", &io.ConfigFlags, ImGuiConfigFlags_NoKeyboard);
-            ImGui::SameLine(); HelpMarker("Instruct dear imgui to disable keyboard inputs and interactions.");
+            HvkGui::CheckboxFlags("io.ConfigFlags: NoMouseCursorChange",  &io.ConfigFlags, ImGuiConfigFlags_NoMouseCursorChange);
+            HvkGui::SameLine(); HelpMarker("Instruct backend to not alter mouse cursor shape and visibility.");
+            HvkGui::CheckboxFlags("io.ConfigFlags: NoKeyboard", &io.ConfigFlags, ImGuiConfigFlags_NoKeyboard);
+            HvkGui::SameLine(); HelpMarker("Instruct dear imgui to disable keyboard inputs and interactions.");
 
-            ImGui::Checkbox("io.ConfigInputTrickleEventQueue", &io.ConfigInputTrickleEventQueue);
-            ImGui::SameLine(); HelpMarker("Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, improving interactions with low framerates.");
-            ImGui::Checkbox("io.MouseDrawCursor", &io.MouseDrawCursor);
-            ImGui::SameLine(); HelpMarker("Instruct Dear ImGui to render a mouse cursor itself. Note that a mouse cursor rendered via your application GPU rendering path will feel more laggy than hardware cursor, but will be more in sync with your other visuals.\n\nSome desktop applications may use both kinds of cursors (e.g. enable software cursor only when resizing/dragging something).");
+            HvkGui::Checkbox("io.ConfigInputTrickleEventQueue", &io.ConfigInputTrickleEventQueue);
+            HvkGui::SameLine(); HelpMarker("Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, improving interactions with low framerates.");
+            HvkGui::Checkbox("io.MouseDrawCursor", &io.MouseDrawCursor);
+            HvkGui::SameLine(); HelpMarker("Instruct Dear ImGui to render a mouse cursor itself. Note that a mouse cursor rendered via your application GPU rendering path will feel more laggy than hardware cursor, but will be more in sync with your other visuals.\n\nSome desktop applications may use both kinds of cursors (e.g. enable software cursor only when resizing/dragging something).");
 
-            ImGui::SeparatorText("Keyboard/Gamepad Navigation");
-            ImGui::Checkbox("io.ConfigNavSwapGamepadButtons", &io.ConfigNavSwapGamepadButtons);
-            ImGui::Checkbox("io.ConfigNavMoveSetMousePos", &io.ConfigNavMoveSetMousePos);
-            ImGui::SameLine(); HelpMarker("Directional/tabbing navigation teleports the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is difficult");
-            ImGui::Checkbox("io.ConfigNavCaptureKeyboard", &io.ConfigNavCaptureKeyboard);
-            ImGui::Checkbox("io.ConfigNavEscapeClearFocusItem", &io.ConfigNavEscapeClearFocusItem);
-            ImGui::SameLine(); HelpMarker("Pressing Escape clears focused item.");
-            ImGui::Checkbox("io.ConfigNavEscapeClearFocusWindow", &io.ConfigNavEscapeClearFocusWindow);
-            ImGui::SameLine(); HelpMarker("Pressing Escape clears focused window.");
-            ImGui::Checkbox("io.ConfigNavCursorVisibleAuto", &io.ConfigNavCursorVisibleAuto);
-            ImGui::SameLine(); HelpMarker("Using directional navigation key makes the cursor visible. Mouse click hides the cursor.");
-            ImGui::Checkbox("io.ConfigNavCursorVisibleAlways", &io.ConfigNavCursorVisibleAlways);
-            ImGui::SameLine(); HelpMarker("Navigation cursor is always visible.");
+            HvkGui::SeparatorText("Keyboard/Gamepad Navigation");
+            HvkGui::Checkbox("io.ConfigNavSwapGamepadButtons", &io.ConfigNavSwapGamepadButtons);
+            HvkGui::Checkbox("io.ConfigNavMoveSetMousePos", &io.ConfigNavMoveSetMousePos);
+            HvkGui::SameLine(); HelpMarker("Directional/tabbing navigation teleports the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is difficult");
+            HvkGui::Checkbox("io.ConfigNavCaptureKeyboard", &io.ConfigNavCaptureKeyboard);
+            HvkGui::Checkbox("io.ConfigNavEscapeClearFocusItem", &io.ConfigNavEscapeClearFocusItem);
+            HvkGui::SameLine(); HelpMarker("Pressing Escape clears focused item.");
+            HvkGui::Checkbox("io.ConfigNavEscapeClearFocusWindow", &io.ConfigNavEscapeClearFocusWindow);
+            HvkGui::SameLine(); HelpMarker("Pressing Escape clears focused window.");
+            HvkGui::Checkbox("io.ConfigNavCursorVisibleAuto", &io.ConfigNavCursorVisibleAuto);
+            HvkGui::SameLine(); HelpMarker("Using directional navigation key makes the cursor visible. Mouse click hides the cursor.");
+            HvkGui::Checkbox("io.ConfigNavCursorVisibleAlways", &io.ConfigNavCursorVisibleAlways);
+            HvkGui::SameLine(); HelpMarker("Navigation cursor is always visible.");
 
-            ImGui::SeparatorText("Windows");
-            ImGui::Checkbox("io.ConfigWindowsResizeFromEdges", &io.ConfigWindowsResizeFromEdges);
-            ImGui::SameLine(); HelpMarker("Enable resizing of windows from their edges and from the lower-left corner.\nThis requires ImGuiBackendFlags_HasMouseCursors for better mouse cursor feedback.");
-            ImGui::Checkbox("io.ConfigWindowsMoveFromTitleBarOnly", &io.ConfigWindowsMoveFromTitleBarOnly);
-            ImGui::Checkbox("io.ConfigWindowsCopyContentsWithCtrlC", &io.ConfigWindowsCopyContentsWithCtrlC); // [EXPERIMENTAL]
-            ImGui::SameLine(); HelpMarker("*EXPERIMENTAL* Ctrl+C copy the contents of focused window into the clipboard.\n\nExperimental because:\n- (1) has known issues with nested Begin/End pairs.\n- (2) text output quality varies.\n- (3) text output is in submission order rather than spatial order.");
-            ImGui::Checkbox("io.ConfigScrollbarScrollByPage", &io.ConfigScrollbarScrollByPage);
-            ImGui::SameLine(); HelpMarker("Enable scrolling page by page when clicking outside the scrollbar grab.\nWhen disabled, always scroll to clicked location.\nWhen enabled, Shift+Click scrolls to clicked location.");
+            HvkGui::SeparatorText("Windows");
+            HvkGui::Checkbox("io.ConfigWindowsResizeFromEdges", &io.ConfigWindowsResizeFromEdges);
+            HvkGui::SameLine(); HelpMarker("Enable resizing of windows from their edges and from the lower-left corner.\nThis requires ImGuiBackendFlags_HasMouseCursors for better mouse cursor feedback.");
+            HvkGui::Checkbox("io.ConfigWindowsMoveFromTitleBarOnly", &io.ConfigWindowsMoveFromTitleBarOnly);
+            HvkGui::Checkbox("io.ConfigWindowsCopyContentsWithCtrlC", &io.ConfigWindowsCopyContentsWithCtrlC); // [EXPERIMENTAL]
+            HvkGui::SameLine(); HelpMarker("*EXPERIMENTAL* Ctrl+C copy the contents of focused window into the clipboard.\n\nExperimental because:\n- (1) has known issues with nested Begin/End pairs.\n- (2) text output quality varies.\n- (3) text output is in submission order rather than spatial order.");
+            HvkGui::Checkbox("io.ConfigScrollbarScrollByPage", &io.ConfigScrollbarScrollByPage);
+            HvkGui::SameLine(); HelpMarker("Enable scrolling page by page when clicking outside the scrollbar grab.\nWhen disabled, always scroll to clicked location.\nWhen enabled, Shift+Click scrolls to clicked location.");
 
-            ImGui::SeparatorText("Widgets");
-            ImGui::Checkbox("io.ConfigInputTextCursorBlink", &io.ConfigInputTextCursorBlink);
-            ImGui::SameLine(); HelpMarker("Enable blinking cursor (optional as some users consider it to be distracting).");
-            ImGui::Checkbox("io.ConfigInputTextEnterKeepActive", &io.ConfigInputTextEnterKeepActive);
-            ImGui::SameLine(); HelpMarker("Pressing Enter will keep item active and select contents (single-line only).");
-            ImGui::Checkbox("io.ConfigDragClickToInputText", &io.ConfigDragClickToInputText);
-            ImGui::SameLine(); HelpMarker("Enable turning DragXXX widgets into text input with a simple mouse click-release (without moving).");
-            ImGui::Checkbox("io.ConfigMacOSXBehaviors", &io.ConfigMacOSXBehaviors);
-            ImGui::SameLine(); HelpMarker("Swap Cmd<>Ctrl keys, enable various MacOS style behaviors.");
-            ImGui::Text("Also see Style->Rendering for rendering options.");
+            HvkGui::SeparatorText("Widgets");
+            HvkGui::Checkbox("io.ConfigInputTextCursorBlink", &io.ConfigInputTextCursorBlink);
+            HvkGui::SameLine(); HelpMarker("Enable blinking cursor (optional as some users consider it to be distracting).");
+            HvkGui::Checkbox("io.ConfigInputTextEnterKeepActive", &io.ConfigInputTextEnterKeepActive);
+            HvkGui::SameLine(); HelpMarker("Pressing Enter will keep item active and select contents (single-line only).");
+            HvkGui::Checkbox("io.ConfigDragClickToInputText", &io.ConfigDragClickToInputText);
+            HvkGui::SameLine(); HelpMarker("Enable turning DragXXX widgets into text input with a simple mouse click-release (without moving).");
+            HvkGui::Checkbox("io.ConfigMacOSXBehaviors", &io.ConfigMacOSXBehaviors);
+            HvkGui::SameLine(); HelpMarker("Swap Cmd<>Ctrl keys, enable various MacOS style behaviors.");
+            HvkGui::Text("Also see Style->Rendering for rendering options.");
 
             // Also read: https://github.com/ocornut/imgui/wiki/Error-Handling
-            ImGui::SeparatorText("Error Handling");
+            HvkGui::SeparatorText("Error Handling");
 
-            ImGui::Checkbox("io.ConfigErrorRecovery", &io.ConfigErrorRecovery);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::Checkbox("io.ConfigErrorRecovery", &io.ConfigErrorRecovery);
+            HvkGui::SameLine(); HelpMarker(
                 "Options to configure how we handle recoverable errors.\n"
                 "- Error recovery is not perfect nor guaranteed! It is a feature to ease development.\n"
                 "- You not are not supposed to rely on it in the course of a normal application run.\n"
                 "- Possible usage: facilitate recovery from errors triggered from a scripting language or after specific exceptions handlers.\n"
                 "- Always ensure that on programmers seat you have at minimum Asserts or Tooltips enabled when making direct imgui API call! "
                 "Otherwise it would severely hinder your ability to catch and correct mistakes!");
-            ImGui::Checkbox("io.ConfigErrorRecoveryEnableAssert", &io.ConfigErrorRecoveryEnableAssert);
-            ImGui::Checkbox("io.ConfigErrorRecoveryEnableDebugLog", &io.ConfigErrorRecoveryEnableDebugLog);
-            ImGui::Checkbox("io.ConfigErrorRecoveryEnableTooltip", &io.ConfigErrorRecoveryEnableTooltip);
+            HvkGui::Checkbox("io.ConfigErrorRecoveryEnableAssert", &io.ConfigErrorRecoveryEnableAssert);
+            HvkGui::Checkbox("io.ConfigErrorRecoveryEnableDebugLog", &io.ConfigErrorRecoveryEnableDebugLog);
+            HvkGui::Checkbox("io.ConfigErrorRecoveryEnableTooltip", &io.ConfigErrorRecoveryEnableTooltip);
             if (!io.ConfigErrorRecoveryEnableAssert && !io.ConfigErrorRecoveryEnableDebugLog && !io.ConfigErrorRecoveryEnableTooltip)
                 io.ConfigErrorRecoveryEnableAssert = io.ConfigErrorRecoveryEnableDebugLog = io.ConfigErrorRecoveryEnableTooltip = true;
 
             // Also read: https://github.com/ocornut/imgui/wiki/Debug-Tools
-            ImGui::SeparatorText("Debug");
-            ImGui::Checkbox("io.ConfigDebugIsDebuggerPresent", &io.ConfigDebugIsDebuggerPresent);
-            ImGui::SameLine(); HelpMarker("Enable various tools calling IM_DEBUG_BREAK().\n\nRequires a debugger being attached, otherwise IM_DEBUG_BREAK() options will appear to crash your application.");
-            ImGui::Checkbox("io.ConfigDebugHighlightIdConflicts", &io.ConfigDebugHighlightIdConflicts);
-            ImGui::SameLine(); HelpMarker("Highlight and show an error message when multiple items have conflicting identifiers.");
-            ImGui::BeginDisabled();
-            ImGui::Checkbox("io.ConfigDebugBeginReturnValueOnce", &io.ConfigDebugBeginReturnValueOnce);
-            ImGui::EndDisabled();
-            ImGui::SameLine(); HelpMarker("First calls to Begin()/BeginChild() will return false.\n\nTHIS OPTION IS DISABLED because it needs to be set at application boot-time to make sense. Showing the disabled option is a way to make this feature easier to discover.");
-            ImGui::Checkbox("io.ConfigDebugBeginReturnValueLoop", &io.ConfigDebugBeginReturnValueLoop);
-            ImGui::SameLine(); HelpMarker("Some calls to Begin()/BeginChild() will return false.\n\nWill cycle through window depths then repeat. Windows should be flickering while running.");
-            ImGui::Checkbox("io.ConfigDebugIgnoreFocusLoss", &io.ConfigDebugIgnoreFocusLoss);
-            ImGui::SameLine(); HelpMarker("Option to deactivate io.AddFocusEvent(false) handling. May facilitate interactions with a debugger when focus loss leads to clearing inputs data.");
-            ImGui::Checkbox("io.ConfigDebugIniSettings", &io.ConfigDebugIniSettings);
-            ImGui::SameLine(); HelpMarker("Option to save .ini data with extra comments (particularly helpful for Docking, but makes saving slower).");
+            HvkGui::SeparatorText("Debug");
+            HvkGui::Checkbox("io.ConfigDebugIsDebuggerPresent", &io.ConfigDebugIsDebuggerPresent);
+            HvkGui::SameLine(); HelpMarker("Enable various tools calling IM_DEBUG_BREAK().\n\nRequires a debugger being attached, otherwise IM_DEBUG_BREAK() options will appear to crash your application.");
+            HvkGui::Checkbox("io.ConfigDebugHighlightIdConflicts", &io.ConfigDebugHighlightIdConflicts);
+            HvkGui::SameLine(); HelpMarker("Highlight and show an error message when multiple items have conflicting identifiers.");
+            HvkGui::BeginDisabled();
+            HvkGui::Checkbox("io.ConfigDebugBeginReturnValueOnce", &io.ConfigDebugBeginReturnValueOnce);
+            HvkGui::EndDisabled();
+            HvkGui::SameLine(); HelpMarker("First calls to Begin()/BeginChild() will return false.\n\nTHIS OPTION IS DISABLED because it needs to be set at application boot-time to make sense. Showing the disabled option is a way to make this feature easier to discover.");
+            HvkGui::Checkbox("io.ConfigDebugBeginReturnValueLoop", &io.ConfigDebugBeginReturnValueLoop);
+            HvkGui::SameLine(); HelpMarker("Some calls to Begin()/BeginChild() will return false.\n\nWill cycle through window depths then repeat. Windows should be flickering while running.");
+            HvkGui::Checkbox("io.ConfigDebugIgnoreFocusLoss", &io.ConfigDebugIgnoreFocusLoss);
+            HvkGui::SameLine(); HelpMarker("Option to deactivate io.AddFocusEvent(false) handling. May facilitate interactions with a debugger when focus loss leads to clearing inputs data.");
+            HvkGui::Checkbox("io.ConfigDebugIniSettings", &io.ConfigDebugIniSettings);
+            HvkGui::SameLine(); HelpMarker("Option to save .ini data with extra comments (particularly helpful for Docking, but makes saving slower).");
 
-            ImGui::TreePop();
-            ImGui::Spacing();
+            HvkGui::TreePop();
+            HvkGui::Spacing();
         }
 
         IMGUI_DEMO_MARKER("Configuration/Backend Flags");
-        if (ImGui::TreeNode("Backend Flags"))
+        if (HvkGui::TreeNode("Backend Flags"))
         {
             HelpMarker(
                 "Those flags are set by the backends (imgui_impl_xxx files) to specify their capabilities.\n"
                 "Here we expose them as read-only fields to avoid breaking interactions with your backend.");
 
             // FIXME: Maybe we need a BeginReadonly() equivalent to keep label bright?
-            ImGui::BeginDisabled();
-            ImGui::CheckboxFlags("io.BackendFlags: HasGamepad",           &io.BackendFlags, ImGuiBackendFlags_HasGamepad);
-            ImGui::CheckboxFlags("io.BackendFlags: HasMouseCursors",      &io.BackendFlags, ImGuiBackendFlags_HasMouseCursors);
-            ImGui::CheckboxFlags("io.BackendFlags: HasSetMousePos",       &io.BackendFlags, ImGuiBackendFlags_HasSetMousePos);
-            ImGui::CheckboxFlags("io.BackendFlags: RendererHasVtxOffset", &io.BackendFlags, ImGuiBackendFlags_RendererHasVtxOffset);
-            ImGui::CheckboxFlags("io.BackendFlags: RendererHasTextures",  &io.BackendFlags, ImGuiBackendFlags_RendererHasTextures);
-            ImGui::EndDisabled();
+            HvkGui::BeginDisabled();
+            HvkGui::CheckboxFlags("io.BackendFlags: HasGamepad",           &io.BackendFlags, ImGuiBackendFlags_HasGamepad);
+            HvkGui::CheckboxFlags("io.BackendFlags: HasMouseCursors",      &io.BackendFlags, ImGuiBackendFlags_HasMouseCursors);
+            HvkGui::CheckboxFlags("io.BackendFlags: HasSetMousePos",       &io.BackendFlags, ImGuiBackendFlags_HasSetMousePos);
+            HvkGui::CheckboxFlags("io.BackendFlags: RendererHasVtxOffset", &io.BackendFlags, ImGuiBackendFlags_RendererHasVtxOffset);
+            HvkGui::CheckboxFlags("io.BackendFlags: RendererHasTextures",  &io.BackendFlags, ImGuiBackendFlags_RendererHasTextures);
+            HvkGui::EndDisabled();
 
-            ImGui::TreePop();
-            ImGui::Spacing();
+            HvkGui::TreePop();
+            HvkGui::Spacing();
         }
 
         IMGUI_DEMO_MARKER("Configuration/Style, Fonts");
-        if (ImGui::TreeNode("Style, Fonts"))
+        if (HvkGui::TreeNode("Style, Fonts"))
         {
-            ImGui::Checkbox("Style Editor", &demo_data.ShowStyleEditor);
-            ImGui::SameLine();
+            HvkGui::Checkbox("Style Editor", &demo_data.ShowStyleEditor);
+            HvkGui::SameLine();
             HelpMarker("The same contents can be accessed in 'Tools->Style Editor' or by calling the ShowStyleEditor() function.");
-            ImGui::TreePop();
-            ImGui::Spacing();
+            HvkGui::TreePop();
+            HvkGui::Spacing();
         }
 
         IMGUI_DEMO_MARKER("Configuration/Capture, Logging");
-        if (ImGui::TreeNode("Capture/Logging"))
+        if (HvkGui::TreeNode("Capture/Logging"))
         {
             HelpMarker(
                 "The logging API redirects all text output so you can easily capture the content of "
                 "a window or a block. Tree nodes can be automatically expanded.\n"
                 "Try opening any of the contents below in this window and then click one of the \"Log To\" button.");
-            ImGui::LogButtons();
+            HvkGui::LogButtons();
 
-            HelpMarker("You can also call ImGui::LogText() to output directly to the log without a visual output.");
-            if (ImGui::Button("Copy \"Hello, world!\" to clipboard"))
+            HelpMarker("You can also call HvkGui::LogText() to output directly to the log without a visual output.");
+            if (HvkGui::Button("Copy \"Hello, world!\" to clipboard"))
             {
-                ImGui::LogToClipboard();
-                ImGui::LogText("Hello, world!");
-                ImGui::LogFinish();
+                HvkGui::LogToClipboard();
+                HvkGui::LogText("Hello, world!");
+                HvkGui::LogFinish();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
     }
 
     IMGUI_DEMO_MARKER("Window options");
-    if (ImGui::CollapsingHeader("Window options"))
+    if (HvkGui::CollapsingHeader("Window options"))
     {
-        if (ImGui::BeginTable("split", 3))
+        if (HvkGui::BeginTable("split", 3))
         {
-            ImGui::TableNextColumn(); ImGui::Checkbox("No titlebar", &no_titlebar);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No scrollbar", &no_scrollbar);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No menu", &no_menu);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No move", &no_move);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No resize", &no_resize);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No collapse", &no_collapse);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No close", &no_close);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No nav", &no_nav);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No background", &no_background);
-            ImGui::TableNextColumn(); ImGui::Checkbox("No bring to front", &no_bring_to_front);
-            ImGui::TableNextColumn(); ImGui::Checkbox("Unsaved document", &unsaved_document);
-            ImGui::EndTable();
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No titlebar", &no_titlebar);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No scrollbar", &no_scrollbar);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No menu", &no_menu);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No move", &no_move);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No resize", &no_resize);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No collapse", &no_collapse);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No close", &no_close);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No nav", &no_nav);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No background", &no_background);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("No bring to front", &no_bring_to_front);
+            HvkGui::TableNextColumn(); HvkGui::Checkbox("Unsaved document", &unsaved_document);
+            HvkGui::EndTable();
         }
     }
 
@@ -641,8 +641,8 @@ void ImGui::ShowDemoWindow(bool* p_open)
     DemoWindowInputs();
 
     // End of ShowDemoWindow()
-    ImGui::PopItemWidth();
-    ImGui::End();
+    HvkGui::PopItemWidth();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -652,71 +652,71 @@ void ImGui::ShowDemoWindow(bool* p_open)
 static void DemoWindowMenuBar(ImGuiDemoWindowData* demo_data)
 {
     IMGUI_DEMO_MARKER("Menu");
-    if (ImGui::BeginMenuBar())
+    if (HvkGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("Menu"))
+        if (HvkGui::BeginMenu("Menu"))
         {
             IMGUI_DEMO_MARKER("Menu/File");
             ShowExampleMenuFile();
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Examples"))
+        if (HvkGui::BeginMenu("Examples"))
         {
             IMGUI_DEMO_MARKER("Menu/Examples");
-            ImGui::MenuItem("Main menu bar", NULL, &demo_data->ShowMainMenuBar);
+            HvkGui::MenuItem("Main menu bar", NULL, &demo_data->ShowMainMenuBar);
 
-            ImGui::SeparatorText("Mini apps");
-            ImGui::MenuItem("Assets Browser", NULL, &demo_data->ShowAppAssetsBrowser);
-            ImGui::MenuItem("Console", NULL, &demo_data->ShowAppConsole);
-            ImGui::MenuItem("Custom rendering", NULL, &demo_data->ShowAppCustomRendering);
-            ImGui::MenuItem("Documents", NULL, &demo_data->ShowAppDocuments);
-            ImGui::MenuItem("Log", NULL, &demo_data->ShowAppLog);
-            ImGui::MenuItem("Property editor", NULL, &demo_data->ShowAppPropertyEditor);
-            ImGui::MenuItem("Simple layout", NULL, &demo_data->ShowAppLayout);
-            ImGui::MenuItem("Simple overlay", NULL, &demo_data->ShowAppSimpleOverlay);
+            HvkGui::SeparatorText("Mini apps");
+            HvkGui::MenuItem("Assets Browser", NULL, &demo_data->ShowAppAssetsBrowser);
+            HvkGui::MenuItem("Console", NULL, &demo_data->ShowAppConsole);
+            HvkGui::MenuItem("Custom rendering", NULL, &demo_data->ShowAppCustomRendering);
+            HvkGui::MenuItem("Documents", NULL, &demo_data->ShowAppDocuments);
+            HvkGui::MenuItem("Log", NULL, &demo_data->ShowAppLog);
+            HvkGui::MenuItem("Property editor", NULL, &demo_data->ShowAppPropertyEditor);
+            HvkGui::MenuItem("Simple layout", NULL, &demo_data->ShowAppLayout);
+            HvkGui::MenuItem("Simple overlay", NULL, &demo_data->ShowAppSimpleOverlay);
 
-            ImGui::SeparatorText("Concepts");
-            ImGui::MenuItem("Auto-resizing window", NULL, &demo_data->ShowAppAutoResize);
-            ImGui::MenuItem("Constrained-resizing window", NULL, &demo_data->ShowAppConstrainedResize);
-            ImGui::MenuItem("Fullscreen window", NULL, &demo_data->ShowAppFullscreen);
-            ImGui::MenuItem("Long text display", NULL, &demo_data->ShowAppLongText);
-            ImGui::MenuItem("Manipulating window titles", NULL, &demo_data->ShowAppWindowTitles);
+            HvkGui::SeparatorText("Concepts");
+            HvkGui::MenuItem("Auto-resizing window", NULL, &demo_data->ShowAppAutoResize);
+            HvkGui::MenuItem("Constrained-resizing window", NULL, &demo_data->ShowAppConstrainedResize);
+            HvkGui::MenuItem("Fullscreen window", NULL, &demo_data->ShowAppFullscreen);
+            HvkGui::MenuItem("Long text display", NULL, &demo_data->ShowAppLongText);
+            HvkGui::MenuItem("Manipulating window titles", NULL, &demo_data->ShowAppWindowTitles);
 
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        //if (ImGui::MenuItem("MenuItem")) {} // You can also use MenuItem() inside a menu bar!
-        if (ImGui::BeginMenu("Tools"))
+        //if (HvkGui::MenuItem("MenuItem")) {} // You can also use MenuItem() inside a menu bar!
+        if (HvkGui::BeginMenu("Tools"))
         {
             IMGUI_DEMO_MARKER("Menu/Tools");
-            ImGuiIO& io = ImGui::GetIO();
+            ImGuiIO& io = HvkGui::GetIO();
 #ifndef IMGUI_DISABLE_DEBUG_TOOLS
             const bool has_debug_tools = true;
 #else
             const bool has_debug_tools = false;
 #endif
-            ImGui::MenuItem("Metrics/Debugger", NULL, &demo_data->ShowMetrics, has_debug_tools);
-            if (ImGui::BeginMenu("Debug Options"))
+            HvkGui::MenuItem("Metrics/Debugger", NULL, &demo_data->ShowMetrics, has_debug_tools);
+            if (HvkGui::BeginMenu("Debug Options"))
             {
-                ImGui::BeginDisabled(!has_debug_tools);
-                ImGui::Checkbox("Highlight ID Conflicts", &io.ConfigDebugHighlightIdConflicts);
-                ImGui::EndDisabled();
-                ImGui::Checkbox("Assert on error recovery", &io.ConfigErrorRecoveryEnableAssert);
-                ImGui::TextDisabled("(see Demo->Configuration for details & more)");
-                ImGui::EndMenu();
+                HvkGui::BeginDisabled(!has_debug_tools);
+                HvkGui::Checkbox("Highlight ID Conflicts", &io.ConfigDebugHighlightIdConflicts);
+                HvkGui::EndDisabled();
+                HvkGui::Checkbox("Assert on error recovery", &io.ConfigErrorRecoveryEnableAssert);
+                HvkGui::TextDisabled("(see Demo->Configuration for details & more)");
+                HvkGui::EndMenu();
             }
-            ImGui::MenuItem("Debug Log", NULL, &demo_data->ShowDebugLog, has_debug_tools);
-            ImGui::MenuItem("ID Stack Tool", NULL, &demo_data->ShowIDStackTool, has_debug_tools);
+            HvkGui::MenuItem("Debug Log", NULL, &demo_data->ShowDebugLog, has_debug_tools);
+            HvkGui::MenuItem("ID Stack Tool", NULL, &demo_data->ShowIDStackTool, has_debug_tools);
             bool is_debugger_present = io.ConfigDebugIsDebuggerPresent;
-            if (ImGui::MenuItem("Item Picker", NULL, false, has_debug_tools))// && is_debugger_present))
-                ImGui::DebugStartItemPicker();
+            if (HvkGui::MenuItem("Item Picker", NULL, false, has_debug_tools))// && is_debugger_present))
+                HvkGui::DebugStartItemPicker();
             if (!is_debugger_present)
-                ImGui::SetItemTooltip("Requires io.ConfigDebugIsDebuggerPresent=true to be set.\n\nWe otherwise disable some extra features to avoid casual users crashing the application.");
-            ImGui::MenuItem("Style Editor", NULL, &demo_data->ShowStyleEditor);
-            ImGui::MenuItem("About Dear ImGui", NULL, &demo_data->ShowAbout);
+                HvkGui::SetItemTooltip("Requires io.ConfigDebugIsDebuggerPresent=true to be set.\n\nWe otherwise disable some extra features to avoid casual users crashing the application.");
+            HvkGui::MenuItem("Style Editor", NULL, &demo_data->ShowStyleEditor);
+            HvkGui::MenuItem("About Dear ImGui", NULL, &demo_data->ShowAbout);
 
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        ImGui::EndMenuBar();
+        HvkGui::EndMenuBar();
     }
 }
 
@@ -818,73 +818,73 @@ static ExampleTreeNode* ExampleTree_CreateDemoTree()
 static void DemoWindowWidgetsBasic()
 {
     IMGUI_DEMO_MARKER("Widgets/Basic");
-    if (ImGui::TreeNode("Basic"))
+    if (HvkGui::TreeNode("Basic"))
     {
-        ImGui::SeparatorText("General");
+        HvkGui::SeparatorText("General");
 
         IMGUI_DEMO_MARKER("Widgets/Basic/Button");
         static int clicked = 0;
-        if (ImGui::Button("Button"))
+        if (HvkGui::Button("Button"))
             clicked++;
         if (clicked & 1)
         {
-            ImGui::SameLine();
-            ImGui::Text("Thanks for clicking me!");
+            HvkGui::SameLine();
+            HvkGui::Text("Thanks for clicking me!");
         }
 
         IMGUI_DEMO_MARKER("Widgets/Basic/Checkbox");
         static bool check = true;
-        ImGui::Checkbox("checkbox", &check);
+        HvkGui::Checkbox("checkbox", &check);
 
         IMGUI_DEMO_MARKER("Widgets/Basic/RadioButton");
         static int e = 0;
-        ImGui::RadioButton("radio a", &e, 0); ImGui::SameLine();
-        ImGui::RadioButton("radio b", &e, 1); ImGui::SameLine();
-        ImGui::RadioButton("radio c", &e, 2);
+        HvkGui::RadioButton("radio a", &e, 0); HvkGui::SameLine();
+        HvkGui::RadioButton("radio b", &e, 1); HvkGui::SameLine();
+        HvkGui::RadioButton("radio c", &e, 2);
 
-        ImGui::AlignTextToFramePadding();
-        ImGui::TextLinkOpenURL("Hyperlink", "https://github.com/ocornut/imgui/wiki/Error-Handling");
+        HvkGui::AlignTextToFramePadding();
+        HvkGui::TextLinkOpenURL("Hyperlink", "https://github.com/ocornut/imgui/wiki/Error-Handling");
 
         // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
         IMGUI_DEMO_MARKER("Widgets/Basic/Buttons (Colored)");
         for (int i = 0; i < 7; i++)
         {
             if (i > 0)
-                ImGui::SameLine();
-            ImGui::PushID(i);
-            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
-            ImGui::Button("Click");
-            ImGui::PopStyleColor(3);
-            ImGui::PopID();
+                HvkGui::SameLine();
+            HvkGui::PushID(i);
+            HvkGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
+            HvkGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
+            HvkGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
+            HvkGui::Button("Click");
+            HvkGui::PopStyleColor(3);
+            HvkGui::PopID();
         }
 
         // Use AlignTextToFramePadding() to align text baseline to the baseline of framed widgets elements
         // (otherwise a Text+SameLine+Button sequence will have the text a little too high by default!)
         // See 'Demo->Layout->Text Baseline Alignment' for details.
-        ImGui::AlignTextToFramePadding();
-        ImGui::Text("Hold to repeat:");
-        ImGui::SameLine();
+        HvkGui::AlignTextToFramePadding();
+        HvkGui::Text("Hold to repeat:");
+        HvkGui::SameLine();
 
         // Arrow buttons with Repeater
         IMGUI_DEMO_MARKER("Widgets/Basic/Buttons (Repeating)");
         static int counter = 0;
-        float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
-        ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
-        if (ImGui::ArrowButton("##left", ImGuiDir_Left)) { counter--; }
-        ImGui::SameLine(0.0f, spacing);
-        if (ImGui::ArrowButton("##right", ImGuiDir_Right)) { counter++; }
-        ImGui::PopItemFlag();
-        ImGui::SameLine();
-        ImGui::Text("%d", counter);
+        float spacing = HvkGui::GetStyle().ItemInnerSpacing.x;
+        HvkGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
+        if (HvkGui::ArrowButton("##left", ImGuiDir_Left)) { counter--; }
+        HvkGui::SameLine(0.0f, spacing);
+        if (HvkGui::ArrowButton("##right", ImGuiDir_Right)) { counter++; }
+        HvkGui::PopItemFlag();
+        HvkGui::SameLine();
+        HvkGui::Text("%d", counter);
 
-        ImGui::Button("Tooltip");
-        ImGui::SetItemTooltip("I am a tooltip");
+        HvkGui::Button("Tooltip");
+        HvkGui::SetItemTooltip("I am a tooltip");
 
-        ImGui::LabelText("label", "Value");
+        HvkGui::LabelText("label", "Value");
 
-        ImGui::SeparatorText("Inputs");
+        HvkGui::SeparatorText("Inputs");
 
         {
             // If you want to use InputText() with std::string or any custom dynamic string type:
@@ -892,8 +892,8 @@ static void DemoWindowWidgetsBasic()
             // - Otherwise, see the 'Dear ImGui Demo->Widgets->Text Input->Resize Callback' for using ImGuiInputTextFlags_CallbackResize.
             IMGUI_DEMO_MARKER("Widgets/Basic/InputText");
             static char str0[128] = "Hello, world!";
-            ImGui::InputText("input text", str0, IM_ARRAYSIZE(str0));
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::InputText("input text", str0, IM_ARRAYSIZE(str0));
+            HvkGui::SameLine(); HelpMarker(
                 "USER:\n"
                 "Hold Shift or use mouse to select text.\n"
                 "Ctrl+Left/Right to word jump.\n"
@@ -907,62 +907,62 @@ static void DemoWindowWidgetsBasic()
                 "in imgui_demo.cpp).");
 
             static char str1[128] = "";
-            ImGui::InputTextWithHint("input text (w/ hint)", "enter text here", str1, IM_ARRAYSIZE(str1));
+            HvkGui::InputTextWithHint("input text (w/ hint)", "enter text here", str1, IM_ARRAYSIZE(str1));
 
             IMGUI_DEMO_MARKER("Widgets/Basic/InputInt, InputFloat");
             static int i0 = 123;
-            ImGui::InputInt("input int", &i0);
+            HvkGui::InputInt("input int", &i0);
 
             static float f0 = 0.001f;
-            ImGui::InputFloat("input float", &f0, 0.01f, 1.0f, "%.3f");
+            HvkGui::InputFloat("input float", &f0, 0.01f, 1.0f, "%.3f");
 
             static double d0 = 999999.00000001;
-            ImGui::InputDouble("input double", &d0, 0.01f, 1.0f, "%.8f");
+            HvkGui::InputDouble("input double", &d0, 0.01f, 1.0f, "%.8f");
 
             static float f1 = 1.e10f;
-            ImGui::InputFloat("input scientific", &f1, 0.0f, 0.0f, "%e");
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::InputFloat("input scientific", &f1, 0.0f, 0.0f, "%e");
+            HvkGui::SameLine(); HelpMarker(
                 "You can input value using the scientific notation,\n"
                 "  e.g. \"1e+8\" becomes \"100000000\".");
 
             static float vec4a[4] = { 0.10f, 0.20f, 0.30f, 0.44f };
-            ImGui::InputFloat3("input float3", vec4a);
+            HvkGui::InputFloat3("input float3", vec4a);
         }
 
-        ImGui::SeparatorText("Drags");
+        HvkGui::SeparatorText("Drags");
 
         {
             IMGUI_DEMO_MARKER("Widgets/Basic/DragInt, DragFloat");
             static int i1 = 50, i2 = 42, i3 = 128;
-            ImGui::DragInt("drag int", &i1, 1);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::DragInt("drag int", &i1, 1);
+            HvkGui::SameLine(); HelpMarker(
                 "Click and drag to edit value.\n"
                 "Hold Shift/Alt for faster/slower edit.\n"
                 "Double-Click or Ctrl+Click to input value.");
-            ImGui::DragInt("drag int 0..100", &i2, 1, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp);
-            ImGui::DragInt("drag int wrap 100..200", &i3, 1, 100, 200, "%d", ImGuiSliderFlags_WrapAround);
+            HvkGui::DragInt("drag int 0..100", &i2, 1, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp);
+            HvkGui::DragInt("drag int wrap 100..200", &i3, 1, 100, 200, "%d", ImGuiSliderFlags_WrapAround);
 
             static float f1 = 1.00f, f2 = 0.0067f;
-            ImGui::DragFloat("drag float", &f1, 0.005f);
-            ImGui::DragFloat("drag small float", &f2, 0.0001f, 0.0f, 0.0f, "%.06f ns");
-            //ImGui::DragFloat("drag wrap -1..1", &f3, 0.005f, -1.0f, 1.0f, NULL, ImGuiSliderFlags_WrapAround);
+            HvkGui::DragFloat("drag float", &f1, 0.005f);
+            HvkGui::DragFloat("drag small float", &f2, 0.0001f, 0.0f, 0.0f, "%.06f ns");
+            //HvkGui::DragFloat("drag wrap -1..1", &f3, 0.005f, -1.0f, 1.0f, NULL, ImGuiSliderFlags_WrapAround);
         }
 
-        ImGui::SeparatorText("Sliders");
+        HvkGui::SeparatorText("Sliders");
 
         {
             IMGUI_DEMO_MARKER("Widgets/Basic/SliderInt, SliderFloat");
             static int i1 = 0;
-            ImGui::SliderInt("slider int", &i1, -1, 3);
-            ImGui::SameLine(); HelpMarker("Ctrl+Click to input value.");
+            HvkGui::SliderInt("slider int", &i1, -1, 3);
+            HvkGui::SameLine(); HelpMarker("Ctrl+Click to input value.");
 
             static float f1 = 0.123f, f2 = 0.0f;
-            ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
-            ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+            HvkGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
+            HvkGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
 
             IMGUI_DEMO_MARKER("Widgets/Basic/SliderAngle");
             static float angle = 0.0f;
-            ImGui::SliderAngle("slider angle", &angle);
+            HvkGui::SliderAngle("slider angle", &angle);
 
             // Using the format string to display a name instead of an integer.
             // Here we completely omit '%d' from the format string, so it'll only display a name.
@@ -972,24 +972,24 @@ static void DemoWindowWidgetsBasic()
             static int elem = Element_Fire;
             const char* elems_names[Element_COUNT] = { "Fire", "Earth", "Air", "Water" };
             const char* elem_name = (elem >= 0 && elem < Element_COUNT) ? elems_names[elem] : "Unknown";
-            ImGui::SliderInt("slider enum", &elem, 0, Element_COUNT - 1, elem_name); // Use ImGuiSliderFlags_NoInput flag to disable Ctrl+Click here.
-            ImGui::SameLine(); HelpMarker("Using the format string parameter to display a name instead of the underlying integer.");
+            HvkGui::SliderInt("slider enum", &elem, 0, Element_COUNT - 1, elem_name); // Use ImGuiSliderFlags_NoInput flag to disable Ctrl+Click here.
+            HvkGui::SameLine(); HelpMarker("Using the format string parameter to display a name instead of the underlying integer.");
         }
 
-        ImGui::SeparatorText("Selectors/Pickers");
+        HvkGui::SeparatorText("Selectors/Pickers");
 
         {
             IMGUI_DEMO_MARKER("Widgets/Basic/ColorEdit3, ColorEdit4");
             static float col1[3] = { 1.0f, 0.0f, 0.2f };
             static float col2[4] = { 0.4f, 0.7f, 0.0f, 0.5f };
-            ImGui::ColorEdit3("color 1", col1);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::ColorEdit3("color 1", col1);
+            HvkGui::SameLine(); HelpMarker(
                 "Click on the color square to open a color picker.\n"
                 "Click and hold to use drag and drop.\n"
                 "Right-Click on the color square to show options.\n"
                 "Ctrl+Click on individual component to input value.\n");
 
-            ImGui::ColorEdit4("color 2", col2);
+            HvkGui::ColorEdit4("color 2", col2);
         }
 
         {
@@ -998,8 +998,8 @@ static void DemoWindowWidgetsBasic()
             IMGUI_DEMO_MARKER("Widgets/Basic/Combo");
             const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
             static int item_current = 0;
-            ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+            HvkGui::SameLine(); HelpMarker(
                 "Using the simplified one-liner Combo API here.\n"
                 "Refer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
         }
@@ -1010,8 +1010,8 @@ static void DemoWindowWidgetsBasic()
             IMGUI_DEMO_MARKER("Widgets/Basic/ListBox");
             const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
             static int item_current = 1;
-            ImGui::ListBox("listbox", &item_current, items, IM_ARRAYSIZE(items), 4);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::ListBox("listbox", &item_current, items, IM_ARRAYSIZE(items), 4);
+            HvkGui::SameLine(); HelpMarker(
                 "Using the simplified one-liner ListBox API here.\n"
                 "Refer to the \"List boxes\" section below for an explanation of how to use the more flexible and general BeginListBox/EndListBox API.");
         }
@@ -1020,9 +1020,9 @@ static void DemoWindowWidgetsBasic()
         //static ImGuiOnceUponAFrame once;
         //for (int i = 0; i < 5; i++)
         //    if (once)
-        //        ImGui::Text("This will be displayed only once.");
+        //        HvkGui::Text("This will be displayed only once.");
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1033,18 +1033,18 @@ static void DemoWindowWidgetsBasic()
 static void DemoWindowWidgetsBullets()
 {
     IMGUI_DEMO_MARKER("Widgets/Bullets");
-    if (ImGui::TreeNode("Bullets"))
+    if (HvkGui::TreeNode("Bullets"))
     {
-        ImGui::BulletText("Bullet point 1");
-        ImGui::BulletText("Bullet point 2\nOn multiple lines");
-        if (ImGui::TreeNode("Tree node"))
+        HvkGui::BulletText("Bullet point 1");
+        HvkGui::BulletText("Bullet point 2\nOn multiple lines");
+        if (HvkGui::TreeNode("Tree node"))
         {
-            ImGui::BulletText("Another bullet point");
-            ImGui::TreePop();
+            HvkGui::BulletText("Another bullet point");
+            HvkGui::TreePop();
         }
-        ImGui::Bullet(); ImGui::Text("Bullet point 3 (two calls)");
-        ImGui::Bullet(); ImGui::SmallButton("Button");
-        ImGui::TreePop();
+        HvkGui::Bullet(); HvkGui::Text("Bullet point 3 (two calls)");
+        HvkGui::Bullet(); HvkGui::SmallButton("Button");
+        HvkGui::TreePop();
     }
 }
 
@@ -1055,27 +1055,27 @@ static void DemoWindowWidgetsBullets()
 static void DemoWindowWidgetsCollapsingHeaders()
 {
     IMGUI_DEMO_MARKER("Widgets/Collapsing Headers");
-    if (ImGui::TreeNode("Collapsing Headers"))
+    if (HvkGui::TreeNode("Collapsing Headers"))
     {
         static bool closable_group = true;
-        ImGui::Checkbox("Show 2nd header", &closable_group);
-        if (ImGui::CollapsingHeader("Header", ImGuiTreeNodeFlags_None))
+        HvkGui::Checkbox("Show 2nd header", &closable_group);
+        if (HvkGui::CollapsingHeader("Header", ImGuiTreeNodeFlags_None))
         {
-            ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
+            HvkGui::Text("IsItemHovered: %d", HvkGui::IsItemHovered());
             for (int i = 0; i < 5; i++)
-                ImGui::Text("Some content %d", i);
+                HvkGui::Text("Some content %d", i);
         }
-        if (ImGui::CollapsingHeader("Header with a close button", &closable_group))
+        if (HvkGui::CollapsingHeader("Header with a close button", &closable_group))
         {
-            ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
+            HvkGui::Text("IsItemHovered: %d", HvkGui::IsItemHovered());
             for (int i = 0; i < 5; i++)
-                ImGui::Text("More content %d", i);
+                HvkGui::Text("More content %d", i);
         }
         /*
-        if (ImGui::CollapsingHeader("Header with a bullet", ImGuiTreeNodeFlags_Bullet))
-            ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
+        if (HvkGui::CollapsingHeader("Header with a bullet", ImGuiTreeNodeFlags_Bullet))
+            HvkGui::Text("IsItemHovered: %d", HvkGui::IsItemHovered());
         */
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1086,47 +1086,47 @@ static void DemoWindowWidgetsCollapsingHeaders()
 static void DemoWindowWidgetsColorAndPickers()
 {
     IMGUI_DEMO_MARKER("Widgets/Color");
-    if (ImGui::TreeNode("Color/Picker Widgets"))
+    if (HvkGui::TreeNode("Color/Picker Widgets"))
     {
         static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
         static ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
 
-        ImGui::SeparatorText("Options");
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoAlpha", &base_flags, ImGuiColorEditFlags_NoAlpha);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_AlphaOpaque", &base_flags, ImGuiColorEditFlags_AlphaOpaque);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_AlphaNoBg", &base_flags, ImGuiColorEditFlags_AlphaNoBg);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_AlphaPreviewHalf", &base_flags, ImGuiColorEditFlags_AlphaPreviewHalf);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoOptions", &base_flags, ImGuiColorEditFlags_NoOptions); ImGui::SameLine(); HelpMarker("Right-click on the individual color widget to show options.");
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoDragDrop", &base_flags, ImGuiColorEditFlags_NoDragDrop);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoColorMarkers", &base_flags, ImGuiColorEditFlags_NoColorMarkers);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_HDR", &base_flags, ImGuiColorEditFlags_HDR); ImGui::SameLine(); HelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
+        HvkGui::SeparatorText("Options");
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoAlpha", &base_flags, ImGuiColorEditFlags_NoAlpha);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_AlphaOpaque", &base_flags, ImGuiColorEditFlags_AlphaOpaque);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_AlphaNoBg", &base_flags, ImGuiColorEditFlags_AlphaNoBg);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_AlphaPreviewHalf", &base_flags, ImGuiColorEditFlags_AlphaPreviewHalf);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoOptions", &base_flags, ImGuiColorEditFlags_NoOptions); HvkGui::SameLine(); HelpMarker("Right-click on the individual color widget to show options.");
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoDragDrop", &base_flags, ImGuiColorEditFlags_NoDragDrop);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoColorMarkers", &base_flags, ImGuiColorEditFlags_NoColorMarkers);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_HDR", &base_flags, ImGuiColorEditFlags_HDR); HvkGui::SameLine(); HelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorEdit");
-        ImGui::SeparatorText("Inline color editor");
-        ImGui::Text("Color widget:");
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::SeparatorText("Inline color editor");
+        HvkGui::Text("Color widget:");
+        HvkGui::SameLine(); HelpMarker(
             "Click on the color square to open a color picker.\n"
             "Ctrl+Click on individual component to input value.\n");
-        ImGui::ColorEdit3("MyColor##1", (float*)&color, base_flags);
+        HvkGui::ColorEdit3("MyColor##1", (float*)&color, base_flags);
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorEdit (HSV, with Alpha)");
-        ImGui::Text("Color widget HSV with Alpha:");
-        ImGui::ColorEdit4("MyColor##2", (float*)&color, ImGuiColorEditFlags_DisplayHSV | base_flags);
+        HvkGui::Text("Color widget HSV with Alpha:");
+        HvkGui::ColorEdit4("MyColor##2", (float*)&color, ImGuiColorEditFlags_DisplayHSV | base_flags);
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorEdit (float display)");
-        ImGui::Text("Color widget with Float Display:");
-        ImGui::ColorEdit4("MyColor##2f", (float*)&color, ImGuiColorEditFlags_Float | base_flags);
+        HvkGui::Text("Color widget with Float Display:");
+        HvkGui::ColorEdit4("MyColor##2f", (float*)&color, ImGuiColorEditFlags_Float | base_flags);
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorButton (with Picker)");
-        ImGui::Text("Color button with Picker:");
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::Text("Color button with Picker:");
+        HvkGui::SameLine(); HelpMarker(
             "With the ImGuiColorEditFlags_NoInputs flag you can hide all the slider/text inputs.\n"
             "With the ImGuiColorEditFlags_NoLabel flag you can pass a non-empty label which will only "
             "be used for the tooltip and picker popup.");
-        ImGui::ColorEdit4("MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | base_flags);
+        HvkGui::ColorEdit4("MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | base_flags);
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorButton (with custom Picker popup)");
-        ImGui::Text("Color button with Custom Picker Popup:");
+        HvkGui::Text("Color button with Custom Picker Popup:");
 
         // Generate a default palette. The palette will persist and can be edited.
         static bool saved_palette_init = true;
@@ -1135,7 +1135,7 @@ static void DemoWindowWidgetsColorAndPickers()
         {
             for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
             {
-                ImGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
+                HvkGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
                     saved_palette[n].x, saved_palette[n].y, saved_palette[n].z);
                 saved_palette[n].w = 1.0f; // Alpha
             }
@@ -1143,64 +1143,64 @@ static void DemoWindowWidgetsColorAndPickers()
         }
 
         static ImVec4 backup_color;
-        bool open_popup = ImGui::ColorButton("MyColor##3b", color, base_flags);
-        ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-        open_popup |= ImGui::Button("Palette");
+        bool open_popup = HvkGui::ColorButton("MyColor##3b", color, base_flags);
+        HvkGui::SameLine(0, HvkGui::GetStyle().ItemInnerSpacing.x);
+        open_popup |= HvkGui::Button("Palette");
         if (open_popup)
         {
-            ImGui::OpenPopup("mypicker");
+            HvkGui::OpenPopup("mypicker");
             backup_color = color;
         }
-        if (ImGui::BeginPopup("mypicker"))
+        if (HvkGui::BeginPopup("mypicker"))
         {
-            ImGui::Text("MY CUSTOM COLOR PICKER WITH AN AMAZING PALETTE!");
-            ImGui::Separator();
-            ImGui::ColorPicker4("##picker", (float*)&color, base_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
-            ImGui::SameLine();
+            HvkGui::Text("MY CUSTOM COLOR PICKER WITH AN AMAZING PALETTE!");
+            HvkGui::Separator();
+            HvkGui::ColorPicker4("##picker", (float*)&color, base_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+            HvkGui::SameLine();
 
-            ImGui::BeginGroup(); // Lock X position
-            ImGui::Text("Current");
-            ImGui::ColorButton("##current", color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
-            ImGui::Text("Previous");
-            if (ImGui::ColorButton("##previous", backup_color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
+            HvkGui::BeginGroup(); // Lock X position
+            HvkGui::Text("Current");
+            HvkGui::ColorButton("##current", color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
+            HvkGui::Text("Previous");
+            if (HvkGui::ColorButton("##previous", backup_color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
                 color = backup_color;
-            ImGui::Separator();
-            ImGui::Text("Palette");
+            HvkGui::Separator();
+            HvkGui::Text("Palette");
             for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
             {
-                ImGui::PushID(n);
+                HvkGui::PushID(n);
                 if ((n % 8) != 0)
-                    ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
+                    HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemSpacing.y);
 
                 ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
-                if (ImGui::ColorButton("##palette", saved_palette[n], palette_button_flags, ImVec2(20, 20)))
+                if (HvkGui::ColorButton("##palette", saved_palette[n], palette_button_flags, ImVec2(20, 20)))
                     color = ImVec4(saved_palette[n].x, saved_palette[n].y, saved_palette[n].z, color.w); // Preserve alpha!
 
                 // Allow user to drop colors into each palette entry. Note that ColorButton() is already a
                 // drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
-                if (ImGui::BeginDragDropTarget())
+                if (HvkGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
+                    if (const ImGuiPayload* payload = HvkGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
                         memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
+                    if (const ImGuiPayload* payload = HvkGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
                         memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
-                    ImGui::EndDragDropTarget();
+                    HvkGui::EndDragDropTarget();
                 }
 
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::EndGroup();
-            ImGui::EndPopup();
+            HvkGui::EndGroup();
+            HvkGui::EndPopup();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorButton (simple)");
-        ImGui::Text("Color button only:");
+        HvkGui::Text("Color button only:");
         static bool no_border = false;
-        ImGui::Checkbox("ImGuiColorEditFlags_NoBorder", &no_border);
-        ImGui::ColorButton("MyColor##3c", *(ImVec4*)&color, base_flags | (no_border ? ImGuiColorEditFlags_NoBorder : 0), ImVec2(80, 80));
+        HvkGui::Checkbox("ImGuiColorEditFlags_NoBorder", &no_border);
+        HvkGui::ColorButton("MyColor##3c", *(ImVec4*)&color, base_flags | (no_border ? ImGuiColorEditFlags_NoBorder : 0), ImVec2(80, 80));
 
         IMGUI_DEMO_MARKER("Widgets/Color/ColorPicker");
-        ImGui::SeparatorText("Color picker");
+        HvkGui::SeparatorText("Color picker");
 
         static bool ref_color = false;
         static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
@@ -1208,26 +1208,26 @@ static void DemoWindowWidgetsColorAndPickers()
         static int display_mode = 0;
         static ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_AlphaBar;
 
-        ImGui::PushID("Color picker");
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoAlpha", &color_picker_flags, ImGuiColorEditFlags_NoAlpha);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_AlphaBar", &color_picker_flags, ImGuiColorEditFlags_AlphaBar);
-        ImGui::CheckboxFlags("ImGuiColorEditFlags_NoSidePreview", &color_picker_flags, ImGuiColorEditFlags_NoSidePreview);
+        HvkGui::PushID("Color picker");
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoAlpha", &color_picker_flags, ImGuiColorEditFlags_NoAlpha);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_AlphaBar", &color_picker_flags, ImGuiColorEditFlags_AlphaBar);
+        HvkGui::CheckboxFlags("ImGuiColorEditFlags_NoSidePreview", &color_picker_flags, ImGuiColorEditFlags_NoSidePreview);
         if (color_picker_flags & ImGuiColorEditFlags_NoSidePreview)
         {
-            ImGui::SameLine();
-            ImGui::Checkbox("With Ref Color", &ref_color);
+            HvkGui::SameLine();
+            HvkGui::Checkbox("With Ref Color", &ref_color);
             if (ref_color)
             {
-                ImGui::SameLine();
-                ImGui::ColorEdit4("##RefColor", &ref_color_v.x, ImGuiColorEditFlags_NoInputs | base_flags);
+                HvkGui::SameLine();
+                HvkGui::ColorEdit4("##RefColor", &ref_color_v.x, ImGuiColorEditFlags_NoInputs | base_flags);
             }
         }
 
-        ImGui::Combo("Picker Mode", &picker_mode, "Auto/Current\0ImGuiColorEditFlags_PickerHueBar\0ImGuiColorEditFlags_PickerHueWheel\0");
-        ImGui::SameLine(); HelpMarker("When not specified explicitly, user can right-click the picker to change mode.");
+        HvkGui::Combo("Picker Mode", &picker_mode, "Auto/Current\0ImGuiColorEditFlags_PickerHueBar\0ImGuiColorEditFlags_PickerHueWheel\0");
+        HvkGui::SameLine(); HelpMarker("When not specified explicitly, user can right-click the picker to change mode.");
 
-        ImGui::Combo("Display Mode", &display_mode, "Auto/Current\0ImGuiColorEditFlags_NoInputs\0ImGuiColorEditFlags_DisplayRGB\0ImGuiColorEditFlags_DisplayHSV\0ImGuiColorEditFlags_DisplayHex\0");
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::Combo("Display Mode", &display_mode, "Auto/Current\0ImGuiColorEditFlags_NoInputs\0ImGuiColorEditFlags_DisplayRGB\0ImGuiColorEditFlags_DisplayHSV\0ImGuiColorEditFlags_DisplayHex\0");
+        HvkGui::SameLine(); HelpMarker(
             "ColorEdit defaults to displaying RGB inputs if you don't specify a display mode, "
             "but the user can change it with a right-click on those inputs.\n\nColorPicker defaults to displaying RGB+HSV+Hex "
             "if you don't specify a display mode.\n\nYou can change the defaults using SetColorEditOptions().");
@@ -1239,44 +1239,44 @@ static void DemoWindowWidgetsColorAndPickers()
         if (display_mode == 2) flags |= ImGuiColorEditFlags_DisplayRGB;     // Override display mode
         if (display_mode == 3) flags |= ImGuiColorEditFlags_DisplayHSV;
         if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
-        ImGui::ColorPicker4("MyColor##4", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+        HvkGui::ColorPicker4("MyColor##4", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
 
-        ImGui::Text("Set defaults in code:");
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::Text("Set defaults in code:");
+        HvkGui::SameLine(); HelpMarker(
             "SetColorEditOptions() is designed to allow you to set boot-time default.\n"
             "We don't have Push/Pop functions because you can force options on a per-widget basis if needed, "
             "and the user can change non-forced ones with the options menu.\nWe don't have a getter to avoid "
             "encouraging you to persistently save values that aren't forward-compatible.");
-        if (ImGui::Button("Default: Uint8 + HSV + Hue Bar"))
-            ImGui::SetColorEditOptions(ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_PickerHueBar);
-        if (ImGui::Button("Default: Float + HDR + Hue Wheel"))
-            ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_PickerHueWheel);
+        if (HvkGui::Button("Default: Uint8 + HSV + Hue Bar"))
+            HvkGui::SetColorEditOptions(ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_PickerHueBar);
+        if (HvkGui::Button("Default: Float + HDR + Hue Wheel"))
+            HvkGui::SetColorEditOptions(ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_PickerHueWheel);
 
         // Always display a small version of both types of pickers
         // (that's in order to make it more visible in the demo to people who are skimming quickly through it)
-        ImGui::Text("Both types:");
-        float w = (ImGui::GetContentRegionAvail().x - ImGui::GetStyle().ItemSpacing.y) * 0.40f;
-        ImGui::SetNextItemWidth(w);
-        ImGui::ColorPicker3("##MyColor##5", (float*)&color, ImGuiColorEditFlags_PickerHueBar | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoAlpha);
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(w);
-        ImGui::ColorPicker3("##MyColor##6", (float*)&color, ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoAlpha);
-        ImGui::PopID();
+        HvkGui::Text("Both types:");
+        float w = (HvkGui::GetContentRegionAvail().x - HvkGui::GetStyle().ItemSpacing.y) * 0.40f;
+        HvkGui::SetNextItemWidth(w);
+        HvkGui::ColorPicker3("##MyColor##5", (float*)&color, ImGuiColorEditFlags_PickerHueBar | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoAlpha);
+        HvkGui::SameLine();
+        HvkGui::SetNextItemWidth(w);
+        HvkGui::ColorPicker3("##MyColor##6", (float*)&color, ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoAlpha);
+        HvkGui::PopID();
 
         // HSV encoded support (to avoid RGB<>HSV round trips and singularities when S==0 or V==0)
         static ImVec4 color_hsv(0.23f, 1.0f, 1.0f, 1.0f); // Stored as HSV!
-        ImGui::Spacing();
-        ImGui::Text("HSV encoded colors");
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::Spacing();
+        HvkGui::Text("HSV encoded colors");
+        HvkGui::SameLine(); HelpMarker(
             "By default, colors are given to ColorEdit and ColorPicker in RGB, but ImGuiColorEditFlags_InputHSV "
             "allows you to store colors as HSV and pass them to ColorEdit and ColorPicker as HSV. This comes with the "
             "added benefit that you can manipulate hue values with the picker even when saturation or value are zero.");
-        ImGui::Text("Color widget with InputHSV:");
-        ImGui::ColorEdit4("HSV shown as RGB##1", (float*)&color_hsv, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_Float);
-        ImGui::ColorEdit4("HSV shown as HSV##1", (float*)&color_hsv, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_Float);
-        ImGui::DragFloat4("Raw HSV values", (float*)&color_hsv, 0.01f, 0.0f, 1.0f);
+        HvkGui::Text("Color widget with InputHSV:");
+        HvkGui::ColorEdit4("HSV shown as RGB##1", (float*)&color_hsv, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_Float);
+        HvkGui::ColorEdit4("HSV shown as HSV##1", (float*)&color_hsv, ImGuiColorEditFlags_DisplayHSV | ImGuiColorEditFlags_InputHSV | ImGuiColorEditFlags_Float);
+        HvkGui::DragFloat4("Raw HSV values", (float*)&color_hsv, 0.01f, 0.0f, 1.0f);
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1287,26 +1287,26 @@ static void DemoWindowWidgetsColorAndPickers()
 static void DemoWindowWidgetsComboBoxes()
 {
     IMGUI_DEMO_MARKER("Widgets/Combo");
-    if (ImGui::TreeNode("Combo"))
+    if (HvkGui::TreeNode("Combo"))
     {
         // Combo Boxes are also called "Dropdown" in other systems
         // Expose flags as checkbox for the demo
         static ImGuiComboFlags flags = 0;
-        ImGui::CheckboxFlags("ImGuiComboFlags_PopupAlignLeft", &flags, ImGuiComboFlags_PopupAlignLeft);
-        ImGui::SameLine(); HelpMarker("Only makes a difference if the popup is larger than the combo");
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_NoArrowButton", &flags, ImGuiComboFlags_NoArrowButton))
+        HvkGui::CheckboxFlags("ImGuiComboFlags_PopupAlignLeft", &flags, ImGuiComboFlags_PopupAlignLeft);
+        HvkGui::SameLine(); HelpMarker("Only makes a difference if the popup is larger than the combo");
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_NoArrowButton", &flags, ImGuiComboFlags_NoArrowButton))
             flags &= ~ImGuiComboFlags_NoPreview;     // Clear incompatible flags
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_NoPreview", &flags, ImGuiComboFlags_NoPreview))
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_NoPreview", &flags, ImGuiComboFlags_NoPreview))
             flags &= ~(ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_WidthFitPreview); // Clear incompatible flags
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_WidthFitPreview", &flags, ImGuiComboFlags_WidthFitPreview))
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_WidthFitPreview", &flags, ImGuiComboFlags_WidthFitPreview))
             flags &= ~ImGuiComboFlags_NoPreview;
 
         // Override default popup height
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_HeightSmall", &flags, ImGuiComboFlags_HeightSmall))
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_HeightSmall", &flags, ImGuiComboFlags_HeightSmall))
             flags &= ~(ImGuiComboFlags_HeightMask_ & ~ImGuiComboFlags_HeightSmall);
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_HeightRegular", &flags, ImGuiComboFlags_HeightRegular))
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_HeightRegular", &flags, ImGuiComboFlags_HeightRegular))
             flags &= ~(ImGuiComboFlags_HeightMask_ & ~ImGuiComboFlags_HeightRegular);
-        if (ImGui::CheckboxFlags("ImGuiComboFlags_HeightLargest", &flags, ImGuiComboFlags_HeightLargest))
+        if (HvkGui::CheckboxFlags("ImGuiComboFlags_HeightLargest", &flags, ImGuiComboFlags_HeightLargest))
             flags &= ~(ImGuiComboFlags_HeightMask_ & ~ImGuiComboFlags_HeightLargest);
 
         // Using the generic BeginCombo() API, you have full control over how to display the combo contents.
@@ -1317,63 +1317,63 @@ static void DemoWindowWidgetsComboBoxes()
 
         // Pass in the preview value visible before opening the combo (it could technically be different contents or not pulled from items[])
         const char* combo_preview_value = items[item_selected_idx];
-        if (ImGui::BeginCombo("combo 1", combo_preview_value, flags))
+        if (HvkGui::BeginCombo("combo 1", combo_preview_value, flags))
         {
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
-                if (ImGui::Selectable(items[n], is_selected))
+                if (HvkGui::Selectable(items[n], is_selected))
                     item_selected_idx = n;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
-                    ImGui::SetItemDefaultFocus();
+                    HvkGui::SetItemDefaultFocus();
             }
-            ImGui::EndCombo();
+            HvkGui::EndCombo();
         }
 
         // Show case embedding a filter using a simple trick: displaying the filter inside combo contents.
         // See https://github.com/ocornut/imgui/issues/718 for advanced/esoteric alternatives.
-        if (ImGui::BeginCombo("combo 2 (w/ filter)", combo_preview_value, flags))
+        if (HvkGui::BeginCombo("combo 2 (w/ filter)", combo_preview_value, flags))
         {
             static ImGuiTextFilter filter;
-            if (ImGui::IsWindowAppearing())
+            if (HvkGui::IsWindowAppearing())
             {
-                ImGui::SetKeyboardFocusHere();
+                HvkGui::SetKeyboardFocusHere();
                 filter.Clear();
             }
-            ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+            HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
             filter.Draw("##Filter", -FLT_MIN);
 
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
                 if (filter.PassFilter(items[n]))
-                    if (ImGui::Selectable(items[n], is_selected))
+                    if (HvkGui::Selectable(items[n], is_selected))
                         item_selected_idx = n;
             }
-            ImGui::EndCombo();
+            HvkGui::EndCombo();
         }
 
-        ImGui::Spacing();
-        ImGui::SeparatorText("One-liner variants");
+        HvkGui::Spacing();
+        HvkGui::SeparatorText("One-liner variants");
         HelpMarker("The Combo() function is not greatly useful apart from cases were you want to embed all options in a single strings.\nFlags above don't apply to this section.");
 
         // Simplified one-liner Combo() API, using values packed in a single constant string
         // This is a convenience for when the selection set is small and known at compile-time.
         static int item_current_2 = 0;
-        ImGui::Combo("combo 3 (one-liner)", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+        HvkGui::Combo("combo 3 (one-liner)", &item_current_2, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 
         // Simplified one-liner Combo() using an array of const char*
         // This is not very useful (may obsolete): prefer using BeginCombo()/EndCombo() for full control.
         static int item_current_3 = -1; // If the selection isn't within 0..count, Combo won't display a preview
-        ImGui::Combo("combo 4 (array)", &item_current_3, items, IM_ARRAYSIZE(items));
+        HvkGui::Combo("combo 4 (array)", &item_current_3, items, IM_ARRAYSIZE(items));
 
         // Simplified one-liner Combo() using an accessor function
         static int item_current_4 = 0;
-        ImGui::Combo("combo 5 (function)", &item_current_4, [](void* data, int n) { return ((const char**)data)[n]; }, items, IM_ARRAYSIZE(items));
+        HvkGui::Combo("combo 5 (function)", &item_current_4, [](void* data, int n) { return ((const char**)data)[n]; }, items, IM_ARRAYSIZE(items));
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1384,7 +1384,7 @@ static void DemoWindowWidgetsComboBoxes()
 static void DemoWindowWidgetsDataTypes()
 {
     IMGUI_DEMO_MARKER("Widgets/Data Types");
-    if (ImGui::TreeNode("Data Types"))
+    if (HvkGui::TreeNode("Data Types"))
     {
         // DragScalar/InputScalar/SliderScalar functions allow various data types
         // - signed/unsigned
@@ -1434,81 +1434,81 @@ static void DemoWindowWidgetsDataTypes()
         const float drag_speed = 0.2f;
         static bool drag_clamp = false;
         IMGUI_DEMO_MARKER("Widgets/Data Types/Drags");
-        ImGui::SeparatorText("Drags");
-        ImGui::Checkbox("Clamp integers to 0..50", &drag_clamp);
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::SeparatorText("Drags");
+        HvkGui::Checkbox("Clamp integers to 0..50", &drag_clamp);
+        HvkGui::SameLine(); HelpMarker(
             "As with every widget in dear imgui, we never modify values unless there is a user interaction.\n"
             "You can override the clamping limits by using Ctrl+Click to input a value.");
-        ImGui::DragScalar("drag s8",        ImGuiDataType_S8,     &s8_v,  drag_speed, drag_clamp ? &s8_zero  : NULL, drag_clamp ? &s8_fifty  : NULL);
-        ImGui::DragScalar("drag u8",        ImGuiDataType_U8,     &u8_v,  drag_speed, drag_clamp ? &u8_zero  : NULL, drag_clamp ? &u8_fifty  : NULL, "%u ms");
-        ImGui::DragScalar("drag s16",       ImGuiDataType_S16,    &s16_v, drag_speed, drag_clamp ? &s16_zero : NULL, drag_clamp ? &s16_fifty : NULL);
-        ImGui::DragScalar("drag u16",       ImGuiDataType_U16,    &u16_v, drag_speed, drag_clamp ? &u16_zero : NULL, drag_clamp ? &u16_fifty : NULL, "%u ms");
-        ImGui::DragScalar("drag s32",       ImGuiDataType_S32,    &s32_v, drag_speed, drag_clamp ? &s32_zero : NULL, drag_clamp ? &s32_fifty : NULL);
-        ImGui::DragScalar("drag s32 hex",   ImGuiDataType_S32,    &s32_v, drag_speed, drag_clamp ? &s32_zero : NULL, drag_clamp ? &s32_fifty : NULL, "0x%08X");
-        ImGui::DragScalar("drag u32",       ImGuiDataType_U32,    &u32_v, drag_speed, drag_clamp ? &u32_zero : NULL, drag_clamp ? &u32_fifty : NULL, "%u ms");
-        ImGui::DragScalar("drag s64",       ImGuiDataType_S64,    &s64_v, drag_speed, drag_clamp ? &s64_zero : NULL, drag_clamp ? &s64_fifty : NULL);
-        ImGui::DragScalar("drag u64",       ImGuiDataType_U64,    &u64_v, drag_speed, drag_clamp ? &u64_zero : NULL, drag_clamp ? &u64_fifty : NULL);
-        ImGui::DragScalar("drag float",     ImGuiDataType_Float,  &f32_v, 0.005f,  &f32_zero, &f32_one, "%f");
-        ImGui::DragScalar("drag float log", ImGuiDataType_Float,  &f32_v, 0.005f,  &f32_zero, &f32_one, "%f", ImGuiSliderFlags_Logarithmic);
-        ImGui::DragScalar("drag double",    ImGuiDataType_Double, &f64_v, 0.0005f, &f64_zero, NULL,     "%.10f grams");
-        ImGui::DragScalar("drag double log",ImGuiDataType_Double, &f64_v, 0.0005f, &f64_zero, &f64_one, "0 < %.10f < 1", ImGuiSliderFlags_Logarithmic);
+        HvkGui::DragScalar("drag s8",        ImGuiDataType_S8,     &s8_v,  drag_speed, drag_clamp ? &s8_zero  : NULL, drag_clamp ? &s8_fifty  : NULL);
+        HvkGui::DragScalar("drag u8",        ImGuiDataType_U8,     &u8_v,  drag_speed, drag_clamp ? &u8_zero  : NULL, drag_clamp ? &u8_fifty  : NULL, "%u ms");
+        HvkGui::DragScalar("drag s16",       ImGuiDataType_S16,    &s16_v, drag_speed, drag_clamp ? &s16_zero : NULL, drag_clamp ? &s16_fifty : NULL);
+        HvkGui::DragScalar("drag u16",       ImGuiDataType_U16,    &u16_v, drag_speed, drag_clamp ? &u16_zero : NULL, drag_clamp ? &u16_fifty : NULL, "%u ms");
+        HvkGui::DragScalar("drag s32",       ImGuiDataType_S32,    &s32_v, drag_speed, drag_clamp ? &s32_zero : NULL, drag_clamp ? &s32_fifty : NULL);
+        HvkGui::DragScalar("drag s32 hex",   ImGuiDataType_S32,    &s32_v, drag_speed, drag_clamp ? &s32_zero : NULL, drag_clamp ? &s32_fifty : NULL, "0x%08X");
+        HvkGui::DragScalar("drag u32",       ImGuiDataType_U32,    &u32_v, drag_speed, drag_clamp ? &u32_zero : NULL, drag_clamp ? &u32_fifty : NULL, "%u ms");
+        HvkGui::DragScalar("drag s64",       ImGuiDataType_S64,    &s64_v, drag_speed, drag_clamp ? &s64_zero : NULL, drag_clamp ? &s64_fifty : NULL);
+        HvkGui::DragScalar("drag u64",       ImGuiDataType_U64,    &u64_v, drag_speed, drag_clamp ? &u64_zero : NULL, drag_clamp ? &u64_fifty : NULL);
+        HvkGui::DragScalar("drag float",     ImGuiDataType_Float,  &f32_v, 0.005f,  &f32_zero, &f32_one, "%f");
+        HvkGui::DragScalar("drag float log", ImGuiDataType_Float,  &f32_v, 0.005f,  &f32_zero, &f32_one, "%f", ImGuiSliderFlags_Logarithmic);
+        HvkGui::DragScalar("drag double",    ImGuiDataType_Double, &f64_v, 0.0005f, &f64_zero, NULL,     "%.10f grams");
+        HvkGui::DragScalar("drag double log",ImGuiDataType_Double, &f64_v, 0.0005f, &f64_zero, &f64_one, "0 < %.10f < 1", ImGuiSliderFlags_Logarithmic);
 
         IMGUI_DEMO_MARKER("Widgets/Data Types/Sliders");
-        ImGui::SeparatorText("Sliders");
-        ImGui::SliderScalar("slider s8 full",       ImGuiDataType_S8,     &s8_v,  &s8_min,   &s8_max,   "%d");
-        ImGui::SliderScalar("slider u8 full",       ImGuiDataType_U8,     &u8_v,  &u8_min,   &u8_max,   "%u");
-        ImGui::SliderScalar("slider s16 full",      ImGuiDataType_S16,    &s16_v, &s16_min,  &s16_max,  "%d");
-        ImGui::SliderScalar("slider u16 full",      ImGuiDataType_U16,    &u16_v, &u16_min,  &u16_max,  "%u");
-        ImGui::SliderScalar("slider s32 low",       ImGuiDataType_S32,    &s32_v, &s32_zero, &s32_fifty,"%d");
-        ImGui::SliderScalar("slider s32 high",      ImGuiDataType_S32,    &s32_v, &s32_hi_a, &s32_hi_b, "%d");
-        ImGui::SliderScalar("slider s32 full",      ImGuiDataType_S32,    &s32_v, &s32_min,  &s32_max,  "%d");
-        ImGui::SliderScalar("slider s32 hex",       ImGuiDataType_S32,    &s32_v, &s32_zero, &s32_fifty, "0x%04X");
-        ImGui::SliderScalar("slider u32 low",       ImGuiDataType_U32,    &u32_v, &u32_zero, &u32_fifty,"%u");
-        ImGui::SliderScalar("slider u32 high",      ImGuiDataType_U32,    &u32_v, &u32_hi_a, &u32_hi_b, "%u");
-        ImGui::SliderScalar("slider u32 full",      ImGuiDataType_U32,    &u32_v, &u32_min,  &u32_max,  "%u");
-        ImGui::SliderScalar("slider s64 low",       ImGuiDataType_S64,    &s64_v, &s64_zero, &s64_fifty,"%" PRId64);
-        ImGui::SliderScalar("slider s64 high",      ImGuiDataType_S64,    &s64_v, &s64_hi_a, &s64_hi_b, "%" PRId64);
-        ImGui::SliderScalar("slider s64 full",      ImGuiDataType_S64,    &s64_v, &s64_min,  &s64_max,  "%" PRId64);
-        ImGui::SliderScalar("slider u64 low",       ImGuiDataType_U64,    &u64_v, &u64_zero, &u64_fifty,"%" PRIu64 " ms");
-        ImGui::SliderScalar("slider u64 high",      ImGuiDataType_U64,    &u64_v, &u64_hi_a, &u64_hi_b, "%" PRIu64 " ms");
-        ImGui::SliderScalar("slider u64 full",      ImGuiDataType_U64,    &u64_v, &u64_min,  &u64_max,  "%" PRIu64 " ms");
-        ImGui::SliderScalar("slider float low",     ImGuiDataType_Float,  &f32_v, &f32_zero, &f32_one);
-        ImGui::SliderScalar("slider float low log", ImGuiDataType_Float,  &f32_v, &f32_zero, &f32_one,  "%.10f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderScalar("slider float high",    ImGuiDataType_Float,  &f32_v, &f32_lo_a, &f32_hi_a, "%e");
-        ImGui::SliderScalar("slider double low",    ImGuiDataType_Double, &f64_v, &f64_zero, &f64_one,  "%.10f grams");
-        ImGui::SliderScalar("slider double low log",ImGuiDataType_Double, &f64_v, &f64_zero, &f64_one,  "%.10f", ImGuiSliderFlags_Logarithmic);
-        ImGui::SliderScalar("slider double high",   ImGuiDataType_Double, &f64_v, &f64_lo_a, &f64_hi_a, "%e grams");
+        HvkGui::SeparatorText("Sliders");
+        HvkGui::SliderScalar("slider s8 full",       ImGuiDataType_S8,     &s8_v,  &s8_min,   &s8_max,   "%d");
+        HvkGui::SliderScalar("slider u8 full",       ImGuiDataType_U8,     &u8_v,  &u8_min,   &u8_max,   "%u");
+        HvkGui::SliderScalar("slider s16 full",      ImGuiDataType_S16,    &s16_v, &s16_min,  &s16_max,  "%d");
+        HvkGui::SliderScalar("slider u16 full",      ImGuiDataType_U16,    &u16_v, &u16_min,  &u16_max,  "%u");
+        HvkGui::SliderScalar("slider s32 low",       ImGuiDataType_S32,    &s32_v, &s32_zero, &s32_fifty,"%d");
+        HvkGui::SliderScalar("slider s32 high",      ImGuiDataType_S32,    &s32_v, &s32_hi_a, &s32_hi_b, "%d");
+        HvkGui::SliderScalar("slider s32 full",      ImGuiDataType_S32,    &s32_v, &s32_min,  &s32_max,  "%d");
+        HvkGui::SliderScalar("slider s32 hex",       ImGuiDataType_S32,    &s32_v, &s32_zero, &s32_fifty, "0x%04X");
+        HvkGui::SliderScalar("slider u32 low",       ImGuiDataType_U32,    &u32_v, &u32_zero, &u32_fifty,"%u");
+        HvkGui::SliderScalar("slider u32 high",      ImGuiDataType_U32,    &u32_v, &u32_hi_a, &u32_hi_b, "%u");
+        HvkGui::SliderScalar("slider u32 full",      ImGuiDataType_U32,    &u32_v, &u32_min,  &u32_max,  "%u");
+        HvkGui::SliderScalar("slider s64 low",       ImGuiDataType_S64,    &s64_v, &s64_zero, &s64_fifty,"%" PRId64);
+        HvkGui::SliderScalar("slider s64 high",      ImGuiDataType_S64,    &s64_v, &s64_hi_a, &s64_hi_b, "%" PRId64);
+        HvkGui::SliderScalar("slider s64 full",      ImGuiDataType_S64,    &s64_v, &s64_min,  &s64_max,  "%" PRId64);
+        HvkGui::SliderScalar("slider u64 low",       ImGuiDataType_U64,    &u64_v, &u64_zero, &u64_fifty,"%" PRIu64 " ms");
+        HvkGui::SliderScalar("slider u64 high",      ImGuiDataType_U64,    &u64_v, &u64_hi_a, &u64_hi_b, "%" PRIu64 " ms");
+        HvkGui::SliderScalar("slider u64 full",      ImGuiDataType_U64,    &u64_v, &u64_min,  &u64_max,  "%" PRIu64 " ms");
+        HvkGui::SliderScalar("slider float low",     ImGuiDataType_Float,  &f32_v, &f32_zero, &f32_one);
+        HvkGui::SliderScalar("slider float low log", ImGuiDataType_Float,  &f32_v, &f32_zero, &f32_one,  "%.10f", ImGuiSliderFlags_Logarithmic);
+        HvkGui::SliderScalar("slider float high",    ImGuiDataType_Float,  &f32_v, &f32_lo_a, &f32_hi_a, "%e");
+        HvkGui::SliderScalar("slider double low",    ImGuiDataType_Double, &f64_v, &f64_zero, &f64_one,  "%.10f grams");
+        HvkGui::SliderScalar("slider double low log",ImGuiDataType_Double, &f64_v, &f64_zero, &f64_one,  "%.10f", ImGuiSliderFlags_Logarithmic);
+        HvkGui::SliderScalar("slider double high",   ImGuiDataType_Double, &f64_v, &f64_lo_a, &f64_hi_a, "%e grams");
 
-        ImGui::SeparatorText("Sliders (reverse)");
-        ImGui::SliderScalar("slider s8 reverse",    ImGuiDataType_S8,   &s8_v,  &s8_max,    &s8_min,   "%d");
-        ImGui::SliderScalar("slider u8 reverse",    ImGuiDataType_U8,   &u8_v,  &u8_max,    &u8_min,   "%u");
-        ImGui::SliderScalar("slider s32 reverse",   ImGuiDataType_S32,  &s32_v, &s32_fifty, &s32_zero, "%d");
-        ImGui::SliderScalar("slider u32 reverse",   ImGuiDataType_U32,  &u32_v, &u32_fifty, &u32_zero, "%u");
-        ImGui::SliderScalar("slider s64 reverse",   ImGuiDataType_S64,  &s64_v, &s64_fifty, &s64_zero, "%" PRId64);
-        ImGui::SliderScalar("slider u64 reverse",   ImGuiDataType_U64,  &u64_v, &u64_fifty, &u64_zero, "%" PRIu64 " ms");
+        HvkGui::SeparatorText("Sliders (reverse)");
+        HvkGui::SliderScalar("slider s8 reverse",    ImGuiDataType_S8,   &s8_v,  &s8_max,    &s8_min,   "%d");
+        HvkGui::SliderScalar("slider u8 reverse",    ImGuiDataType_U8,   &u8_v,  &u8_max,    &u8_min,   "%u");
+        HvkGui::SliderScalar("slider s32 reverse",   ImGuiDataType_S32,  &s32_v, &s32_fifty, &s32_zero, "%d");
+        HvkGui::SliderScalar("slider u32 reverse",   ImGuiDataType_U32,  &u32_v, &u32_fifty, &u32_zero, "%u");
+        HvkGui::SliderScalar("slider s64 reverse",   ImGuiDataType_S64,  &s64_v, &s64_fifty, &s64_zero, "%" PRId64);
+        HvkGui::SliderScalar("slider u64 reverse",   ImGuiDataType_U64,  &u64_v, &u64_fifty, &u64_zero, "%" PRIu64 " ms");
 
         IMGUI_DEMO_MARKER("Widgets/Data Types/Inputs");
         static bool inputs_step = true;
         static ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
-        ImGui::SeparatorText("Inputs");
-        ImGui::Checkbox("Show step buttons", &inputs_step);
-        ImGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
-        ImGui::CheckboxFlags("ImGuiInputTextFlags_ParseEmptyRefVal", &flags, ImGuiInputTextFlags_ParseEmptyRefVal);
-        ImGui::CheckboxFlags("ImGuiInputTextFlags_DisplayEmptyRefVal", &flags, ImGuiInputTextFlags_DisplayEmptyRefVal);
-        ImGui::InputScalar("input s8",      ImGuiDataType_S8,     &s8_v,  inputs_step ? &s8_one  : NULL, NULL, "%d", flags);
-        ImGui::InputScalar("input u8",      ImGuiDataType_U8,     &u8_v,  inputs_step ? &u8_one  : NULL, NULL, "%u", flags);
-        ImGui::InputScalar("input s16",     ImGuiDataType_S16,    &s16_v, inputs_step ? &s16_one : NULL, NULL, "%d", flags);
-        ImGui::InputScalar("input u16",     ImGuiDataType_U16,    &u16_v, inputs_step ? &u16_one : NULL, NULL, "%u", flags);
-        ImGui::InputScalar("input s32",     ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%d", flags);
-        ImGui::InputScalar("input s32 hex", ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%04X", flags);
-        ImGui::InputScalar("input u32",     ImGuiDataType_U32,    &u32_v, inputs_step ? &u32_one : NULL, NULL, "%u", flags);
-        ImGui::InputScalar("input u32 hex", ImGuiDataType_U32,    &u32_v, inputs_step ? &u32_one : NULL, NULL, "%08X", flags);
-        ImGui::InputScalar("input s64",     ImGuiDataType_S64,    &s64_v, inputs_step ? &s64_one : NULL, NULL, NULL, flags);
-        ImGui::InputScalar("input u64",     ImGuiDataType_U64,    &u64_v, inputs_step ? &u64_one : NULL, NULL, NULL, flags);
-        ImGui::InputScalar("input float",   ImGuiDataType_Float,  &f32_v, inputs_step ? &f32_one : NULL, NULL, NULL, flags);
-        ImGui::InputScalar("input double",  ImGuiDataType_Double, &f64_v, inputs_step ? &f64_one : NULL, NULL, NULL, flags);
+        HvkGui::SeparatorText("Inputs");
+        HvkGui::Checkbox("Show step buttons", &inputs_step);
+        HvkGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
+        HvkGui::CheckboxFlags("ImGuiInputTextFlags_ParseEmptyRefVal", &flags, ImGuiInputTextFlags_ParseEmptyRefVal);
+        HvkGui::CheckboxFlags("ImGuiInputTextFlags_DisplayEmptyRefVal", &flags, ImGuiInputTextFlags_DisplayEmptyRefVal);
+        HvkGui::InputScalar("input s8",      ImGuiDataType_S8,     &s8_v,  inputs_step ? &s8_one  : NULL, NULL, "%d", flags);
+        HvkGui::InputScalar("input u8",      ImGuiDataType_U8,     &u8_v,  inputs_step ? &u8_one  : NULL, NULL, "%u", flags);
+        HvkGui::InputScalar("input s16",     ImGuiDataType_S16,    &s16_v, inputs_step ? &s16_one : NULL, NULL, "%d", flags);
+        HvkGui::InputScalar("input u16",     ImGuiDataType_U16,    &u16_v, inputs_step ? &u16_one : NULL, NULL, "%u", flags);
+        HvkGui::InputScalar("input s32",     ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%d", flags);
+        HvkGui::InputScalar("input s32 hex", ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%04X", flags);
+        HvkGui::InputScalar("input u32",     ImGuiDataType_U32,    &u32_v, inputs_step ? &u32_one : NULL, NULL, "%u", flags);
+        HvkGui::InputScalar("input u32 hex", ImGuiDataType_U32,    &u32_v, inputs_step ? &u32_one : NULL, NULL, "%08X", flags);
+        HvkGui::InputScalar("input s64",     ImGuiDataType_S64,    &s64_v, inputs_step ? &s64_one : NULL, NULL, NULL, flags);
+        HvkGui::InputScalar("input u64",     ImGuiDataType_U64,    &u64_v, inputs_step ? &u64_one : NULL, NULL, NULL, flags);
+        HvkGui::InputScalar("input float",   ImGuiDataType_Float,  &f32_v, inputs_step ? &f32_one : NULL, NULL, NULL, flags);
+        HvkGui::InputScalar("input double",  ImGuiDataType_Double, &f64_v, inputs_step ? &f64_one : NULL, NULL, NULL, flags);
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1519,11 +1519,11 @@ static void DemoWindowWidgetsDataTypes()
 static void DemoWindowWidgetsDisableBlocks(ImGuiDemoWindowData* demo_data)
 {
     IMGUI_DEMO_MARKER("Widgets/Disable Blocks");
-    if (ImGui::TreeNode("Disable Blocks"))
+    if (HvkGui::TreeNode("Disable Blocks"))
     {
-        ImGui::Checkbox("Disable entire section above", &demo_data->DisableSections);
-        ImGui::SameLine(); HelpMarker("Demonstrate using BeginDisabled()/EndDisabled() across other sections.");
-        ImGui::TreePop();
+        HvkGui::Checkbox("Disable entire section above", &demo_data->DisableSections);
+        HvkGui::SameLine(); HelpMarker("Demonstrate using BeginDisabled()/EndDisabled() across other sections.");
+        HvkGui::TreePop();
     }
 }
 
@@ -1534,10 +1534,10 @@ static void DemoWindowWidgetsDisableBlocks(ImGuiDemoWindowData* demo_data)
 static void DemoWindowWidgetsDragAndDrop()
 {
     IMGUI_DEMO_MARKER("Widgets/Drag and drop");
-    if (ImGui::TreeNode("Drag and Drop"))
+    if (HvkGui::TreeNode("Drag and Drop"))
     {
         IMGUI_DEMO_MARKER("Widgets/Drag and drop/Standard widgets");
-        if (ImGui::TreeNode("Drag and drop in standard widgets"))
+        if (HvkGui::TreeNode("Drag and drop in standard widgets"))
         {
             // ColorEdit widgets automatically act as drag source and drag target.
             // They are using standardized payload strings IMGUI_PAYLOAD_TYPE_COLOR_3F and IMGUI_PAYLOAD_TYPE_COLOR_4F
@@ -1546,13 +1546,13 @@ static void DemoWindowWidgetsDragAndDrop()
             HelpMarker("You can drag from the color squares.");
             static float col1[3] = { 1.0f, 0.0f, 0.2f };
             static float col2[4] = { 0.4f, 0.7f, 0.0f, 0.5f };
-            ImGui::ColorEdit3("color 1", col1);
-            ImGui::ColorEdit4("color 2", col2);
-            ImGui::TreePop();
+            HvkGui::ColorEdit3("color 1", col1);
+            HvkGui::ColorEdit4("color 2", col2);
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Drag and drop/Copy-swap items");
-        if (ImGui::TreeNode("Drag and drop to copy/swap items"))
+        if (HvkGui::TreeNode("Drag and drop to copy/swap items"))
         {
             enum Mode
             {
@@ -1561,9 +1561,9 @@ static void DemoWindowWidgetsDragAndDrop()
                 Mode_Swap
             };
             static int mode = 0;
-            if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } ImGui::SameLine();
-            if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
-            if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }
+            if (HvkGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } HvkGui::SameLine();
+            if (HvkGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } HvkGui::SameLine();
+            if (HvkGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }
             static const char* names[9] =
             {
                 "Bobby", "Beatrice", "Betty",
@@ -1572,27 +1572,27 @@ static void DemoWindowWidgetsDragAndDrop()
             };
             for (int n = 0; n < IM_ARRAYSIZE(names); n++)
             {
-                ImGui::PushID(n);
+                HvkGui::PushID(n);
                 if ((n % 3) != 0)
-                    ImGui::SameLine();
-                ImGui::Button(names[n], ImVec2(60, 60));
+                    HvkGui::SameLine();
+                HvkGui::Button(names[n], ImVec2(60, 60));
 
                 // Our buttons are both drag sources and drag targets here!
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                if (HvkGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                 {
                     // Set payload to carry the index of our item (could be anything)
-                    ImGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
+                    HvkGui::SetDragDropPayload("DND_DEMO_CELL", &n, sizeof(int));
 
                     // Display preview (could be anything, e.g. when dragging an image we could decide to display
                     // the filename and a small preview of the image, etc.)
-                    if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
-                    if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
-                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
-                    ImGui::EndDragDropSource();
+                    if (mode == Mode_Copy) { HvkGui::Text("Copy %s", names[n]); }
+                    if (mode == Mode_Move) { HvkGui::Text("Move %s", names[n]); }
+                    if (mode == Mode_Swap) { HvkGui::Text("Swap %s", names[n]); }
+                    HvkGui::EndDragDropSource();
                 }
-                if (ImGui::BeginDragDropTarget())
+                if (HvkGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+                    if (const ImGuiPayload* payload = HvkGui::AcceptDragDropPayload("DND_DEMO_CELL"))
                     {
                         IM_ASSERT(payload->DataSize == sizeof(int));
                         int payload_n = *(const int*)payload->Data;
@@ -1612,20 +1612,20 @@ static void DemoWindowWidgetsDragAndDrop()
                             names[payload_n] = tmp;
                         }
                     }
-                    ImGui::EndDragDropTarget();
+                    HvkGui::EndDragDropTarget();
                 }
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Drag and Drop/Drag to reorder items (simple)");
-        if (ImGui::TreeNode("Drag to reorder items (simple)"))
+        if (HvkGui::TreeNode("Drag to reorder items (simple)"))
         {
             // FIXME: there is temporary (usually single-frame) ID Conflict during reordering as a same item may be submitting twice.
             // This code was always slightly faulty but in a way which was not easily noticeable.
             // Until we fix this, enable ImGuiItemFlags_AllowDuplicateId to disable detecting the issue.
-            ImGui::PushItemFlag(ImGuiItemFlags_AllowDuplicateId, true);
+            HvkGui::PushItemFlag(ImGuiItemFlags_AllowDuplicateId, true);
 
             // Simple reordering
             HelpMarker(
@@ -1635,53 +1635,53 @@ static void DemoWindowWidgetsDragAndDrop()
             for (int n = 0; n < IM_ARRAYSIZE(item_names); n++)
             {
                 const char* item = item_names[n];
-                ImGui::Selectable(item);
+                HvkGui::Selectable(item);
 
-                if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
+                if (HvkGui::IsItemActive() && !HvkGui::IsItemHovered())
                 {
-                    int n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
+                    int n_next = n + (HvkGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
                     if (n_next >= 0 && n_next < IM_ARRAYSIZE(item_names))
                     {
                         item_names[n] = item_names[n_next];
                         item_names[n_next] = item;
-                        ImGui::ResetMouseDragDelta();
+                        HvkGui::ResetMouseDragDelta();
                     }
                 }
             }
 
-            ImGui::PopItemFlag();
-            ImGui::TreePop();
+            HvkGui::PopItemFlag();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Drag and Drop/Tooltip at target location");
-        if (ImGui::TreeNode("Tooltip at target location"))
+        if (HvkGui::TreeNode("Tooltip at target location"))
         {
             for (int n = 0; n < 2; n++)
             {
                 // Drop targets
-                ImGui::Button(n ? "drop here##1" : "drop here##0");
-                if (ImGui::BeginDragDropTarget())
+                HvkGui::Button(n ? "drop here##1" : "drop here##0");
+                if (HvkGui::BeginDragDropTarget())
                 {
                     ImGuiDragDropFlags drop_target_flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F, drop_target_flags))
+                    if (const ImGuiPayload* payload = HvkGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F, drop_target_flags))
                     {
                         IM_UNUSED(payload);
-                        ImGui::SetMouseCursor(ImGuiMouseCursor_NotAllowed);
-                        ImGui::SetTooltip("Cannot drop here!");
+                        HvkGui::SetMouseCursor(ImGuiMouseCursor_NotAllowed);
+                        HvkGui::SetTooltip("Cannot drop here!");
                     }
-                    ImGui::EndDragDropTarget();
+                    HvkGui::EndDragDropTarget();
                 }
 
                 // Drop source
                 static ImVec4 col4 = { 1.0f, 0.0f, 0.2f, 1.0f };
                 if (n == 0)
-                    ImGui::ColorButton("drag me", col4);
+                    HvkGui::ColorButton("drag me", col4);
 
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1692,53 +1692,53 @@ static void DemoWindowWidgetsDragAndDrop()
 static void DemoWindowWidgetsDragsAndSliders()
 {
     IMGUI_DEMO_MARKER("Widgets/Drag and Slider Flags");
-    if (ImGui::TreeNode("Drag/Slider Flags"))
+    if (HvkGui::TreeNode("Drag/Slider Flags"))
     {
         // Demonstrate using advanced flags for DragXXX and SliderXXX functions. Note that the flags are the same!
         static ImGuiSliderFlags flags = ImGuiSliderFlags_None;
-        ImGui::CheckboxFlags("ImGuiSliderFlags_AlwaysClamp", &flags, ImGuiSliderFlags_AlwaysClamp);
-        ImGui::CheckboxFlags("ImGuiSliderFlags_ClampOnInput", &flags, ImGuiSliderFlags_ClampOnInput);
-        ImGui::SameLine(); HelpMarker("Clamp value to min/max bounds when input manually with Ctrl+Click. By default Ctrl+Click allows going out of bounds.");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_ClampZeroRange", &flags, ImGuiSliderFlags_ClampZeroRange);
-        ImGui::SameLine(); HelpMarker("Clamp even if min==max==0.0f. Otherwise DragXXX functions don't clamp.");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_Logarithmic", &flags, ImGuiSliderFlags_Logarithmic);
-        ImGui::SameLine(); HelpMarker("Enable logarithmic editing (more precision for small values).");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_NoRoundToFormat", &flags, ImGuiSliderFlags_NoRoundToFormat);
-        ImGui::SameLine(); HelpMarker("Disable rounding underlying value to match precision of the format string (e.g. %.3f values are rounded to those 3 digits).");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_NoInput", &flags, ImGuiSliderFlags_NoInput);
-        ImGui::SameLine(); HelpMarker("Disable Ctrl+Click or Enter key allowing to input text directly into the widget.");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_NoSpeedTweaks", &flags, ImGuiSliderFlags_NoSpeedTweaks);
-        ImGui::SameLine(); HelpMarker("Disable keyboard modifiers altering tweak speed. Useful if you want to alter tweak speed yourself based on your own logic.");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_WrapAround", &flags, ImGuiSliderFlags_WrapAround);
-        ImGui::SameLine(); HelpMarker("Enable wrapping around from max to min and from min to max (only supported by DragXXX() functions)");
-        ImGui::CheckboxFlags("ImGuiSliderFlags_ColorMarkers", &flags, ImGuiSliderFlags_ColorMarkers);
-        //ImGui::CheckboxFlags("ImGuiSliderFlags_ColorMarkersG", &flags, 1 << ImGuiSliderFlags_ColorMarkersIndexShift_); // Not explicitly documented but possible.
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_AlwaysClamp", &flags, ImGuiSliderFlags_AlwaysClamp);
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_ClampOnInput", &flags, ImGuiSliderFlags_ClampOnInput);
+        HvkGui::SameLine(); HelpMarker("Clamp value to min/max bounds when input manually with Ctrl+Click. By default Ctrl+Click allows going out of bounds.");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_ClampZeroRange", &flags, ImGuiSliderFlags_ClampZeroRange);
+        HvkGui::SameLine(); HelpMarker("Clamp even if min==max==0.0f. Otherwise DragXXX functions don't clamp.");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_Logarithmic", &flags, ImGuiSliderFlags_Logarithmic);
+        HvkGui::SameLine(); HelpMarker("Enable logarithmic editing (more precision for small values).");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_NoRoundToFormat", &flags, ImGuiSliderFlags_NoRoundToFormat);
+        HvkGui::SameLine(); HelpMarker("Disable rounding underlying value to match precision of the format string (e.g. %.3f values are rounded to those 3 digits).");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_NoInput", &flags, ImGuiSliderFlags_NoInput);
+        HvkGui::SameLine(); HelpMarker("Disable Ctrl+Click or Enter key allowing to input text directly into the widget.");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_NoSpeedTweaks", &flags, ImGuiSliderFlags_NoSpeedTweaks);
+        HvkGui::SameLine(); HelpMarker("Disable keyboard modifiers altering tweak speed. Useful if you want to alter tweak speed yourself based on your own logic.");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_WrapAround", &flags, ImGuiSliderFlags_WrapAround);
+        HvkGui::SameLine(); HelpMarker("Enable wrapping around from max to min and from min to max (only supported by DragXXX() functions)");
+        HvkGui::CheckboxFlags("ImGuiSliderFlags_ColorMarkers", &flags, ImGuiSliderFlags_ColorMarkers);
+        //HvkGui::CheckboxFlags("ImGuiSliderFlags_ColorMarkersG", &flags, 1 << ImGuiSliderFlags_ColorMarkersIndexShift_); // Not explicitly documented but possible.
 
         // Drags
         static float drag_f = 0.5f;
         static float drag_f4[4];
         static int drag_i = 50;
-        ImGui::Text("Underlying float value: %f", drag_f);
-        ImGui::DragFloat("DragFloat (0 -> 1)", &drag_f, 0.005f, 0.0f, 1.0f, "%.3f", flags);
-        ImGui::DragFloat("DragFloat (0 -> +inf)", &drag_f, 0.005f, 0.0f, FLT_MAX, "%.3f", flags);
-        ImGui::DragFloat("DragFloat (-inf -> 1)", &drag_f, 0.005f, -FLT_MAX, 1.0f, "%.3f", flags);
-        ImGui::DragFloat("DragFloat (-inf -> +inf)", &drag_f, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-        //ImGui::DragFloat("DragFloat (0 -> 0)", &drag_f, 0.005f, 0.0f, 0.0f, "%.3f", flags);           // To test ClampZeroRange
-        //ImGui::DragFloat("DragFloat (100 -> 100)", &drag_f, 0.005f, 100.0f, 100.0f, "%.3f", flags);
-        ImGui::DragInt("DragInt (0 -> 100)", &drag_i, 0.5f, 0, 100, "%d", flags);
-        ImGui::DragFloat4("DragFloat4 (0 -> 1)", drag_f4, 0.005f, 0.0f, 1.0f, "%.3f", flags); // Multi-component item, mostly here to document the effect of ImGuiSliderFlags_ColorMarkers.
+        HvkGui::Text("Underlying float value: %f", drag_f);
+        HvkGui::DragFloat("DragFloat (0 -> 1)", &drag_f, 0.005f, 0.0f, 1.0f, "%.3f", flags);
+        HvkGui::DragFloat("DragFloat (0 -> +inf)", &drag_f, 0.005f, 0.0f, FLT_MAX, "%.3f", flags);
+        HvkGui::DragFloat("DragFloat (-inf -> 1)", &drag_f, 0.005f, -FLT_MAX, 1.0f, "%.3f", flags);
+        HvkGui::DragFloat("DragFloat (-inf -> +inf)", &drag_f, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+        //HvkGui::DragFloat("DragFloat (0 -> 0)", &drag_f, 0.005f, 0.0f, 0.0f, "%.3f", flags);           // To test ClampZeroRange
+        //HvkGui::DragFloat("DragFloat (100 -> 100)", &drag_f, 0.005f, 100.0f, 100.0f, "%.3f", flags);
+        HvkGui::DragInt("DragInt (0 -> 100)", &drag_i, 0.5f, 0, 100, "%d", flags);
+        HvkGui::DragFloat4("DragFloat4 (0 -> 1)", drag_f4, 0.005f, 0.0f, 1.0f, "%.3f", flags); // Multi-component item, mostly here to document the effect of ImGuiSliderFlags_ColorMarkers.
 
         // Sliders
         static float slider_f = 0.5f;
         static float slider_f4[4];
         static int slider_i = 50;
         const ImGuiSliderFlags flags_for_sliders = (flags & ~ImGuiSliderFlags_WrapAround);
-        ImGui::Text("Underlying float value: %f", slider_f);
-        ImGui::SliderFloat("SliderFloat (0 -> 1)", &slider_f, 0.0f, 1.0f, "%.3f", flags_for_sliders);
-        ImGui::SliderInt("SliderInt (0 -> 100)", &slider_i, 0, 100, "%d", flags_for_sliders);
-        ImGui::SliderFloat4("SliderFloat4 (0 -> 1)", slider_f4, 0.0f, 1.0f, "%.3f", flags); // Multi-component item, mostly here to document the effect of ImGuiSliderFlags_ColorMarkers.
+        HvkGui::Text("Underlying float value: %f", slider_f);
+        HvkGui::SliderFloat("SliderFloat (0 -> 1)", &slider_f, 0.0f, 1.0f, "%.3f", flags_for_sliders);
+        HvkGui::SliderInt("SliderInt (0 -> 100)", &slider_i, 0, 100, "%d", flags_for_sliders);
+        HvkGui::SliderFloat4("SliderFloat4 (0 -> 1)", slider_f4, 0.0f, 1.0f, "%.3f", flags); // Multi-component item, mostly here to document the effect of ImGuiSliderFlags_ColorMarkers.
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1752,12 +1752,12 @@ namespace ImGui { IMGUI_API void ShowFontAtlas(ImFontAtlas* atlas); }
 static void DemoWindowWidgetsFonts()
 {
     IMGUI_DEMO_MARKER("Widgets/Fonts");
-    if (ImGui::TreeNode("Fonts"))
+    if (HvkGui::TreeNode("Fonts"))
     {
-        ImFontAtlas* atlas = ImGui::GetIO().Fonts;
-        ImGui::ShowFontAtlas(atlas);
+        ImFontAtlas* atlas = HvkGui::GetIO().Fonts;
+        HvkGui::ShowFontAtlas(atlas);
         // FIXME-NEWATLAS: Provide a demo to add/create a procedural font?
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1768,10 +1768,10 @@ static void DemoWindowWidgetsFonts()
 static void DemoWindowWidgetsImages()
 {
     IMGUI_DEMO_MARKER("Widgets/Images");
-    if (ImGui::TreeNode("Images"))
+    if (HvkGui::TreeNode("Images"))
     {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGui::TextWrapped(
+        ImGuiIO& io = HvkGui::GetIO();
+        HvkGui::TextWrapped(
             "Below we are displaying the font texture (which is the only texture we have access to in this demo). "
             "Use the 'ImTextureID' type as storage to pass pointers or identifier to your own texture data. "
             "Hover the texture for a zoomed view!");
@@ -1782,12 +1782,12 @@ static void DemoWindowWidgetsImages()
         // of their respective source file to specify what they are using as texture identifier, for example:
         // - The imgui_impl_dx11.cpp renderer expect a 'ID3D11ShaderResourceView*' pointer.
         // - The imgui_impl_opengl3.cpp renderer expect a GLuint OpenGL texture identifier, etc.
-        // So with the DirectX11 backend, you call ImGui::Image() with a 'ID3D11ShaderResourceView*' cast to ImTextureID.
+        // So with the DirectX11 backend, you call HvkGui::Image() with a 'ID3D11ShaderResourceView*' cast to ImTextureID.
         // - If you decided that ImTextureID = MyEngineTexture*, then you can pass your MyEngineTexture* pointers
-        //   to ImGui::Image(), and gather width/height through your own functions, etc.
+        //   to HvkGui::Image(), and gather width/height through your own functions, etc.
         // - You can use ShowMetricsWindow() to inspect the draw data that are being passed to your renderer,
         //   it will help you debug issues if you are confused about it.
-        // - Consider using the lower-level ImDrawList::AddImage() API, via ImGui::GetWindowDrawList()->AddImage().
+        // - Consider using the lower-level ImDrawList::AddImage() API, via HvkGui::GetWindowDrawList()->AddImage().
         // - Read https://github.com/ocornut/imgui/blob/master/docs/FAQ.md
         // - Read https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 
@@ -1799,13 +1799,13 @@ static void DemoWindowWidgetsImages()
         float my_tex_h = (float)io.Fonts->TexData->Height;
 
         {
-            ImGui::Text("%.0fx%.0f", my_tex_w, my_tex_h);
-            ImVec2 pos = ImGui::GetCursorScreenPos();
+            HvkGui::Text("%.0fx%.0f", my_tex_w, my_tex_h);
+            ImVec2 pos = HvkGui::GetCursorScreenPos();
             ImVec2 uv_min = ImVec2(0.0f, 0.0f); // Top-left
             ImVec2 uv_max = ImVec2(1.0f, 1.0f); // Lower-right
-            ImGui::PushStyleVar(ImGuiStyleVar_ImageBorderSize, IM_MAX(1.0f, ImGui::GetStyle().ImageBorderSize));
-            ImGui::ImageWithBg(my_tex_id, ImVec2(my_tex_w, my_tex_h), uv_min, uv_max, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-            if (ImGui::BeginItemTooltip())
+            HvkGui::PushStyleVar(ImGuiStyleVar_ImageBorderSize, IM_MAX(1.0f, HvkGui::GetStyle().ImageBorderSize));
+            HvkGui::ImageWithBg(my_tex_id, ImVec2(my_tex_w, my_tex_h), uv_min, uv_max, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+            if (HvkGui::BeginItemTooltip())
             {
                 float region_sz = 32.0f;
                 float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
@@ -1815,42 +1815,42 @@ static void DemoWindowWidgetsImages()
                 else if (region_x > my_tex_w - region_sz) { region_x = my_tex_w - region_sz; }
                 if (region_y < 0.0f) { region_y = 0.0f; }
                 else if (region_y > my_tex_h - region_sz) { region_y = my_tex_h - region_sz; }
-                ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
-                ImGui::Text("Max: (%.2f, %.2f)", region_x + region_sz, region_y + region_sz);
+                HvkGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
+                HvkGui::Text("Max: (%.2f, %.2f)", region_x + region_sz, region_y + region_sz);
                 ImVec2 uv0 = ImVec2((region_x) / my_tex_w, (region_y) / my_tex_h);
                 ImVec2 uv1 = ImVec2((region_x + region_sz) / my_tex_w, (region_y + region_sz) / my_tex_h);
-                ImGui::ImageWithBg(my_tex_id, ImVec2(region_sz * zoom, region_sz * zoom), uv0, uv1, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-                ImGui::EndTooltip();
+                HvkGui::ImageWithBg(my_tex_id, ImVec2(region_sz * zoom, region_sz * zoom), uv0, uv1, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                HvkGui::EndTooltip();
             }
-            ImGui::PopStyleVar();
+            HvkGui::PopStyleVar();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Images/Textured buttons");
-        ImGui::TextWrapped("And now some textured buttons..");
+        HvkGui::TextWrapped("And now some textured buttons..");
         static int pressed_count = 0;
         for (int i = 0; i < 8; i++)
         {
             // UV coordinates are often (0.0f, 0.0f) and (1.0f, 1.0f) to display an entire textures.
             // Here are trying to display only a 32x32 pixels area of the texture, hence the UV computation.
             // Read about UV coordinates here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
-            ImGui::PushID(i);
+            HvkGui::PushID(i);
             if (i > 0)
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(i - 1.0f, i - 1.0f));
+                HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(i - 1.0f, i - 1.0f));
             ImVec2 size = ImVec2(32.0f, 32.0f);                         // Size of the image we want to make visible
             ImVec2 uv0 = ImVec2(0.0f, 0.0f);                            // UV coordinates for lower-left
             ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);    // UV coordinates for (32,32) in our texture
             ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);             // Black background
             ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);           // No tint
-            if (ImGui::ImageButton("", my_tex_id, size, uv0, uv1, bg_col, tint_col))
+            if (HvkGui::ImageButton("", my_tex_id, size, uv0, uv1, bg_col, tint_col))
                 pressed_count += 1;
             if (i > 0)
-                ImGui::PopStyleVar();
-            ImGui::PopID();
-            ImGui::SameLine();
+                HvkGui::PopStyleVar();
+            HvkGui::PopID();
+            HvkGui::SameLine();
         }
-        ImGui::NewLine();
-        ImGui::Text("Pressed %d times.", pressed_count);
-        ImGui::TreePop();
+        HvkGui::NewLine();
+        HvkGui::Text("Pressed %d times.", pressed_count);
+        HvkGui::TreePop();
     }
 }
 
@@ -1861,7 +1861,7 @@ static void DemoWindowWidgetsImages()
 static void DemoWindowWidgetsListBoxes()
 {
     IMGUI_DEMO_MARKER("Widgets/List Boxes");
-    if (ImGui::TreeNode("List Boxes"))
+    if (HvkGui::TreeNode("List Boxes"))
     {
         // BeginListBox() is essentially a thin wrapper to using BeginChild()/EndChild()
         // using the ImGuiChildFlags_FrameStyle flag for stylistic changes + displaying a label.
@@ -1876,46 +1876,46 @@ static void DemoWindowWidgetsListBoxes()
 
         static bool item_highlight = false;
         int item_highlighted_idx = -1; // Here we store our highlighted data as an index.
-        ImGui::Checkbox("Highlight hovered item in second listbox", &item_highlight);
+        HvkGui::Checkbox("Highlight hovered item in second listbox", &item_highlight);
 
-        if (ImGui::BeginListBox("listbox 1"))
+        if (HvkGui::BeginListBox("listbox 1"))
         {
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
-                if (ImGui::Selectable(items[n], is_selected))
+                if (HvkGui::Selectable(items[n], is_selected))
                     item_selected_idx = n;
 
-                if (item_highlight && ImGui::IsItemHovered())
+                if (item_highlight && HvkGui::IsItemHovered())
                     item_highlighted_idx = n;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
-                    ImGui::SetItemDefaultFocus();
+                    HvkGui::SetItemDefaultFocus();
             }
-            ImGui::EndListBox();
+            HvkGui::EndListBox();
         }
-        ImGui::SameLine(); HelpMarker("Here we are sharing selection state between both boxes.");
+        HvkGui::SameLine(); HelpMarker("Here we are sharing selection state between both boxes.");
 
         // Custom size: use all width, 5 items tall
-        ImGui::Text("Full-width:");
-        if (ImGui::BeginListBox("##listbox 2", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+        HvkGui::Text("Full-width:");
+        if (HvkGui::BeginListBox("##listbox 2", ImVec2(-FLT_MIN, 5 * HvkGui::GetTextLineHeightWithSpacing())))
         {
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {
                 bool is_selected = (item_selected_idx == n);
                 ImGuiSelectableFlags flags = (item_highlighted_idx == n) ? ImGuiSelectableFlags_Highlight : 0;
-                if (ImGui::Selectable(items[n], is_selected, flags))
+                if (HvkGui::Selectable(items[n], is_selected, flags))
                     item_selected_idx = n;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
-                    ImGui::SetItemDefaultFocus();
+                    HvkGui::SetItemDefaultFocus();
             }
-            ImGui::EndListBox();
+            HvkGui::EndListBox();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1926,43 +1926,43 @@ static void DemoWindowWidgetsListBoxes()
 static void DemoWindowWidgetsMultiComponents()
 {
     IMGUI_DEMO_MARKER("Widgets/Multi-component Widgets");
-    if (ImGui::TreeNode("Multi-component Widgets"))
+    if (HvkGui::TreeNode("Multi-component Widgets"))
     {
         static float vec4f[4] = { 0.10f, 0.20f, 0.30f, 0.44f };
         static int vec4i[4] = { 1, 5, 100, 255 };
 
-        ImGui::SeparatorText("2-wide");
-        ImGui::InputFloat2("input float2", vec4f);
-        ImGui::DragFloat2("drag float2", vec4f, 0.01f, 0.0f, 1.0f);
-        ImGui::SliderFloat2("slider float2", vec4f, 0.0f, 1.0f);
-        ImGui::InputInt2("input int2", vec4i);
-        ImGui::DragInt2("drag int2", vec4i, 1, 0, 255);
-        ImGui::SliderInt2("slider int2", vec4i, 0, 255);
+        HvkGui::SeparatorText("2-wide");
+        HvkGui::InputFloat2("input float2", vec4f);
+        HvkGui::DragFloat2("drag float2", vec4f, 0.01f, 0.0f, 1.0f);
+        HvkGui::SliderFloat2("slider float2", vec4f, 0.0f, 1.0f);
+        HvkGui::InputInt2("input int2", vec4i);
+        HvkGui::DragInt2("drag int2", vec4i, 1, 0, 255);
+        HvkGui::SliderInt2("slider int2", vec4i, 0, 255);
 
-        ImGui::SeparatorText("3-wide");
-        ImGui::InputFloat3("input float3", vec4f);
-        ImGui::DragFloat3("drag float3", vec4f, 0.01f, 0.0f, 1.0f);
-        ImGui::SliderFloat3("slider float3", vec4f, 0.0f, 1.0f);
-        ImGui::InputInt3("input int3", vec4i);
-        ImGui::DragInt3("drag int3", vec4i, 1, 0, 255);
-        ImGui::SliderInt3("slider int3", vec4i, 0, 255);
+        HvkGui::SeparatorText("3-wide");
+        HvkGui::InputFloat3("input float3", vec4f);
+        HvkGui::DragFloat3("drag float3", vec4f, 0.01f, 0.0f, 1.0f);
+        HvkGui::SliderFloat3("slider float3", vec4f, 0.0f, 1.0f);
+        HvkGui::InputInt3("input int3", vec4i);
+        HvkGui::DragInt3("drag int3", vec4i, 1, 0, 255);
+        HvkGui::SliderInt3("slider int3", vec4i, 0, 255);
 
-        ImGui::SeparatorText("4-wide");
-        ImGui::InputFloat4("input float4", vec4f);
-        ImGui::DragFloat4("drag float4", vec4f, 0.01f, 0.0f, 1.0f);
-        ImGui::SliderFloat4("slider float4", vec4f, 0.0f, 1.0f);
-        ImGui::InputInt4("input int4", vec4i);
-        ImGui::DragInt4("drag int4", vec4i, 1, 0, 255);
-        ImGui::SliderInt4("slider int4", vec4i, 0, 255);
+        HvkGui::SeparatorText("4-wide");
+        HvkGui::InputFloat4("input float4", vec4f);
+        HvkGui::DragFloat4("drag float4", vec4f, 0.01f, 0.0f, 1.0f);
+        HvkGui::SliderFloat4("slider float4", vec4f, 0.0f, 1.0f);
+        HvkGui::InputInt4("input int4", vec4i);
+        HvkGui::DragInt4("drag int4", vec4i, 1, 0, 255);
+        HvkGui::SliderInt4("slider int4", vec4i, 0, 255);
 
-        ImGui::SeparatorText("Ranges");
+        HvkGui::SeparatorText("Ranges");
         static float begin = 10, end = 90;
         static int begin_i = 100, end_i = 1000;
-        ImGui::DragFloatRange2("range float", &begin, &end, 0.25f, 0.0f, 100.0f, "Min: %.1f %%", "Max: %.1f %%", ImGuiSliderFlags_AlwaysClamp);
-        ImGui::DragIntRange2("range int", &begin_i, &end_i, 5, 0, 1000, "Min: %d units", "Max: %d units");
-        ImGui::DragIntRange2("range int (no bounds)", &begin_i, &end_i, 5, 0, 0, "Min: %d units", "Max: %d units");
+        HvkGui::DragFloatRange2("range float", &begin, &end, 0.25f, 0.0f, 100.0f, "Min: %.1f %%", "Max: %.1f %%", ImGuiSliderFlags_AlwaysClamp);
+        HvkGui::DragIntRange2("range int", &begin_i, &end_i, 5, 0, 1000, "Min: %d units", "Max: %d units");
+        HvkGui::DragIntRange2("range int (no bounds)", &begin_i, &end_i, 5, 0, 0, "Min: %d units", "Max: %d units");
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -1976,20 +1976,20 @@ static void DemoWindowWidgetsPlotting()
 // Consider using a third-party library such as ImPlot: https://github.com/epezent/implot
 // (see others https://github.com/ocornut/imgui/wiki/Useful-Extensions)
     IMGUI_DEMO_MARKER("Widgets/Plotting");
-    if (ImGui::TreeNode("Plotting"))
+    if (HvkGui::TreeNode("Plotting"))
     {
-        ImGui::Text("Need better plotting and graphing? Consider using ImPlot:");
-        ImGui::TextLinkOpenURL("https://github.com/epezent/implot");
-        ImGui::Separator();
+        HvkGui::Text("Need better plotting and graphing? Consider using ImPlot:");
+        HvkGui::TextLinkOpenURL("https://github.com/epezent/implot");
+        HvkGui::Separator();
 
         static bool animate = true;
-        ImGui::Checkbox("Animate", &animate);
+        HvkGui::Checkbox("Animate", &animate);
 
         // Plot as lines and plot as histogram
         static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-        ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
-        ImGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
-        //ImGui::SameLine(); HelpMarker("Consider using ImPlot instead!");
+        HvkGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
+        HvkGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
+        //HvkGui::SameLine(); HelpMarker("Consider using ImPlot instead!");
 
         // Fill an array of contiguous float values to plot
         // Tip: If your float aren't contiguous but part of a structure, you can pass a pointer to your first float
@@ -1998,8 +1998,8 @@ static void DemoWindowWidgetsPlotting()
         static int values_offset = 0;
         static double refresh_time = 0.0;
         if (!animate || refresh_time == 0.0)
-            refresh_time = ImGui::GetTime();
-        while (refresh_time < ImGui::GetTime()) // Create data at fixed 60 Hz rate for the demo
+            refresh_time = HvkGui::GetTime();
+        while (refresh_time < HvkGui::GetTime()) // Create data at fixed 60 Hz rate for the demo
         {
             static float phase = 0.0f;
             values[values_offset] = cosf(phase);
@@ -2017,7 +2017,7 @@ static void DemoWindowWidgetsPlotting()
             average /= (float)IM_ARRAYSIZE(values);
             char overlay[32];
             sprintf(overlay, "avg %f", average);
-            ImGui::PlotLines("Lines", values, IM_ARRAYSIZE(values), values_offset, overlay, -1.0f, 1.0f, ImVec2(0, 80.0f));
+            HvkGui::PlotLines("Lines", values, IM_ARRAYSIZE(values), values_offset, overlay, -1.0f, 1.0f, ImVec2(0, 80.0f));
         }
 
         // Use functions to generate output
@@ -2029,16 +2029,16 @@ static void DemoWindowWidgetsPlotting()
             static float Saw(void*, int i) { return (i & 1) ? 1.0f : -1.0f; }
         };
         static int func_type = 0, display_count = 70;
-        ImGui::SeparatorText("Functions");
-        ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-        ImGui::Combo("func", &func_type, "Sin\0Saw\0");
-        ImGui::SameLine();
-        ImGui::SliderInt("Sample count", &display_count, 1, 400);
+        HvkGui::SeparatorText("Functions");
+        HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+        HvkGui::Combo("func", &func_type, "Sin\0Saw\0");
+        HvkGui::SameLine();
+        HvkGui::SliderInt("Sample count", &display_count, 1, 400);
         float (*func)(void*, int) = (func_type == 0) ? Funcs::Sin : Funcs::Saw;
-        ImGui::PlotLines("Lines##2", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
-        ImGui::PlotHistogram("Histogram##2", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
+        HvkGui::PlotLines("Lines##2", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
+        HvkGui::PlotHistogram("Histogram##2", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -2049,11 +2049,11 @@ static void DemoWindowWidgetsPlotting()
 static void DemoWindowWidgetsProgressBars()
 {
     IMGUI_DEMO_MARKER("Widgets/Progress Bars");
-    if (ImGui::TreeNode("Progress Bars"))
+    if (HvkGui::TreeNode("Progress Bars"))
     {
         // Animate a simple progress bar
         static float progress_accum = 0.0f, progress_dir = 1.0f;
-        progress_accum += progress_dir * 0.4f * ImGui::GetIO().DeltaTime;
+        progress_accum += progress_dir * 0.4f * HvkGui::GetIO().DeltaTime;
         if (progress_accum >= +1.1f) { progress_accum = +1.1f; progress_dir *= -1.0f; }
         if (progress_accum <= -0.1f) { progress_accum = -0.1f; progress_dir *= -1.0f; }
 
@@ -2061,21 +2061,21 @@ static void DemoWindowWidgetsProgressBars()
 
         // Typically we would use ImVec2(-1.0f,0.0f) or ImVec2(-FLT_MIN,0.0f) to use all available width,
         // or ImVec2(width,0.0f) for a specified width. ImVec2(0.0f,0.0f) uses ItemWidth.
-        ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
-        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::Text("Progress Bar");
+        HvkGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
+        HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+        HvkGui::Text("Progress Bar");
 
         char buf[32];
         sprintf(buf, "%d/%d", (int)(progress * 1753), 1753);
-        ImGui::ProgressBar(progress, ImVec2(0.f, 0.f), buf);
+        HvkGui::ProgressBar(progress, ImVec2(0.f, 0.f), buf);
 
-        // Pass an animated negative value, e.g. -1.0f * (float)ImGui::GetTime() is the recommended value.
+        // Pass an animated negative value, e.g. -1.0f * (float)HvkGui::GetTime() is the recommended value.
         // Adjust the factor if you want to adjust the animation speed.
-        ImGui::ProgressBar(-1.0f * (float)ImGui::GetTime(), ImVec2(0.0f, 0.0f), "Searching..");
-        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::Text("Indeterminate");
+        HvkGui::ProgressBar(-1.0f * (float)HvkGui::GetTime(), ImVec2(0.0f, 0.0f), "Searching..");
+        HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+        HvkGui::Text("Indeterminate");
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -2086,7 +2086,7 @@ static void DemoWindowWidgetsProgressBars()
 static void DemoWindowWidgetsQueryingStatuses()
 {
     IMGUI_DEMO_MARKER("Widgets/Querying Item Status (Edited,Active,Hovered etc.)");
-    if (ImGui::TreeNode("Querying Item Status (Edited/Active/Hovered etc.)"))
+    if (HvkGui::TreeNode("Querying Item Status (Edited/Active/Hovered etc.)"))
     {
         // Select an item type
         const char* item_names[] =
@@ -2096,10 +2096,10 @@ static void DemoWindowWidgetsQueryingStatuses()
         };
         static int item_type = 4;
         static bool item_disabled = false;
-        ImGui::Combo("Item Type", &item_type, item_names, IM_ARRAYSIZE(item_names), IM_ARRAYSIZE(item_names));
-        ImGui::SameLine();
-        HelpMarker("Testing how various types of items are interacting with the IsItemXXX functions. Note that the bool return value of most ImGui function is generally equivalent to calling ImGui::IsItemHovered().");
-        ImGui::Checkbox("Item Disabled", &item_disabled);
+        HvkGui::Combo("Item Type", &item_type, item_names, IM_ARRAYSIZE(item_names), IM_ARRAYSIZE(item_names));
+        HvkGui::SameLine();
+        HelpMarker("Testing how various types of items are interacting with the IsItemXXX functions. Note that the bool return value of most ImGui function is generally equivalent to calling HvkGui::IsItemHovered().");
+        HvkGui::Checkbox("Item Disabled", &item_disabled);
 
         // Submit selected items so we can query their status in the code following it.
         bool ret = false;
@@ -2107,35 +2107,35 @@ static void DemoWindowWidgetsQueryingStatuses()
         static float col4f[4] = { 1.0f, 0.5, 0.0f, 1.0f };
         static char str[16] = {};
         if (item_disabled)
-            ImGui::BeginDisabled(true);
-        if (item_type == 0) { ImGui::Text("ITEM: Text"); }                                              // Testing text items with no identifier/interaction
-        if (item_type == 1) { ret = ImGui::Button("ITEM: Button"); }                                    // Testing button
-        if (item_type == 2) { ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true); ret = ImGui::Button("ITEM: Button"); ImGui::PopItemFlag(); } // Testing button (with repeater)
-        if (item_type == 3) { ret = ImGui::Checkbox("ITEM: Checkbox", &b); }                            // Testing checkbox
-        if (item_type == 4) { ret = ImGui::SliderFloat("ITEM: SliderFloat", &col4f[0], 0.0f, 1.0f); }   // Testing basic item
-        if (item_type == 5) { ret = ImGui::InputText("ITEM: InputText", &str[0], IM_ARRAYSIZE(str)); }  // Testing input text (which handles tabbing)
-        if (item_type == 6) { ret = ImGui::InputTextMultiline("ITEM: InputTextMultiline", &str[0], IM_ARRAYSIZE(str)); } // Testing input text (which uses a child window)
-        if (item_type == 7) { ret = ImGui::InputFloat("ITEM: InputFloat", col4f, 1.0f); }               // Testing +/- buttons on scalar input
-        if (item_type == 8) { ret = ImGui::InputFloat3("ITEM: InputFloat3", col4f); }                   // Testing multi-component items (IsItemXXX flags are reported merged)
-        if (item_type == 9) { ret = ImGui::ColorEdit4("ITEM: ColorEdit4", col4f); }                     // Testing multi-component items (IsItemXXX flags are reported merged)
-        if (item_type == 10) { ret = ImGui::Selectable("ITEM: Selectable"); }                            // Testing selectable item
-        if (item_type == 11) { ret = ImGui::MenuItem("ITEM: MenuItem"); }                                // Testing menu item (they use ImGuiButtonFlags_PressedOnRelease button policy)
-        if (item_type == 12) { ret = ImGui::TreeNode("ITEM: TreeNode"); if (ret) ImGui::TreePop(); }     // Testing tree node
-        if (item_type == 13) { ret = ImGui::TreeNodeEx("ITEM: TreeNode w/ ImGuiTreeNodeFlags_OpenOnDoubleClick", ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NoTreePushOnOpen); } // Testing tree node with ImGuiButtonFlags_PressedOnDoubleClick button policy.
-        if (item_type == 14) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = ImGui::Combo("ITEM: Combo", &current, items, IM_ARRAYSIZE(items)); }
-        if (item_type == 15) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = ImGui::ListBox("ITEM: ListBox", &current, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)); }
+            HvkGui::BeginDisabled(true);
+        if (item_type == 0) { HvkGui::Text("ITEM: Text"); }                                              // Testing text items with no identifier/interaction
+        if (item_type == 1) { ret = HvkGui::Button("ITEM: Button"); }                                    // Testing button
+        if (item_type == 2) { HvkGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true); ret = HvkGui::Button("ITEM: Button"); HvkGui::PopItemFlag(); } // Testing button (with repeater)
+        if (item_type == 3) { ret = HvkGui::Checkbox("ITEM: Checkbox", &b); }                            // Testing checkbox
+        if (item_type == 4) { ret = HvkGui::SliderFloat("ITEM: SliderFloat", &col4f[0], 0.0f, 1.0f); }   // Testing basic item
+        if (item_type == 5) { ret = HvkGui::InputText("ITEM: InputText", &str[0], IM_ARRAYSIZE(str)); }  // Testing input text (which handles tabbing)
+        if (item_type == 6) { ret = HvkGui::InputTextMultiline("ITEM: InputTextMultiline", &str[0], IM_ARRAYSIZE(str)); } // Testing input text (which uses a child window)
+        if (item_type == 7) { ret = HvkGui::InputFloat("ITEM: InputFloat", col4f, 1.0f); }               // Testing +/- buttons on scalar input
+        if (item_type == 8) { ret = HvkGui::InputFloat3("ITEM: InputFloat3", col4f); }                   // Testing multi-component items (IsItemXXX flags are reported merged)
+        if (item_type == 9) { ret = HvkGui::ColorEdit4("ITEM: ColorEdit4", col4f); }                     // Testing multi-component items (IsItemXXX flags are reported merged)
+        if (item_type == 10) { ret = HvkGui::Selectable("ITEM: Selectable"); }                            // Testing selectable item
+        if (item_type == 11) { ret = HvkGui::MenuItem("ITEM: MenuItem"); }                                // Testing menu item (they use ImGuiButtonFlags_PressedOnRelease button policy)
+        if (item_type == 12) { ret = HvkGui::TreeNode("ITEM: TreeNode"); if (ret) HvkGui::TreePop(); }     // Testing tree node
+        if (item_type == 13) { ret = HvkGui::TreeNodeEx("ITEM: TreeNode w/ ImGuiTreeNodeFlags_OpenOnDoubleClick", ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NoTreePushOnOpen); } // Testing tree node with ImGuiButtonFlags_PressedOnDoubleClick button policy.
+        if (item_type == 14) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::Combo("ITEM: Combo", &current, items, IM_ARRAYSIZE(items)); }
+        if (item_type == 15) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::ListBox("ITEM: ListBox", &current, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)); }
 
-        bool hovered_delay_none = ImGui::IsItemHovered();
-        bool hovered_delay_stationary = ImGui::IsItemHovered(ImGuiHoveredFlags_Stationary);
-        bool hovered_delay_short = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
-        bool hovered_delay_normal = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal);
-        bool hovered_delay_tooltip = ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip); // = Normal + Stationary
+        bool hovered_delay_none = HvkGui::IsItemHovered();
+        bool hovered_delay_stationary = HvkGui::IsItemHovered(ImGuiHoveredFlags_Stationary);
+        bool hovered_delay_short = HvkGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
+        bool hovered_delay_normal = HvkGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal);
+        bool hovered_delay_tooltip = HvkGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip); // = Normal + Stationary
 
         // Display the values of IsItemHovered() and other common item state functions.
         // Note that the ImGuiHoveredFlags_XXX flags can be combined.
         // Because BulletText is an item itself and that would affect the output of IsItemXXX functions,
         // we query every state in a single call to avoid storing them and to simplify the code.
-        ImGui::BulletText(
+        HvkGui::BulletText(
             "Return value = %d\n"
             "IsItemFocused() = %d\n"
             "IsItemHovered() = %d\n"
@@ -2157,27 +2157,27 @@ static void DemoWindowWidgetsQueryingStatuses()
             "GetItemRectMax() = (%.1f, %.1f)\n"
             "GetItemRectSize() = (%.1f, %.1f)",
             ret,
-            ImGui::IsItemFocused(),
-            ImGui::IsItemHovered(),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenOverlappedByItem),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenOverlappedByWindow),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled),
-            ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly),
-            ImGui::IsItemActive(),
-            ImGui::IsItemEdited(),
-            ImGui::IsItemActivated(),
-            ImGui::IsItemDeactivated(),
-            ImGui::IsItemDeactivatedAfterEdit(),
-            ImGui::IsItemVisible(),
-            ImGui::IsItemClicked(),
-            ImGui::IsItemToggledOpen(),
-            ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y,
-            ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y,
-            ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y
+            HvkGui::IsItemFocused(),
+            HvkGui::IsItemHovered(),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenOverlappedByItem),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenOverlappedByWindow),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled),
+            HvkGui::IsItemHovered(ImGuiHoveredFlags_RectOnly),
+            HvkGui::IsItemActive(),
+            HvkGui::IsItemEdited(),
+            HvkGui::IsItemActivated(),
+            HvkGui::IsItemDeactivated(),
+            HvkGui::IsItemDeactivatedAfterEdit(),
+            HvkGui::IsItemVisible(),
+            HvkGui::IsItemClicked(),
+            HvkGui::IsItemToggledOpen(),
+            HvkGui::GetItemRectMin().x, HvkGui::GetItemRectMin().y,
+            HvkGui::GetItemRectMax().x, HvkGui::GetItemRectMax().y,
+            HvkGui::GetItemRectSize().x, HvkGui::GetItemRectSize().y
         );
-        ImGui::BulletText(
+        HvkGui::BulletText(
             "with Hovering Delay or Stationary test:\n"
             "IsItemHovered() = %d\n"
             "IsItemHovered(_Stationary) = %d\n"
@@ -2187,26 +2187,26 @@ static void DemoWindowWidgetsQueryingStatuses()
             hovered_delay_none, hovered_delay_stationary, hovered_delay_short, hovered_delay_normal, hovered_delay_tooltip);
 
         if (item_disabled)
-            ImGui::EndDisabled();
+            HvkGui::EndDisabled();
 
         char buf[1] = "";
-        ImGui::InputText("unused", buf, IM_ARRAYSIZE(buf), ImGuiInputTextFlags_ReadOnly);
-        ImGui::SameLine();
+        HvkGui::InputText("unused", buf, IM_ARRAYSIZE(buf), ImGuiInputTextFlags_ReadOnly);
+        HvkGui::SameLine();
         HelpMarker("This widget is only here to be able to tab-out of the widgets above and see e.g. Deactivated() status.");
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Widgets/Querying Window Status (Focused,Hovered etc.)");
-    if (ImGui::TreeNode("Querying Window Status (Focused/Hovered etc.)"))
+    if (HvkGui::TreeNode("Querying Window Status (Focused/Hovered etc.)"))
     {
         static bool embed_all_inside_a_child_window = false;
-        ImGui::Checkbox("Embed everything inside a child window for testing _RootWindow flag.", &embed_all_inside_a_child_window);
+        HvkGui::Checkbox("Embed everything inside a child window for testing _RootWindow flag.", &embed_all_inside_a_child_window);
         if (embed_all_inside_a_child_window)
-            ImGui::BeginChild("outer_child", ImVec2(0, ImGui::GetFontSize() * 20.0f), ImGuiChildFlags_Borders);
+            HvkGui::BeginChild("outer_child", ImVec2(0, HvkGui::GetFontSize() * 20.0f), ImGuiChildFlags_Borders);
 
         // Testing IsWindowFocused() function with its various flags.
-        ImGui::BulletText(
+        HvkGui::BulletText(
             "IsWindowFocused() = %d\n"
             "IsWindowFocused(_ChildWindows) = %d\n"
             "IsWindowFocused(_ChildWindows|_NoPopupHierarchy) = %d\n"
@@ -2215,17 +2215,17 @@ static void DemoWindowWidgetsQueryingStatuses()
             "IsWindowFocused(_RootWindow) = %d\n"
             "IsWindowFocused(_RootWindow|_NoPopupHierarchy) = %d\n"
             "IsWindowFocused(_AnyWindow) = %d\n",
-            ImGui::IsWindowFocused(),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_NoPopupHierarchy),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_RootWindow),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_RootWindow | ImGuiFocusedFlags_NoPopupHierarchy),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow | ImGuiFocusedFlags_NoPopupHierarchy),
-            ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
+            HvkGui::IsWindowFocused(),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_NoPopupHierarchy),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_RootWindow),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows | ImGuiFocusedFlags_RootWindow | ImGuiFocusedFlags_NoPopupHierarchy),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow | ImGuiFocusedFlags_NoPopupHierarchy),
+            HvkGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 
         // Testing IsWindowHovered() function with its various flags.
-        ImGui::BulletText(
+        HvkGui::BulletText(
             "IsWindowHovered() = %d\n"
             "IsWindowHovered(_AllowWhenBlockedByPopup) = %d\n"
             "IsWindowHovered(_AllowWhenBlockedByActiveItem) = %d\n"
@@ -2238,45 +2238,45 @@ static void DemoWindowWidgetsQueryingStatuses()
             "IsWindowHovered(_ChildWindows|_AllowWhenBlockedByPopup) = %d\n"
             "IsWindowHovered(_AnyWindow) = %d\n"
             "IsWindowHovered(_Stationary) = %d\n",
-            ImGui::IsWindowHovered(),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_NoPopupHierarchy),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_RootWindow),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_NoPopupHierarchy),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_NoPopupHierarchy),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_AllowWhenBlockedByPopup),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow),
-            ImGui::IsWindowHovered(ImGuiHoveredFlags_Stationary));
+            HvkGui::IsWindowHovered(),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_NoPopupHierarchy),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_RootWindow),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_NoPopupHierarchy),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_NoPopupHierarchy),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_AllowWhenBlockedByPopup),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow),
+            HvkGui::IsWindowHovered(ImGuiHoveredFlags_Stationary));
 
-        ImGui::BeginChild("child", ImVec2(0, 50), ImGuiChildFlags_Borders);
-        ImGui::Text("This is another child window for testing the _ChildWindows flag.");
-        ImGui::EndChild();
+        HvkGui::BeginChild("child", ImVec2(0, 50), ImGuiChildFlags_Borders);
+        HvkGui::Text("This is another child window for testing the _ChildWindows flag.");
+        HvkGui::EndChild();
         if (embed_all_inside_a_child_window)
-            ImGui::EndChild();
+            HvkGui::EndChild();
 
         // Calling IsItemHovered() after begin returns the hovered status of the title bar.
         // This is useful in particular if you want to create a context menu associated to the title bar of a window.
         static bool test_window = false;
-        ImGui::Checkbox("Hovered/Active tests after Begin() for title bar testing", &test_window);
+        HvkGui::Checkbox("Hovered/Active tests after Begin() for title bar testing", &test_window);
         if (test_window)
         {
-            ImGui::Begin("Title bar Hovered/Active tests", &test_window);
-            if (ImGui::BeginPopupContextItem()) // <-- This is using IsItemHovered()
+            HvkGui::Begin("Title bar Hovered/Active tests", &test_window);
+            if (HvkGui::BeginPopupContextItem()) // <-- This is using IsItemHovered()
             {
-                if (ImGui::MenuItem("Close")) { test_window = false; }
-                ImGui::EndPopup();
+                if (HvkGui::MenuItem("Close")) { test_window = false; }
+                HvkGui::EndPopup();
             }
-            ImGui::Text(
+            HvkGui::Text(
                 "IsItemHovered() after begin = %d (== is title bar hovered)\n"
                 "IsItemActive() after begin = %d (== is window being clicked/moved)\n",
-                ImGui::IsItemHovered(), ImGui::IsItemActive());
-            ImGui::End();
+                HvkGui::IsItemHovered(), HvkGui::IsItemActive());
+            HvkGui::End();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -2287,8 +2287,8 @@ static void DemoWindowWidgetsQueryingStatuses()
 static void DemoWindowWidgetsSelectables()
 {
     IMGUI_DEMO_MARKER("Widgets/Selectables");
-    //ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Selectables"))
+    //HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (HvkGui::TreeNode("Selectables"))
     {
         // Selectable() has 2 overloads:
         // - The one taking "bool selected" as a read-only selection information.
@@ -2297,84 +2297,84 @@ static void DemoWindowWidgetsSelectables()
         // The earlier is more flexible, as in real application your selection may be stored in many different ways
         // and not necessarily inside a bool value (e.g. in flags within objects, as an external list, etc).
         IMGUI_DEMO_MARKER("Widgets/Selectables/Basic");
-        if (ImGui::TreeNode("Basic"))
+        if (HvkGui::TreeNode("Basic"))
         {
             static bool selection[5] = { false, true, false, false };
-            ImGui::Selectable("1. I am selectable", &selection[0]);
-            ImGui::Selectable("2. I am selectable", &selection[1]);
-            ImGui::Selectable("3. I am selectable", &selection[2]);
-            if (ImGui::Selectable("4. I am double clickable", selection[3], ImGuiSelectableFlags_AllowDoubleClick))
-                if (ImGui::IsMouseDoubleClicked(0))
+            HvkGui::Selectable("1. I am selectable", &selection[0]);
+            HvkGui::Selectable("2. I am selectable", &selection[1]);
+            HvkGui::Selectable("3. I am selectable", &selection[2]);
+            if (HvkGui::Selectable("4. I am double clickable", selection[3], ImGuiSelectableFlags_AllowDoubleClick))
+                if (HvkGui::IsMouseDoubleClicked(0))
                     selection[3] = !selection[3];
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Selectables/Rendering more items on the same line");
-        if (ImGui::TreeNode("Rendering more items on the same line"))
+        if (HvkGui::TreeNode("Rendering more items on the same line"))
         {
             // (1) Using SetNextItemAllowOverlap()
             // (2) Using the Selectable() override that takes "bool* p_selected" parameter, the bool value is toggled automatically.
             static bool selected[3] = { false, false, false };
-            ImGui::SetNextItemAllowOverlap(); ImGui::Selectable("main.c", &selected[0]); ImGui::SameLine(); ImGui::SmallButton("Link 1");
-            ImGui::SetNextItemAllowOverlap(); ImGui::Selectable("Hello.cpp", &selected[1]); ImGui::SameLine(); ImGui::SmallButton("Link 2");
-            ImGui::SetNextItemAllowOverlap(); ImGui::Selectable("Hello.h", &selected[2]); ImGui::SameLine(); ImGui::SmallButton("Link 3");
-            ImGui::TreePop();
+            HvkGui::SetNextItemAllowOverlap(); HvkGui::Selectable("main.c", &selected[0]); HvkGui::SameLine(); HvkGui::SmallButton("Link 1");
+            HvkGui::SetNextItemAllowOverlap(); HvkGui::Selectable("Hello.cpp", &selected[1]); HvkGui::SameLine(); HvkGui::SmallButton("Link 2");
+            HvkGui::SetNextItemAllowOverlap(); HvkGui::Selectable("Hello.h", &selected[2]); HvkGui::SameLine(); HvkGui::SmallButton("Link 3");
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Selectables/In Tables");
-        if (ImGui::TreeNode("In Tables"))
+        if (HvkGui::TreeNode("In Tables"))
         {
             static bool selected[10] = {};
 
-            if (ImGui::BeginTable("split1", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+            if (HvkGui::BeginTable("split1", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
             {
                 for (int i = 0; i < 10; i++)
                 {
                     char label[32];
                     sprintf(label, "Item %d", i);
-                    ImGui::TableNextColumn();
-                    ImGui::Selectable(label, &selected[i]); // FIXME-TABLE: Selection overlap
+                    HvkGui::TableNextColumn();
+                    HvkGui::Selectable(label, &selected[i]); // FIXME-TABLE: Selection overlap
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::Spacing();
-            if (ImGui::BeginTable("split2", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+            HvkGui::Spacing();
+            if (HvkGui::BeginTable("split2", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
             {
                 for (int i = 0; i < 10; i++)
                 {
                     char label[32];
                     sprintf(label, "Item %d", i);
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn();
-                    ImGui::Selectable(label, &selected[i], ImGuiSelectableFlags_SpanAllColumns);
-                    ImGui::TableNextColumn();
-                    ImGui::Text("Some other contents");
-                    ImGui::TableNextColumn();
-                    ImGui::Text("123456");
+                    HvkGui::TableNextRow();
+                    HvkGui::TableNextColumn();
+                    HvkGui::Selectable(label, &selected[i], ImGuiSelectableFlags_SpanAllColumns);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("Some other contents");
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("123456");
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Selectables/Grid");
-        if (ImGui::TreeNode("Grid"))
+        if (HvkGui::TreeNode("Grid"))
         {
             static char selected[4][4] = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
 
             // Add in a bit of silly fun...
-            const float time = (float)ImGui::GetTime();
+            const float time = (float)HvkGui::GetTime();
             const bool winning_state = memchr(selected, 0, sizeof(selected)) == NULL; // If all cells are selected...
             if (winning_state)
-                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f + 0.5f * cosf(time * 2.0f), 0.5f + 0.5f * sinf(time * 3.0f)));
+                HvkGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f + 0.5f * cosf(time * 2.0f), 0.5f + 0.5f * sinf(time * 3.0f)));
 
             for (int y = 0; y < 4; y++)
                 for (int x = 0; x < 4; x++)
                 {
                     if (x > 0)
-                        ImGui::SameLine();
-                    ImGui::PushID(y * 4 + x);
-                    if (ImGui::Selectable("Sailor", selected[y][x] != 0, 0, ImVec2(50, 50)))
+                        HvkGui::SameLine();
+                    HvkGui::PushID(y * 4 + x);
+                    if (HvkGui::Selectable("Sailor", selected[y][x] != 0, 0, ImVec2(50, 50)))
                     {
                         // Toggle clicked cell + toggle neighbors
                         selected[y][x] ^= 1;
@@ -2383,15 +2383,15 @@ static void DemoWindowWidgetsSelectables()
                         if (y > 0) { selected[y - 1][x] ^= 1; }
                         if (y < 3) { selected[y + 1][x] ^= 1; }
                     }
-                    ImGui::PopID();
+                    HvkGui::PopID();
                 }
 
             if (winning_state)
-                ImGui::PopStyleVar();
-            ImGui::TreePop();
+                HvkGui::PopStyleVar();
+            HvkGui::TreePop();
         }
         IMGUI_DEMO_MARKER("Widgets/Selectables/Alignment");
-        if (ImGui::TreeNode("Alignment"))
+        if (HvkGui::TreeNode("Alignment"))
         {
             HelpMarker(
                 "By default, Selectables uses style.SelectableTextAlign but it can be overridden on a per-item "
@@ -2405,15 +2405,15 @@ static void DemoWindowWidgetsSelectables()
                     ImVec2 alignment = ImVec2((float)x / 2.0f, (float)y / 2.0f);
                     char name[32];
                     sprintf(name, "(%.1f,%.1f)", alignment.x, alignment.y);
-                    if (x > 0) ImGui::SameLine();
-                    ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, alignment);
-                    ImGui::Selectable(name, &selected[3 * y + x], ImGuiSelectableFlags_None, ImVec2(80, 80));
-                    ImGui::PopStyleVar();
+                    if (x > 0) HvkGui::SameLine();
+                    HvkGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, alignment);
+                    HvkGui::Selectable(name, &selected[3 * y + x], ImGuiSelectableFlags_None, ImVec2(80, 80));
+                    HvkGui::PopStyleVar();
                 }
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -2546,13 +2546,13 @@ struct ExampleDualListBox
     }
     void Show()
     {
-        //if (ImGui::Checkbox("Sorted", &OptKeepSorted) && OptKeepSorted) { SortItems(0); SortItems(1); }
-        if (ImGui::BeginTable("split", 3, ImGuiTableFlags_None))
+        //if (HvkGui::Checkbox("Sorted", &OptKeepSorted) && OptKeepSorted) { SortItems(0); SortItems(1); }
+        if (HvkGui::BeginTable("split", 3, ImGuiTableFlags_None))
         {
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);    // Left side
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);      // Buttons
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);    // Right side
-            ImGui::TableNextRow();
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);    // Left side
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);      // Buttons
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);    // Right side
+            HvkGui::TableNextRow();
 
             int request_move_selected = -1;
             int request_move_all = -1;
@@ -2564,68 +2564,68 @@ struct ExampleDualListBox
                 ImVector<ImGuiID>& items = Items[side];
                 ImGuiSelectionBasicStorage& selection = Selections[side];
 
-                ImGui::TableSetColumnIndex((side == 0) ? 0 : 2);
-                ImGui::Text("%s (%d)", (side == 0) ? "Available" : "Basket", items.Size);
+                HvkGui::TableSetColumnIndex((side == 0) ? 0 : 2);
+                HvkGui::Text("%s (%d)", (side == 0) ? "Available" : "Basket", items.Size);
 
                 // Submit scrolling range to avoid glitches on moving/deletion
-                const float items_height = ImGui::GetTextLineHeightWithSpacing();
-                ImGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
+                const float items_height = HvkGui::GetTextLineHeightWithSpacing();
+                HvkGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
 
                 bool child_visible;
                 if (side == 0)
                 {
                     // Left child is resizable
-                    ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, ImGui::GetFrameHeightWithSpacing() * 4), ImVec2(FLT_MAX, FLT_MAX));
-                    child_visible = ImGui::BeginChild("0", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY);
-                    child_height_0 = ImGui::GetWindowSize().y;
+                    HvkGui::SetNextWindowSizeConstraints(ImVec2(0.0f, HvkGui::GetFrameHeightWithSpacing() * 4), ImVec2(FLT_MAX, FLT_MAX));
+                    child_visible = HvkGui::BeginChild("0", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY);
+                    child_height_0 = HvkGui::GetWindowSize().y;
                 }
                 else
                 {
                     // Right child use same height as left one
-                    child_visible = ImGui::BeginChild("1", ImVec2(-FLT_MIN, child_height_0), ImGuiChildFlags_FrameStyle);
+                    child_visible = HvkGui::BeginChild("1", ImVec2(-FLT_MIN, child_height_0), ImGuiChildFlags_FrameStyle);
                 }
                 if (child_visible)
                 {
                     ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_None;
-                    ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, items.Size);
+                    ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, items.Size);
                     ApplySelectionRequests(ms_io, side);
 
                     for (int item_n = 0; item_n < items.Size; item_n++)
                     {
                         ImGuiID item_id = items[item_n];
                         bool item_is_selected = selection.Contains(item_id);
-                        ImGui::SetNextItemSelectionUserData(item_n);
-                        ImGui::Selectable(ExampleNames[item_id], item_is_selected, ImGuiSelectableFlags_AllowDoubleClick);
-                        if (ImGui::IsItemFocused())
+                        HvkGui::SetNextItemSelectionUserData(item_n);
+                        HvkGui::Selectable(ExampleNames[item_id], item_is_selected, ImGuiSelectableFlags_AllowDoubleClick);
+                        if (HvkGui::IsItemFocused())
                         {
                             // FIXME-MULTISELECT: Dual List Box: Transfer focus
-                            if (ImGui::IsKeyPressed(ImGuiKey_Enter) || ImGui::IsKeyPressed(ImGuiKey_KeypadEnter))
+                            if (HvkGui::IsKeyPressed(ImGuiKey_Enter) || HvkGui::IsKeyPressed(ImGuiKey_KeypadEnter))
                                 request_move_selected = side;
-                            if (ImGui::IsMouseDoubleClicked(0)) // FIXME-MULTISELECT: Double-click on multi-selection?
+                            if (HvkGui::IsMouseDoubleClicked(0)) // FIXME-MULTISELECT: Double-click on multi-selection?
                                 request_move_selected = side;
                         }
                     }
 
-                    ms_io = ImGui::EndMultiSelect();
+                    ms_io = HvkGui::EndMultiSelect();
                     ApplySelectionRequests(ms_io, side);
                 }
-                ImGui::EndChild();
+                HvkGui::EndChild();
             }
 
             // Buttons columns
-            ImGui::TableSetColumnIndex(1);
-            ImGui::NewLine();
-            //ImVec2 button_sz = { ImGui::CalcTextSize(">>").x + ImGui::GetStyle().FramePadding.x * 2.0f, ImGui::GetFrameHeight() + padding.y * 2.0f };
-            ImVec2 button_sz = { ImGui::GetFrameHeight(), ImGui::GetFrameHeight() };
+            HvkGui::TableSetColumnIndex(1);
+            HvkGui::NewLine();
+            //ImVec2 button_sz = { HvkGui::CalcTextSize(">>").x + HvkGui::GetStyle().FramePadding.x * 2.0f, HvkGui::GetFrameHeight() + padding.y * 2.0f };
+            ImVec2 button_sz = { HvkGui::GetFrameHeight(), HvkGui::GetFrameHeight() };
 
             // (Using BeginDisabled()/EndDisabled() works but feels distracting given how it is currently visualized)
-            if (ImGui::Button(">>", button_sz))
+            if (HvkGui::Button(">>", button_sz))
                 request_move_all = 0;
-            if (ImGui::Button(">", button_sz))
+            if (HvkGui::Button(">", button_sz))
                 request_move_selected = 0;
-            if (ImGui::Button("<", button_sz))
+            if (HvkGui::Button("<", button_sz))
                 request_move_selected = 1;
-            if (ImGui::Button("<<", button_sz))
+            if (HvkGui::Button("<<", button_sz))
                 request_move_all = 1;
 
             // Process requests
@@ -2638,13 +2638,13 @@ struct ExampleDualListBox
             /*
             if (OptKeepSorted == false)
             {
-                ImGui::NewLine();
-                if (ImGui::ArrowButton("MoveUp", ImGuiDir_Up)) {}
-                if (ImGui::ArrowButton("MoveDown", ImGuiDir_Down)) {}
+                HvkGui::NewLine();
+                if (HvkGui::ArrowButton("MoveUp", ImGuiDir_Up)) {}
+                if (HvkGui::ArrowButton("MoveDown", ImGuiDir_Down)) {}
             }
             */
 
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
     }
 };
@@ -2652,33 +2652,33 @@ struct ExampleDualListBox
 static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_data)
 {
     IMGUI_DEMO_MARKER("Widgets/Selection State & Multi-Select");
-    if (ImGui::TreeNode("Selection State & Multi-Select"))
+    if (HvkGui::TreeNode("Selection State & Multi-Select"))
     {
         HelpMarker("Selections can be built using Selectable(), TreeNode() or other widgets. Selection state is owned by application code/data.");
 
-        ImGui::BulletText("Wiki page:");
-        ImGui::SameLine();
-        ImGui::TextLinkOpenURL("imgui/wiki/Multi-Select", "https://github.com/ocornut/imgui/wiki/Multi-Select");
+        HvkGui::BulletText("Wiki page:");
+        HvkGui::SameLine();
+        HvkGui::TextLinkOpenURL("imgui/wiki/Multi-Select", "https://github.com/ocornut/imgui/wiki/Multi-Select");
 
         // Without any fancy API: manage single-selection yourself.
         IMGUI_DEMO_MARKER("Widgets/Selection State/Single-Select");
-        if (ImGui::TreeNode("Single-Select"))
+        if (HvkGui::TreeNode("Single-Select"))
         {
             static int selected = -1;
             for (int n = 0; n < 5; n++)
             {
                 char buf[32];
                 sprintf(buf, "Object %d", n);
-                if (ImGui::Selectable(buf, selected == n))
+                if (HvkGui::Selectable(buf, selected == n))
                     selected = n;
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Demonstrate implementation a most-basic form of multi-selection manually
         // This doesn't support the Shift modifier which requires BeginMultiSelect()!
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (manual/simplified, without BeginMultiSelect)");
-        if (ImGui::TreeNode("Multi-Select (manual/simplified, without BeginMultiSelect)"))
+        if (HvkGui::TreeNode("Multi-Select (manual/simplified, without BeginMultiSelect)"))
         {
             HelpMarker("Hold Ctrl and Click to select multiple items.");
             static bool selection[5] = { false, false, false, false, false };
@@ -2686,41 +2686,41 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             {
                 char buf[32];
                 sprintf(buf, "Object %d", n);
-                if (ImGui::Selectable(buf, selection[n]))
+                if (HvkGui::Selectable(buf, selection[n]))
                 {
-                    if (!ImGui::GetIO().KeyCtrl) // Clear selection when Ctrl is not held
+                    if (!HvkGui::GetIO().KeyCtrl) // Clear selection when Ctrl is not held
                         memset(selection, 0, sizeof(selection));
                     selection[n] ^= 1; // Toggle current item
                 }
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Demonstrate handling proper multi-selection using the BeginMultiSelect/EndMultiSelect API.
         // Shift+Click w/ Ctrl and other standard features are supported.
         // We use the ImGuiSelectionBasicStorage helper which you may freely reimplement.
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select");
-        if (ImGui::TreeNode("Multi-Select"))
+        if (HvkGui::TreeNode("Multi-Select"))
         {
-            ImGui::Text("Supported features:");
-            ImGui::BulletText("Keyboard navigation (arrows, page up/down, home/end, space).");
-            ImGui::BulletText("Ctrl modifier to preserve and toggle selection.");
-            ImGui::BulletText("Shift modifier for range selection.");
-            ImGui::BulletText("Ctrl+A to select all.");
-            ImGui::BulletText("Escape to clear selection.");
-            ImGui::BulletText("Click and drag to box-select.");
-            ImGui::Text("Tip: Use 'Demo->Tools->Debug Log->Selection' to see selection requests as they happen.");
+            HvkGui::Text("Supported features:");
+            HvkGui::BulletText("Keyboard navigation (arrows, page up/down, home/end, space).");
+            HvkGui::BulletText("Ctrl modifier to preserve and toggle selection.");
+            HvkGui::BulletText("Shift modifier for range selection.");
+            HvkGui::BulletText("Ctrl+A to select all.");
+            HvkGui::BulletText("Escape to clear selection.");
+            HvkGui::BulletText("Click and drag to box-select.");
+            HvkGui::Text("Tip: Use 'Demo->Tools->Debug Log->Selection' to see selection requests as they happen.");
 
             // Use default selection.Adapter: Pass index to SetNextItemSelectionUserData(), store index in Selection
             const int ITEMS_COUNT = 50;
             static ImGuiSelectionBasicStorage selection;
-            ImGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
+            HvkGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
 
             // The BeginChild() has no purpose for selection logic, other that offering a scrolling region.
-            if (ImGui::BeginChild("##Basket", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
+            if (HvkGui::BeginChild("##Basket", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
             {
                 ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect1d;
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
                 selection.ApplyRequests(ms_io);
 
                 for (int n = 0; n < ITEMS_COUNT; n++)
@@ -2728,33 +2728,33 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                     char label[64];
                     sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
                     bool item_is_selected = selection.Contains((ImGuiID)n);
-                    ImGui::SetNextItemSelectionUserData(n);
-                    ImGui::Selectable(label, item_is_selected);
+                    HvkGui::SetNextItemSelectionUserData(n);
+                    HvkGui::Selectable(label, item_is_selected);
                 }
 
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection.ApplyRequests(ms_io);
             }
-            ImGui::EndChild();
-            ImGui::TreePop();
+            HvkGui::EndChild();
+            HvkGui::TreePop();
         }
 
         // Demonstrate using the clipper with BeginMultiSelect()/EndMultiSelect()
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (with clipper)");
-        if (ImGui::TreeNode("Multi-Select (with clipper)"))
+        if (HvkGui::TreeNode("Multi-Select (with clipper)"))
         {
             // Use default selection.Adapter: Pass index to SetNextItemSelectionUserData(), store index in Selection
             static ImGuiSelectionBasicStorage selection;
 
-            ImGui::Text("Added features:");
-            ImGui::BulletText("Using ImGuiListClipper.");
+            HvkGui::Text("Added features:");
+            HvkGui::BulletText("Using ImGuiListClipper.");
 
             const int ITEMS_COUNT = 10000;
-            ImGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
-            if (ImGui::BeginChild("##Basket", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
+            HvkGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
+            if (HvkGui::BeginChild("##Basket", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
             {
                 ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect1d;
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
                 selection.ApplyRequests(ms_io);
 
                 ImGuiListClipper clipper;
@@ -2768,16 +2768,16 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                         char label[64];
                         sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
                         bool item_is_selected = selection.Contains((ImGuiID)n);
-                        ImGui::SetNextItemSelectionUserData(n);
-                        ImGui::Selectable(label, item_is_selected);
+                        HvkGui::SetNextItemSelectionUserData(n);
+                        HvkGui::Selectable(label, item_is_selected);
                     }
                 }
 
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection.ApplyRequests(ms_io);
             }
-            ImGui::EndChild();
-            ImGui::TreePop();
+            HvkGui::EndChild();
+            HvkGui::TreePop();
         }
 
         // Demonstrate dynamic item list + deletion support using the BeginMultiSelect/EndMultiSelect API.
@@ -2788,7 +2788,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
         // - (4) Focus process
         // - (5) EndXXXX process
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (with deletion)");
-        if (ImGui::TreeNode("Multi-Select (with deletion)"))
+        if (HvkGui::TreeNode("Multi-Select (with deletion)"))
         {
             // Storing items data separately from selection data.
             // (you may decide to store selection data inside your item (aka intrusive storage) if you don't need multiple views over same items)
@@ -2798,30 +2798,30 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             selection.UserData = (void*)&items;
             selection.AdapterIndexToStorageId = [](ImGuiSelectionBasicStorage* self, int idx) { ImVector<ImGuiID>* p_items = (ImVector<ImGuiID>*)self->UserData; return (*p_items)[idx]; }; // Index -> ID
 
-            ImGui::Text("Added features:");
-            ImGui::BulletText("Dynamic list with Delete key support.");
-            ImGui::Text("Selection size: %d/%d", selection.Size, items.Size);
+            HvkGui::Text("Added features:");
+            HvkGui::BulletText("Dynamic list with Delete key support.");
+            HvkGui::Text("Selection size: %d/%d", selection.Size, items.Size);
 
             // Initialize default list with 50 items + button to add/remove items.
             static ImGuiID items_next_id = 0;
             if (items_next_id == 0)
                 for (ImGuiID n = 0; n < 50; n++)
                     items.push_back(items_next_id++);
-            if (ImGui::SmallButton("Add 20 items"))     { for (int n = 0; n < 20; n++) { items.push_back(items_next_id++); } }
-            ImGui::SameLine();
-            if (ImGui::SmallButton("Remove 20 items"))  { for (int n = IM_MIN(20, items.Size); n > 0; n--) { selection.SetItemSelected(items.back(), false); items.pop_back(); } }
+            if (HvkGui::SmallButton("Add 20 items"))     { for (int n = 0; n < 20; n++) { items.push_back(items_next_id++); } }
+            HvkGui::SameLine();
+            if (HvkGui::SmallButton("Remove 20 items"))  { for (int n = IM_MIN(20, items.Size); n > 0; n--) { selection.SetItemSelected(items.back(), false); items.pop_back(); } }
 
             // (1) Extra to support deletion: Submit scrolling range to avoid glitches on deletion
-            const float items_height = ImGui::GetTextLineHeightWithSpacing();
-            ImGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
+            const float items_height = HvkGui::GetTextLineHeightWithSpacing();
+            HvkGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
 
-            if (ImGui::BeginChild("##Basket", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
+            if (HvkGui::BeginChild("##Basket", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
             {
                 ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect1d;
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, items.Size);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, items.Size);
                 selection.ApplyRequests(ms_io);
 
-                const bool want_delete = ImGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (selection.Size > 0);
+                const bool want_delete = HvkGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (selection.Size > 0);
                 const int item_curr_idx_to_focus = want_delete ? selection.ApplyDeletionPreLoop(ms_io, items.Size) : -1;
 
                 for (int n = 0; n < items.Size; n++)
@@ -2831,25 +2831,25 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                     sprintf(label, "Object %05u: %s", item_id, ExampleNames[item_id % IM_ARRAYSIZE(ExampleNames)]);
 
                     bool item_is_selected = selection.Contains(item_id);
-                    ImGui::SetNextItemSelectionUserData(n);
-                    ImGui::Selectable(label, item_is_selected);
+                    HvkGui::SetNextItemSelectionUserData(n);
+                    HvkGui::Selectable(label, item_is_selected);
                     if (item_curr_idx_to_focus == n)
-                        ImGui::SetKeyboardFocusHere(-1);
+                        HvkGui::SetKeyboardFocusHere(-1);
                 }
 
                 // Apply multi-select requests
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection.ApplyRequests(ms_io);
                 if (want_delete)
                     selection.ApplyDeletionPostLoop(ms_io, items, item_curr_idx_to_focus);
             }
-            ImGui::EndChild();
-            ImGui::TreePop();
+            HvkGui::EndChild();
+            HvkGui::TreePop();
         }
 
         // Implement a Dual List Box (#6648)
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (dual list box)");
-        if (ImGui::TreeNode("Multi-Select (dual list box)"))
+        if (HvkGui::TreeNode("Multi-Select (dual list box)"))
         {
             // Init default state
             static ExampleDualListBox dlb;
@@ -2860,26 +2860,26 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             // Show
             dlb.Show();
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Demonstrate using the clipper with BeginMultiSelect()/EndMultiSelect()
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (in a table)");
-        if (ImGui::TreeNode("Multi-Select (in a table)"))
+        if (HvkGui::TreeNode("Multi-Select (in a table)"))
         {
             static ImGuiSelectionBasicStorage selection;
 
             const int ITEMS_COUNT = 10000;
-            ImGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
-            if (ImGui::BeginTable("##Basket", 2, ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter, ImVec2(0.0f, ImGui::GetFontSize() * 20)))
+            HvkGui::Text("Selection: %d/%d", selection.Size, ITEMS_COUNT);
+            if (HvkGui::BeginTable("##Basket", 2, ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter, ImVec2(0.0f, HvkGui::GetFontSize() * 20)))
             {
-                ImGui::TableSetupColumn("Object");
-                ImGui::TableSetupColumn("Action");
-                ImGui::TableSetupScrollFreeze(0, 1);
-                ImGui::TableHeadersRow();
+                HvkGui::TableSetupColumn("Object");
+                HvkGui::TableSetupColumn("Action");
+                HvkGui::TableSetupScrollFreeze(0, 1);
+                HvkGui::TableHeadersRow();
 
                 ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect1d;
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, ITEMS_COUNT);
                 selection.ApplyRequests(ms_io);
 
                 ImGuiListClipper clipper;
@@ -2890,45 +2890,45 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                 {
                     for (int n = clipper.DisplayStart; n < clipper.DisplayEnd; n++)
                     {
-                        ImGui::TableNextRow();
-                        ImGui::TableNextColumn();
-                        ImGui::PushID(n);
+                        HvkGui::TableNextRow();
+                        HvkGui::TableNextColumn();
+                        HvkGui::PushID(n);
                         char label[64];
                         sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
                         bool item_is_selected = selection.Contains((ImGuiID)n);
-                        ImGui::SetNextItemSelectionUserData(n);
-                        ImGui::Selectable(label, item_is_selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap);
-                        ImGui::TableNextColumn();
-                        ImGui::SmallButton("hello");
-                        ImGui::PopID();
+                        HvkGui::SetNextItemSelectionUserData(n);
+                        HvkGui::Selectable(label, item_is_selected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap);
+                        HvkGui::TableNextColumn();
+                        HvkGui::SmallButton("hello");
+                        HvkGui::PopID();
                     }
                 }
 
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection.ApplyRequests(ms_io);
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (checkboxes)");
-        if (ImGui::TreeNode("Multi-Select (checkboxes)"))
+        if (HvkGui::TreeNode("Multi-Select (checkboxes)"))
         {
-            ImGui::Text("In a list of checkboxes (not selectable):");
-            ImGui::BulletText("Using _NoAutoSelect + _NoAutoClear flags.");
-            ImGui::BulletText("Shift+Click to check multiple boxes.");
-            ImGui::BulletText("Shift+Keyboard to copy current value to other boxes.");
+            HvkGui::Text("In a list of checkboxes (not selectable):");
+            HvkGui::BulletText("Using _NoAutoSelect + _NoAutoClear flags.");
+            HvkGui::BulletText("Shift+Click to check multiple boxes.");
+            HvkGui::BulletText("Shift+Keyboard to copy current value to other boxes.");
 
             // If you have an array of checkboxes, you may want to use NoAutoSelect + NoAutoClear and the ImGuiSelectionExternalStorage helper.
             static bool items[20] = {};
             static ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_NoAutoSelect | ImGuiMultiSelectFlags_NoAutoClear | ImGuiMultiSelectFlags_ClearOnEscape;
-            ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoSelect", &flags, ImGuiMultiSelectFlags_NoAutoSelect);
-            ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClear", &flags, ImGuiMultiSelectFlags_NoAutoClear);
-            ImGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect2d", &flags, ImGuiMultiSelectFlags_BoxSelect2d); // Cannot use ImGuiMultiSelectFlags_BoxSelect1d as checkboxes are varying width.
+            HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoSelect", &flags, ImGuiMultiSelectFlags_NoAutoSelect);
+            HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClear", &flags, ImGuiMultiSelectFlags_NoAutoClear);
+            HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect2d", &flags, ImGuiMultiSelectFlags_BoxSelect2d); // Cannot use ImGuiMultiSelectFlags_BoxSelect1d as checkboxes are varying width.
 
-            if (ImGui::BeginChild("##Basket", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
+            if (HvkGui::BeginChild("##Basket", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
             {
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, -1, IM_ARRAYSIZE(items));
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, -1, IM_ARRAYSIZE(items));
                 ImGuiSelectionExternalStorage storage_wrapper;
                 storage_wrapper.UserData = (void*)items;
                 storage_wrapper.AdapterSetItemSelected = [](ImGuiSelectionExternalStorage* self, int n, bool selected) { bool* array = (bool*)self->UserData; array[n] = selected; };
@@ -2937,20 +2937,20 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                 {
                     char label[32];
                     sprintf(label, "Item %d", n);
-                    ImGui::SetNextItemSelectionUserData(n);
-                    ImGui::Checkbox(label, &items[n]);
+                    HvkGui::SetNextItemSelectionUserData(n);
+                    HvkGui::Checkbox(label, &items[n]);
                 }
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 storage_wrapper.ApplyRequests(ms_io);
             }
-            ImGui::EndChild();
+            HvkGui::EndChild();
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Demonstrate individual selection scopes in same window
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (multiple scopes)");
-        if (ImGui::TreeNode("Multi-Select (multiple scopes)"))
+        if (HvkGui::TreeNode("Multi-Select (multiple scopes)"))
         {
             // Use default select: Pass index to SetNextItemSelectionUserData(), store index in Selection
             const int SCOPES_COUNT = 3;
@@ -2959,46 +2959,46 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
 
             // Use ImGuiMultiSelectFlags_ScopeRect to not affect other selections in same window.
             static ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ScopeRect | ImGuiMultiSelectFlags_ClearOnEscape;// | ImGuiMultiSelectFlags_ClearOnClickVoid;
-            if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeWindow", &flags, ImGuiMultiSelectFlags_ScopeWindow) && (flags & ImGuiMultiSelectFlags_ScopeWindow))
+            if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeWindow", &flags, ImGuiMultiSelectFlags_ScopeWindow) && (flags & ImGuiMultiSelectFlags_ScopeWindow))
                 flags &= ~ImGuiMultiSelectFlags_ScopeRect;
-            if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeRect", &flags, ImGuiMultiSelectFlags_ScopeRect) && (flags & ImGuiMultiSelectFlags_ScopeRect))
+            if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeRect", &flags, ImGuiMultiSelectFlags_ScopeRect) && (flags & ImGuiMultiSelectFlags_ScopeRect))
                 flags &= ~ImGuiMultiSelectFlags_ScopeWindow;
-            ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnClickVoid", &flags, ImGuiMultiSelectFlags_ClearOnClickVoid);
-            ImGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect1d", &flags, ImGuiMultiSelectFlags_BoxSelect1d);
+            HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnClickVoid", &flags, ImGuiMultiSelectFlags_ClearOnClickVoid);
+            HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect1d", &flags, ImGuiMultiSelectFlags_BoxSelect1d);
 
             for (int selection_scope_n = 0; selection_scope_n < SCOPES_COUNT; selection_scope_n++)
             {
-                ImGui::PushID(selection_scope_n);
+                HvkGui::PushID(selection_scope_n);
                 ImGuiSelectionBasicStorage* selection = &selections_data[selection_scope_n];
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection->Size, ITEMS_COUNT);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection->Size, ITEMS_COUNT);
                 selection->ApplyRequests(ms_io);
 
-                ImGui::SeparatorText("Selection scope");
-                ImGui::Text("Selection size: %d/%d", selection->Size, ITEMS_COUNT);
+                HvkGui::SeparatorText("Selection scope");
+                HvkGui::Text("Selection size: %d/%d", selection->Size, ITEMS_COUNT);
 
                 for (int n = 0; n < ITEMS_COUNT; n++)
                 {
                     char label[64];
                     sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
                     bool item_is_selected = selection->Contains((ImGuiID)n);
-                    ImGui::SetNextItemSelectionUserData(n);
-                    ImGui::Selectable(label, item_is_selected);
+                    HvkGui::SetNextItemSelectionUserData(n);
+                    HvkGui::Selectable(label, item_is_selected);
                 }
 
                 // Apply multi-select requests
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection->ApplyRequests(ms_io);
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // See ShowExampleAppAssetsBrowser()
-        if (ImGui::TreeNode("Multi-Select (tiled assets browser)"))
+        if (HvkGui::TreeNode("Multi-Select (tiled assets browser)"))
         {
-            ImGui::Checkbox("Assets Browser", &demo_data->ShowAppAssetsBrowser);
-            ImGui::Text("(also access from 'Examples->Assets Browser' in menu)");
-            ImGui::TreePop();
+            HvkGui::Checkbox("Assets Browser", &demo_data->ShowAppAssetsBrowser);
+            HvkGui::Text("(also access from 'Examples->Assets Browser' in menu)");
+            HvkGui::TreePop();
         }
 
         // Demonstrate supporting multiple-selection in a tree.
@@ -3012,7 +3012,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
         //   filtering/search + clipping process will benefit from it. Having this will make this interpolation much easier.
         // - Consider this a prototype: we are working toward simplifying some of it.
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (trees)");
-        if (ImGui::TreeNode("Multi-Select (trees)"))
+        if (HvkGui::TreeNode("Multi-Select (trees)"))
         {
             HelpMarker(
                 "This is rather advanced and experimental. If you are getting started with multi-select, "
@@ -3032,15 +3032,15 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
 
                     // Using SetNextItemStorageID() to specify storage id, so we can easily peek into
                     // the storage holding open/close stage, using our TreeNodeGetOpen/TreeNodeSetOpen() functions.
-                    ImGui::SetNextItemSelectionUserData((ImGuiSelectionUserData)(intptr_t)node);
-                    ImGui::SetNextItemStorageID((ImGuiID)node->UID);
-                    if (ImGui::TreeNodeEx(node->Name, tree_node_flags))
+                    HvkGui::SetNextItemSelectionUserData((ImGuiSelectionUserData)(intptr_t)node);
+                    HvkGui::SetNextItemStorageID((ImGuiID)node->UID);
+                    if (HvkGui::TreeNodeEx(node->Name, tree_node_flags))
                     {
                         for (ExampleTreeNode* child : node->Childs)
                             DrawNode(child, selection);
-                        ImGui::TreePop();
+                        HvkGui::TreePop();
                     }
-                    else if (ImGui::IsItemToggledOpen())
+                    else if (HvkGui::IsItemToggledOpen())
                     {
                         TreeCloseAndUnselectChildNodes(node, selection);
                     }
@@ -3048,12 +3048,12 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
 
                 static bool TreeNodeGetOpen(ExampleTreeNode* node)
                 {
-                    return ImGui::GetStateStorage()->GetBool((ImGuiID)node->UID);
+                    return HvkGui::GetStateStorage()->GetBool((ImGuiID)node->UID);
                 }
 
                 static void TreeNodeSetOpen(ExampleTreeNode* node, bool open)
                 {
-                    ImGui::GetStateStorage()->SetBool((ImGuiID)node->UID, open);
+                    HvkGui::GetStateStorage()->SetBool((ImGuiID)node->UID, open);
                 }
 
                 // When closing a node: 1) close and unselect all child nodes, 2) select parent if any child was selected.
@@ -3139,22 +3139,22 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             static ImGuiSelectionBasicStorage selection;
             if (demo_data->DemoTree == NULL)
                 demo_data->DemoTree = ExampleTree_CreateDemoTree(); // Create tree once
-            ImGui::Text("Selection size: %d", selection.Size);
+            HvkGui::Text("Selection size: %d", selection.Size);
 
-            if (ImGui::BeginChild("##Tree", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
+            if (HvkGui::BeginChild("##Tree", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
             {
                 ExampleTreeNode* tree = demo_data->DemoTree;
                 ImGuiMultiSelectFlags ms_flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect2d;
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(ms_flags, selection.Size, -1);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(ms_flags, selection.Size, -1);
                 ExampleTreeFuncs::ApplySelectionRequests(ms_io, tree, &selection);
                 for (ExampleTreeNode* node : tree->Childs)
                     ExampleTreeFuncs::DrawNode(node, &selection);
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 ExampleTreeFuncs::ApplySelectionRequests(ms_io, tree, &selection);
             }
-            ImGui::EndChild();
+            HvkGui::EndChild();
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Advanced demonstration of BeginMultiSelect()
@@ -3164,8 +3164,8 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
         // - Showcase TreeNode variant (note that tree node don't expand in the demo: supporting expanding tree nodes + clipping a separate thing).
         // - Showcase using inside a table.
         IMGUI_DEMO_MARKER("Widgets/Selection State/Multi-Select (advanced)");
-        //ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::TreeNode("Multi-Select (advanced)"))
+        //HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (HvkGui::TreeNode("Multi-Select (advanced)"))
         {
             // Options
             enum WidgetType { WidgetType_Selectable, WidgetType_TreeNode };
@@ -3177,40 +3177,40 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             static ImGuiMultiSelectFlags flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect1d;
             static WidgetType widget_type = WidgetType_Selectable;
 
-            if (ImGui::TreeNode("Options"))
+            if (HvkGui::TreeNode("Options"))
             {
-                if (ImGui::RadioButton("Selectables", widget_type == WidgetType_Selectable)) { widget_type = WidgetType_Selectable; }
-                ImGui::SameLine();
-                if (ImGui::RadioButton("Tree nodes", widget_type == WidgetType_TreeNode)) { widget_type = WidgetType_TreeNode; }
-                ImGui::SameLine();
+                if (HvkGui::RadioButton("Selectables", widget_type == WidgetType_Selectable)) { widget_type = WidgetType_Selectable; }
+                HvkGui::SameLine();
+                if (HvkGui::RadioButton("Tree nodes", widget_type == WidgetType_TreeNode)) { widget_type = WidgetType_TreeNode; }
+                HvkGui::SameLine();
                 HelpMarker("TreeNode() is technically supported but... using this correctly is more complicated (you need some sort of linear/random access to your tree, which is suited to advanced trees setups already implementing filters and clipper. We will work toward simplifying and demoing this.\n\nFor now the tree demo is actually a little bit meaningless because it is an empty tree with only root nodes.");
-                ImGui::Checkbox("Enable clipper", &use_clipper);
-                ImGui::Checkbox("Enable deletion", &use_deletion);
-                ImGui::Checkbox("Enable drag & drop", &use_drag_drop);
-                ImGui::Checkbox("Show in a table", &show_in_table);
-                ImGui::Checkbox("Show color button", &show_color_button);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_SingleSelect", &flags, ImGuiMultiSelectFlags_SingleSelect);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoSelectAll", &flags, ImGuiMultiSelectFlags_NoSelectAll);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoRangeSelect", &flags, ImGuiMultiSelectFlags_NoRangeSelect);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoSelect", &flags, ImGuiMultiSelectFlags_NoAutoSelect);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClear", &flags, ImGuiMultiSelectFlags_NoAutoClear);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClearOnReselect", &flags, ImGuiMultiSelectFlags_NoAutoClearOnReselect);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_NoSelectOnRightClick", &flags, ImGuiMultiSelectFlags_NoSelectOnRightClick);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect1d", &flags, ImGuiMultiSelectFlags_BoxSelect1d);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect2d", &flags, ImGuiMultiSelectFlags_BoxSelect2d);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelectNoScroll", &flags, ImGuiMultiSelectFlags_BoxSelectNoScroll);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnEscape", &flags, ImGuiMultiSelectFlags_ClearOnEscape);
-                ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnClickVoid", &flags, ImGuiMultiSelectFlags_ClearOnClickVoid);
-                if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeWindow", &flags, ImGuiMultiSelectFlags_ScopeWindow) && (flags & ImGuiMultiSelectFlags_ScopeWindow))
+                HvkGui::Checkbox("Enable clipper", &use_clipper);
+                HvkGui::Checkbox("Enable deletion", &use_deletion);
+                HvkGui::Checkbox("Enable drag & drop", &use_drag_drop);
+                HvkGui::Checkbox("Show in a table", &show_in_table);
+                HvkGui::Checkbox("Show color button", &show_color_button);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_SingleSelect", &flags, ImGuiMultiSelectFlags_SingleSelect);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoSelectAll", &flags, ImGuiMultiSelectFlags_NoSelectAll);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoRangeSelect", &flags, ImGuiMultiSelectFlags_NoRangeSelect);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoSelect", &flags, ImGuiMultiSelectFlags_NoAutoSelect);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClear", &flags, ImGuiMultiSelectFlags_NoAutoClear);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoAutoClearOnReselect", &flags, ImGuiMultiSelectFlags_NoAutoClearOnReselect);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_NoSelectOnRightClick", &flags, ImGuiMultiSelectFlags_NoSelectOnRightClick);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect1d", &flags, ImGuiMultiSelectFlags_BoxSelect1d);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelect2d", &flags, ImGuiMultiSelectFlags_BoxSelect2d);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_BoxSelectNoScroll", &flags, ImGuiMultiSelectFlags_BoxSelectNoScroll);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnEscape", &flags, ImGuiMultiSelectFlags_ClearOnEscape);
+                HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ClearOnClickVoid", &flags, ImGuiMultiSelectFlags_ClearOnClickVoid);
+                if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeWindow", &flags, ImGuiMultiSelectFlags_ScopeWindow) && (flags & ImGuiMultiSelectFlags_ScopeWindow))
                     flags &= ~ImGuiMultiSelectFlags_ScopeRect;
-                if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeRect", &flags, ImGuiMultiSelectFlags_ScopeRect) && (flags & ImGuiMultiSelectFlags_ScopeRect))
+                if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_ScopeRect", &flags, ImGuiMultiSelectFlags_ScopeRect) && (flags & ImGuiMultiSelectFlags_ScopeRect))
                     flags &= ~ImGuiMultiSelectFlags_ScopeWindow;
-                if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_SelectOnClick", &flags, ImGuiMultiSelectFlags_SelectOnClick) && (flags & ImGuiMultiSelectFlags_SelectOnClick))
+                if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_SelectOnClick", &flags, ImGuiMultiSelectFlags_SelectOnClick) && (flags & ImGuiMultiSelectFlags_SelectOnClick))
                     flags &= ~ImGuiMultiSelectFlags_SelectOnClickRelease;
-                if (ImGui::CheckboxFlags("ImGuiMultiSelectFlags_SelectOnClickRelease", &flags, ImGuiMultiSelectFlags_SelectOnClickRelease) && (flags & ImGuiMultiSelectFlags_SelectOnClickRelease))
+                if (HvkGui::CheckboxFlags("ImGuiMultiSelectFlags_SelectOnClickRelease", &flags, ImGuiMultiSelectFlags_SelectOnClickRelease) && (flags & ImGuiMultiSelectFlags_SelectOnClickRelease))
                     flags &= ~ImGuiMultiSelectFlags_SelectOnClick;
-                ImGui::SameLine(); HelpMarker("Allow dragging an unselected item without altering selection.");
-                ImGui::TreePop();
+                HvkGui::SameLine(); HelpMarker("Allow dragging an unselected item without altering selection.");
+                HvkGui::TreePop();
             }
 
             // Initialize default list with 1000 items.
@@ -3221,31 +3221,31 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
             static ExampleSelectionWithDeletion selection;
             static bool request_deletion_from_menu = false; // Queue deletion triggered from context menu
 
-            ImGui::Text("Selection size: %d/%d", selection.Size, items.Size);
+            HvkGui::Text("Selection size: %d/%d", selection.Size, items.Size);
 
-            const float items_height = (widget_type == WidgetType_TreeNode) ? ImGui::GetTextLineHeight() : ImGui::GetTextLineHeightWithSpacing();
-            ImGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
-            if (ImGui::BeginChild("##Basket", ImVec2(-FLT_MIN, ImGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
+            const float items_height = (widget_type == WidgetType_TreeNode) ? HvkGui::GetTextLineHeight() : HvkGui::GetTextLineHeightWithSpacing();
+            HvkGui::SetNextWindowContentSize(ImVec2(0.0f, items.Size * items_height));
+            if (HvkGui::BeginChild("##Basket", ImVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY))
             {
-                ImVec2 color_button_sz(ImGui::GetFontSize(), ImGui::GetFontSize());
+                ImVec2 color_button_sz(HvkGui::GetFontSize(), HvkGui::GetFontSize());
                 if (widget_type == WidgetType_TreeNode)
-                    ImGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, 0.0f);
+                    HvkGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, 0.0f);
 
-                ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(flags, selection.Size, items.Size);
+                ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, selection.Size, items.Size);
                 selection.ApplyRequests(ms_io);
 
-                const bool want_delete = (ImGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (selection.Size > 0)) || request_deletion_from_menu;
+                const bool want_delete = (HvkGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (selection.Size > 0)) || request_deletion_from_menu;
                 const int item_curr_idx_to_focus = want_delete ? selection.ApplyDeletionPreLoop(ms_io, items.Size) : -1;
                 request_deletion_from_menu = false;
 
                 if (show_in_table)
                 {
                     if (widget_type == WidgetType_TreeNode)
-                        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0.0f, 0.0f));
-                    ImGui::BeginTable("##Split", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_NoPadOuterX);
-                    ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 0.70f);
-                    ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 0.30f);
-                    //ImGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, 0.0f);
+                        HvkGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0.0f, 0.0f));
+                    HvkGui::BeginTable("##Split", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_NoPadOuterX);
+                    HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 0.70f);
+                    HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 0.30f);
+                    //HvkGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, 0.0f);
                 }
 
                 ImGuiListClipper clipper;
@@ -3265,7 +3265,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                     for (int n = item_begin; n < item_end; n++)
                     {
                         if (show_in_table)
-                            ImGui::TableNextColumn();
+                            HvkGui::TableNextColumn();
 
                         const int item_id = items[n];
                         const char* item_category = ExampleNames[item_id % IM_ARRAYSIZE(ExampleNames)];
@@ -3276,43 +3276,43 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                         // aka not depend on their index in the list. Here we use our persistent item_id
                         // instead of index to build a unique ID that will persist.
                         // (If we used PushID(index) instead, focus wouldn't be restored correctly after deletion).
-                        ImGui::PushID(item_id);
+                        HvkGui::PushID(item_id);
 
                         // Emit a color button, to test that Shift+LeftArrow landing on an item that is not part
                         // of the selection scope doesn't erroneously alter our selection.
                         if (show_color_button)
                         {
                             ImU32 dummy_col = (ImU32)((unsigned int)n * 0xC250B74B) | IM_COL32_A_MASK;
-                            ImGui::ColorButton("##", ImColor(dummy_col), ImGuiColorEditFlags_NoTooltip, color_button_sz);
-                            ImGui::SameLine();
+                            HvkGui::ColorButton("##", ImColor(dummy_col), ImGuiColorEditFlags_NoTooltip, color_button_sz);
+                            HvkGui::SameLine();
                         }
 
                         // Submit item
                         bool item_is_selected = selection.Contains((ImGuiID)n);
                         bool item_is_open = false;
-                        ImGui::SetNextItemSelectionUserData(n);
+                        HvkGui::SetNextItemSelectionUserData(n);
                         if (widget_type == WidgetType_Selectable)
                         {
-                            ImGui::Selectable(label, item_is_selected, ImGuiSelectableFlags_None);
+                            HvkGui::Selectable(label, item_is_selected, ImGuiSelectableFlags_None);
                         }
                         else if (widget_type == WidgetType_TreeNode)
                         {
                             ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
                             if (item_is_selected)
                                 tree_node_flags |= ImGuiTreeNodeFlags_Selected;
-                            item_is_open = ImGui::TreeNodeEx(label, tree_node_flags);
+                            item_is_open = HvkGui::TreeNodeEx(label, tree_node_flags);
                         }
 
                         // Focus (for after deletion)
                         if (item_curr_idx_to_focus == n)
-                            ImGui::SetKeyboardFocusHere(-1);
+                            HvkGui::SetKeyboardFocusHere(-1);
 
                         // Drag and Drop
-                        if (use_drag_drop && ImGui::BeginDragDropSource())
+                        if (use_drag_drop && HvkGui::BeginDragDropSource())
                         {
                             // Create payload with full selection OR single unselected item.
                             // (the later is only possible when using ImGuiMultiSelectFlags_SelectOnClickRelease)
-                            if (ImGui::GetDragDropPayload() == NULL)
+                            if (HvkGui::GetDragDropPayload() == NULL)
                             {
                                 ImVector<int> payload_items;
                                 void* it = NULL;
@@ -3322,47 +3322,47 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
                                 else
                                     while (selection.GetNextSelectedItem(&it, &id))
                                         payload_items.push_back((int)id);
-                                ImGui::SetDragDropPayload("MULTISELECT_DEMO_ITEMS", payload_items.Data, (size_t)payload_items.size_in_bytes());
+                                HvkGui::SetDragDropPayload("MULTISELECT_DEMO_ITEMS", payload_items.Data, (size_t)payload_items.size_in_bytes());
                             }
 
                             // Display payload content in tooltip
-                            const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+                            const ImGuiPayload* payload = HvkGui::GetDragDropPayload();
                             const int* payload_items = (int*)payload->Data;
                             const int payload_count = (int)payload->DataSize / (int)sizeof(int);
                             if (payload_count == 1)
-                                ImGui::Text("Object %05d: %s", payload_items[0], ExampleNames[payload_items[0] % IM_ARRAYSIZE(ExampleNames)]);
+                                HvkGui::Text("Object %05d: %s", payload_items[0], ExampleNames[payload_items[0] % IM_ARRAYSIZE(ExampleNames)]);
                             else
-                                ImGui::Text("Dragging %d objects", payload_count);
+                                HvkGui::Text("Dragging %d objects", payload_count);
 
-                            ImGui::EndDragDropSource();
+                            HvkGui::EndDragDropSource();
                         }
 
                         if (widget_type == WidgetType_TreeNode && item_is_open)
-                            ImGui::TreePop();
+                            HvkGui::TreePop();
 
                         // Right-click: context menu
-                        if (ImGui::BeginPopupContextItem())
+                        if (HvkGui::BeginPopupContextItem())
                         {
-                            ImGui::BeginDisabled(!use_deletion || selection.Size == 0);
+                            HvkGui::BeginDisabled(!use_deletion || selection.Size == 0);
                             sprintf(label, "Delete %d item(s)###DeleteSelected", selection.Size);
-                            if (ImGui::Selectable(label))
+                            if (HvkGui::Selectable(label))
                                 request_deletion_from_menu = true;
-                            ImGui::EndDisabled();
-                            ImGui::Selectable("Close");
-                            ImGui::EndPopup();
+                            HvkGui::EndDisabled();
+                            HvkGui::Selectable("Close");
+                            HvkGui::EndPopup();
                         }
 
                         // Demo content within a table
                         if (show_in_table)
                         {
-                            ImGui::TableNextColumn();
-                            ImGui::SetNextItemWidth(-FLT_MIN);
-                            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-                            ImGui::InputText("###NoLabel", (char*)(void*)item_category, strlen(item_category), ImGuiInputTextFlags_ReadOnly);
-                            ImGui::PopStyleVar();
+                            HvkGui::TableNextColumn();
+                            HvkGui::SetNextItemWidth(-FLT_MIN);
+                            HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+                            HvkGui::InputText("###NoLabel", (char*)(void*)item_category, strlen(item_category), ImGuiInputTextFlags_ReadOnly);
+                            HvkGui::PopStyleVar();
                         }
 
-                        ImGui::PopID();
+                        HvkGui::PopID();
                     }
                     if (!use_clipper)
                         break;
@@ -3370,24 +3370,24 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(ImGuiDemoWindowData* demo_d
 
                 if (show_in_table)
                 {
-                    ImGui::EndTable();
+                    HvkGui::EndTable();
                     if (widget_type == WidgetType_TreeNode)
-                        ImGui::PopStyleVar();
+                        HvkGui::PopStyleVar();
                 }
 
                 // Apply multi-select requests
-                ms_io = ImGui::EndMultiSelect();
+                ms_io = HvkGui::EndMultiSelect();
                 selection.ApplyRequests(ms_io);
                 if (want_delete)
                     selection.ApplyDeletionPostLoop(ms_io, items, item_curr_idx_to_focus);
 
                 if (widget_type == WidgetType_TreeNode)
-                    ImGui::PopStyleVar();
+                    HvkGui::PopStyleVar();
             }
-            ImGui::EndChild();
-            ImGui::TreePop();
+            HvkGui::EndChild();
+            HvkGui::TreePop();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -3399,89 +3399,89 @@ static void EditTabBarFittingPolicyFlags(ImGuiTabBarFlags* p_flags)
 {
     if ((*p_flags & ImGuiTabBarFlags_FittingPolicyMask_) == 0)
         *p_flags |= ImGuiTabBarFlags_FittingPolicyDefault_;
-    if (ImGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyMixed", p_flags, ImGuiTabBarFlags_FittingPolicyMixed))
+    if (HvkGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyMixed", p_flags, ImGuiTabBarFlags_FittingPolicyMixed))
         *p_flags &= ~(ImGuiTabBarFlags_FittingPolicyMask_ ^ ImGuiTabBarFlags_FittingPolicyMixed);
-    if (ImGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyShrink", p_flags, ImGuiTabBarFlags_FittingPolicyShrink))
+    if (HvkGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyShrink", p_flags, ImGuiTabBarFlags_FittingPolicyShrink))
         *p_flags &= ~(ImGuiTabBarFlags_FittingPolicyMask_ ^ ImGuiTabBarFlags_FittingPolicyShrink);
-    if (ImGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyScroll", p_flags, ImGuiTabBarFlags_FittingPolicyScroll))
+    if (HvkGui::CheckboxFlags("ImGuiTabBarFlags_FittingPolicyScroll", p_flags, ImGuiTabBarFlags_FittingPolicyScroll))
         *p_flags &= ~(ImGuiTabBarFlags_FittingPolicyMask_ ^ ImGuiTabBarFlags_FittingPolicyScroll);
 }
 
 static void DemoWindowWidgetsTabs()
 {
     IMGUI_DEMO_MARKER("Widgets/Tabs");
-    if (ImGui::TreeNode("Tabs"))
+    if (HvkGui::TreeNode("Tabs"))
     {
         IMGUI_DEMO_MARKER("Widgets/Tabs/Basic");
-        if (ImGui::TreeNode("Basic"))
+        if (HvkGui::TreeNode("Basic"))
         {
             ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-            if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+            if (HvkGui::BeginTabBar("MyTabBar", tab_bar_flags))
             {
-                if (ImGui::BeginTabItem("Avocado"))
+                if (HvkGui::BeginTabItem("Avocado"))
                 {
-                    ImGui::Text("This is the Avocado tab!\nblah blah blah blah blah");
-                    ImGui::EndTabItem();
+                    HvkGui::Text("This is the Avocado tab!\nblah blah blah blah blah");
+                    HvkGui::EndTabItem();
                 }
-                if (ImGui::BeginTabItem("Broccoli"))
+                if (HvkGui::BeginTabItem("Broccoli"))
                 {
-                    ImGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
-                    ImGui::EndTabItem();
+                    HvkGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
+                    HvkGui::EndTabItem();
                 }
-                if (ImGui::BeginTabItem("Cucumber"))
+                if (HvkGui::BeginTabItem("Cucumber"))
                 {
-                    ImGui::Text("This is the Cucumber tab!\nblah blah blah blah blah");
-                    ImGui::EndTabItem();
+                    HvkGui::Text("This is the Cucumber tab!\nblah blah blah blah blah");
+                    HvkGui::EndTabItem();
                 }
-                ImGui::EndTabBar();
+                HvkGui::EndTabBar();
             }
-            ImGui::Separator();
-            ImGui::TreePop();
+            HvkGui::Separator();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Tabs/Advanced & Close Button");
-        if (ImGui::TreeNode("Advanced & Close Button"))
+        if (HvkGui::TreeNode("Advanced & Close Button"))
         {
             // Expose a couple of the available flags. In most cases you may just call BeginTabBar() with no flags (0).
             static ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_Reorderable;
-            ImGui::CheckboxFlags("ImGuiTabBarFlags_Reorderable", &tab_bar_flags, ImGuiTabBarFlags_Reorderable);
-            ImGui::CheckboxFlags("ImGuiTabBarFlags_AutoSelectNewTabs", &tab_bar_flags, ImGuiTabBarFlags_AutoSelectNewTabs);
-            ImGui::CheckboxFlags("ImGuiTabBarFlags_TabListPopupButton", &tab_bar_flags, ImGuiTabBarFlags_TabListPopupButton);
-            ImGui::CheckboxFlags("ImGuiTabBarFlags_NoCloseWithMiddleMouseButton", &tab_bar_flags, ImGuiTabBarFlags_NoCloseWithMiddleMouseButton);
-            ImGui::CheckboxFlags("ImGuiTabBarFlags_DrawSelectedOverline", &tab_bar_flags, ImGuiTabBarFlags_DrawSelectedOverline);
+            HvkGui::CheckboxFlags("ImGuiTabBarFlags_Reorderable", &tab_bar_flags, ImGuiTabBarFlags_Reorderable);
+            HvkGui::CheckboxFlags("ImGuiTabBarFlags_AutoSelectNewTabs", &tab_bar_flags, ImGuiTabBarFlags_AutoSelectNewTabs);
+            HvkGui::CheckboxFlags("ImGuiTabBarFlags_TabListPopupButton", &tab_bar_flags, ImGuiTabBarFlags_TabListPopupButton);
+            HvkGui::CheckboxFlags("ImGuiTabBarFlags_NoCloseWithMiddleMouseButton", &tab_bar_flags, ImGuiTabBarFlags_NoCloseWithMiddleMouseButton);
+            HvkGui::CheckboxFlags("ImGuiTabBarFlags_DrawSelectedOverline", &tab_bar_flags, ImGuiTabBarFlags_DrawSelectedOverline);
             EditTabBarFittingPolicyFlags(&tab_bar_flags);
 
             // Tab Bar
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("Opened:");
+            HvkGui::AlignTextToFramePadding();
+            HvkGui::Text("Opened:");
             const char* names[4] = { "Artichoke", "Beetroot", "Celery", "Daikon" };
             static bool opened[4] = { true, true, true, true }; // Persistent user state
             for (int n = 0; n < IM_ARRAYSIZE(opened); n++)
             {
-                ImGui::SameLine();
-                ImGui::Checkbox(names[n], &opened[n]);
+                HvkGui::SameLine();
+                HvkGui::Checkbox(names[n], &opened[n]);
             }
 
             // Passing a bool* to BeginTabItem() is similar to passing one to Begin():
             // the underlying bool will be set to false when the tab is closed.
-            if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+            if (HvkGui::BeginTabBar("MyTabBar", tab_bar_flags))
             {
                 for (int n = 0; n < IM_ARRAYSIZE(opened); n++)
-                    if (opened[n] && ImGui::BeginTabItem(names[n], &opened[n], ImGuiTabItemFlags_None))
+                    if (opened[n] && HvkGui::BeginTabItem(names[n], &opened[n], ImGuiTabItemFlags_None))
                     {
-                        ImGui::Text("This is the %s tab!", names[n]);
+                        HvkGui::Text("This is the %s tab!", names[n]);
                         if (n & 1)
-                            ImGui::Text("I am an odd tab.");
-                        ImGui::EndTabItem();
+                            HvkGui::Text("I am an odd tab.");
+                        HvkGui::EndTabItem();
                     }
-                ImGui::EndTabBar();
+                HvkGui::EndTabBar();
             }
-            ImGui::Separator();
-            ImGui::TreePop();
+            HvkGui::Separator();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Tabs/TabItemButton & Leading-Trailing flags");
-        if (ImGui::TreeNode("TabItemButton & Leading/Trailing flags"))
+        if (HvkGui::TreeNode("TabItemButton & Leading/Trailing flags"))
         {
             static ImVector<int> active_tabs;
             static int next_tab_id = 0;
@@ -3494,30 +3494,30 @@ static void DemoWindowWidgetsTabs()
             // but they tend to make more sense together)
             static bool show_leading_button = true;
             static bool show_trailing_button = true;
-            ImGui::Checkbox("Show Leading TabItemButton()", &show_leading_button);
-            ImGui::Checkbox("Show Trailing TabItemButton()", &show_trailing_button);
+            HvkGui::Checkbox("Show Leading TabItemButton()", &show_leading_button);
+            HvkGui::Checkbox("Show Trailing TabItemButton()", &show_trailing_button);
 
             // Expose some other flags which are useful to showcase how they interact with Leading/Trailing tabs
             static ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyShrink;
             EditTabBarFittingPolicyFlags(&tab_bar_flags);
 
-            if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+            if (HvkGui::BeginTabBar("MyTabBar", tab_bar_flags))
             {
                 // Demo a Leading TabItemButton(): click the "?" button to open a menu
                 if (show_leading_button)
-                    if (ImGui::TabItemButton("?", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip))
-                        ImGui::OpenPopup("MyHelpMenu");
-                if (ImGui::BeginPopup("MyHelpMenu"))
+                    if (HvkGui::TabItemButton("?", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip))
+                        HvkGui::OpenPopup("MyHelpMenu");
+                if (HvkGui::BeginPopup("MyHelpMenu"))
                 {
-                    ImGui::Selectable("Hello!");
-                    ImGui::EndPopup();
+                    HvkGui::Selectable("Hello!");
+                    HvkGui::EndPopup();
                 }
 
                 // Demo Trailing Tabs: click the "+" button to add a new tab.
                 // (In your app you may want to use a font icon instead of the "+")
                 // We submit it before the regular tabs, but thanks to the ImGuiTabItemFlags_Trailing flag it will always appear at the end.
                 if (show_trailing_button)
-                    if (ImGui::TabItemButton("+", ImGuiTabItemFlags_Trailing | ImGuiTabItemFlags_NoTooltip))
+                    if (HvkGui::TabItemButton("+", ImGuiTabItemFlags_Trailing | ImGuiTabItemFlags_NoTooltip))
                         active_tabs.push_back(next_tab_id++); // Add new tab
 
                 // Submit our regular tabs
@@ -3526,10 +3526,10 @@ static void DemoWindowWidgetsTabs()
                     bool open = true;
                     char name[16];
                     snprintf(name, IM_ARRAYSIZE(name), "%04d", active_tabs[n]);
-                    if (ImGui::BeginTabItem(name, &open, ImGuiTabItemFlags_None))
+                    if (HvkGui::BeginTabItem(name, &open, ImGuiTabItemFlags_None))
                     {
-                        ImGui::Text("This is the %s tab!", name);
-                        ImGui::EndTabItem();
+                        HvkGui::Text("This is the %s tab!", name);
+                        HvkGui::EndTabItem();
                     }
 
                     if (!open)
@@ -3538,12 +3538,12 @@ static void DemoWindowWidgetsTabs()
                         n++;
                 }
 
-                ImGui::EndTabBar();
+                HvkGui::EndTabBar();
             }
-            ImGui::Separator();
-            ImGui::TreePop();
+            HvkGui::Separator();
+            HvkGui::TreePop();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -3554,92 +3554,92 @@ static void DemoWindowWidgetsTabs()
 static void DemoWindowWidgetsText()
 {
     IMGUI_DEMO_MARKER("Widgets/Text");
-    if (ImGui::TreeNode("Text"))
+    if (HvkGui::TreeNode("Text"))
     {
         IMGUI_DEMO_MARKER("Widgets/Text/Colored Text");
-        if (ImGui::TreeNode("Colorful Text"))
+        if (HvkGui::TreeNode("Colorful Text"))
         {
             // Using shortcut. You can use PushStyleColor()/PopStyleColor() for more flexibility.
-            ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
-            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
-            ImGui::TextDisabled("Disabled");
-            ImGui::SameLine(); HelpMarker("The TextDisabled color is stored in ImGuiStyle.");
-            ImGui::TreePop();
+            HvkGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
+            HvkGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
+            HvkGui::TextDisabled("Disabled");
+            HvkGui::SameLine(); HelpMarker("The TextDisabled color is stored in ImGuiStyle.");
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text/Font Size");
-        if (ImGui::TreeNode("Font Size"))
+        if (HvkGui::TreeNode("Font Size"))
         {
-            ImGuiStyle& style = ImGui::GetStyle();
+            ImGuiStyle& style = HvkGui::GetStyle();
             const float global_scale = style.FontScaleMain * style.FontScaleDpi;
-            ImGui::Text("style.FontScaleMain = %0.2f", style.FontScaleMain);
-            ImGui::Text("style.FontScaleDpi = %0.2f", style.FontScaleDpi);
-            ImGui::Text("global_scale = ~%0.2f", global_scale); // This is not technically accurate as internal scales may apply, but conceptually let's pretend it is.
-            ImGui::Text("FontSize = %0.2f", ImGui::GetFontSize());
+            HvkGui::Text("style.FontScaleMain = %0.2f", style.FontScaleMain);
+            HvkGui::Text("style.FontScaleDpi = %0.2f", style.FontScaleDpi);
+            HvkGui::Text("global_scale = ~%0.2f", global_scale); // This is not technically accurate as internal scales may apply, but conceptually let's pretend it is.
+            HvkGui::Text("FontSize = %0.2f", HvkGui::GetFontSize());
 
-            ImGui::SeparatorText("");
+            HvkGui::SeparatorText("");
             static float custom_size = 16.0f;
-            ImGui::SliderFloat("custom_size", &custom_size, 10.0f, 100.0f, "%.0f");
-            ImGui::Text("ImGui::PushFont(nullptr, custom_size);");
-            ImGui::PushFont(NULL, custom_size);
-            ImGui::Text("FontSize = %.2f (== %.2f * global_scale)", ImGui::GetFontSize(), custom_size);
-            ImGui::PopFont();
+            HvkGui::SliderFloat("custom_size", &custom_size, 10.0f, 100.0f, "%.0f");
+            HvkGui::Text("HvkGui::PushFont(nullptr, custom_size);");
+            HvkGui::PushFont(NULL, custom_size);
+            HvkGui::Text("FontSize = %.2f (== %.2f * global_scale)", HvkGui::GetFontSize(), custom_size);
+            HvkGui::PopFont();
 
-            ImGui::SeparatorText("");
+            HvkGui::SeparatorText("");
             static float custom_scale = 1.0f;
-            ImGui::SliderFloat("custom_scale", &custom_scale, 0.5f, 4.0f, "%.2f");
-            ImGui::Text("ImGui::PushFont(nullptr, style.FontSizeBase * custom_scale);");
-            ImGui::PushFont(NULL, style.FontSizeBase * custom_scale);
-            ImGui::Text("FontSize = %.2f (== style.FontSizeBase * %.2f * global_scale)", ImGui::GetFontSize(), custom_scale);
-            ImGui::PopFont();
+            HvkGui::SliderFloat("custom_scale", &custom_scale, 0.5f, 4.0f, "%.2f");
+            HvkGui::Text("HvkGui::PushFont(nullptr, style.FontSizeBase * custom_scale);");
+            HvkGui::PushFont(NULL, style.FontSizeBase * custom_scale);
+            HvkGui::Text("FontSize = %.2f (== style.FontSizeBase * %.2f * global_scale)", HvkGui::GetFontSize(), custom_scale);
+            HvkGui::PopFont();
 
-            ImGui::SeparatorText("");
+            HvkGui::SeparatorText("");
             for (float scaling = 0.5f; scaling <= 4.0f; scaling += 0.5f)
             {
-                ImGui::PushFont(NULL, style.FontSizeBase * scaling);
-                ImGui::Text("FontSize = %.2f (== style.FontSizeBase * %.2f * global_scale)", ImGui::GetFontSize(), scaling);
-                ImGui::PopFont();
+                HvkGui::PushFont(NULL, style.FontSizeBase * scaling);
+                HvkGui::Text("FontSize = %.2f (== style.FontSizeBase * %.2f * global_scale)", HvkGui::GetFontSize(), scaling);
+                HvkGui::PopFont();
             }
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text/Word Wrapping");
-        if (ImGui::TreeNode("Word Wrapping"))
+        if (HvkGui::TreeNode("Word Wrapping"))
         {
             // Using shortcut. You can use PushTextWrapPos()/PopTextWrapPos() for more flexibility.
-            ImGui::TextWrapped(
+            HvkGui::TextWrapped(
                 "This text should automatically wrap on the edge of the window. The current implementation "
                 "for text wrapping follows simple rules suitable for English and possibly other languages.");
-            ImGui::Spacing();
+            HvkGui::Spacing();
 
             static float wrap_width = 200.0f;
-            ImGui::SliderFloat("Wrap width", &wrap_width, -20, 600, "%.0f");
+            HvkGui::SliderFloat("Wrap width", &wrap_width, -20, 600, "%.0f");
 
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
             for (int n = 0; n < 2; n++)
             {
-                ImGui::Text("Test paragraph %d:", n);
-                ImVec2 pos = ImGui::GetCursorScreenPos();
+                HvkGui::Text("Test paragraph %d:", n);
+                ImVec2 pos = HvkGui::GetCursorScreenPos();
                 ImVec2 marker_min = ImVec2(pos.x + wrap_width, pos.y);
-                ImVec2 marker_max = ImVec2(pos.x + wrap_width + 10, pos.y + ImGui::GetTextLineHeight());
-                ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
+                ImVec2 marker_max = ImVec2(pos.x + wrap_width + 10, pos.y + HvkGui::GetTextLineHeight());
+                HvkGui::PushTextWrapPos(HvkGui::GetCursorPos().x + wrap_width);
                 if (n == 0)
-                    ImGui::Text("The lazy dog is a good dog. This paragraph should fit within %.0f pixels. Testing a 1 character word. The quick brown fox jumps over the lazy dog.", wrap_width);
+                    HvkGui::Text("The lazy dog is a good dog. This paragraph should fit within %.0f pixels. Testing a 1 character word. The quick brown fox jumps over the lazy dog.", wrap_width);
                 else
-                    ImGui::Text("aaaaaaaa bbbbbbbb, c cccccccc,dddddddd. d eeeeeeee   ffffffff. gggggggg!hhhhhhhh");
+                    HvkGui::Text("aaaaaaaa bbbbbbbb, c cccccccc,dddddddd. d eeeeeeee   ffffffff. gggggggg!hhhhhhhh");
 
                 // Draw actual text bounding box, following by marker of our expected limit (should not overlap!)
-                draw_list->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
+                draw_list->AddRect(HvkGui::GetItemRectMin(), HvkGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
                 draw_list->AddRectFilled(marker_min, marker_max, IM_COL32(255, 0, 255, 255));
-                ImGui::PopTextWrapPos();
+                HvkGui::PopTextWrapPos();
             }
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text/UTF-8 Text");
-        if (ImGui::TreeNode("UTF-8 Text"))
+        if (HvkGui::TreeNode("UTF-8 Text"))
         {
             // UTF-8 test with Japanese characters
             // (Needs a suitable font? Try "Google Noto" or "Arial Unicode". See docs/FONTS.md for details.)
@@ -3651,18 +3651,18 @@ static void DemoWindowWidgetsText()
             //   Don't do this in your application! Please use u8"text in any language" in your application!
             // Note that characters values are preserved even by InputText() if the font cannot be displayed,
             // so you can safely copy & paste garbled characters into another application.
-            ImGui::TextWrapped(
+            HvkGui::TextWrapped(
                 "CJK text will only appear if the font was loaded with the appropriate CJK character ranges. "
                 "Call io.Fonts->AddFontFromFileTTF() manually to load extra character ranges. "
                 "Read docs/FONTS.md for details.");
-            ImGui::Text("Hiragana: \xe3\x81\x8b\xe3\x81\x8d\xe3\x81\x8f\xe3\x81\x91\xe3\x81\x93 (kakikukeko)");
-            ImGui::Text("Kanjis: \xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e (nihongo)");
+            HvkGui::Text("Hiragana: \xe3\x81\x8b\xe3\x81\x8d\xe3\x81\x8f\xe3\x81\x91\xe3\x81\x93 (kakikukeko)");
+            HvkGui::Text("Kanjis: \xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e (nihongo)");
             static char buf[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
             //static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
-            ImGui::InputText("UTF-8 input", buf, IM_ARRAYSIZE(buf));
-            ImGui::TreePop();
+            HvkGui::InputText("UTF-8 input", buf, IM_ARRAYSIZE(buf));
+            HvkGui::TreePop();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -3673,13 +3673,13 @@ static void DemoWindowWidgetsText()
 static void DemoWindowWidgetsTextFilter()
 {
     IMGUI_DEMO_MARKER("Widgets/Text Filter");
-    if (ImGui::TreeNode("Text Filter"))
+    if (HvkGui::TreeNode("Text Filter"))
     {
         // Helper class to easy setup a text filter.
         // You may want to implement a more feature-full filtering scheme in your own application.
         HelpMarker("Not a widget per-se, but ImGuiTextFilter is a helper to perform simple filtering on text strings.");
         static ImGuiTextFilter filter;
-        ImGui::Text("Filter usage:\n"
+        HvkGui::Text("Filter usage:\n"
             "  \"\"         display all lines\n"
             "  \"xxx\"      display lines containing \"xxx\"\n"
             "  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"
@@ -3688,8 +3688,8 @@ static void DemoWindowWidgetsTextFilter()
         const char* lines[] = { "aaa1.c", "bbb1.c", "ccc1.c", "aaa2.cpp", "bbb2.cpp", "ccc2.cpp", "abc.h", "hello, world" };
         for (int i = 0; i < IM_ARRAYSIZE(lines); i++)
             if (filter.PassFilter(lines[i]))
-                ImGui::BulletText("%s", lines[i]);
-        ImGui::TreePop();
+                HvkGui::BulletText("%s", lines[i]);
+        HvkGui::TreePop();
     }
 }
 
@@ -3702,10 +3702,10 @@ static void DemoWindowWidgetsTextInput()
     // To wire InputText() with std::string or any other custom string type,
     // see the "Text Input > Resize Callback" section of this demo, and the misc/cpp/imgui_stdlib.h file.
     IMGUI_DEMO_MARKER("Widgets/Text Input");
-    if (ImGui::TreeNode("Text Input"))
+    if (HvkGui::TreeNode("Text Input"))
     {
         IMGUI_DEMO_MARKER("Widgets/Text Input/Multi-line Text Input");
-        if (ImGui::TreeNode("Multi-line Text Input"))
+        if (HvkGui::TreeNode("Multi-line Text Input"))
         {
             // WE ARE USING A FIXED-SIZE BUFFER FOR SIMPLICITY HERE.
             // If you want to use InputText() with std::string or any custom dynamic string type:
@@ -3725,18 +3725,18 @@ static void DemoWindowWidgetsTextInput()
 
             static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
             HelpMarker("You can use the ImGuiInputTextFlags_CallbackResize facility if you need to wire InputTextMultiline() to a dynamic string type. See misc/cpp/imgui_stdlib.h for an example. (This is not demonstrated in imgui_demo.cpp because we don't want to include <string> in here)");
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_WordWrap", &flags, ImGuiInputTextFlags_WordWrap);
-            ImGui::SameLine(); HelpMarker("Feature is currently in Beta. Please read comments in imgui.h");
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_AllowTabInput", &flags, ImGuiInputTextFlags_AllowTabInput);
-            ImGui::SameLine(); HelpMarker("When _AllowTabInput is set, passing through the widget with Tabbing doesn't automatically activate it, in order to also cycling through subsequent widgets.");
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_CtrlEnterForNewLine", &flags, ImGuiInputTextFlags_CtrlEnterForNewLine);
-            ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags);
-            ImGui::TreePop();
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_WordWrap", &flags, ImGuiInputTextFlags_WordWrap);
+            HvkGui::SameLine(); HelpMarker("Feature is currently in Beta. Please read comments in imgui.h");
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_AllowTabInput", &flags, ImGuiInputTextFlags_AllowTabInput);
+            HvkGui::SameLine(); HelpMarker("When _AllowTabInput is set, passing through the widget with Tabbing doesn't automatically activate it, in order to also cycling through subsequent widgets.");
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_CtrlEnterForNewLine", &flags, ImGuiInputTextFlags_CtrlEnterForNewLine);
+            HvkGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-FLT_MIN, HvkGui::GetTextLineHeight() * 16), flags);
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Filtered Text Input");
-        if (ImGui::TreeNode("Filtered Text Input"))
+        if (HvkGui::TreeNode("Filtered Text Input"))
         {
             struct TextFilters
             {
@@ -3757,29 +3757,29 @@ static void DemoWindowWidgetsTextInput()
                 }
             };
 
-            static char buf1[32] = ""; ImGui::InputText("default", buf1, IM_ARRAYSIZE(buf1));
-            static char buf2[32] = ""; ImGui::InputText("decimal", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_CharsDecimal);
-            static char buf3[32] = ""; ImGui::InputText("hexadecimal", buf3, IM_ARRAYSIZE(buf3), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
-            static char buf4[32] = ""; ImGui::InputText("uppercase", buf4, IM_ARRAYSIZE(buf4), ImGuiInputTextFlags_CharsUppercase);
-            static char buf5[32] = ""; ImGui::InputText("no blank", buf5, IM_ARRAYSIZE(buf5), ImGuiInputTextFlags_CharsNoBlank);
-            static char buf6[32] = ""; ImGui::InputText("casing swap", buf6, IM_ARRAYSIZE(buf6), ImGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterCasingSwap); // Use CharFilter callback to replace characters.
-            static char buf7[32] = ""; ImGui::InputText("\"imgui\"", buf7, IM_ARRAYSIZE(buf7), ImGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterImGuiLetters); // Use CharFilter callback to disable some characters.
-            ImGui::TreePop();
+            static char buf1[32] = ""; HvkGui::InputText("default", buf1, IM_ARRAYSIZE(buf1));
+            static char buf2[32] = ""; HvkGui::InputText("decimal", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_CharsDecimal);
+            static char buf3[32] = ""; HvkGui::InputText("hexadecimal", buf3, IM_ARRAYSIZE(buf3), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
+            static char buf4[32] = ""; HvkGui::InputText("uppercase", buf4, IM_ARRAYSIZE(buf4), ImGuiInputTextFlags_CharsUppercase);
+            static char buf5[32] = ""; HvkGui::InputText("no blank", buf5, IM_ARRAYSIZE(buf5), ImGuiInputTextFlags_CharsNoBlank);
+            static char buf6[32] = ""; HvkGui::InputText("casing swap", buf6, IM_ARRAYSIZE(buf6), ImGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterCasingSwap); // Use CharFilter callback to replace characters.
+            static char buf7[32] = ""; HvkGui::InputText("\"imgui\"", buf7, IM_ARRAYSIZE(buf7), ImGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterImGuiLetters); // Use CharFilter callback to disable some characters.
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Password input");
-        if (ImGui::TreeNode("Password Input"))
+        if (HvkGui::TreeNode("Password Input"))
         {
             static char password[64] = "password123";
-            ImGui::InputText("password", password, IM_ARRAYSIZE(password), ImGuiInputTextFlags_Password);
-            ImGui::SameLine(); HelpMarker("Display all characters as '*'.\nDisable clipboard cut and copy.\nDisable logging.\n");
-            ImGui::InputTextWithHint("password (w/ hint)", "<password>", password, IM_ARRAYSIZE(password), ImGuiInputTextFlags_Password);
-            ImGui::InputText("password (clear)", password, IM_ARRAYSIZE(password));
-            ImGui::TreePop();
+            HvkGui::InputText("password", password, IM_ARRAYSIZE(password), ImGuiInputTextFlags_Password);
+            HvkGui::SameLine(); HelpMarker("Display all characters as '*'.\nDisable clipboard cut and copy.\nDisable logging.\n");
+            HvkGui::InputTextWithHint("password (w/ hint)", "<password>", password, IM_ARRAYSIZE(password), ImGuiInputTextFlags_Password);
+            HvkGui::InputText("password (clear)", password, IM_ARRAYSIZE(password));
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Completion, History, Edit Callbacks");
-        if (ImGui::TreeNode("Completion, History, Edit Callbacks"))
+        if (HvkGui::TreeNode("Completion, History, Edit Callbacks"))
         {
             struct Funcs
             {
@@ -3819,32 +3819,32 @@ static void DemoWindowWidgetsTextInput()
                 }
             };
             static char buf1[64];
-            ImGui::InputText("Completion", buf1, IM_ARRAYSIZE(buf1), ImGuiInputTextFlags_CallbackCompletion, Funcs::MyCallback);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::InputText("Completion", buf1, IM_ARRAYSIZE(buf1), ImGuiInputTextFlags_CallbackCompletion, Funcs::MyCallback);
+            HvkGui::SameLine(); HelpMarker(
                 "Here we append \"..\" each time Tab is pressed. "
                 "See 'Examples>Console' for a more meaningful demonstration of using this callback.");
 
             static char buf2[64];
-            ImGui::InputText("History", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_CallbackHistory, Funcs::MyCallback);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::InputText("History", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_CallbackHistory, Funcs::MyCallback);
+            HvkGui::SameLine(); HelpMarker(
                 "Here we replace and select text each time Up/Down are pressed. "
                 "See 'Examples>Console' for a more meaningful demonstration of using this callback.");
 
             static char buf3[64];
             static int edit_count = 0;
-            ImGui::InputText("Edit", buf3, IM_ARRAYSIZE(buf3), ImGuiInputTextFlags_CallbackEdit, Funcs::MyCallback, (void*)&edit_count);
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::InputText("Edit", buf3, IM_ARRAYSIZE(buf3), ImGuiInputTextFlags_CallbackEdit, Funcs::MyCallback, (void*)&edit_count);
+            HvkGui::SameLine(); HelpMarker(
                 "Here we toggle the casing of the first character on every edit + count edits.");
-            ImGui::SameLine(); ImGui::Text("(%d)", edit_count);
+            HvkGui::SameLine(); HvkGui::Text("(%d)", edit_count);
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Resize Callback");
-        if (ImGui::TreeNode("Resize Callback"))
+        if (HvkGui::TreeNode("Resize Callback"))
         {
             // To wire InputText() with std::string or any other custom string type,
-            // you can use the ImGuiInputTextFlags_CallbackResize flag + create a custom ImGui::InputText() wrapper
+            // you can use the ImGuiInputTextFlags_CallbackResize flag + create a custom HvkGui::InputText() wrapper
             // using your preferred type. See misc/cpp/imgui_stdlib.h for an implementation of this using std::string.
             HelpMarker(
                 "Using ImGuiInputTextFlags_CallbackResize to wire your custom string type to InputText().\n\n"
@@ -3863,12 +3863,12 @@ static void DemoWindowWidgetsTextInput()
                     return 0;
                 }
 
-                // Note: Because ImGui:: is a namespace you would typically add your own function into the namespace.
-                // For example, you code may declare a function 'ImGui::InputText(const char* label, MyString* my_str)'
+                // Note: Because HvkGui:: is a namespace you would typically add your own function into the namespace.
+                // For example, you code may declare a function 'HvkGui::InputText(const char* label, MyString* my_str)'
                 static bool MyInputTextMultiline(const char* label, ImVector<char>* my_str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0)
                 {
                     IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
-                    return ImGui::InputTextMultiline(label, my_str->begin(), (size_t)my_str->size(), size, flags | ImGuiInputTextFlags_CallbackResize, Funcs::MyResizeCallback, (void*)my_str);
+                    return HvkGui::InputTextMultiline(label, my_str->begin(), (size_t)my_str->size(), size, flags | ImGuiInputTextFlags_CallbackResize, Funcs::MyResizeCallback, (void*)my_str);
                 }
             };
 
@@ -3876,39 +3876,39 @@ static void DemoWindowWidgetsTextInput()
             // Note that because we need to store a terminating zero character, our size/capacity are 1 more
             // than usually reported by a typical string class.
             static ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_WordWrap", &flags, ImGuiInputTextFlags_WordWrap);
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_WordWrap", &flags, ImGuiInputTextFlags_WordWrap);
 
             static ImVector<char> my_str;
             if (my_str.empty())
                 my_str.push_back(0);
-            Funcs::MyInputTextMultiline("##MyStr", &my_str, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), flags);
-            ImGui::Text("Data: %p\nSize: %d\nCapacity: %d", (void*)my_str.begin(), my_str.size(), my_str.capacity());
-            ImGui::TreePop();
+            Funcs::MyInputTextMultiline("##MyStr", &my_str, ImVec2(-FLT_MIN, HvkGui::GetTextLineHeight() * 16), flags);
+            HvkGui::Text("Data: %p\nSize: %d\nCapacity: %d", (void*)my_str.begin(), my_str.size(), my_str.capacity());
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Eliding, Alignment");
-        if (ImGui::TreeNode("Eliding, Alignment"))
+        if (HvkGui::TreeNode("Eliding, Alignment"))
         {
             static char buf1[128] = "/path/to/some/folder/with/long/filename.cpp";
             static ImGuiInputTextFlags flags = ImGuiInputTextFlags_ElideLeft;
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_ElideLeft", &flags, ImGuiInputTextFlags_ElideLeft);
-            ImGui::InputText("Path", buf1, IM_ARRAYSIZE(buf1), flags);
-            ImGui::TreePop();
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_ElideLeft", &flags, ImGuiInputTextFlags_ElideLeft);
+            HvkGui::InputText("Path", buf1, IM_ARRAYSIZE(buf1), flags);
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Text Input/Miscellaneous");
-        if (ImGui::TreeNode("Miscellaneous"))
+        if (HvkGui::TreeNode("Miscellaneous"))
         {
             static char buf1[16];
             static ImGuiInputTextFlags flags = ImGuiInputTextFlags_EscapeClearsAll;
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_EscapeClearsAll", &flags, ImGuiInputTextFlags_EscapeClearsAll);
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
-            ImGui::CheckboxFlags("ImGuiInputTextFlags_NoUndoRedo", &flags, ImGuiInputTextFlags_NoUndoRedo);
-            ImGui::InputText("Hello", buf1, IM_ARRAYSIZE(buf1), flags);
-            ImGui::TreePop();
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_EscapeClearsAll", &flags, ImGuiInputTextFlags_EscapeClearsAll);
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", &flags, ImGuiInputTextFlags_ReadOnly);
+            HvkGui::CheckboxFlags("ImGuiInputTextFlags_NoUndoRedo", &flags, ImGuiInputTextFlags_NoUndoRedo);
+            HvkGui::InputText("Hello", buf1, IM_ARRAYSIZE(buf1), flags);
+            HvkGui::TreePop();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
 }
@@ -3920,10 +3920,10 @@ static void DemoWindowWidgetsTextInput()
 static void DemoWindowWidgetsTooltips()
 {
     IMGUI_DEMO_MARKER("Widgets/Tooltips");
-    if (ImGui::TreeNode("Tooltips"))
+    if (HvkGui::TreeNode("Tooltips"))
     {
         // Tooltips are windows following the mouse. They do not take focus away.
-        ImGui::SeparatorText("General");
+        HvkGui::SeparatorText("General");
 
         // Typical use cases:
         // - Short-form (text only):      SetItemTooltip("Hello");
@@ -3938,38 +3938,38 @@ static void DemoWindowWidgetsTooltips()
 
         ImVec2 sz = ImVec2(-FLT_MIN, 0.0f);
 
-        ImGui::Button("Basic", sz);
-        ImGui::SetItemTooltip("I am a tooltip");
+        HvkGui::Button("Basic", sz);
+        HvkGui::SetItemTooltip("I am a tooltip");
 
-        ImGui::Button("Fancy", sz);
-        if (ImGui::BeginItemTooltip())
+        HvkGui::Button("Fancy", sz);
+        if (HvkGui::BeginItemTooltip())
         {
-            ImGui::Text("I am a fancy tooltip");
+            HvkGui::Text("I am a fancy tooltip");
             static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-            ImGui::PlotLines("Curve", arr, IM_ARRAYSIZE(arr));
-            ImGui::Text("Sin(time) = %f", sinf((float)ImGui::GetTime()));
-            ImGui::EndTooltip();
+            HvkGui::PlotLines("Curve", arr, IM_ARRAYSIZE(arr));
+            HvkGui::Text("Sin(time) = %f", sinf((float)HvkGui::GetTime()));
+            HvkGui::EndTooltip();
         }
 
-        ImGui::SeparatorText("Always On");
+        HvkGui::SeparatorText("Always On");
 
         // Showcase NOT relying on a IsItemHovered() to emit a tooltip.
         // Here the tooltip is always emitted when 'always_on == true'.
         static int always_on = 0;
-        ImGui::RadioButton("Off", &always_on, 0);
-        ImGui::SameLine();
-        ImGui::RadioButton("Always On (Simple)", &always_on, 1);
-        ImGui::SameLine();
-        ImGui::RadioButton("Always On (Advanced)", &always_on, 2);
+        HvkGui::RadioButton("Off", &always_on, 0);
+        HvkGui::SameLine();
+        HvkGui::RadioButton("Always On (Simple)", &always_on, 1);
+        HvkGui::SameLine();
+        HvkGui::RadioButton("Always On (Advanced)", &always_on, 2);
         if (always_on == 1)
-            ImGui::SetTooltip("I am following you around.");
-        else if (always_on == 2 && ImGui::BeginTooltip())
+            HvkGui::SetTooltip("I am following you around.");
+        else if (always_on == 2 && HvkGui::BeginTooltip())
         {
-            ImGui::ProgressBar(sinf((float)ImGui::GetTime()) * 0.5f + 0.5f, ImVec2(ImGui::GetFontSize() * 25, 0.0f));
-            ImGui::EndTooltip();
+            HvkGui::ProgressBar(sinf((float)HvkGui::GetTime()) * 0.5f + 0.5f, ImVec2(HvkGui::GetFontSize() * 25, 0.0f));
+            HvkGui::EndTooltip();
         }
 
-        ImGui::SeparatorText("Custom");
+        HvkGui::SeparatorText("Custom");
 
         HelpMarker(
             "Passing ImGuiHoveredFlags_ForTooltip to IsItemHovered() is the preferred way to standardize "
@@ -3980,35 +3980,35 @@ static void DemoWindowWidgetsTooltips()
         // Passing ImGuiHoveredFlags_ForTooltip to IsItemHovered() will pull ImGuiHoveredFlags flags values from
         // 'style.HoverFlagsForTooltipMouse' or 'style.HoverFlagsForTooltipNav' depending on whether mouse or keyboard/gamepad is being used.
         // With default settings, ImGuiHoveredFlags_ForTooltip is equivalent to ImGuiHoveredFlags_DelayShort + ImGuiHoveredFlags_Stationary.
-        ImGui::Button("Manual", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
-            ImGui::SetTooltip("I am a manually emitted tooltip.");
+        HvkGui::Button("Manual", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+            HvkGui::SetTooltip("I am a manually emitted tooltip.");
 
-        ImGui::Button("DelayNone", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
-            ImGui::SetTooltip("I am a tooltip with no delay.");
+        HvkGui::Button("DelayNone", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_DelayNone))
+            HvkGui::SetTooltip("I am a tooltip with no delay.");
 
-        ImGui::Button("DelayShort", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort | ImGuiHoveredFlags_NoSharedDelay))
-            ImGui::SetTooltip("I am a tooltip with a short delay (%0.2f sec).", ImGui::GetStyle().HoverDelayShort);
+        HvkGui::Button("DelayShort", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_DelayShort | ImGuiHoveredFlags_NoSharedDelay))
+            HvkGui::SetTooltip("I am a tooltip with a short delay (%0.2f sec).", HvkGui::GetStyle().HoverDelayShort);
 
-        ImGui::Button("DelayLong", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal | ImGuiHoveredFlags_NoSharedDelay))
-            ImGui::SetTooltip("I am a tooltip with a long delay (%0.2f sec).", ImGui::GetStyle().HoverDelayNormal);
+        HvkGui::Button("DelayLong", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal | ImGuiHoveredFlags_NoSharedDelay))
+            HvkGui::SetTooltip("I am a tooltip with a long delay (%0.2f sec).", HvkGui::GetStyle().HoverDelayNormal);
 
-        ImGui::Button("Stationary", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_Stationary))
-            ImGui::SetTooltip("I am a tooltip requiring mouse to be stationary before activating.");
+        HvkGui::Button("Stationary", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_Stationary))
+            HvkGui::SetTooltip("I am a tooltip requiring mouse to be stationary before activating.");
 
         // Using ImGuiHoveredFlags_ForTooltip will pull flags from 'style.HoverFlagsForTooltipMouse' or 'style.HoverFlagsForTooltipNav',
         // which default value include the ImGuiHoveredFlags_AllowWhenDisabled flag.
-        ImGui::BeginDisabled();
-        ImGui::Button("Disabled item", sz);
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
-            ImGui::SetTooltip("I am a a tooltip for a disabled item.");
-        ImGui::EndDisabled();
+        HvkGui::BeginDisabled();
+        HvkGui::Button("Disabled item", sz);
+        if (HvkGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+            HvkGui::SetTooltip("I am a a tooltip for a disabled item.");
+        HvkGui::EndDisabled();
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -4019,66 +4019,66 @@ static void DemoWindowWidgetsTooltips()
 static void DemoWindowWidgetsTreeNodes()
 {
     IMGUI_DEMO_MARKER("Widgets/Tree Nodes");
-    if (ImGui::TreeNode("Tree Nodes"))
+    if (HvkGui::TreeNode("Tree Nodes"))
     {
         // See see "Examples -> Property Editor" (ShowExampleAppPropertyEditor() function) for a fancier, data-driven tree.
         IMGUI_DEMO_MARKER("Widgets/Tree Nodes/Basic trees");
-        if (ImGui::TreeNode("Basic trees"))
+        if (HvkGui::TreeNode("Basic trees"))
         {
             for (int i = 0; i < 5; i++)
             {
                 // Use SetNextItemOpen() so set the default state of a node to be open. We could
                 // also use TreeNodeEx() with the ImGuiTreeNodeFlags_DefaultOpen flag to achieve the same thing!
                 if (i == 0)
-                    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+                    HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
 
                 // Here we use PushID() to generate a unique base ID, and then the "" used as TreeNode id won't conflict.
                 // An alternative to using 'PushID() + TreeNode("", ...)' to generate a unique ID is to use 'TreeNode((void*)(intptr_t)i, ...)',
                 // aka generate a dummy pointer-sized value to be hashed. The demo below uses that technique. Both are fine.
-                ImGui::PushID(i);
-                if (ImGui::TreeNode("", "Child %d", i))
+                HvkGui::PushID(i);
+                if (HvkGui::TreeNode("", "Child %d", i))
                 {
-                    ImGui::Text("blah blah");
-                    ImGui::SameLine();
-                    if (ImGui::SmallButton("button")) {}
-                    ImGui::TreePop();
+                    HvkGui::Text("blah blah");
+                    HvkGui::SameLine();
+                    if (HvkGui::SmallButton("button")) {}
+                    HvkGui::TreePop();
                 }
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Tree Nodes/Hierarchy lines");
-        if (ImGui::TreeNode("Hierarchy lines"))
+        if (HvkGui::TreeNode("Hierarchy lines"))
         {
             static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DrawLinesFull | ImGuiTreeNodeFlags_DefaultOpen;
             HelpMarker("Default option for DrawLinesXXX is stored in style.TreeLinesFlags");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesNone", &base_flags, ImGuiTreeNodeFlags_DrawLinesNone);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesFull", &base_flags, ImGuiTreeNodeFlags_DrawLinesFull);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesToNodes", &base_flags, ImGuiTreeNodeFlags_DrawLinesToNodes);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesNone", &base_flags, ImGuiTreeNodeFlags_DrawLinesNone);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesFull", &base_flags, ImGuiTreeNodeFlags_DrawLinesFull);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesToNodes", &base_flags, ImGuiTreeNodeFlags_DrawLinesToNodes);
 
-            if (ImGui::TreeNodeEx("Parent", base_flags))
+            if (HvkGui::TreeNodeEx("Parent", base_flags))
             {
-                if (ImGui::TreeNodeEx("Child 1", base_flags))
+                if (HvkGui::TreeNodeEx("Child 1", base_flags))
                 {
-                    ImGui::Button("Button for Child 1");
-                    ImGui::TreePop();
+                    HvkGui::Button("Button for Child 1");
+                    HvkGui::TreePop();
                 }
-                if (ImGui::TreeNodeEx("Child 2", base_flags))
+                if (HvkGui::TreeNodeEx("Child 2", base_flags))
                 {
-                    ImGui::Button("Button for Child 2");
-                    ImGui::TreePop();
+                    HvkGui::Button("Button for Child 2");
+                    HvkGui::TreePop();
                 }
-                ImGui::Text("Remaining contents");
-                ImGui::Text("Remaining contents");
-                ImGui::TreePop();
+                HvkGui::Text("Remaining contents");
+                HvkGui::Text("Remaining contents");
+                HvkGui::TreePop();
             }
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Widgets/Tree Nodes/Advanced, with Selectable nodes");
-        if (ImGui::TreeNode("Advanced, with Selectable nodes"))
+        if (HvkGui::TreeNode("Advanced, with Selectable nodes"))
         {
             HelpMarker(
                 "This is a more typical looking tree with selectable nodes.\n"
@@ -4086,27 +4086,27 @@ static void DemoWindowWidgetsTreeNodes()
             static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
             static bool align_label_with_current_x_position = false;
             static bool test_drag_and_drop = false;
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_OpenOnArrow", &base_flags, ImGuiTreeNodeFlags_OpenOnArrow);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_OpenOnDoubleClick", &base_flags, ImGuiTreeNodeFlags_OpenOnDoubleClick);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAvailWidth", &base_flags, ImGuiTreeNodeFlags_SpanAvailWidth); ImGui::SameLine(); HelpMarker("Extend hit area to all available width instead of allowing more items to be laid out after the node.");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanFullWidth", &base_flags, ImGuiTreeNodeFlags_SpanFullWidth);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanLabelWidth", &base_flags, ImGuiTreeNodeFlags_SpanLabelWidth); ImGui::SameLine(); HelpMarker("Reduce hit area to the text label and a bit of margin.");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAllColumns", &base_flags, ImGuiTreeNodeFlags_SpanAllColumns); ImGui::SameLine(); HelpMarker("For use in Tables only.");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_AllowOverlap", &base_flags, ImGuiTreeNodeFlags_AllowOverlap);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_Framed", &base_flags, ImGuiTreeNodeFlags_Framed); ImGui::SameLine(); HelpMarker("Draw frame with background (e.g. for CollapsingHeader)");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_FramePadding", &base_flags, ImGuiTreeNodeFlags_FramePadding);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_NavLeftJumpsToParent", &base_flags, ImGuiTreeNodeFlags_NavLeftJumpsToParent);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_OpenOnArrow", &base_flags, ImGuiTreeNodeFlags_OpenOnArrow);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_OpenOnDoubleClick", &base_flags, ImGuiTreeNodeFlags_OpenOnDoubleClick);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAvailWidth", &base_flags, ImGuiTreeNodeFlags_SpanAvailWidth); HvkGui::SameLine(); HelpMarker("Extend hit area to all available width instead of allowing more items to be laid out after the node.");
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanFullWidth", &base_flags, ImGuiTreeNodeFlags_SpanFullWidth);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanLabelWidth", &base_flags, ImGuiTreeNodeFlags_SpanLabelWidth); HvkGui::SameLine(); HelpMarker("Reduce hit area to the text label and a bit of margin.");
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAllColumns", &base_flags, ImGuiTreeNodeFlags_SpanAllColumns); HvkGui::SameLine(); HelpMarker("For use in Tables only.");
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_AllowOverlap", &base_flags, ImGuiTreeNodeFlags_AllowOverlap);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_Framed", &base_flags, ImGuiTreeNodeFlags_Framed); HvkGui::SameLine(); HelpMarker("Draw frame with background (e.g. for CollapsingHeader)");
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_FramePadding", &base_flags, ImGuiTreeNodeFlags_FramePadding);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_NavLeftJumpsToParent", &base_flags, ImGuiTreeNodeFlags_NavLeftJumpsToParent);
 
             HelpMarker("Default option for DrawLinesXXX is stored in style.TreeLinesFlags");
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesNone", &base_flags, ImGuiTreeNodeFlags_DrawLinesNone);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesFull", &base_flags, ImGuiTreeNodeFlags_DrawLinesFull);
-            ImGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesToNodes", &base_flags, ImGuiTreeNodeFlags_DrawLinesToNodes);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesNone", &base_flags, ImGuiTreeNodeFlags_DrawLinesNone);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesFull", &base_flags, ImGuiTreeNodeFlags_DrawLinesFull);
+            HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_DrawLinesToNodes", &base_flags, ImGuiTreeNodeFlags_DrawLinesToNodes);
 
-            ImGui::Checkbox("Align label with current X position", &align_label_with_current_x_position);
-            ImGui::Checkbox("Test tree node as drag source", &test_drag_and_drop);
-            ImGui::Text("Hello!");
+            HvkGui::Checkbox("Align label with current X position", &align_label_with_current_x_position);
+            HvkGui::Checkbox("Test tree node as drag source", &test_drag_and_drop);
+            HvkGui::Text("Hello!");
             if (align_label_with_current_x_position)
-                ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
+                HvkGui::Unindent(HvkGui::GetTreeNodeToLabelSpacing());
 
             // 'selection_mask' is dumb representation of what may be user-side selection state.
             //  You may retain selection state inside or outside your objects in whatever format you see fit.
@@ -4125,27 +4125,27 @@ static void DemoWindowWidgetsTreeNodes()
                 if (i < 3)
                 {
                     // Items 0..2 are Tree Node
-                    bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Selectable Node %d", i);
-                    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+                    bool node_open = HvkGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Selectable Node %d", i);
+                    if (HvkGui::IsItemClicked() && !HvkGui::IsItemToggledOpen())
                         node_clicked = i;
-                    if (test_drag_and_drop && ImGui::BeginDragDropSource())
+                    if (test_drag_and_drop && HvkGui::BeginDragDropSource())
                     {
-                        ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-                        ImGui::Text("This is a drag and drop source");
-                        ImGui::EndDragDropSource();
+                        HvkGui::SetDragDropPayload("_TREENODE", NULL, 0);
+                        HvkGui::Text("This is a drag and drop source");
+                        HvkGui::EndDragDropSource();
                     }
                     if (i == 2 && (base_flags & ImGuiTreeNodeFlags_SpanLabelWidth))
                     {
                         // Item 2 has an additional inline button to help demonstrate SpanLabelWidth.
-                        ImGui::SameLine();
-                        if (ImGui::SmallButton("button")) {}
+                        HvkGui::SameLine();
+                        if (HvkGui::SmallButton("button")) {}
                     }
                     if (node_open)
                     {
-                        ImGui::BulletText("Blah blah\nBlah Blah");
-                        ImGui::SameLine();
-                        ImGui::SmallButton("Button");
-                        ImGui::TreePop();
+                        HvkGui::BulletText("Blah blah\nBlah Blah");
+                        HvkGui::SameLine();
+                        HvkGui::SmallButton("Button");
+                        HvkGui::TreePop();
                     }
                 }
                 else
@@ -4154,14 +4154,14 @@ static void DemoWindowWidgetsTreeNodes()
                     // The only reason we use TreeNode at all is to allow selection of the leaf. Otherwise we can
                     // use BulletText() or advance the cursor by GetTreeNodeToLabelSpacing() and call Text().
                     node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-                    ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Selectable Leaf %d", i);
-                    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+                    HvkGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Selectable Leaf %d", i);
+                    if (HvkGui::IsItemClicked() && !HvkGui::IsItemToggledOpen())
                         node_clicked = i;
-                    if (test_drag_and_drop && ImGui::BeginDragDropSource())
+                    if (test_drag_and_drop && HvkGui::BeginDragDropSource())
                     {
-                        ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-                        ImGui::Text("This is a drag and drop source");
-                        ImGui::EndDragDropSource();
+                        HvkGui::SetDragDropPayload("_TREENODE", NULL, 0);
+                        HvkGui::Text("This is a drag and drop source");
+                        HvkGui::EndDragDropSource();
                     }
                 }
             }
@@ -4169,16 +4169,16 @@ static void DemoWindowWidgetsTreeNodes()
             {
                 // Update selection state
                 // (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
-                if (ImGui::GetIO().KeyCtrl)
+                if (HvkGui::GetIO().KeyCtrl)
                     selection_mask ^= (1 << node_clicked);          // Ctrl+Click to toggle
                 else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
                     selection_mask = (1 << node_clicked);           // Click to single-select
             }
             if (align_label_with_current_x_position)
-                ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
-            ImGui::TreePop();
+                HvkGui::Indent(HvkGui::GetTreeNodeToLabelSpacing());
+            HvkGui::TreePop();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -4189,68 +4189,68 @@ static void DemoWindowWidgetsTreeNodes()
 static void DemoWindowWidgetsVerticalSliders()
 {
     IMGUI_DEMO_MARKER("Widgets/Vertical Sliders");
-    if (ImGui::TreeNode("Vertical Sliders"))
+    if (HvkGui::TreeNode("Vertical Sliders"))
     {
         const float spacing = 4;
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, spacing));
+        HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, spacing));
 
         static int int_value = 0;
-        ImGui::VSliderInt("##int", ImVec2(18, 160), &int_value, 0, 5);
-        ImGui::SameLine();
+        HvkGui::VSliderInt("##int", ImVec2(18, 160), &int_value, 0, 5);
+        HvkGui::SameLine();
 
         static float values[7] = { 0.0f, 0.60f, 0.35f, 0.9f, 0.70f, 0.20f, 0.0f };
-        ImGui::PushID("set1");
+        HvkGui::PushID("set1");
         for (int i = 0; i < 7; i++)
         {
-            if (i > 0) ImGui::SameLine();
-            ImGui::PushID(i);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
-            ImGui::VSliderFloat("##v", ImVec2(18, 160), &values[i], 0.0f, 1.0f, "");
-            if (ImGui::IsItemActive() || ImGui::IsItemHovered())
-                ImGui::SetTooltip("%.3f", values[i]);
-            ImGui::PopStyleColor(4);
-            ImGui::PopID();
+            if (i > 0) HvkGui::SameLine();
+            HvkGui::PushID(i);
+            HvkGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor::HSV(i / 7.0f, 0.5f, 0.5f));
+            HvkGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.5f));
+            HvkGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.5f));
+            HvkGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)ImColor::HSV(i / 7.0f, 0.9f, 0.9f));
+            HvkGui::VSliderFloat("##v", ImVec2(18, 160), &values[i], 0.0f, 1.0f, "");
+            if (HvkGui::IsItemActive() || HvkGui::IsItemHovered())
+                HvkGui::SetTooltip("%.3f", values[i]);
+            HvkGui::PopStyleColor(4);
+            HvkGui::PopID();
         }
-        ImGui::PopID();
+        HvkGui::PopID();
 
-        ImGui::SameLine();
-        ImGui::PushID("set2");
+        HvkGui::SameLine();
+        HvkGui::PushID("set2");
         static float values2[4] = { 0.20f, 0.80f, 0.40f, 0.25f };
         const int rows = 3;
         const ImVec2 small_slider_size(18, (float)(int)((160.0f - (rows - 1) * spacing) / rows));
         for (int nx = 0; nx < 4; nx++)
         {
-            if (nx > 0) ImGui::SameLine();
-            ImGui::BeginGroup();
+            if (nx > 0) HvkGui::SameLine();
+            HvkGui::BeginGroup();
             for (int ny = 0; ny < rows; ny++)
             {
-                ImGui::PushID(nx * rows + ny);
-                ImGui::VSliderFloat("##v", small_slider_size, &values2[nx], 0.0f, 1.0f, "");
-                if (ImGui::IsItemActive() || ImGui::IsItemHovered())
-                    ImGui::SetTooltip("%.3f", values2[nx]);
-                ImGui::PopID();
+                HvkGui::PushID(nx * rows + ny);
+                HvkGui::VSliderFloat("##v", small_slider_size, &values2[nx], 0.0f, 1.0f, "");
+                if (HvkGui::IsItemActive() || HvkGui::IsItemHovered())
+                    HvkGui::SetTooltip("%.3f", values2[nx]);
+                HvkGui::PopID();
             }
-            ImGui::EndGroup();
+            HvkGui::EndGroup();
         }
-        ImGui::PopID();
+        HvkGui::PopID();
 
-        ImGui::SameLine();
-        ImGui::PushID("set3");
+        HvkGui::SameLine();
+        HvkGui::PushID("set3");
         for (int i = 0; i < 4; i++)
         {
-            if (i > 0) ImGui::SameLine();
-            ImGui::PushID(i);
-            ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 40);
-            ImGui::VSliderFloat("##v", ImVec2(40, 160), &values[i], 0.0f, 1.0f, "%.2f\nsec");
-            ImGui::PopStyleVar();
-            ImGui::PopID();
+            if (i > 0) HvkGui::SameLine();
+            HvkGui::PushID(i);
+            HvkGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 40);
+            HvkGui::VSliderFloat("##v", ImVec2(40, 160), &values[i], 0.0f, 1.0f, "%.2f\nsec");
+            HvkGui::PopStyleVar();
+            HvkGui::PopID();
         }
-        ImGui::PopID();
-        ImGui::PopStyleVar();
-        ImGui::TreePop();
+        HvkGui::PopID();
+        HvkGui::PopStyleVar();
+        HvkGui::TreePop();
     }
 }
 
@@ -4261,13 +4261,13 @@ static void DemoWindowWidgetsVerticalSliders()
 static void DemoWindowWidgets(ImGuiDemoWindowData* demo_data)
 {
     IMGUI_DEMO_MARKER("Widgets");
-    //ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (!ImGui::CollapsingHeader("Widgets"))
+    //HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (!HvkGui::CollapsingHeader("Widgets"))
         return;
 
     const bool disable_all = demo_data->DisableSections; // The Checkbox for that is inside the "Disabled" section at the bottom
     if (disable_all)
-        ImGui::BeginDisabled();
+        HvkGui::BeginDisabled();
 
     DemoWindowWidgetsBasic();
     DemoWindowWidgetsBullets();
@@ -4277,10 +4277,10 @@ static void DemoWindowWidgets(ImGuiDemoWindowData* demo_data)
     DemoWindowWidgetsDataTypes();
 
     if (disable_all)
-        ImGui::EndDisabled();
+        HvkGui::EndDisabled();
     DemoWindowWidgetsDisableBlocks(demo_data);
     if (disable_all)
-        ImGui::BeginDisabled();
+        HvkGui::BeginDisabled();
 
     DemoWindowWidgetsDragAndDrop();
     DemoWindowWidgetsDragsAndSliders();
@@ -4302,7 +4302,7 @@ static void DemoWindowWidgets(ImGuiDemoWindowData* demo_data)
     DemoWindowWidgetsVerticalSliders();
 
     if (disable_all)
-        ImGui::EndDisabled();
+        HvkGui::EndDisabled();
 }
 
 //-----------------------------------------------------------------------------
@@ -4312,32 +4312,32 @@ static void DemoWindowWidgets(ImGuiDemoWindowData* demo_data)
 static void DemoWindowLayout()
 {
     IMGUI_DEMO_MARKER("Layout");
-    if (!ImGui::CollapsingHeader("Layout & Scrolling"))
+    if (!HvkGui::CollapsingHeader("Layout & Scrolling"))
         return;
 
     IMGUI_DEMO_MARKER("Layout/Child windows");
-    if (ImGui::TreeNode("Child windows"))
+    if (HvkGui::TreeNode("Child windows"))
     {
-        ImGui::SeparatorText("Child windows");
+        HvkGui::SeparatorText("Child windows");
 
         HelpMarker("Use child windows to begin into a self-contained independent scrolling/clipping regions within a host window.");
         static bool disable_mouse_wheel = false;
         static bool disable_menu = false;
-        ImGui::Checkbox("Disable Mouse Wheel", &disable_mouse_wheel);
-        ImGui::Checkbox("Disable Menu", &disable_menu);
+        HvkGui::Checkbox("Disable Mouse Wheel", &disable_mouse_wheel);
+        HvkGui::Checkbox("Disable Menu", &disable_menu);
 
         // Child 1: no border, enable horizontal scrollbar
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
             if (disable_mouse_wheel)
                 window_flags |= ImGuiWindowFlags_NoScrollWithMouse;
-            ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 260), ImGuiChildFlags_None, window_flags);
+            HvkGui::BeginChild("ChildL", ImVec2(HvkGui::GetContentRegionAvail().x * 0.5f, 260), ImGuiChildFlags_None, window_flags);
             for (int i = 0; i < 100; i++)
-                ImGui::Text("%04d: scrollable region", i);
-            ImGui::EndChild();
+                HvkGui::Text("%04d: scrollable region", i);
+            HvkGui::EndChild();
         }
 
-        ImGui::SameLine();
+        HvkGui::SameLine();
 
         // Child 2: rounded border
         {
@@ -4346,467 +4346,467 @@ static void DemoWindowLayout()
                 window_flags |= ImGuiWindowFlags_NoScrollWithMouse;
             if (!disable_menu)
                 window_flags |= ImGuiWindowFlags_MenuBar;
-            ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-            ImGui::BeginChild("ChildR", ImVec2(0, 260), ImGuiChildFlags_Borders, window_flags);
-            if (!disable_menu && ImGui::BeginMenuBar())
+            HvkGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+            HvkGui::BeginChild("ChildR", ImVec2(0, 260), ImGuiChildFlags_Borders, window_flags);
+            if (!disable_menu && HvkGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("Menu"))
+                if (HvkGui::BeginMenu("Menu"))
                 {
                     ShowExampleMenuFile();
-                    ImGui::EndMenu();
+                    HvkGui::EndMenu();
                 }
-                ImGui::EndMenuBar();
+                HvkGui::EndMenuBar();
             }
-            if (ImGui::BeginTable("split", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
+            if (HvkGui::BeginTable("split", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
             {
                 for (int i = 0; i < 100; i++)
                 {
                     char buf[32];
                     sprintf(buf, "%03d", i);
-                    ImGui::TableNextColumn();
-                    ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
+                    HvkGui::TableNextColumn();
+                    HvkGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::EndChild();
-            ImGui::PopStyleVar();
+            HvkGui::EndChild();
+            HvkGui::PopStyleVar();
         }
 
         // Child 3: manual-resize
-        ImGui::SeparatorText("Manual-resize");
+        HvkGui::SeparatorText("Manual-resize");
         {
             HelpMarker("Drag bottom border to resize. Double-click bottom border to auto-fit to vertical contents.");
-            //if (ImGui::Button("Set Height to 200"))
-            //    ImGui::SetNextWindowSize(ImVec2(-FLT_MIN, 200.0f));
+            //if (HvkGui::Button("Set Height to 200"))
+            //    HvkGui::SetNextWindowSize(ImVec2(-FLT_MIN, 200.0f));
 
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-            if (ImGui::BeginChild("ResizableChild", ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
+            HvkGui::PushStyleColor(ImGuiCol_ChildBg, HvkGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+            if (HvkGui::BeginChild("ResizableChild", ImVec2(-FLT_MIN, HvkGui::GetTextLineHeightWithSpacing() * 8), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY))
                 for (int n = 0; n < 10; n++)
-                    ImGui::Text("Line %04d", n);
-            ImGui::PopStyleColor();
-            ImGui::EndChild();
+                    HvkGui::Text("Line %04d", n);
+            HvkGui::PopStyleColor();
+            HvkGui::EndChild();
         }
 
         // Child 4: auto-resizing height with a limit
-        ImGui::SeparatorText("Auto-resize with constraints");
+        HvkGui::SeparatorText("Auto-resize with constraints");
         {
             static int draw_lines = 3;
             static int max_height_in_lines = 10;
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-            ImGui::DragInt("Lines Count", &draw_lines, 0.2f);
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-            ImGui::DragInt("Max Height (in Lines)", &max_height_in_lines, 0.2f);
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+            HvkGui::DragInt("Lines Count", &draw_lines, 0.2f);
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+            HvkGui::DragInt("Max Height (in Lines)", &max_height_in_lines, 0.2f);
 
-            ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 1), ImVec2(FLT_MAX, ImGui::GetTextLineHeightWithSpacing() * max_height_in_lines));
-            if (ImGui::BeginChild("ConstrainedChild", ImVec2(-FLT_MIN, 0.0f), ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY))
+            HvkGui::SetNextWindowSizeConstraints(ImVec2(0.0f, HvkGui::GetTextLineHeightWithSpacing() * 1), ImVec2(FLT_MAX, HvkGui::GetTextLineHeightWithSpacing() * max_height_in_lines));
+            if (HvkGui::BeginChild("ConstrainedChild", ImVec2(-FLT_MIN, 0.0f), ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY))
                 for (int n = 0; n < draw_lines; n++)
-                    ImGui::Text("Line %04d", n);
-            ImGui::EndChild();
+                    HvkGui::Text("Line %04d", n);
+            HvkGui::EndChild();
         }
 
-        ImGui::SeparatorText("Misc/Advanced");
+        HvkGui::SeparatorText("Misc/Advanced");
 
         // Demonstrate a few extra things
         // - Changing ImGuiCol_ChildBg (which is transparent black in default styles)
         // - Using SetCursorPos() to position child window (the child window is an item from the POV of parent window)
         //   You can also call SetNextWindowPos() to position the child window. The parent window will effectively
         //   layout from this position.
-        // - Using ImGui::GetItemRectMin/Max() to query the "item" state (because the child window is an item from
+        // - Using HvkGui::GetItemRectMin/Max() to query the "item" state (because the child window is an item from
         //   the POV of the parent window). See 'Demo->Querying Status (Edited/Active/Hovered etc.)' for details.
         {
             static int offset_x = 0;
             static bool override_bg_color = true;
             static ImGuiChildFlags child_flags = ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY;
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-            ImGui::DragInt("Offset X", &offset_x, 1.0f, -1000, 1000);
-            ImGui::Checkbox("Override ChildBg color", &override_bg_color);
-            ImGui::CheckboxFlags("ImGuiChildFlags_Borders", &child_flags, ImGuiChildFlags_Borders);
-            ImGui::CheckboxFlags("ImGuiChildFlags_AlwaysUseWindowPadding", &child_flags, ImGuiChildFlags_AlwaysUseWindowPadding);
-            ImGui::CheckboxFlags("ImGuiChildFlags_ResizeX", &child_flags, ImGuiChildFlags_ResizeX);
-            ImGui::CheckboxFlags("ImGuiChildFlags_ResizeY", &child_flags, ImGuiChildFlags_ResizeY);
-            ImGui::CheckboxFlags("ImGuiChildFlags_FrameStyle", &child_flags, ImGuiChildFlags_FrameStyle);
-            ImGui::SameLine(); HelpMarker("Style the child window like a framed item: use FrameBg, FrameRounding, FrameBorderSize, FramePadding instead of ChildBg, ChildRounding, ChildBorderSize, WindowPadding.");
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+            HvkGui::DragInt("Offset X", &offset_x, 1.0f, -1000, 1000);
+            HvkGui::Checkbox("Override ChildBg color", &override_bg_color);
+            HvkGui::CheckboxFlags("ImGuiChildFlags_Borders", &child_flags, ImGuiChildFlags_Borders);
+            HvkGui::CheckboxFlags("ImGuiChildFlags_AlwaysUseWindowPadding", &child_flags, ImGuiChildFlags_AlwaysUseWindowPadding);
+            HvkGui::CheckboxFlags("ImGuiChildFlags_ResizeX", &child_flags, ImGuiChildFlags_ResizeX);
+            HvkGui::CheckboxFlags("ImGuiChildFlags_ResizeY", &child_flags, ImGuiChildFlags_ResizeY);
+            HvkGui::CheckboxFlags("ImGuiChildFlags_FrameStyle", &child_flags, ImGuiChildFlags_FrameStyle);
+            HvkGui::SameLine(); HelpMarker("Style the child window like a framed item: use FrameBg, FrameRounding, FrameBorderSize, FramePadding instead of ChildBg, ChildRounding, ChildBorderSize, WindowPadding.");
             if (child_flags & ImGuiChildFlags_FrameStyle)
                 override_bg_color = false;
 
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (float)offset_x);
+            HvkGui::SetCursorPosX(HvkGui::GetCursorPosX() + (float)offset_x);
             if (override_bg_color)
-                ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(255, 0, 0, 100));
-            ImGui::BeginChild("Red", ImVec2(200, 100), child_flags, ImGuiWindowFlags_None);
+                HvkGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(255, 0, 0, 100));
+            HvkGui::BeginChild("Red", ImVec2(200, 100), child_flags, ImGuiWindowFlags_None);
             if (override_bg_color)
-                ImGui::PopStyleColor();
+                HvkGui::PopStyleColor();
 
             for (int n = 0; n < 50; n++)
-                ImGui::Text("Some test %d", n);
-            ImGui::EndChild();
-            bool child_is_hovered = ImGui::IsItemHovered();
-            ImVec2 child_rect_min = ImGui::GetItemRectMin();
-            ImVec2 child_rect_max = ImGui::GetItemRectMax();
-            ImGui::Text("Hovered: %d", child_is_hovered);
-            ImGui::Text("Rect of child window is: (%.0f,%.0f) (%.0f,%.0f)", child_rect_min.x, child_rect_min.y, child_rect_max.x, child_rect_max.y);
+                HvkGui::Text("Some test %d", n);
+            HvkGui::EndChild();
+            bool child_is_hovered = HvkGui::IsItemHovered();
+            ImVec2 child_rect_min = HvkGui::GetItemRectMin();
+            ImVec2 child_rect_max = HvkGui::GetItemRectMax();
+            HvkGui::Text("Hovered: %d", child_is_hovered);
+            HvkGui::Text("Rect of child window is: (%.0f,%.0f) (%.0f,%.0f)", child_rect_min.x, child_rect_min.y, child_rect_max.x, child_rect_max.y);
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Widgets Width");
-    if (ImGui::TreeNode("Widgets Width"))
+    if (HvkGui::TreeNode("Widgets Width"))
     {
         static float f = 0.0f;
         static bool show_indented_items = true;
-        ImGui::Checkbox("Show indented items", &show_indented_items);
+        HvkGui::Checkbox("Show indented items", &show_indented_items);
 
         // Use SetNextItemWidth() to set the width of a single upcoming item.
         // Use PushItemWidth()/PopItemWidth() to set the width of a group of items.
         // In real code use you'll probably want to choose width values that are proportional to your font size
         // e.g. Using '20.0f * GetFontSize()' as width instead of '200.0f', etc.
 
-        ImGui::Text("SetNextItemWidth/PushItemWidth(100)");
-        ImGui::SameLine(); HelpMarker("Fixed width.");
-        ImGui::PushItemWidth(100);
-        ImGui::DragFloat("float##1b", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(100)");
+        HvkGui::SameLine(); HelpMarker("Fixed width.");
+        HvkGui::PushItemWidth(100);
+        HvkGui::DragFloat("float##1b", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##1b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##1b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
-        ImGui::Text("SetNextItemWidth/PushItemWidth(-100)");
-        ImGui::SameLine(); HelpMarker("Align to right edge minus 100");
-        ImGui::PushItemWidth(-100);
-        ImGui::DragFloat("float##2a", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(-100)");
+        HvkGui::SameLine(); HelpMarker("Align to right edge minus 100");
+        HvkGui::PushItemWidth(-100);
+        HvkGui::DragFloat("float##2a", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##2b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##2b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
-        ImGui::Text("SetNextItemWidth/PushItemWidth(GetContentRegionAvail().x * 0.5f)");
-        ImGui::SameLine(); HelpMarker("Half of available width.\n(~ right-cursor_pos)\n(works within a column set)");
-        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.5f);
-        ImGui::DragFloat("float##3a", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(GetContentRegionAvail().x * 0.5f)");
+        HvkGui::SameLine(); HelpMarker("Half of available width.\n(~ right-cursor_pos)\n(works within a column set)");
+        HvkGui::PushItemWidth(HvkGui::GetContentRegionAvail().x * 0.5f);
+        HvkGui::DragFloat("float##3a", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##3b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##3b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
-        ImGui::Text("SetNextItemWidth/PushItemWidth(-GetContentRegionAvail().x * 0.5f)");
-        ImGui::SameLine(); HelpMarker("Align to right edge minus half");
-        ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f);
-        ImGui::DragFloat("float##4a", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(-GetContentRegionAvail().x * 0.5f)");
+        HvkGui::SameLine(); HelpMarker("Align to right edge minus half");
+        HvkGui::PushItemWidth(-HvkGui::GetContentRegionAvail().x * 0.5f);
+        HvkGui::DragFloat("float##4a", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##4b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##4b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
-        ImGui::Text("SetNextItemWidth/PushItemWidth(-Min(GetContentRegionAvail().x * 0.40f, GetFontSize() * 12))");
-        ImGui::PushItemWidth(-IM_MIN(ImGui::GetFontSize() * 12, ImGui::GetContentRegionAvail().x * 0.40f));
-        ImGui::DragFloat("float##5a", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(-Min(GetContentRegionAvail().x * 0.40f, GetFontSize() * 12))");
+        HvkGui::PushItemWidth(-IM_MIN(HvkGui::GetFontSize() * 12, HvkGui::GetContentRegionAvail().x * 0.40f));
+        HvkGui::DragFloat("float##5a", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##5b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##5b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
         // Demonstrate using PushItemWidth to surround three items.
         // Calling SetNextItemWidth() before each of them would have the same effect.
-        ImGui::Text("SetNextItemWidth/PushItemWidth(-FLT_MIN)");
-        ImGui::SameLine(); HelpMarker("Align to right edge");
-        ImGui::PushItemWidth(-FLT_MIN);
-        ImGui::DragFloat("##float6a", &f);
+        HvkGui::Text("SetNextItemWidth/PushItemWidth(-FLT_MIN)");
+        HvkGui::SameLine(); HelpMarker("Align to right edge");
+        HvkGui::PushItemWidth(-FLT_MIN);
+        HvkGui::DragFloat("##float6a", &f);
         if (show_indented_items)
         {
-            ImGui::Indent();
-            ImGui::DragFloat("float (indented)##6b", &f);
-            ImGui::Unindent();
+            HvkGui::Indent();
+            HvkGui::DragFloat("float (indented)##6b", &f);
+            HvkGui::Unindent();
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout");
-    if (ImGui::TreeNode("Basic Horizontal Layout"))
+    if (HvkGui::TreeNode("Basic Horizontal Layout"))
     {
-        ImGui::TextWrapped("(Use ImGui::SameLine() to keep adding items to the right of the preceding item)");
+        HvkGui::TextWrapped("(Use HvkGui::SameLine() to keep adding items to the right of the preceding item)");
 
         // Text
         IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout/SameLine");
-        ImGui::Text("Two items: Hello"); ImGui::SameLine();
-        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Sailor");
+        HvkGui::Text("Two items: Hello"); HvkGui::SameLine();
+        HvkGui::TextColored(ImVec4(1, 1, 0, 1), "Sailor");
 
         // Adjust spacing
-        ImGui::Text("More spacing: Hello"); ImGui::SameLine(0, 20);
-        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Sailor");
+        HvkGui::Text("More spacing: Hello"); HvkGui::SameLine(0, 20);
+        HvkGui::TextColored(ImVec4(1, 1, 0, 1), "Sailor");
 
         // Button
-        ImGui::AlignTextToFramePadding();
-        ImGui::Text("Normal buttons"); ImGui::SameLine();
-        ImGui::Button("Banana"); ImGui::SameLine();
-        ImGui::Button("Apple"); ImGui::SameLine();
-        ImGui::Button("Corniflower");
+        HvkGui::AlignTextToFramePadding();
+        HvkGui::Text("Normal buttons"); HvkGui::SameLine();
+        HvkGui::Button("Banana"); HvkGui::SameLine();
+        HvkGui::Button("Apple"); HvkGui::SameLine();
+        HvkGui::Button("Corniflower");
 
         // Button
-        ImGui::Text("Small buttons"); ImGui::SameLine();
-        ImGui::SmallButton("Like this one"); ImGui::SameLine();
-        ImGui::Text("can fit within a text block.");
+        HvkGui::Text("Small buttons"); HvkGui::SameLine();
+        HvkGui::SmallButton("Like this one"); HvkGui::SameLine();
+        HvkGui::Text("can fit within a text block.");
 
         // Aligned to arbitrary position. Easy/cheap column.
         IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout/SameLine (with offset)");
-        ImGui::Text("Aligned");
-        ImGui::SameLine(150); ImGui::Text("x=150");
-        ImGui::SameLine(300); ImGui::Text("x=300");
-        ImGui::Text("Aligned");
-        ImGui::SameLine(150); ImGui::SmallButton("x=150");
-        ImGui::SameLine(300); ImGui::SmallButton("x=300");
+        HvkGui::Text("Aligned");
+        HvkGui::SameLine(150); HvkGui::Text("x=150");
+        HvkGui::SameLine(300); HvkGui::Text("x=300");
+        HvkGui::Text("Aligned");
+        HvkGui::SameLine(150); HvkGui::SmallButton("x=150");
+        HvkGui::SameLine(300); HvkGui::SmallButton("x=300");
 
         // Checkbox
         IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout/SameLine (more)");
         static bool c1 = false, c2 = false, c3 = false, c4 = false;
-        ImGui::Checkbox("My", &c1); ImGui::SameLine();
-        ImGui::Checkbox("Tailor", &c2); ImGui::SameLine();
-        ImGui::Checkbox("Is", &c3); ImGui::SameLine();
-        ImGui::Checkbox("Rich", &c4);
+        HvkGui::Checkbox("My", &c1); HvkGui::SameLine();
+        HvkGui::Checkbox("Tailor", &c2); HvkGui::SameLine();
+        HvkGui::Checkbox("Is", &c3); HvkGui::SameLine();
+        HvkGui::Checkbox("Rich", &c4);
 
         // Various
         static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
-        ImGui::PushItemWidth(ImGui::CalcTextSize("AAAAAAA").x);
+        HvkGui::PushItemWidth(HvkGui::CalcTextSize("AAAAAAA").x);
         const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD" };
         static int item = -1;
-        ImGui::Combo("Combo", &item, items, IM_ARRAYSIZE(items)); ImGui::SameLine();
-        ImGui::SliderFloat("X", &f0, 0.0f, 5.0f); ImGui::SameLine();
-        ImGui::SliderFloat("Y", &f1, 0.0f, 5.0f); ImGui::SameLine();
-        ImGui::SliderFloat("Z", &f2, 0.0f, 5.0f);
+        HvkGui::Combo("Combo", &item, items, IM_ARRAYSIZE(items)); HvkGui::SameLine();
+        HvkGui::SliderFloat("X", &f0, 0.0f, 5.0f); HvkGui::SameLine();
+        HvkGui::SliderFloat("Y", &f1, 0.0f, 5.0f); HvkGui::SameLine();
+        HvkGui::SliderFloat("Z", &f2, 0.0f, 5.0f);
 
-        ImGui::Text("Lists:");
+        HvkGui::Text("Lists:");
         static int selection[4] = { 0, 1, 2, 3 };
         for (int i = 0; i < 4; i++)
         {
-            if (i > 0) ImGui::SameLine();
-            ImGui::PushID(i);
-            ImGui::ListBox("", &selection[i], items, IM_ARRAYSIZE(items));
-            ImGui::PopID();
-            //ImGui::SetItemTooltip("ListBox %d hovered", i);
+            if (i > 0) HvkGui::SameLine();
+            HvkGui::PushID(i);
+            HvkGui::ListBox("", &selection[i], items, IM_ARRAYSIZE(items));
+            HvkGui::PopID();
+            //HvkGui::SetItemTooltip("ListBox %d hovered", i);
         }
-        ImGui::PopItemWidth();
+        HvkGui::PopItemWidth();
 
         // Dummy
         IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout/Dummy");
         ImVec2 button_sz(40, 40);
-        ImGui::Button("A", button_sz); ImGui::SameLine();
-        ImGui::Dummy(button_sz); ImGui::SameLine();
-        ImGui::Button("B", button_sz);
+        HvkGui::Button("A", button_sz); HvkGui::SameLine();
+        HvkGui::Dummy(button_sz); HvkGui::SameLine();
+        HvkGui::Button("B", button_sz);
 
         // Manually wrapping
         // (we should eventually provide this as an automatic layout feature, but for now you can do it manually)
         IMGUI_DEMO_MARKER("Layout/Basic Horizontal Layout/Manual wrapping");
-        ImGui::Text("Manual wrapping:");
-        ImGuiStyle& style = ImGui::GetStyle();
+        HvkGui::Text("Manual wrapping:");
+        ImGuiStyle& style = HvkGui::GetStyle();
         int buttons_count = 20;
-        float window_visible_x2 = ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x;
+        float window_visible_x2 = HvkGui::GetCursorScreenPos().x + HvkGui::GetContentRegionAvail().x;
         for (int n = 0; n < buttons_count; n++)
         {
-            ImGui::PushID(n);
-            ImGui::Button("Box", button_sz);
-            float last_button_x2 = ImGui::GetItemRectMax().x;
+            HvkGui::PushID(n);
+            HvkGui::Button("Box", button_sz);
+            float last_button_x2 = HvkGui::GetItemRectMax().x;
             float next_button_x2 = last_button_x2 + style.ItemSpacing.x + button_sz.x; // Expected position if next button was on same line
             if (n + 1 < buttons_count && next_button_x2 < window_visible_x2)
-                ImGui::SameLine();
-            ImGui::PopID();
+                HvkGui::SameLine();
+            HvkGui::PopID();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Groups");
-    if (ImGui::TreeNode("Groups"))
+    if (HvkGui::TreeNode("Groups"))
     {
         HelpMarker(
             "BeginGroup() basically locks the horizontal position for new line. "
             "EndGroup() bundles the whole group so that you can use \"item\" functions such as "
             "IsItemHovered()/IsItemActive() or SameLine() etc. on the whole group.");
-        ImGui::BeginGroup();
+        HvkGui::BeginGroup();
         {
-            ImGui::BeginGroup();
-            ImGui::Button("AAA");
-            ImGui::SameLine();
-            ImGui::Button("BBB");
-            ImGui::SameLine();
-            ImGui::BeginGroup();
-            ImGui::Button("CCC");
-            ImGui::Button("DDD");
-            ImGui::EndGroup();
-            ImGui::SameLine();
-            ImGui::Button("EEE");
-            ImGui::EndGroup();
-            ImGui::SetItemTooltip("First group hovered");
+            HvkGui::BeginGroup();
+            HvkGui::Button("AAA");
+            HvkGui::SameLine();
+            HvkGui::Button("BBB");
+            HvkGui::SameLine();
+            HvkGui::BeginGroup();
+            HvkGui::Button("CCC");
+            HvkGui::Button("DDD");
+            HvkGui::EndGroup();
+            HvkGui::SameLine();
+            HvkGui::Button("EEE");
+            HvkGui::EndGroup();
+            HvkGui::SetItemTooltip("First group hovered");
         }
         // Capture the group size and create widgets using the same size
-        ImVec2 size = ImGui::GetItemRectSize();
+        ImVec2 size = HvkGui::GetItemRectSize();
         const float values[5] = { 0.5f, 0.20f, 0.80f, 0.60f, 0.25f };
-        ImGui::PlotHistogram("##values", values, IM_ARRAYSIZE(values), 0, NULL, 0.0f, 1.0f, size);
+        HvkGui::PlotHistogram("##values", values, IM_ARRAYSIZE(values), 0, NULL, 0.0f, 1.0f, size);
 
-        ImGui::Button("ACTION", ImVec2((size.x - ImGui::GetStyle().ItemSpacing.x) * 0.5f, size.y));
-        ImGui::SameLine();
-        ImGui::Button("REACTION", ImVec2((size.x - ImGui::GetStyle().ItemSpacing.x) * 0.5f, size.y));
-        ImGui::EndGroup();
-        ImGui::SameLine();
+        HvkGui::Button("ACTION", ImVec2((size.x - HvkGui::GetStyle().ItemSpacing.x) * 0.5f, size.y));
+        HvkGui::SameLine();
+        HvkGui::Button("REACTION", ImVec2((size.x - HvkGui::GetStyle().ItemSpacing.x) * 0.5f, size.y));
+        HvkGui::EndGroup();
+        HvkGui::SameLine();
 
-        ImGui::Button("LEVERAGE\nBUZZWORD", size);
-        ImGui::SameLine();
+        HvkGui::Button("LEVERAGE\nBUZZWORD", size);
+        HvkGui::SameLine();
 
-        if (ImGui::BeginListBox("List", size))
+        if (HvkGui::BeginListBox("List", size))
         {
-            ImGui::Selectable("Selected", true);
-            ImGui::Selectable("Not Selected", false);
-            ImGui::EndListBox();
+            HvkGui::Selectable("Selected", true);
+            HvkGui::Selectable("Not Selected", false);
+            HvkGui::EndListBox();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Text Baseline Alignment");
-    if (ImGui::TreeNode("Text Baseline Alignment"))
+    if (HvkGui::TreeNode("Text Baseline Alignment"))
     {
         {
-            ImGui::BulletText("Text baseline:");
-            ImGui::SameLine(); HelpMarker(
+            HvkGui::BulletText("Text baseline:");
+            HvkGui::SameLine(); HelpMarker(
                 "This is testing the vertical alignment that gets applied on text to keep it aligned with widgets. "
                 "Lines only composed of text or \"small\" widgets use less vertical space than lines with framed widgets.");
-            ImGui::Indent();
+            HvkGui::Indent();
 
-            ImGui::Text("KO Blahblah"); ImGui::SameLine();
-            ImGui::Button("Some framed item"); ImGui::SameLine();
+            HvkGui::Text("KO Blahblah"); HvkGui::SameLine();
+            HvkGui::Button("Some framed item"); HvkGui::SameLine();
             HelpMarker("Baseline of button will look misaligned with text..");
 
             // If your line starts with text, call AlignTextToFramePadding() to align text to upcoming widgets.
             // (because we don't know what's coming after the Text() statement, we need to move the text baseline
             // down by FramePadding.y ahead of time)
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("OK Blahblah"); ImGui::SameLine();
-            ImGui::Button("Some framed item##2"); ImGui::SameLine();
+            HvkGui::AlignTextToFramePadding();
+            HvkGui::Text("OK Blahblah"); HvkGui::SameLine();
+            HvkGui::Button("Some framed item##2"); HvkGui::SameLine();
             HelpMarker("We call AlignTextToFramePadding() to vertically align the text baseline by +FramePadding.y");
 
             // SmallButton() uses the same vertical padding as Text
-            ImGui::Button("TEST##1"); ImGui::SameLine();
-            ImGui::Text("TEST"); ImGui::SameLine();
-            ImGui::SmallButton("TEST##2");
+            HvkGui::Button("TEST##1"); HvkGui::SameLine();
+            HvkGui::Text("TEST"); HvkGui::SameLine();
+            HvkGui::SmallButton("TEST##2");
 
             // If your line starts with text, call AlignTextToFramePadding() to align text to upcoming widgets.
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("Text aligned to framed item"); ImGui::SameLine();
-            ImGui::Button("Item##1"); ImGui::SameLine();
-            ImGui::Text("Item"); ImGui::SameLine();
-            ImGui::SmallButton("Item##2"); ImGui::SameLine();
-            ImGui::Button("Item##3");
+            HvkGui::AlignTextToFramePadding();
+            HvkGui::Text("Text aligned to framed item"); HvkGui::SameLine();
+            HvkGui::Button("Item##1"); HvkGui::SameLine();
+            HvkGui::Text("Item"); HvkGui::SameLine();
+            HvkGui::SmallButton("Item##2"); HvkGui::SameLine();
+            HvkGui::Button("Item##3");
 
-            ImGui::Unindent();
+            HvkGui::Unindent();
         }
 
-        ImGui::Spacing();
+        HvkGui::Spacing();
 
         {
-            ImGui::BulletText("Multi-line text:");
-            ImGui::Indent();
-            ImGui::Text("One\nTwo\nThree"); ImGui::SameLine();
-            ImGui::Text("Hello\nWorld"); ImGui::SameLine();
-            ImGui::Text("Banana");
+            HvkGui::BulletText("Multi-line text:");
+            HvkGui::Indent();
+            HvkGui::Text("One\nTwo\nThree"); HvkGui::SameLine();
+            HvkGui::Text("Hello\nWorld"); HvkGui::SameLine();
+            HvkGui::Text("Banana");
 
-            ImGui::Text("Banana"); ImGui::SameLine();
-            ImGui::Text("Hello\nWorld"); ImGui::SameLine();
-            ImGui::Text("One\nTwo\nThree");
+            HvkGui::Text("Banana"); HvkGui::SameLine();
+            HvkGui::Text("Hello\nWorld"); HvkGui::SameLine();
+            HvkGui::Text("One\nTwo\nThree");
 
-            ImGui::Button("HOP##1"); ImGui::SameLine();
-            ImGui::Text("Banana"); ImGui::SameLine();
-            ImGui::Text("Hello\nWorld"); ImGui::SameLine();
-            ImGui::Text("Banana");
+            HvkGui::Button("HOP##1"); HvkGui::SameLine();
+            HvkGui::Text("Banana"); HvkGui::SameLine();
+            HvkGui::Text("Hello\nWorld"); HvkGui::SameLine();
+            HvkGui::Text("Banana");
 
-            ImGui::Button("HOP##2"); ImGui::SameLine();
-            ImGui::Text("Hello\nWorld"); ImGui::SameLine();
-            ImGui::Text("Banana");
-            ImGui::Unindent();
+            HvkGui::Button("HOP##2"); HvkGui::SameLine();
+            HvkGui::Text("Hello\nWorld"); HvkGui::SameLine();
+            HvkGui::Text("Banana");
+            HvkGui::Unindent();
         }
 
-        ImGui::Spacing();
+        HvkGui::Spacing();
 
         {
-            ImGui::BulletText("Misc items:");
-            ImGui::Indent();
+            HvkGui::BulletText("Misc items:");
+            HvkGui::Indent();
 
             // SmallButton() sets FramePadding to zero. Text baseline is aligned to match baseline of previous Button.
-            ImGui::Button("80x80", ImVec2(80, 80));
-            ImGui::SameLine();
-            ImGui::Button("50x50", ImVec2(50, 50));
-            ImGui::SameLine();
-            ImGui::Button("Button()");
-            ImGui::SameLine();
-            ImGui::SmallButton("SmallButton()");
+            HvkGui::Button("80x80", ImVec2(80, 80));
+            HvkGui::SameLine();
+            HvkGui::Button("50x50", ImVec2(50, 50));
+            HvkGui::SameLine();
+            HvkGui::Button("Button()");
+            HvkGui::SameLine();
+            HvkGui::SmallButton("SmallButton()");
 
             // Tree
             // (here the node appears after a button and has odd intent, so we use ImGuiTreeNodeFlags_DrawLinesNone to disable hierarchy outline)
-            const float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
-            ImGui::Button("Button##1"); // Will make line higher
-            ImGui::SameLine(0.0f, spacing);
-            if (ImGui::TreeNodeEx("Node##1", ImGuiTreeNodeFlags_DrawLinesNone))
+            const float spacing = HvkGui::GetStyle().ItemInnerSpacing.x;
+            HvkGui::Button("Button##1"); // Will make line higher
+            HvkGui::SameLine(0.0f, spacing);
+            if (HvkGui::TreeNodeEx("Node##1", ImGuiTreeNodeFlags_DrawLinesNone))
             {
                 // Placeholder tree data
                 for (int i = 0; i < 6; i++)
-                    ImGui::BulletText("Item %d..", i);
-                ImGui::TreePop();
+                    HvkGui::BulletText("Item %d..", i);
+                HvkGui::TreePop();
             }
 
-            const float padding = (float)(int)(ImGui::GetFontSize() * 1.20f); // Large padding
-            ImGui::PushStyleVarY(ImGuiStyleVar_FramePadding, padding);
-            ImGui::Button("Button##2");
-            ImGui::PopStyleVar();
-            ImGui::SameLine(0.0f, spacing);
-            if (ImGui::TreeNodeEx("Node##2", ImGuiTreeNodeFlags_DrawLinesNone))
-                ImGui::TreePop();
+            const float padding = (float)(int)(HvkGui::GetFontSize() * 1.20f); // Large padding
+            HvkGui::PushStyleVarY(ImGuiStyleVar_FramePadding, padding);
+            HvkGui::Button("Button##2");
+            HvkGui::PopStyleVar();
+            HvkGui::SameLine(0.0f, spacing);
+            if (HvkGui::TreeNodeEx("Node##2", ImGuiTreeNodeFlags_DrawLinesNone))
+                HvkGui::TreePop();
 
             // Vertically align text node a bit lower so it'll be vertically centered with upcoming widget.
             // Otherwise you can use SmallButton() (smaller fit).
-            ImGui::AlignTextToFramePadding();
+            HvkGui::AlignTextToFramePadding();
 
             // Common mistake to avoid: if we want to SameLine after TreeNode we need to do it before we add
             // other contents "inside" the node.
-            bool node_open = ImGui::TreeNode("Node##3");
-            ImGui::SameLine(0.0f, spacing); ImGui::Button("Button##3");
+            bool node_open = HvkGui::TreeNode("Node##3");
+            HvkGui::SameLine(0.0f, spacing); HvkGui::Button("Button##3");
             if (node_open)
             {
                 // Placeholder tree data
                 for (int i = 0; i < 6; i++)
-                    ImGui::BulletText("Item %d..", i);
-                ImGui::TreePop();
+                    HvkGui::BulletText("Item %d..", i);
+                HvkGui::TreePop();
             }
 
             // Bullet
-            ImGui::Button("Button##4");
-            ImGui::SameLine(0.0f, spacing);
-            ImGui::BulletText("Bullet text");
+            HvkGui::Button("Button##4");
+            HvkGui::SameLine(0.0f, spacing);
+            HvkGui::BulletText("Bullet text");
 
-            ImGui::AlignTextToFramePadding();
-            ImGui::BulletText("Node");
-            ImGui::SameLine(0.0f, spacing); ImGui::Button("Button##5");
-            ImGui::Unindent();
+            HvkGui::AlignTextToFramePadding();
+            HvkGui::BulletText("Node");
+            HvkGui::SameLine(0.0f, spacing); HvkGui::Button("Button##5");
+            HvkGui::Unindent();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Scrolling");
-    if (ImGui::TreeNode("Scrolling"))
+    if (HvkGui::TreeNode("Scrolling"))
     {
         // Vertical scroll functions
         IMGUI_DEMO_MARKER("Layout/Scrolling/Vertical");
@@ -4818,117 +4818,117 @@ static void DemoWindowLayout()
         static float scroll_to_off_px = 0.0f;
         static float scroll_to_pos_px = 200.0f;
 
-        ImGui::Checkbox("Decoration", &enable_extra_decorations);
+        HvkGui::Checkbox("Decoration", &enable_extra_decorations);
 
-        ImGui::PushItemWidth(ImGui::GetFontSize() * 10);
-        enable_track |= ImGui::DragInt("##item", &track_item, 0.25f, 0, 99, "Item = %d");
-        ImGui::SameLine();
-        ImGui::Checkbox("Track", &enable_track);
+        HvkGui::PushItemWidth(HvkGui::GetFontSize() * 10);
+        enable_track |= HvkGui::DragInt("##item", &track_item, 0.25f, 0, 99, "Item = %d");
+        HvkGui::SameLine();
+        HvkGui::Checkbox("Track", &enable_track);
 
-        bool scroll_to_off = ImGui::DragFloat("##off", &scroll_to_off_px, 1.00f, 0, FLT_MAX, "+%.0f px");
-        ImGui::SameLine();
-        scroll_to_off |= ImGui::Button("Scroll Offset");
+        bool scroll_to_off = HvkGui::DragFloat("##off", &scroll_to_off_px, 1.00f, 0, FLT_MAX, "+%.0f px");
+        HvkGui::SameLine();
+        scroll_to_off |= HvkGui::Button("Scroll Offset");
 
-        bool scroll_to_pos = ImGui::DragFloat("##pos", &scroll_to_pos_px, 1.00f, -10, FLT_MAX, "X/Y = %.0f px");
-        ImGui::SameLine();
-        scroll_to_pos |= ImGui::Button("Scroll To Pos");
-        ImGui::PopItemWidth();
+        bool scroll_to_pos = HvkGui::DragFloat("##pos", &scroll_to_pos_px, 1.00f, -10, FLT_MAX, "X/Y = %.0f px");
+        HvkGui::SameLine();
+        scroll_to_pos |= HvkGui::Button("Scroll To Pos");
+        HvkGui::PopItemWidth();
 
         if (scroll_to_off || scroll_to_pos)
             enable_track = false;
 
-        ImGuiStyle& style = ImGui::GetStyle();
-        float child_w = (ImGui::GetContentRegionAvail().x - 4 * style.ItemSpacing.x) / 5;
+        ImGuiStyle& style = HvkGui::GetStyle();
+        float child_w = (HvkGui::GetContentRegionAvail().x - 4 * style.ItemSpacing.x) / 5;
         if (child_w < 1.0f)
             child_w = 1.0f;
-        ImGui::PushID("##VerticalScrolling");
+        HvkGui::PushID("##VerticalScrolling");
         for (int i = 0; i < 5; i++)
         {
-            if (i > 0) ImGui::SameLine();
-            ImGui::BeginGroup();
+            if (i > 0) HvkGui::SameLine();
+            HvkGui::BeginGroup();
             const char* names[] = { "Top", "25%", "Center", "75%", "Bottom" };
-            ImGui::TextUnformatted(names[i]);
+            HvkGui::TextUnformatted(names[i]);
 
             const ImGuiWindowFlags child_flags = enable_extra_decorations ? ImGuiWindowFlags_MenuBar : 0;
-            const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)i);
-            const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(child_w, 200.0f), ImGuiChildFlags_Borders, child_flags);
-            if (ImGui::BeginMenuBar())
+            const ImGuiID child_id = HvkGui::GetID((void*)(intptr_t)i);
+            const bool child_is_visible = HvkGui::BeginChild(child_id, ImVec2(child_w, 200.0f), ImGuiChildFlags_Borders, child_flags);
+            if (HvkGui::BeginMenuBar())
             {
-                ImGui::TextUnformatted("abc");
-                ImGui::EndMenuBar();
+                HvkGui::TextUnformatted("abc");
+                HvkGui::EndMenuBar();
             }
             if (scroll_to_off)
-                ImGui::SetScrollY(scroll_to_off_px);
+                HvkGui::SetScrollY(scroll_to_off_px);
             if (scroll_to_pos)
-                ImGui::SetScrollFromPosY(ImGui::GetCursorStartPos().y + scroll_to_pos_px, i * 0.25f);
+                HvkGui::SetScrollFromPosY(HvkGui::GetCursorStartPos().y + scroll_to_pos_px, i * 0.25f);
             if (child_is_visible) // Avoid calling SetScrollHereY when running with culled items
             {
                 for (int item = 0; item < 100; item++)
                 {
                     if (enable_track && item == track_item)
                     {
-                        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Item %d", item);
-                        ImGui::SetScrollHereY(i * 0.25f); // 0.0f:top, 0.5f:center, 1.0f:bottom
+                        HvkGui::TextColored(ImVec4(1, 1, 0, 1), "Item %d", item);
+                        HvkGui::SetScrollHereY(i * 0.25f); // 0.0f:top, 0.5f:center, 1.0f:bottom
                     }
                     else
                     {
-                        ImGui::Text("Item %d", item);
+                        HvkGui::Text("Item %d", item);
                     }
                 }
             }
-            float scroll_y = ImGui::GetScrollY();
-            float scroll_max_y = ImGui::GetScrollMaxY();
-            ImGui::EndChild();
-            ImGui::Text("%.0f/%.0f", scroll_y, scroll_max_y);
-            ImGui::EndGroup();
+            float scroll_y = HvkGui::GetScrollY();
+            float scroll_max_y = HvkGui::GetScrollMaxY();
+            HvkGui::EndChild();
+            HvkGui::Text("%.0f/%.0f", scroll_y, scroll_max_y);
+            HvkGui::EndGroup();
         }
-        ImGui::PopID();
+        HvkGui::PopID();
 
         // Horizontal scroll functions
         IMGUI_DEMO_MARKER("Layout/Scrolling/Horizontal");
-        ImGui::Spacing();
+        HvkGui::Spacing();
         HelpMarker(
             "Use SetScrollHereX() or SetScrollFromPosX() to scroll to a given horizontal position.\n\n"
             "Because the clipping rectangle of most window hides half worth of WindowPadding on the "
             "left/right, using SetScrollFromPosX(+1) will usually result in clipped text whereas the "
             "equivalent SetScrollFromPosY(+1) wouldn't.");
-        ImGui::PushID("##HorizontalScrolling");
+        HvkGui::PushID("##HorizontalScrolling");
         for (int i = 0; i < 5; i++)
         {
-            float child_height = ImGui::GetTextLineHeight() + style.ScrollbarSize + style.WindowPadding.y * 2.0f;
+            float child_height = HvkGui::GetTextLineHeight() + style.ScrollbarSize + style.WindowPadding.y * 2.0f;
             ImGuiWindowFlags child_flags = ImGuiWindowFlags_HorizontalScrollbar | (enable_extra_decorations ? ImGuiWindowFlags_AlwaysVerticalScrollbar : 0);
-            ImGuiID child_id = ImGui::GetID((void*)(intptr_t)i);
-            bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(-100, child_height), ImGuiChildFlags_Borders, child_flags);
+            ImGuiID child_id = HvkGui::GetID((void*)(intptr_t)i);
+            bool child_is_visible = HvkGui::BeginChild(child_id, ImVec2(-100, child_height), ImGuiChildFlags_Borders, child_flags);
             if (scroll_to_off)
-                ImGui::SetScrollX(scroll_to_off_px);
+                HvkGui::SetScrollX(scroll_to_off_px);
             if (scroll_to_pos)
-                ImGui::SetScrollFromPosX(ImGui::GetCursorStartPos().x + scroll_to_pos_px, i * 0.25f);
+                HvkGui::SetScrollFromPosX(HvkGui::GetCursorStartPos().x + scroll_to_pos_px, i * 0.25f);
             if (child_is_visible) // Avoid calling SetScrollHereY when running with culled items
             {
                 for (int item = 0; item < 100; item++)
                 {
                     if (item > 0)
-                        ImGui::SameLine();
+                        HvkGui::SameLine();
                     if (enable_track && item == track_item)
                     {
-                        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Item %d", item);
-                        ImGui::SetScrollHereX(i * 0.25f); // 0.0f:left, 0.5f:center, 1.0f:right
+                        HvkGui::TextColored(ImVec4(1, 1, 0, 1), "Item %d", item);
+                        HvkGui::SetScrollHereX(i * 0.25f); // 0.0f:left, 0.5f:center, 1.0f:right
                     }
                     else
                     {
-                        ImGui::Text("Item %d", item);
+                        HvkGui::Text("Item %d", item);
                     }
                 }
             }
-            float scroll_x = ImGui::GetScrollX();
-            float scroll_max_x = ImGui::GetScrollMaxX();
-            ImGui::EndChild();
-            ImGui::SameLine();
+            float scroll_x = HvkGui::GetScrollX();
+            float scroll_max_x = HvkGui::GetScrollMaxX();
+            HvkGui::EndChild();
+            HvkGui::SameLine();
             const char* names[] = { "Left", "25%", "Center", "75%", "Right" };
-            ImGui::Text("%s\n%.0f/%.0f", names[i], scroll_x, scroll_max_x);
-            ImGui::Spacing();
+            HvkGui::Text("%s\n%.0f/%.0f", names[i], scroll_x, scroll_max_x);
+            HvkGui::Spacing();
         }
-        ImGui::PopID();
+        HvkGui::PopID();
 
         // Miscellaneous Horizontal Scrolling Demo
         IMGUI_DEMO_MARKER("Layout/Scrolling/Horizontal (more)");
@@ -4936,11 +4936,11 @@ static void DemoWindowLayout()
             "Horizontal scrolling for a window is enabled via the ImGuiWindowFlags_HorizontalScrollbar flag.\n\n"
             "You may want to also explicitly specify content width by using SetNextWindowContentWidth() before Begin().");
         static int lines = 7;
-        ImGui::SliderInt("Lines", &lines, 1, 15);
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 1.0f));
-        ImVec2 scrolling_child_size = ImVec2(0, ImGui::GetFrameHeightWithSpacing() * 7 + 30);
-        ImGui::BeginChild("scrolling", scrolling_child_size, ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
+        HvkGui::SliderInt("Lines", &lines, 1, 15);
+        HvkGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+        HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 1.0f));
+        ImVec2 scrolling_child_size = ImVec2(0, HvkGui::GetFrameHeightWithSpacing() * 7 + 30);
+        HvkGui::BeginChild("scrolling", scrolling_child_size, ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
         for (int line = 0; line < lines; line++)
         {
             // Display random stuff. For the sake of this trivial demo we are using basic Button() + SameLine()
@@ -4950,47 +4950,47 @@ static void DemoWindowLayout()
             int num_buttons = 10 + ((line & 1) ? line * 9 : line * 3);
             for (int n = 0; n < num_buttons; n++)
             {
-                if (n > 0) ImGui::SameLine();
-                ImGui::PushID(n + line * 1000);
+                if (n > 0) HvkGui::SameLine();
+                HvkGui::PushID(n + line * 1000);
                 char num_buf[16];
                 sprintf(num_buf, "%d", n);
                 const char* label = (!(n % 15)) ? "FizzBuzz" : (!(n % 3)) ? "Fizz" : (!(n % 5)) ? "Buzz" : num_buf;
                 float hue = n * 0.05f;
-                ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(hue, 0.6f, 0.6f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(hue, 0.7f, 0.7f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(hue, 0.8f, 0.8f));
-                ImGui::Button(label, ImVec2(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
-                ImGui::PopStyleColor(3);
-                ImGui::PopID();
+                HvkGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(hue, 0.6f, 0.6f));
+                HvkGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(hue, 0.7f, 0.7f));
+                HvkGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(hue, 0.8f, 0.8f));
+                HvkGui::Button(label, ImVec2(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
+                HvkGui::PopStyleColor(3);
+                HvkGui::PopID();
             }
         }
-        float scroll_x = ImGui::GetScrollX();
-        float scroll_max_x = ImGui::GetScrollMaxX();
-        ImGui::EndChild();
-        ImGui::PopStyleVar(2);
+        float scroll_x = HvkGui::GetScrollX();
+        float scroll_max_x = HvkGui::GetScrollMaxX();
+        HvkGui::EndChild();
+        HvkGui::PopStyleVar(2);
         float scroll_x_delta = 0.0f;
-        ImGui::SmallButton("<<");
-        if (ImGui::IsItemActive())
-            scroll_x_delta = -ImGui::GetIO().DeltaTime * 1000.0f;
-        ImGui::SameLine();
-        ImGui::Text("Scroll from code"); ImGui::SameLine();
-        ImGui::SmallButton(">>");
-        if (ImGui::IsItemActive())
-            scroll_x_delta = +ImGui::GetIO().DeltaTime * 1000.0f;
-        ImGui::SameLine();
-        ImGui::Text("%.0f/%.0f", scroll_x, scroll_max_x);
+        HvkGui::SmallButton("<<");
+        if (HvkGui::IsItemActive())
+            scroll_x_delta = -HvkGui::GetIO().DeltaTime * 1000.0f;
+        HvkGui::SameLine();
+        HvkGui::Text("Scroll from code"); HvkGui::SameLine();
+        HvkGui::SmallButton(">>");
+        if (HvkGui::IsItemActive())
+            scroll_x_delta = +HvkGui::GetIO().DeltaTime * 1000.0f;
+        HvkGui::SameLine();
+        HvkGui::Text("%.0f/%.0f", scroll_x, scroll_max_x);
         if (scroll_x_delta != 0.0f)
         {
             // Demonstrate a trick: you can use Begin to set yourself in the context of another window
             // (here we are already out of your child window)
-            ImGui::BeginChild("scrolling");
-            ImGui::SetScrollX(ImGui::GetScrollX() + scroll_x_delta);
-            ImGui::EndChild();
+            HvkGui::BeginChild("scrolling");
+            HvkGui::SetScrollX(HvkGui::GetScrollX() + scroll_x_delta);
+            HvkGui::EndChild();
         }
-        ImGui::Spacing();
+        HvkGui::Spacing();
 
         static bool show_horizontal_contents_size_demo_window = false;
-        ImGui::Checkbox("Show Horizontal contents size demo window", &show_horizontal_contents_size_demo_window);
+        HvkGui::Checkbox("Show Horizontal contents size demo window", &show_horizontal_contents_size_demo_window);
 
         if (show_horizontal_contents_size_demo_window)
         {
@@ -5004,107 +5004,107 @@ static void DemoWindowLayout()
             static bool explicit_content_size = false;
             static float contents_size_x = 300.0f;
             if (explicit_content_size)
-                ImGui::SetNextWindowContentSize(ImVec2(contents_size_x, 0.0f));
-            ImGui::Begin("Horizontal contents size demo window", &show_horizontal_contents_size_demo_window, show_h_scrollbar ? ImGuiWindowFlags_HorizontalScrollbar : 0);
+                HvkGui::SetNextWindowContentSize(ImVec2(contents_size_x, 0.0f));
+            HvkGui::Begin("Horizontal contents size demo window", &show_horizontal_contents_size_demo_window, show_h_scrollbar ? ImGuiWindowFlags_HorizontalScrollbar : 0);
             IMGUI_DEMO_MARKER("Layout/Scrolling/Horizontal contents size demo window");
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 0));
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 0));
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 0));
+            HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 0));
             HelpMarker(
                 "Test how different widgets react and impact the work rectangle growing when horizontal scrolling is enabled.\n\n"
                 "Use 'Metrics->Tools->Show windows rectangles' to visualize rectangles.");
-            ImGui::Checkbox("H-scrollbar", &show_h_scrollbar);
-            ImGui::Checkbox("Button", &show_button);            // Will grow contents size (unless explicitly overwritten)
-            ImGui::Checkbox("Tree nodes", &show_tree_nodes);    // Will grow contents size and display highlight over full width
-            ImGui::Checkbox("Text wrapped", &show_text_wrapped);// Will grow and use contents size
-            ImGui::Checkbox("Columns", &show_columns);          // Will use contents size
-            ImGui::Checkbox("Tab bar", &show_tab_bar);          // Will use contents size
-            ImGui::Checkbox("Child", &show_child);              // Will grow and use contents size
-            ImGui::Checkbox("Explicit content size", &explicit_content_size);
-            ImGui::Text("Scroll %.1f/%.1f %.1f/%.1f", ImGui::GetScrollX(), ImGui::GetScrollMaxX(), ImGui::GetScrollY(), ImGui::GetScrollMaxY());
+            HvkGui::Checkbox("H-scrollbar", &show_h_scrollbar);
+            HvkGui::Checkbox("Button", &show_button);            // Will grow contents size (unless explicitly overwritten)
+            HvkGui::Checkbox("Tree nodes", &show_tree_nodes);    // Will grow contents size and display highlight over full width
+            HvkGui::Checkbox("Text wrapped", &show_text_wrapped);// Will grow and use contents size
+            HvkGui::Checkbox("Columns", &show_columns);          // Will use contents size
+            HvkGui::Checkbox("Tab bar", &show_tab_bar);          // Will use contents size
+            HvkGui::Checkbox("Child", &show_child);              // Will grow and use contents size
+            HvkGui::Checkbox("Explicit content size", &explicit_content_size);
+            HvkGui::Text("Scroll %.1f/%.1f %.1f/%.1f", HvkGui::GetScrollX(), HvkGui::GetScrollMaxX(), HvkGui::GetScrollY(), HvkGui::GetScrollMaxY());
             if (explicit_content_size)
             {
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(ImGui::CalcTextSize("123456").x);
-                ImGui::DragFloat("##csx", &contents_size_x);
-                ImVec2 p = ImGui::GetCursorScreenPos();
-                ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + 10, p.y + 10), IM_COL32_WHITE);
-                ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(p.x + contents_size_x - 10, p.y), ImVec2(p.x + contents_size_x, p.y + 10), IM_COL32_WHITE);
-                ImGui::Dummy(ImVec2(0, 10));
+                HvkGui::SameLine();
+                HvkGui::SetNextItemWidth(HvkGui::CalcTextSize("123456").x);
+                HvkGui::DragFloat("##csx", &contents_size_x);
+                ImVec2 p = HvkGui::GetCursorScreenPos();
+                HvkGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + 10, p.y + 10), IM_COL32_WHITE);
+                HvkGui::GetWindowDrawList()->AddRectFilled(ImVec2(p.x + contents_size_x - 10, p.y), ImVec2(p.x + contents_size_x, p.y + 10), IM_COL32_WHITE);
+                HvkGui::Dummy(ImVec2(0, 10));
             }
-            ImGui::PopStyleVar(2);
-            ImGui::Separator();
+            HvkGui::PopStyleVar(2);
+            HvkGui::Separator();
             if (show_button)
             {
-                ImGui::Button("this is a 300-wide button", ImVec2(300, 0));
+                HvkGui::Button("this is a 300-wide button", ImVec2(300, 0));
             }
             if (show_tree_nodes)
             {
                 bool open = true;
-                if (ImGui::TreeNode("this is a tree node"))
+                if (HvkGui::TreeNode("this is a tree node"))
                 {
-                    if (ImGui::TreeNode("another one of those tree node..."))
+                    if (HvkGui::TreeNode("another one of those tree node..."))
                     {
-                        ImGui::Text("Some tree contents");
-                        ImGui::TreePop();
+                        HvkGui::Text("Some tree contents");
+                        HvkGui::TreePop();
                     }
-                    ImGui::TreePop();
+                    HvkGui::TreePop();
                 }
-                ImGui::CollapsingHeader("CollapsingHeader", &open);
+                HvkGui::CollapsingHeader("CollapsingHeader", &open);
             }
             if (show_text_wrapped)
             {
-                ImGui::TextWrapped("This text should automatically wrap on the edge of the work rectangle.");
+                HvkGui::TextWrapped("This text should automatically wrap on the edge of the work rectangle.");
             }
             if (show_columns)
             {
-                ImGui::Text("Tables:");
-                if (ImGui::BeginTable("table", 4, ImGuiTableFlags_Borders))
+                HvkGui::Text("Tables:");
+                if (HvkGui::BeginTable("table", 4, ImGuiTableFlags_Borders))
                 {
                     for (int n = 0; n < 4; n++)
                     {
-                        ImGui::TableNextColumn();
-                        ImGui::Text("Width %.2f", ImGui::GetContentRegionAvail().x);
+                        HvkGui::TableNextColumn();
+                        HvkGui::Text("Width %.2f", HvkGui::GetContentRegionAvail().x);
                     }
-                    ImGui::EndTable();
+                    HvkGui::EndTable();
                 }
-                ImGui::Text("Columns:");
-                ImGui::Columns(4);
+                HvkGui::Text("Columns:");
+                HvkGui::Columns(4);
                 for (int n = 0; n < 4; n++)
                 {
-                    ImGui::Text("Width %.2f", ImGui::GetColumnWidth());
-                    ImGui::NextColumn();
+                    HvkGui::Text("Width %.2f", HvkGui::GetColumnWidth());
+                    HvkGui::NextColumn();
                 }
-                ImGui::Columns(1);
+                HvkGui::Columns(1);
             }
-            if (show_tab_bar && ImGui::BeginTabBar("Hello"))
+            if (show_tab_bar && HvkGui::BeginTabBar("Hello"))
             {
-                if (ImGui::BeginTabItem("OneOneOne")) { ImGui::EndTabItem(); }
-                if (ImGui::BeginTabItem("TwoTwoTwo")) { ImGui::EndTabItem(); }
-                if (ImGui::BeginTabItem("ThreeThreeThree")) { ImGui::EndTabItem(); }
-                if (ImGui::BeginTabItem("FourFourFour")) { ImGui::EndTabItem(); }
-                ImGui::EndTabBar();
+                if (HvkGui::BeginTabItem("OneOneOne")) { HvkGui::EndTabItem(); }
+                if (HvkGui::BeginTabItem("TwoTwoTwo")) { HvkGui::EndTabItem(); }
+                if (HvkGui::BeginTabItem("ThreeThreeThree")) { HvkGui::EndTabItem(); }
+                if (HvkGui::BeginTabItem("FourFourFour")) { HvkGui::EndTabItem(); }
+                HvkGui::EndTabBar();
             }
             if (show_child)
             {
-                ImGui::BeginChild("child", ImVec2(0, 0), ImGuiChildFlags_Borders);
-                ImGui::EndChild();
+                HvkGui::BeginChild("child", ImVec2(0, 0), ImGuiChildFlags_Borders);
+                HvkGui::EndChild();
             }
-            ImGui::End();
+            HvkGui::End();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Text Clipping");
-    if (ImGui::TreeNode("Text Clipping"))
+    if (HvkGui::TreeNode("Text Clipping"))
     {
         static ImVec2 size(100.0f, 100.0f);
         static ImVec2 offset(30.0f, 30.0f);
-        ImGui::DragFloat2("size", (float*)&size, 0.5f, 1.0f, 200.0f, "%.0f");
-        ImGui::TextWrapped("(Click and drag to scroll)");
+        HvkGui::DragFloat2("size", (float*)&size, 0.5f, 1.0f, 200.0f, "%.0f");
+        HvkGui::TextWrapped("(Click and drag to scroll)");
 
         HelpMarker(
-            "(Left) Using ImGui::PushClipRect():\n"
+            "(Left) Using HvkGui::PushClipRect():\n"
             "Will alter ImGui hit-testing logic + ImDrawList rendering.\n"
             "(use this if you want your clipping rectangle to affect interactions)\n\n"
             "(Center) Using ImDrawList::PushClipRect():\n"
@@ -5117,31 +5117,31 @@ static void DemoWindowLayout()
         for (int n = 0; n < 3; n++)
         {
             if (n > 0)
-                ImGui::SameLine();
+                HvkGui::SameLine();
 
-            ImGui::PushID(n);
-            ImGui::InvisibleButton("##canvas", size);
-            if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+            HvkGui::PushID(n);
+            HvkGui::InvisibleButton("##canvas", size);
+            if (HvkGui::IsItemActive() && HvkGui::IsMouseDragging(ImGuiMouseButton_Left))
             {
-                offset.x += ImGui::GetIO().MouseDelta.x;
-                offset.y += ImGui::GetIO().MouseDelta.y;
+                offset.x += HvkGui::GetIO().MouseDelta.x;
+                offset.y += HvkGui::GetIO().MouseDelta.y;
             }
-            ImGui::PopID();
-            if (!ImGui::IsItemVisible()) // Skip rendering as ImDrawList elements are not clipped.
+            HvkGui::PopID();
+            if (!HvkGui::IsItemVisible()) // Skip rendering as ImDrawList elements are not clipped.
                 continue;
 
-            const ImVec2 p0 = ImGui::GetItemRectMin();
-            const ImVec2 p1 = ImGui::GetItemRectMax();
+            const ImVec2 p0 = HvkGui::GetItemRectMin();
+            const ImVec2 p1 = HvkGui::GetItemRectMax();
             const char* text_str = "Line 1 hello\nLine 2 clip me!";
             const ImVec2 text_pos = ImVec2(p0.x + offset.x, p0.y + offset.y);
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
             switch (n)
             {
             case 0:
-                ImGui::PushClipRect(p0, p1, true);
+                HvkGui::PushClipRect(p0, p1, true);
                 draw_list->AddRectFilled(p0, p1, IM_COL32(90, 90, 120, 255));
                 draw_list->AddText(text_pos, IM_COL32_WHITE, text_str);
-                ImGui::PopClipRect();
+                HvkGui::PopClipRect();
                 break;
             case 1:
                 draw_list->PushClipRect(p0, p1, true);
@@ -5152,16 +5152,16 @@ static void DemoWindowLayout()
             case 2:
                 ImVec4 clip_rect(p0.x, p0.y, p1.x, p1.y); // AddText() takes a ImVec4* here so let's convert.
                 draw_list->AddRectFilled(p0, p1, IM_COL32(90, 90, 120, 255));
-                draw_list->AddText(ImGui::GetFont(), ImGui::GetFontSize(), text_pos, IM_COL32_WHITE, text_str, NULL, 0.0f, &clip_rect);
+                draw_list->AddText(HvkGui::GetFont(), HvkGui::GetFontSize(), text_pos, IM_COL32_WHITE, text_str, NULL, 0.0f, &clip_rect);
                 break;
             }
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Layout/Overlap Mode");
-    if (ImGui::TreeNode("Overlap Mode"))
+    if (HvkGui::TreeNode("Overlap Mode"))
     {
         static bool enable_allow_overlap = true;
 
@@ -5169,26 +5169,26 @@ static void DemoWindowLayout()
             "Hit-testing is by default performed in item submission order, which generally is perceived as 'back-to-front'.\n\n"
             "By using SetNextItemAllowOverlap() you can notify that an item may be overlapped by another. "
             "Doing so alters the hovering logic: items using AllowOverlap mode requires an extra frame to accept hovered state.");
-        ImGui::Checkbox("Enable AllowOverlap", &enable_allow_overlap);
+        HvkGui::Checkbox("Enable AllowOverlap", &enable_allow_overlap);
 
-        ImVec2 button1_pos = ImGui::GetCursorScreenPos();
+        ImVec2 button1_pos = HvkGui::GetCursorScreenPos();
         ImVec2 button2_pos = ImVec2(button1_pos.x + 50.0f, button1_pos.y + 50.0f);
         if (enable_allow_overlap)
-            ImGui::SetNextItemAllowOverlap();
-        ImGui::Button("Button 1", ImVec2(80, 80));
-        ImGui::SetCursorScreenPos(button2_pos);
-        ImGui::Button("Button 2", ImVec2(80, 80));
+            HvkGui::SetNextItemAllowOverlap();
+        HvkGui::Button("Button 1", ImVec2(80, 80));
+        HvkGui::SetCursorScreenPos(button2_pos);
+        HvkGui::Button("Button 2", ImVec2(80, 80));
 
         // This is typically used with width-spanning items.
         // (note that Selectable() has a dedicated flag ImGuiSelectableFlags_AllowOverlap, which is a shortcut
         // for using SetNextItemAllowOverlap(). For demo purpose we use SetNextItemAllowOverlap() here.)
         if (enable_allow_overlap)
-            ImGui::SetNextItemAllowOverlap();
-        ImGui::Selectable("Some Selectable", false);
-        ImGui::SameLine();
-        ImGui::SmallButton("++");
+            HvkGui::SetNextItemAllowOverlap();
+        HvkGui::Selectable("Some Selectable", false);
+        HvkGui::SameLine();
+        HvkGui::SmallButton("++");
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 }
 
@@ -5199,7 +5199,7 @@ static void DemoWindowLayout()
 static void DemoWindowPopups()
 {
     IMGUI_DEMO_MARKER("Popups");
-    if (!ImGui::CollapsingHeader("Popups & Modal windows"))
+    if (!HvkGui::CollapsingHeader("Popups & Modal windows"))
         return;
 
     // The properties of popups windows are:
@@ -5213,17 +5213,17 @@ static void DemoWindowPopups()
     // popups at any time.
 
     // Typical use for regular windows:
-    //   bool my_tool_is_active = false; if (ImGui::Button("Open")) my_tool_is_active = true; [...] if (my_tool_is_active) Begin("My Tool", &my_tool_is_active) { [...] } End();
+    //   bool my_tool_is_active = false; if (HvkGui::Button("Open")) my_tool_is_active = true; [...] if (my_tool_is_active) Begin("My Tool", &my_tool_is_active) { [...] } End();
     // Typical use for popups:
-    //   if (ImGui::Button("Open")) ImGui::OpenPopup("MyPopup"); if (ImGui::BeginPopup("MyPopup")) { [...] EndPopup(); }
+    //   if (HvkGui::Button("Open")) HvkGui::OpenPopup("MyPopup"); if (HvkGui::BeginPopup("MyPopup")) { [...] EndPopup(); }
 
     // With popups we have to go through a library call (here OpenPopup) to manipulate the visibility state.
     // This may be a bit confusing at first but it should quickly make sense. Follow on the examples below.
 
     IMGUI_DEMO_MARKER("Popups/Popups");
-    if (ImGui::TreeNode("Popups"))
+    if (HvkGui::TreeNode("Popups"))
     {
-        ImGui::TextWrapped(
+        HvkGui::TextWrapped(
             "When a popup is active, it inhibits interacting with windows that are behind the popup. "
             "Clicking outside the popup closes it.");
 
@@ -5233,88 +5233,88 @@ static void DemoWindowPopups()
 
         // Simple selection popup (if you want to show the current selection inside the Button itself,
         // you may want to build a string using the "###" operator to preserve a constant ID with a variable label)
-        if (ImGui::Button("Select.."))
-            ImGui::OpenPopup("my_select_popup");
-        ImGui::SameLine();
-        ImGui::TextUnformatted(selected_fish == -1 ? "<None>" : names[selected_fish]);
-        if (ImGui::BeginPopup("my_select_popup"))
+        if (HvkGui::Button("Select.."))
+            HvkGui::OpenPopup("my_select_popup");
+        HvkGui::SameLine();
+        HvkGui::TextUnformatted(selected_fish == -1 ? "<None>" : names[selected_fish]);
+        if (HvkGui::BeginPopup("my_select_popup"))
         {
-            ImGui::SeparatorText("Aquarium");
+            HvkGui::SeparatorText("Aquarium");
             for (int i = 0; i < IM_ARRAYSIZE(names); i++)
-                if (ImGui::Selectable(names[i]))
+                if (HvkGui::Selectable(names[i]))
                     selected_fish = i;
-            ImGui::EndPopup();
+            HvkGui::EndPopup();
         }
 
         // Showing a menu with toggles
-        if (ImGui::Button("Toggle.."))
-            ImGui::OpenPopup("my_toggle_popup");
-        if (ImGui::BeginPopup("my_toggle_popup"))
+        if (HvkGui::Button("Toggle.."))
+            HvkGui::OpenPopup("my_toggle_popup");
+        if (HvkGui::BeginPopup("my_toggle_popup"))
         {
             for (int i = 0; i < IM_ARRAYSIZE(names); i++)
-                ImGui::MenuItem(names[i], "", &toggles[i]);
-            if (ImGui::BeginMenu("Sub-menu"))
+                HvkGui::MenuItem(names[i], "", &toggles[i]);
+            if (HvkGui::BeginMenu("Sub-menu"))
             {
-                ImGui::MenuItem("Click me");
-                ImGui::EndMenu();
+                HvkGui::MenuItem("Click me");
+                HvkGui::EndMenu();
             }
 
-            ImGui::Separator();
-            ImGui::Text("Tooltip here");
-            ImGui::SetItemTooltip("I am a tooltip over a popup");
+            HvkGui::Separator();
+            HvkGui::Text("Tooltip here");
+            HvkGui::SetItemTooltip("I am a tooltip over a popup");
 
-            if (ImGui::Button("Stacked Popup"))
-                ImGui::OpenPopup("another popup");
-            if (ImGui::BeginPopup("another popup"))
+            if (HvkGui::Button("Stacked Popup"))
+                HvkGui::OpenPopup("another popup");
+            if (HvkGui::BeginPopup("another popup"))
             {
                 for (int i = 0; i < IM_ARRAYSIZE(names); i++)
-                    ImGui::MenuItem(names[i], "", &toggles[i]);
-                if (ImGui::BeginMenu("Sub-menu"))
+                    HvkGui::MenuItem(names[i], "", &toggles[i]);
+                if (HvkGui::BeginMenu("Sub-menu"))
                 {
-                    ImGui::MenuItem("Click me");
-                    if (ImGui::Button("Stacked Popup"))
-                        ImGui::OpenPopup("another popup");
-                    if (ImGui::BeginPopup("another popup"))
+                    HvkGui::MenuItem("Click me");
+                    if (HvkGui::Button("Stacked Popup"))
+                        HvkGui::OpenPopup("another popup");
+                    if (HvkGui::BeginPopup("another popup"))
                     {
-                        ImGui::Text("I am the last one here.");
-                        ImGui::EndPopup();
+                        HvkGui::Text("I am the last one here.");
+                        HvkGui::EndPopup();
                     }
-                    ImGui::EndMenu();
+                    HvkGui::EndMenu();
                 }
-                ImGui::EndPopup();
+                HvkGui::EndPopup();
             }
-            ImGui::EndPopup();
+            HvkGui::EndPopup();
         }
 
         // Call the more complete ShowExampleMenuFile which we use in various places of this demo
-        if (ImGui::Button("With a menu.."))
-            ImGui::OpenPopup("my_file_popup");
-        if (ImGui::BeginPopup("my_file_popup", ImGuiWindowFlags_MenuBar))
+        if (HvkGui::Button("With a menu.."))
+            HvkGui::OpenPopup("my_file_popup");
+        if (HvkGui::BeginPopup("my_file_popup", ImGuiWindowFlags_MenuBar))
         {
-            if (ImGui::BeginMenuBar())
+            if (HvkGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("File"))
+                if (HvkGui::BeginMenu("File"))
                 {
                     ShowExampleMenuFile();
-                    ImGui::EndMenu();
+                    HvkGui::EndMenu();
                 }
-                if (ImGui::BeginMenu("Edit"))
+                if (HvkGui::BeginMenu("Edit"))
                 {
-                    ImGui::MenuItem("Dummy");
-                    ImGui::EndMenu();
+                    HvkGui::MenuItem("Dummy");
+                    HvkGui::EndMenu();
                 }
-                ImGui::EndMenuBar();
+                HvkGui::EndMenuBar();
             }
-            ImGui::Text("Hello from popup!");
-            ImGui::Button("This is a dummy button..");
-            ImGui::EndPopup();
+            HvkGui::Text("Hello from popup!");
+            HvkGui::Button("This is a dummy button..");
+            HvkGui::EndPopup();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Popups/Context menus");
-    if (ImGui::TreeNode("Context menus"))
+    if (HvkGui::TreeNode("Context menus"))
     {
         HelpMarker("\"Context\" functions are simple helpers to associate a Popup to a given Item or Window identifier.");
 
@@ -5335,17 +5335,17 @@ static void DemoWindowPopups()
             static int selected = -1;
             for (int n = 0; n < 5; n++)
             {
-                if (ImGui::Selectable(names[n], selected == n))
+                if (HvkGui::Selectable(names[n], selected == n))
                     selected = n;
-                if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+                if (HvkGui::BeginPopupContextItem()) // <-- use last item id as popup id
                 {
                     selected = n;
-                    ImGui::Text("This is a popup for \"%s\"!", names[n]);
-                    if (ImGui::Button("Close"))
-                        ImGui::CloseCurrentPopup();
-                    ImGui::EndPopup();
+                    HvkGui::Text("This is a popup for \"%s\"!", names[n]);
+                    if (HvkGui::Button("Close"))
+                        HvkGui::CloseCurrentPopup();
+                    HvkGui::EndPopup();
                 }
-                ImGui::SetItemTooltip("Right-click to open popup");
+                HvkGui::SetItemTooltip("Right-click to open popup");
             }
         }
 
@@ -5355,25 +5355,25 @@ static void DemoWindowPopups()
         {
             HelpMarker("Text() elements don't have stable identifiers so we need to provide one.");
             static float value = 0.5f;
-            ImGui::Text("Value = %.3f <-- (1) right-click this text", value);
-            if (ImGui::BeginPopupContextItem("my popup"))
+            HvkGui::Text("Value = %.3f <-- (1) right-click this text", value);
+            if (HvkGui::BeginPopupContextItem("my popup"))
             {
-                if (ImGui::Selectable("Set to zero")) value = 0.0f;
-                if (ImGui::Selectable("Set to PI")) value = 3.1415f;
-                ImGui::SetNextItemWidth(-FLT_MIN);
-                ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
-                ImGui::EndPopup();
+                if (HvkGui::Selectable("Set to zero")) value = 0.0f;
+                if (HvkGui::Selectable("Set to PI")) value = 3.1415f;
+                HvkGui::SetNextItemWidth(-FLT_MIN);
+                HvkGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
+                HvkGui::EndPopup();
             }
 
             // We can also use OpenPopupOnItemClick() to toggle the visibility of a given popup.
             // Here we make it that right-clicking this other text element opens the same popup as above.
             // The popup itself will be submitted by the code above.
-            ImGui::Text("(2) Or right-click this text");
-            ImGui::OpenPopupOnItemClick("my popup", ImGuiPopupFlags_MouseButtonRight);
+            HvkGui::Text("(2) Or right-click this text");
+            HvkGui::OpenPopupOnItemClick("my popup", ImGuiPopupFlags_MouseButtonRight);
 
             // Back to square one: manually open the same popup.
-            if (ImGui::Button("(3) Or click this button"))
-                ImGui::OpenPopup("my popup");
+            if (HvkGui::Button("(3) Or click this button"))
+                HvkGui::OpenPopup("my popup");
         }
 
         // Example 3
@@ -5385,112 +5385,112 @@ static void DemoWindowPopups()
             static char name[32] = "Label1";
             char buf[64];
             sprintf(buf, "Button: %s###Button", name); // ### operator override ID ignoring the preceding label
-            ImGui::Button(buf);
-            if (ImGui::BeginPopupContextItem())
+            HvkGui::Button(buf);
+            if (HvkGui::BeginPopupContextItem())
             {
-                ImGui::Text("Edit name:");
-                ImGui::InputText("##edit", name, IM_ARRAYSIZE(name));
-                if (ImGui::Button("Close"))
-                    ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
+                HvkGui::Text("Edit name:");
+                HvkGui::InputText("##edit", name, IM_ARRAYSIZE(name));
+                if (HvkGui::Button("Close"))
+                    HvkGui::CloseCurrentPopup();
+                HvkGui::EndPopup();
             }
-            ImGui::SameLine(); ImGui::Text("(<-- right-click here)");
+            HvkGui::SameLine(); HvkGui::Text("(<-- right-click here)");
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Popups/Modals");
-    if (ImGui::TreeNode("Modals"))
+    if (HvkGui::TreeNode("Modals"))
     {
-        ImGui::TextWrapped("Modal windows are like popups but the user cannot close them by clicking outside.");
+        HvkGui::TextWrapped("Modal windows are like popups but the user cannot close them by clicking outside.");
 
-        if (ImGui::Button("Delete.."))
-            ImGui::OpenPopup("Delete?");
+        if (HvkGui::Button("Delete.."))
+            HvkGui::OpenPopup("Delete?");
 
         // Always center this window when appearing
-        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+        ImVec2 center = HvkGui::GetMainViewport()->GetCenter();
+        HvkGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-        if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        if (HvkGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!");
-            ImGui::Separator();
+            HvkGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!");
+            HvkGui::Separator();
 
             //static int unused_i = 0;
-            //ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+            //HvkGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
 
             static bool dont_ask_me_next_time = false;
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-            ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
-            ImGui::PopStyleVar();
+            HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+            HvkGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+            HvkGui::PopStyleVar();
 
-            if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-            ImGui::SetItemDefaultFocus();
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-            ImGui::EndPopup();
+            if (HvkGui::Button("OK", ImVec2(120, 0))) { HvkGui::CloseCurrentPopup(); }
+            HvkGui::SetItemDefaultFocus();
+            HvkGui::SameLine();
+            if (HvkGui::Button("Cancel", ImVec2(120, 0))) { HvkGui::CloseCurrentPopup(); }
+            HvkGui::EndPopup();
         }
 
-        if (ImGui::Button("Stacked modals.."))
-            ImGui::OpenPopup("Stacked 1");
-        if (ImGui::BeginPopupModal("Stacked 1", NULL, ImGuiWindowFlags_MenuBar))
+        if (HvkGui::Button("Stacked modals.."))
+            HvkGui::OpenPopup("Stacked 1");
+        if (HvkGui::BeginPopupModal("Stacked 1", NULL, ImGuiWindowFlags_MenuBar))
         {
-            if (ImGui::BeginMenuBar())
+            if (HvkGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("File"))
+                if (HvkGui::BeginMenu("File"))
                 {
-                    if (ImGui::MenuItem("Some menu item")) {}
-                    ImGui::EndMenu();
+                    if (HvkGui::MenuItem("Some menu item")) {}
+                    HvkGui::EndMenu();
                 }
-                ImGui::EndMenuBar();
+                HvkGui::EndMenuBar();
             }
-            ImGui::Text("Hello from Stacked The First\nUsing style.Colors[ImGuiCol_ModalWindowDimBg] behind it.");
+            HvkGui::Text("Hello from Stacked The First\nUsing style.Colors[ImGuiCol_ModalWindowDimBg] behind it.");
 
             // Testing behavior of widgets stacking their own regular popups over the modal.
             static int item = 1;
             static float color[4] = { 0.4f, 0.7f, 0.0f, 0.5f };
-            ImGui::Combo("Combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
-            ImGui::ColorEdit4("Color", color);
+            HvkGui::Combo("Combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+            HvkGui::ColorEdit4("Color", color);
 
-            if (ImGui::Button("Add another modal.."))
-                ImGui::OpenPopup("Stacked 2");
+            if (HvkGui::Button("Add another modal.."))
+                HvkGui::OpenPopup("Stacked 2");
 
             // Also demonstrate passing a bool* to BeginPopupModal(), this will create a regular close button which
             // will close the popup. Note that the visibility state of popups is owned by imgui, so the input value
             // of the bool actually doesn't matter here.
             bool unused_open = true;
-            if (ImGui::BeginPopupModal("Stacked 2", &unused_open))
+            if (HvkGui::BeginPopupModal("Stacked 2", &unused_open))
             {
-                ImGui::Text("Hello from Stacked The Second!");
-                ImGui::ColorEdit4("Color", color); // Allow opening another nested popup
-                if (ImGui::Button("Close"))
-                    ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
+                HvkGui::Text("Hello from Stacked The Second!");
+                HvkGui::ColorEdit4("Color", color); // Allow opening another nested popup
+                if (HvkGui::Button("Close"))
+                    HvkGui::CloseCurrentPopup();
+                HvkGui::EndPopup();
             }
 
-            if (ImGui::Button("Close"))
-                ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
+            if (HvkGui::Button("Close"))
+                HvkGui::CloseCurrentPopup();
+            HvkGui::EndPopup();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Popups/Menus inside a regular window");
-    if (ImGui::TreeNode("Menus inside a regular window"))
+    if (HvkGui::TreeNode("Menus inside a regular window"))
     {
-        ImGui::TextWrapped("Below we are testing adding menu items to a regular window. It's rather unusual but should work!");
-        ImGui::Separator();
+        HvkGui::TextWrapped("Below we are testing adding menu items to a regular window. It's rather unusual but should work!");
+        HvkGui::Separator();
 
-        ImGui::MenuItem("Menu item", "Ctrl+M");
-        if (ImGui::BeginMenu("Menu inside a regular window"))
+        HvkGui::MenuItem("Menu item", "Ctrl+M");
+        if (HvkGui::BeginMenu("Menu inside a regular window"))
         {
             ShowExampleMenuFile();
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        ImGui::Separator();
-        ImGui::TreePop();
+        HvkGui::Separator();
+        HvkGui::TreePop();
     }
 }
 
@@ -5522,7 +5522,7 @@ struct MyItem
     // however qsort doesn't allow passing user data to comparing function.
     // As a workaround, we are storing the sort specs in a static/global for the comparing function to access.
     // In your own use case you would probably pass the sort specs to your sorting/comparing functions directly and not use a global.
-    // We could technically call ImGui::TableGetSortSpecs() in CompareWithSortSpecs(), but considering that this function is called
+    // We could technically call HvkGui::TableGetSortSpecs() in CompareWithSortSpecs(), but considering that this function is called
     // very often by the sorting algorithm it would be a little wasteful.
     static const ImGuiTableSortSpecs* s_current_sort_specs;
 
@@ -5571,14 +5571,14 @@ const ImGuiTableSortSpecs* MyItem::s_current_sort_specs = NULL;
 // Make the UI compact because there are so many fields
 static void PushStyleCompact()
 {
-    ImGuiStyle& style = ImGui::GetStyle();
-    ImGui::PushStyleVarY(ImGuiStyleVar_FramePadding, (float)(int)(style.FramePadding.y * 0.60f));
-    ImGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, (float)(int)(style.ItemSpacing.y * 0.60f));
+    ImGuiStyle& style = HvkGui::GetStyle();
+    HvkGui::PushStyleVarY(ImGuiStyleVar_FramePadding, (float)(int)(style.FramePadding.y * 0.60f));
+    HvkGui::PushStyleVarY(ImGuiStyleVar_ItemSpacing, (float)(int)(style.ItemSpacing.y * 0.60f));
 }
 
 static void PopStyleCompact()
 {
-    ImGui::PopStyleVar(2);
+    HvkGui::PopStyleVar(2);
 }
 
 // Show a combo box with a choice of sizing policies
@@ -5598,62 +5598,62 @@ static void EditTableSizingFlags(ImGuiTableFlags* p_flags)
         if (policies[idx].Value == (*p_flags & ImGuiTableFlags_SizingMask_))
             break;
     const char* preview_text = (idx < IM_ARRAYSIZE(policies)) ? policies[idx].Name + (idx > 0 ? strlen("ImGuiTableFlags") : 0) : "";
-    if (ImGui::BeginCombo("Sizing Policy", preview_text))
+    if (HvkGui::BeginCombo("Sizing Policy", preview_text))
     {
         for (int n = 0; n < IM_ARRAYSIZE(policies); n++)
-            if (ImGui::Selectable(policies[n].Name, idx == n))
+            if (HvkGui::Selectable(policies[n].Name, idx == n))
                 *p_flags = (*p_flags & ~ImGuiTableFlags_SizingMask_) | policies[n].Value;
-        ImGui::EndCombo();
+        HvkGui::EndCombo();
     }
-    ImGui::SameLine();
-    ImGui::TextDisabled("(?)");
-    if (ImGui::BeginItemTooltip())
+    HvkGui::SameLine();
+    HvkGui::TextDisabled("(?)");
+    if (HvkGui::BeginItemTooltip())
     {
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 50.0f);
+        HvkGui::PushTextWrapPos(HvkGui::GetFontSize() * 50.0f);
         for (int m = 0; m < IM_ARRAYSIZE(policies); m++)
         {
-            ImGui::Separator();
-            ImGui::Text("%s:", policies[m].Name);
-            ImGui::Separator();
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().IndentSpacing * 0.5f);
-            ImGui::TextUnformatted(policies[m].Tooltip);
+            HvkGui::Separator();
+            HvkGui::Text("%s:", policies[m].Name);
+            HvkGui::Separator();
+            HvkGui::SetCursorPosX(HvkGui::GetCursorPosX() + HvkGui::GetStyle().IndentSpacing * 0.5f);
+            HvkGui::TextUnformatted(policies[m].Tooltip);
         }
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
+        HvkGui::PopTextWrapPos();
+        HvkGui::EndTooltip();
     }
 }
 
 static void EditTableColumnsFlags(ImGuiTableColumnFlags* p_flags)
 {
-    ImGui::CheckboxFlags("_Disabled", p_flags, ImGuiTableColumnFlags_Disabled); ImGui::SameLine(); HelpMarker("Master disable flag (also hide from context menu)");
-    ImGui::CheckboxFlags("_DefaultHide", p_flags, ImGuiTableColumnFlags_DefaultHide);
-    ImGui::CheckboxFlags("_DefaultSort", p_flags, ImGuiTableColumnFlags_DefaultSort);
-    if (ImGui::CheckboxFlags("_WidthStretch", p_flags, ImGuiTableColumnFlags_WidthStretch))
+    HvkGui::CheckboxFlags("_Disabled", p_flags, ImGuiTableColumnFlags_Disabled); HvkGui::SameLine(); HelpMarker("Master disable flag (also hide from context menu)");
+    HvkGui::CheckboxFlags("_DefaultHide", p_flags, ImGuiTableColumnFlags_DefaultHide);
+    HvkGui::CheckboxFlags("_DefaultSort", p_flags, ImGuiTableColumnFlags_DefaultSort);
+    if (HvkGui::CheckboxFlags("_WidthStretch", p_flags, ImGuiTableColumnFlags_WidthStretch))
         *p_flags &= ~(ImGuiTableColumnFlags_WidthMask_ ^ ImGuiTableColumnFlags_WidthStretch);
-    if (ImGui::CheckboxFlags("_WidthFixed", p_flags, ImGuiTableColumnFlags_WidthFixed))
+    if (HvkGui::CheckboxFlags("_WidthFixed", p_flags, ImGuiTableColumnFlags_WidthFixed))
         *p_flags &= ~(ImGuiTableColumnFlags_WidthMask_ ^ ImGuiTableColumnFlags_WidthFixed);
-    ImGui::CheckboxFlags("_NoResize", p_flags, ImGuiTableColumnFlags_NoResize);
-    ImGui::CheckboxFlags("_NoReorder", p_flags, ImGuiTableColumnFlags_NoReorder);
-    ImGui::CheckboxFlags("_NoHide", p_flags, ImGuiTableColumnFlags_NoHide);
-    ImGui::CheckboxFlags("_NoClip", p_flags, ImGuiTableColumnFlags_NoClip);
-    ImGui::CheckboxFlags("_NoSort", p_flags, ImGuiTableColumnFlags_NoSort);
-    ImGui::CheckboxFlags("_NoSortAscending", p_flags, ImGuiTableColumnFlags_NoSortAscending);
-    ImGui::CheckboxFlags("_NoSortDescending", p_flags, ImGuiTableColumnFlags_NoSortDescending);
-    ImGui::CheckboxFlags("_NoHeaderLabel", p_flags, ImGuiTableColumnFlags_NoHeaderLabel);
-    ImGui::CheckboxFlags("_NoHeaderWidth", p_flags, ImGuiTableColumnFlags_NoHeaderWidth);
-    ImGui::CheckboxFlags("_PreferSortAscending", p_flags, ImGuiTableColumnFlags_PreferSortAscending);
-    ImGui::CheckboxFlags("_PreferSortDescending", p_flags, ImGuiTableColumnFlags_PreferSortDescending);
-    ImGui::CheckboxFlags("_IndentEnable", p_flags, ImGuiTableColumnFlags_IndentEnable); ImGui::SameLine(); HelpMarker("Default for column 0");
-    ImGui::CheckboxFlags("_IndentDisable", p_flags, ImGuiTableColumnFlags_IndentDisable); ImGui::SameLine(); HelpMarker("Default for column >0");
-    ImGui::CheckboxFlags("_AngledHeader", p_flags, ImGuiTableColumnFlags_AngledHeader);
+    HvkGui::CheckboxFlags("_NoResize", p_flags, ImGuiTableColumnFlags_NoResize);
+    HvkGui::CheckboxFlags("_NoReorder", p_flags, ImGuiTableColumnFlags_NoReorder);
+    HvkGui::CheckboxFlags("_NoHide", p_flags, ImGuiTableColumnFlags_NoHide);
+    HvkGui::CheckboxFlags("_NoClip", p_flags, ImGuiTableColumnFlags_NoClip);
+    HvkGui::CheckboxFlags("_NoSort", p_flags, ImGuiTableColumnFlags_NoSort);
+    HvkGui::CheckboxFlags("_NoSortAscending", p_flags, ImGuiTableColumnFlags_NoSortAscending);
+    HvkGui::CheckboxFlags("_NoSortDescending", p_flags, ImGuiTableColumnFlags_NoSortDescending);
+    HvkGui::CheckboxFlags("_NoHeaderLabel", p_flags, ImGuiTableColumnFlags_NoHeaderLabel);
+    HvkGui::CheckboxFlags("_NoHeaderWidth", p_flags, ImGuiTableColumnFlags_NoHeaderWidth);
+    HvkGui::CheckboxFlags("_PreferSortAscending", p_flags, ImGuiTableColumnFlags_PreferSortAscending);
+    HvkGui::CheckboxFlags("_PreferSortDescending", p_flags, ImGuiTableColumnFlags_PreferSortDescending);
+    HvkGui::CheckboxFlags("_IndentEnable", p_flags, ImGuiTableColumnFlags_IndentEnable); HvkGui::SameLine(); HelpMarker("Default for column 0");
+    HvkGui::CheckboxFlags("_IndentDisable", p_flags, ImGuiTableColumnFlags_IndentDisable); HvkGui::SameLine(); HelpMarker("Default for column >0");
+    HvkGui::CheckboxFlags("_AngledHeader", p_flags, ImGuiTableColumnFlags_AngledHeader);
 }
 
 static void ShowTableColumnsStatusFlags(ImGuiTableColumnFlags flags)
 {
-    ImGui::CheckboxFlags("_IsEnabled", &flags, ImGuiTableColumnFlags_IsEnabled);
-    ImGui::CheckboxFlags("_IsVisible", &flags, ImGuiTableColumnFlags_IsVisible);
-    ImGui::CheckboxFlags("_IsSorted", &flags, ImGuiTableColumnFlags_IsSorted);
-    ImGui::CheckboxFlags("_IsHovered", &flags, ImGuiTableColumnFlags_IsHovered);
+    HvkGui::CheckboxFlags("_IsEnabled", &flags, ImGuiTableColumnFlags_IsEnabled);
+    HvkGui::CheckboxFlags("_IsVisible", &flags, ImGuiTableColumnFlags_IsVisible);
+    HvkGui::CheckboxFlags("_IsSorted", &flags, ImGuiTableColumnFlags_IsSorted);
+    HvkGui::CheckboxFlags("_IsHovered", &flags, ImGuiTableColumnFlags_IsHovered);
 }
 
 //-----------------------------------------------------------------------------
@@ -5662,33 +5662,33 @@ static void ShowTableColumnsStatusFlags(ImGuiTableColumnFlags flags)
 
 static void DemoWindowTables()
 {
-    //ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    //HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
     IMGUI_DEMO_MARKER("Tables");
-    if (!ImGui::CollapsingHeader("Tables & Columns"))
+    if (!HvkGui::CollapsingHeader("Tables & Columns"))
         return;
 
     // Using those as a base value to create width/height that are factor of the size of our font
-    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
-    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    const float TEXT_BASE_WIDTH = HvkGui::CalcTextSize("A").x;
+    const float TEXT_BASE_HEIGHT = HvkGui::GetTextLineHeightWithSpacing();
 
-    ImGui::PushID("Tables");
+    HvkGui::PushID("Tables");
 
     int open_action = -1;
-    if (ImGui::Button("Expand all"))
+    if (HvkGui::Button("Expand all"))
         open_action = 1;
-    ImGui::SameLine();
-    if (ImGui::Button("Collapse all"))
+    HvkGui::SameLine();
+    if (HvkGui::Button("Collapse all"))
         open_action = 0;
-    ImGui::SameLine();
+    HvkGui::SameLine();
 
     // Options
     static bool disable_indent = false;
-    ImGui::Checkbox("Disable tree indentation", &disable_indent);
-    ImGui::SameLine();
+    HvkGui::Checkbox("Disable tree indentation", &disable_indent);
+    HvkGui::SameLine();
     HelpMarker("Disable the indenting of tree nodes so demo tables can use the full window width.");
-    ImGui::Separator();
+    HvkGui::Separator();
     if (disable_indent)
-        ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+        HvkGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
 
     // About Styling of tables
     // Most settings are configured on a per-table basis via the flags passed to BeginTable() and TableSetupColumns APIs.
@@ -5702,9 +5702,9 @@ static void DemoWindowTables()
 
     // Demos
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Basic");
-    if (ImGui::TreeNode("Basic"))
+    if (HvkGui::TreeNode("Basic"))
     {
         // Here we will showcase three different ways to output a table.
         // They are very simple variations of a same thing!
@@ -5712,36 +5712,36 @@ static void DemoWindowTables()
         // [Method 1] Using TableNextRow() to create a new row, and TableSetColumnIndex() to select the column.
         // In many situations, this is the most flexible and easy to use pattern.
         HelpMarker("Using TableNextRow() + calling TableSetColumnIndex() _before_ each cell, in a loop.");
-        if (ImGui::BeginTable("table1", 3))
+        if (HvkGui::BeginTable("table1", 3))
         {
             for (int row = 0; row < 4; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Row %d Column %d", row, column);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Row %d Column %d", row, column);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // [Method 2] Using TableNextColumn() called multiple times, instead of using a for loop + TableSetColumnIndex().
         // This is generally more convenient when you have code manually submitting the contents of each column.
         HelpMarker("Using TableNextRow() + calling TableNextColumn() _before_ each cell, manually.");
-        if (ImGui::BeginTable("table2", 3))
+        if (HvkGui::BeginTable("table2", 3))
         {
             for (int row = 0; row < 4; row++)
             {
-                ImGui::TableNextRow();
-                ImGui::TableNextColumn();
-                ImGui::Text("Row %d", row);
-                ImGui::TableNextColumn();
-                ImGui::Text("Some contents");
-                ImGui::TableNextColumn();
-                ImGui::Text("123.456");
+                HvkGui::TableNextRow();
+                HvkGui::TableNextColumn();
+                HvkGui::Text("Row %d", row);
+                HvkGui::TableNextColumn();
+                HvkGui::Text("Some contents");
+                HvkGui::TableNextColumn();
+                HvkGui::Text("123.456");
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // [Method 3] We call TableNextColumn() _before_ each cell. We never call TableNextRow(),
@@ -5751,23 +5751,23 @@ static void DemoWindowTables()
             "Only using TableNextColumn(), which tends to be convenient for tables where every cell contains "
             "the same type of contents.\n This is also more similar to the old NextColumn() function of the "
             "Columns API, and provided to facilitate the Columns->Tables API transition.");
-        if (ImGui::BeginTable("table3", 3))
+        if (HvkGui::BeginTable("table3", 3))
         {
             for (int item = 0; item < 14; item++)
             {
-                ImGui::TableNextColumn();
-                ImGui::Text("Item %d", item);
+                HvkGui::TableNextColumn();
+                HvkGui::Text("Item %d", item);
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Borders, background");
-    if (ImGui::TreeNode("Borders, background"))
+    if (HvkGui::TreeNode("Borders, background"))
     {
         // Expose a few Borders related flags interactively
         enum ContentsType { CT_Text, CT_FillButton };
@@ -5776,101 +5776,101 @@ static void DemoWindowTables()
         static int contents_type = CT_Text;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
-        ImGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags, ImGuiTableFlags_Borders);
-        ImGui::SameLine(); HelpMarker("ImGuiTableFlags_Borders\n = ImGuiTableFlags_BordersInnerV\n | ImGuiTableFlags_BordersOuterV\n | ImGuiTableFlags_BordersInnerH\n | ImGuiTableFlags_BordersOuterH");
-        ImGui::Indent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags, ImGuiTableFlags_Borders);
+        HvkGui::SameLine(); HelpMarker("ImGuiTableFlags_Borders\n = ImGuiTableFlags_BordersInnerV\n | ImGuiTableFlags_BordersOuterV\n | ImGuiTableFlags_BordersInnerH\n | ImGuiTableFlags_BordersOuterH");
+        HvkGui::Indent();
 
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags, ImGuiTableFlags_BordersH);
-        ImGui::Indent();
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterH", &flags, ImGuiTableFlags_BordersOuterH);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerH", &flags, ImGuiTableFlags_BordersInnerH);
-        ImGui::Unindent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags, ImGuiTableFlags_BordersH);
+        HvkGui::Indent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterH", &flags, ImGuiTableFlags_BordersOuterH);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerH", &flags, ImGuiTableFlags_BordersInnerH);
+        HvkGui::Unindent();
 
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
-        ImGui::Indent();
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags, ImGuiTableFlags_BordersOuterV);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags, ImGuiTableFlags_BordersInnerV);
-        ImGui::Unindent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
+        HvkGui::Indent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags, ImGuiTableFlags_BordersOuterV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags, ImGuiTableFlags_BordersInnerV);
+        HvkGui::Unindent();
 
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuter", &flags, ImGuiTableFlags_BordersOuter);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInner", &flags, ImGuiTableFlags_BordersInner);
-        ImGui::Unindent();
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuter", &flags, ImGuiTableFlags_BordersOuter);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInner", &flags, ImGuiTableFlags_BordersInner);
+        HvkGui::Unindent();
 
-        ImGui::AlignTextToFramePadding(); ImGui::Text("Cell contents:");
-        ImGui::SameLine(); ImGui::RadioButton("Text", &contents_type, CT_Text);
-        ImGui::SameLine(); ImGui::RadioButton("FillButton", &contents_type, CT_FillButton);
-        ImGui::Checkbox("Display headers", &display_headers);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody); ImGui::SameLine(); HelpMarker("Disable vertical borders in columns Body (borders will always appear in Headers)");
+        HvkGui::AlignTextToFramePadding(); HvkGui::Text("Cell contents:");
+        HvkGui::SameLine(); HvkGui::RadioButton("Text", &contents_type, CT_Text);
+        HvkGui::SameLine(); HvkGui::RadioButton("FillButton", &contents_type, CT_FillButton);
+        HvkGui::Checkbox("Display headers", &display_headers);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody); HvkGui::SameLine(); HelpMarker("Disable vertical borders in columns Body (borders will always appear in Headers)");
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table1", 3, flags))
+        if (HvkGui::BeginTable("table1", 3, flags))
         {
             // Display headers so we can inspect their interaction with borders
             // (Headers are not the main purpose of this section of the demo, so we are not elaborating on them now. See other sections for details)
             if (display_headers)
             {
-                ImGui::TableSetupColumn("One");
-                ImGui::TableSetupColumn("Two");
-                ImGui::TableSetupColumn("Three");
-                ImGui::TableHeadersRow();
+                HvkGui::TableSetupColumn("One");
+                HvkGui::TableSetupColumn("Two");
+                HvkGui::TableSetupColumn("Three");
+                HvkGui::TableHeadersRow();
             }
 
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
+                    HvkGui::TableSetColumnIndex(column);
                     char buf[32];
                     sprintf(buf, "Hello %d,%d", column, row);
                     if (contents_type == CT_Text)
-                        ImGui::TextUnformatted(buf);
+                        HvkGui::TextUnformatted(buf);
                     else if (contents_type == CT_FillButton)
-                        ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
+                        HvkGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Resizable, stretch");
-    if (ImGui::TreeNode("Resizable, stretch"))
+    if (HvkGui::TreeNode("Resizable, stretch"))
     {
         // By default, if we don't enable ScrollX the sizing policy for each column is "Stretch"
         // All columns maintain a sizing weight, and they will occupy all available width.
         static ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_ContextMenuInBody;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
-        ImGui::SameLine(); HelpMarker(
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
+        HvkGui::SameLine(); HelpMarker(
             "Using the _Resizable flag automatically enables the _BordersInnerV flag as well, "
             "this is why the resize borders are still showing when unchecking this.");
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table1", 3, flags))
+        if (HvkGui::BeginTable("table1", 3, flags))
         {
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Hello %d,%d", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Hello %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Resizable, fixed");
-    if (ImGui::TreeNode("Resizable, fixed"))
+    if (HvkGui::TreeNode("Resizable, fixed"))
     {
         // Here we use ImGuiTableFlags_SizingFixedFit (even though _ScrollX is not set)
         // So columns will adopt the "Fixed" policy and will maintain a fixed width regardless of the whole available width (unless table is small)
@@ -5882,139 +5882,139 @@ static void DemoWindowTables()
             "Double-click a column border to auto-fit the column to its contents.");
         PushStyleCompact();
         static ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_ContextMenuInBody;
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table1", 3, flags))
+        if (HvkGui::BeginTable("table1", 3, flags))
         {
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Hello %d,%d", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Hello %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Resizable, mixed");
-    if (ImGui::TreeNode("Resizable, mixed"))
+    if (HvkGui::TreeNode("Resizable, mixed"))
     {
         HelpMarker(
             "Using TableSetupColumn() to alter resizing policy on a per-column basis.\n\n"
             "When combining Fixed and Stretch columns, generally you only want one, maybe two trailing columns to use _WidthStretch.");
         static ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
-        if (ImGui::BeginTable("table1", 3, flags))
+        if (HvkGui::BeginTable("table1", 3, flags))
         {
-            ImGui::TableSetupColumn("AAA", ImGuiTableColumnFlags_WidthFixed);
-            ImGui::TableSetupColumn("BBB", ImGuiTableColumnFlags_WidthFixed);
-            ImGui::TableSetupColumn("CCC", ImGuiTableColumnFlags_WidthStretch);
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("AAA", ImGuiTableColumnFlags_WidthFixed);
+            HvkGui::TableSetupColumn("BBB", ImGuiTableColumnFlags_WidthFixed);
+            HvkGui::TableSetupColumn("CCC", ImGuiTableColumnFlags_WidthStretch);
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("%s %d,%d", (column == 2) ? "Stretch" : "Fixed", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("%s %d,%d", (column == 2) ? "Stretch" : "Fixed", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        if (ImGui::BeginTable("table2", 6, flags))
+        if (HvkGui::BeginTable("table2", 6, flags))
         {
-            ImGui::TableSetupColumn("AAA", ImGuiTableColumnFlags_WidthFixed);
-            ImGui::TableSetupColumn("BBB", ImGuiTableColumnFlags_WidthFixed);
-            ImGui::TableSetupColumn("CCC", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultHide);
-            ImGui::TableSetupColumn("DDD", ImGuiTableColumnFlags_WidthStretch);
-            ImGui::TableSetupColumn("EEE", ImGuiTableColumnFlags_WidthStretch);
-            ImGui::TableSetupColumn("FFF", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultHide);
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("AAA", ImGuiTableColumnFlags_WidthFixed);
+            HvkGui::TableSetupColumn("BBB", ImGuiTableColumnFlags_WidthFixed);
+            HvkGui::TableSetupColumn("CCC", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultHide);
+            HvkGui::TableSetupColumn("DDD", ImGuiTableColumnFlags_WidthStretch);
+            HvkGui::TableSetupColumn("EEE", ImGuiTableColumnFlags_WidthStretch);
+            HvkGui::TableSetupColumn("FFF", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultHide);
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 6; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("%s %d,%d", (column >= 3) ? "Stretch" : "Fixed", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("%s %d,%d", (column >= 3) ? "Stretch" : "Fixed", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Reorderable, hideable, with headers");
-    if (ImGui::TreeNode("Reorderable, hideable, with headers"))
+    if (HvkGui::TreeNode("Reorderable, hideable, with headers"))
     {
         HelpMarker(
             "Click and drag column headers to reorder columns.\n\n"
             "Right-click on a header to open a context menu.");
         static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_Reorderable", &flags, ImGuiTableFlags_Reorderable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_Hideable", &flags, ImGuiTableFlags_Hideable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags, ImGuiTableFlags_NoBordersInBodyUntilResize); ImGui::SameLine(); HelpMarker("Disable vertical borders in columns Body until hovered for resize (borders will always appear in Headers)");
-        ImGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Reorderable", &flags, ImGuiTableFlags_Reorderable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Hideable", &flags, ImGuiTableFlags_Hideable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags, ImGuiTableFlags_NoBordersInBodyUntilResize); HvkGui::SameLine(); HelpMarker("Disable vertical borders in columns Body until hovered for resize (borders will always appear in Headers)");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table1", 3, flags))
+        if (HvkGui::BeginTable("table1", 3, flags))
         {
             // Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each column.
             // (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
-            ImGui::TableSetupColumn("One");
-            ImGui::TableSetupColumn("Two");
-            ImGui::TableSetupColumn("Three");
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("One");
+            HvkGui::TableSetupColumn("Two");
+            HvkGui::TableSetupColumn("Three");
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 6; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Hello %d,%d", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Hello %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // Use outer_size.x == 0.0f instead of default to make the table as tight as possible
         // (only valid when no scrolling and no stretch column)
-        if (ImGui::BeginTable("table2", 3, flags | ImGuiTableFlags_SizingFixedFit, ImVec2(0.0f, 0.0f)))
+        if (HvkGui::BeginTable("table2", 3, flags | ImGuiTableFlags_SizingFixedFit, ImVec2(0.0f, 0.0f)))
         {
-            ImGui::TableSetupColumn("One");
-            ImGui::TableSetupColumn("Two");
-            ImGui::TableSetupColumn("Three");
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("One");
+            HvkGui::TableSetupColumn("Two");
+            HvkGui::TableSetupColumn("Three");
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 6; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Fixed %d,%d", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Fixed %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Padding");
-    if (ImGui::TreeNode("Padding"))
+    if (HvkGui::TreeNode("Padding"))
     {
         // First example: showcase use of padding flags and effect of BorderOuterV/BorderInnerV on X padding.
         // We don't expose BorderOuterH/BorderInnerH here because they have no effect on X padding.
@@ -6030,49 +6030,49 @@ static void DemoWindowTables()
 
         static ImGuiTableFlags flags1 = ImGuiTableFlags_BordersV;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_PadOuterX", &flags1, ImGuiTableFlags_PadOuterX);
-        ImGui::SameLine(); HelpMarker("Enable outer-most padding (default if ImGuiTableFlags_BordersOuterV is set)");
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoPadOuterX", &flags1, ImGuiTableFlags_NoPadOuterX);
-        ImGui::SameLine(); HelpMarker("Disable outer-most padding (default if ImGuiTableFlags_BordersOuterV is not set)");
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoPadInnerX", &flags1, ImGuiTableFlags_NoPadInnerX);
-        ImGui::SameLine(); HelpMarker("Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off)");
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags1, ImGuiTableFlags_BordersOuterV);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags1, ImGuiTableFlags_BordersInnerV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_PadOuterX", &flags1, ImGuiTableFlags_PadOuterX);
+        HvkGui::SameLine(); HelpMarker("Enable outer-most padding (default if ImGuiTableFlags_BordersOuterV is set)");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoPadOuterX", &flags1, ImGuiTableFlags_NoPadOuterX);
+        HvkGui::SameLine(); HelpMarker("Disable outer-most padding (default if ImGuiTableFlags_BordersOuterV is not set)");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoPadInnerX", &flags1, ImGuiTableFlags_NoPadInnerX);
+        HvkGui::SameLine(); HelpMarker("Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off)");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags1, ImGuiTableFlags_BordersOuterV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags1, ImGuiTableFlags_BordersInnerV);
         static bool show_headers = false;
-        ImGui::Checkbox("show_headers", &show_headers);
+        HvkGui::Checkbox("show_headers", &show_headers);
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table_padding", 3, flags1))
+        if (HvkGui::BeginTable("table_padding", 3, flags1))
         {
             if (show_headers)
             {
-                ImGui::TableSetupColumn("One");
-                ImGui::TableSetupColumn("Two");
-                ImGui::TableSetupColumn("Three");
-                ImGui::TableHeadersRow();
+                HvkGui::TableSetupColumn("One");
+                HvkGui::TableSetupColumn("Two");
+                HvkGui::TableSetupColumn("Three");
+                HvkGui::TableHeadersRow();
             }
 
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
+                    HvkGui::TableSetColumnIndex(column);
                     if (row == 0)
                     {
-                        ImGui::Text("Avail %.2f", ImGui::GetContentRegionAvail().x);
+                        HvkGui::Text("Avail %.2f", HvkGui::GetContentRegionAvail().x);
                     }
                     else
                     {
                         char buf[32];
                         sprintf(buf, "Hello %d,%d", column, row);
-                        ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
+                        HvkGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
                     }
-                    //if (ImGui::TableGetColumnFlags() & ImGuiTableColumnFlags_IsHovered)
-                    //    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(0, 100, 0, 255));
+                    //if (HvkGui::TableGetColumnFlags() & ImGuiTableColumnFlags_IsHovered)
+                    //    HvkGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(0, 100, 0, 255));
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // Second example: set style.CellPadding to (0.0) or a custom value.
@@ -6083,93 +6083,93 @@ static void DemoWindowTables()
         static bool show_widget_frame_bg = true;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags2, ImGuiTableFlags_Borders);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags2, ImGuiTableFlags_BordersH);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags2, ImGuiTableFlags_BordersV);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInner", &flags2, ImGuiTableFlags_BordersInner);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuter", &flags2, ImGuiTableFlags_BordersOuter);
-        ImGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags2, ImGuiTableFlags_RowBg);
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags2, ImGuiTableFlags_Resizable);
-        ImGui::Checkbox("show_widget_frame_bg", &show_widget_frame_bg);
-        ImGui::SliderFloat2("CellPadding", &cell_padding.x, 0.0f, 10.0f, "%.0f");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags2, ImGuiTableFlags_Borders);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags2, ImGuiTableFlags_BordersH);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags2, ImGuiTableFlags_BordersV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInner", &flags2, ImGuiTableFlags_BordersInner);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuter", &flags2, ImGuiTableFlags_BordersOuter);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags2, ImGuiTableFlags_RowBg);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags2, ImGuiTableFlags_Resizable);
+        HvkGui::Checkbox("show_widget_frame_bg", &show_widget_frame_bg);
+        HvkGui::SliderFloat2("CellPadding", &cell_padding.x, 0.0f, 10.0f, "%.0f");
         PopStyleCompact();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, cell_padding);
-        if (ImGui::BeginTable("table_padding_2", 3, flags2))
+        HvkGui::PushStyleVar(ImGuiStyleVar_CellPadding, cell_padding);
+        if (HvkGui::BeginTable("table_padding_2", 3, flags2))
         {
             static char text_bufs[3 * 5][16]; // Mini text storage for 3x5 cells
             static bool init = true;
             if (!show_widget_frame_bg)
-                ImGui::PushStyleColor(ImGuiCol_FrameBg, 0);
+                HvkGui::PushStyleColor(ImGuiCol_FrameBg, 0);
             for (int cell = 0; cell < 3 * 5; cell++)
             {
-                ImGui::TableNextColumn();
+                HvkGui::TableNextColumn();
                 if (init)
                     strcpy(text_bufs[cell], "edit me");
-                ImGui::SetNextItemWidth(-FLT_MIN);
-                ImGui::PushID(cell);
-                ImGui::InputText("##cell", text_bufs[cell], IM_ARRAYSIZE(text_bufs[cell]));
-                ImGui::PopID();
+                HvkGui::SetNextItemWidth(-FLT_MIN);
+                HvkGui::PushID(cell);
+                HvkGui::InputText("##cell", text_bufs[cell], IM_ARRAYSIZE(text_bufs[cell]));
+                HvkGui::PopID();
             }
             if (!show_widget_frame_bg)
-                ImGui::PopStyleColor();
+                HvkGui::PopStyleColor();
             init = false;
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::PopStyleVar();
+        HvkGui::PopStyleVar();
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Explicit widths");
-    if (ImGui::TreeNode("Sizing policies"))
+    if (HvkGui::TreeNode("Sizing policies"))
     {
         static ImGuiTableFlags flags1 = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_RowBg | ImGuiTableFlags_ContextMenuInBody;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags1, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags1, ImGuiTableFlags_NoHostExtendX);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags1, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags1, ImGuiTableFlags_NoHostExtendX);
         PopStyleCompact();
 
         static ImGuiTableFlags sizing_policy_flags[4] = { ImGuiTableFlags_SizingFixedFit, ImGuiTableFlags_SizingFixedSame, ImGuiTableFlags_SizingStretchProp, ImGuiTableFlags_SizingStretchSame };
         for (int table_n = 0; table_n < 4; table_n++)
         {
-            ImGui::PushID(table_n);
-            ImGui::SetNextItemWidth(TEXT_BASE_WIDTH * 30);
+            HvkGui::PushID(table_n);
+            HvkGui::SetNextItemWidth(TEXT_BASE_WIDTH * 30);
             EditTableSizingFlags(&sizing_policy_flags[table_n]);
 
             // To make it easier to understand the different sizing policy,
             // For each policy: we display one table where the columns have equal contents width,
             // and one where the columns have different contents width.
-            if (ImGui::BeginTable("table1", 3, sizing_policy_flags[table_n] | flags1))
+            if (HvkGui::BeginTable("table1", 3, sizing_policy_flags[table_n] | flags1))
             {
                 for (int row = 0; row < 3; row++)
                 {
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn(); ImGui::Text("Oh dear");
-                    ImGui::TableNextColumn(); ImGui::Text("Oh dear");
-                    ImGui::TableNextColumn(); ImGui::Text("Oh dear");
+                    HvkGui::TableNextRow();
+                    HvkGui::TableNextColumn(); HvkGui::Text("Oh dear");
+                    HvkGui::TableNextColumn(); HvkGui::Text("Oh dear");
+                    HvkGui::TableNextColumn(); HvkGui::Text("Oh dear");
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            if (ImGui::BeginTable("table2", 3, sizing_policy_flags[table_n] | flags1))
+            if (HvkGui::BeginTable("table2", 3, sizing_policy_flags[table_n] | flags1))
             {
                 for (int row = 0; row < 3; row++)
                 {
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn(); ImGui::Text("AAAA");
-                    ImGui::TableNextColumn(); ImGui::Text("BBBBBBBB");
-                    ImGui::TableNextColumn(); ImGui::Text("CCCCCCCCCCCC");
+                    HvkGui::TableNextRow();
+                    HvkGui::TableNextColumn(); HvkGui::Text("AAAA");
+                    HvkGui::TableNextColumn(); HvkGui::Text("BBBBBBBB");
+                    HvkGui::TableNextColumn(); HvkGui::Text("CCCCCCCCCCCC");
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::PopID();
+            HvkGui::PopID();
         }
 
-        ImGui::Spacing();
-        ImGui::TextUnformatted("Advanced");
-        ImGui::SameLine();
+        HvkGui::Spacing();
+        HvkGui::TextUnformatted("Advanced");
+        HvkGui::SameLine();
         HelpMarker(
             "This section allows you to interact and see the effect of various sizing policies "
             "depending on whether Scroll is enabled and the contents of your columns.");
@@ -6180,60 +6180,60 @@ static void DemoWindowTables()
         static int column_count = 3;
 
         PushStyleCompact();
-        ImGui::PushID("Advanced");
-        ImGui::PushItemWidth(TEXT_BASE_WIDTH * 30);
+        HvkGui::PushID("Advanced");
+        HvkGui::PushItemWidth(TEXT_BASE_WIDTH * 30);
         EditTableSizingFlags(&flags);
-        ImGui::Combo("Contents", &contents_type, "Show width\0Short Text\0Long Text\0Button\0Fill Button\0InputText\0");
+        HvkGui::Combo("Contents", &contents_type, "Show width\0Short Text\0Long Text\0Button\0Fill Button\0InputText\0");
         if (contents_type == CT_FillButton)
         {
-            ImGui::SameLine();
+            HvkGui::SameLine();
             HelpMarker(
                 "Be mindful that using right-alignment (e.g. size.x = -FLT_MIN) creates a feedback loop "
                 "where contents width can feed into auto-column width can feed into contents width.");
         }
-        ImGui::DragInt("Columns", &column_count, 0.1f, 1, 64, "%d", ImGuiSliderFlags_AlwaysClamp);
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_PreciseWidths", &flags, ImGuiTableFlags_PreciseWidths);
-        ImGui::SameLine(); HelpMarker("Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.");
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoClip", &flags, ImGuiTableFlags_NoClip);
-        ImGui::PopItemWidth();
-        ImGui::PopID();
+        HvkGui::DragInt("Columns", &column_count, 0.1f, 1, 64, "%d", ImGuiSliderFlags_AlwaysClamp);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_PreciseWidths", &flags, ImGuiTableFlags_PreciseWidths);
+        HvkGui::SameLine(); HelpMarker("Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoClip", &flags, ImGuiTableFlags_NoClip);
+        HvkGui::PopItemWidth();
+        HvkGui::PopID();
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table2", column_count, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 7)))
+        if (HvkGui::BeginTable("table2", column_count, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 7)))
         {
             for (int cell = 0; cell < 10 * column_count; cell++)
             {
-                ImGui::TableNextColumn();
-                int column = ImGui::TableGetColumnIndex();
-                int row = ImGui::TableGetRowIndex();
+                HvkGui::TableNextColumn();
+                int column = HvkGui::TableGetColumnIndex();
+                int row = HvkGui::TableGetRowIndex();
 
-                ImGui::PushID(cell);
+                HvkGui::PushID(cell);
                 char label[32];
                 static char text_buf[32] = "";
                 sprintf(label, "Hello %d,%d", column, row);
                 switch (contents_type)
                 {
-                case CT_ShortText:  ImGui::TextUnformatted(label); break;
-                case CT_LongText:   ImGui::Text("Some %s text %d,%d\nOver two lines..", column == 0 ? "long" : "longeeer", column, row); break;
-                case CT_ShowWidth:  ImGui::Text("W: %.1f", ImGui::GetContentRegionAvail().x); break;
-                case CT_Button:     ImGui::Button(label); break;
-                case CT_FillButton: ImGui::Button(label, ImVec2(-FLT_MIN, 0.0f)); break;
-                case CT_InputText:  ImGui::SetNextItemWidth(-FLT_MIN); ImGui::InputText("##", text_buf, IM_ARRAYSIZE(text_buf)); break;
+                case CT_ShortText:  HvkGui::TextUnformatted(label); break;
+                case CT_LongText:   HvkGui::Text("Some %s text %d,%d\nOver two lines..", column == 0 ? "long" : "longeeer", column, row); break;
+                case CT_ShowWidth:  HvkGui::Text("W: %.1f", HvkGui::GetContentRegionAvail().x); break;
+                case CT_Button:     HvkGui::Button(label); break;
+                case CT_FillButton: HvkGui::Button(label, ImVec2(-FLT_MIN, 0.0f)); break;
+                case CT_InputText:  HvkGui::SetNextItemWidth(-FLT_MIN); HvkGui::InputText("##", text_buf, IM_ARRAYSIZE(text_buf)); break;
                 }
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Vertical scrolling, with clipping");
-    if (ImGui::TreeNode("Vertical scrolling, with clipping"))
+    if (HvkGui::TreeNode("Vertical scrolling, with clipping"))
     {
         HelpMarker(
             "Here we activate ScrollY, which will create a child window container to allow hosting scrollable contents.\n\n"
@@ -6241,19 +6241,19 @@ static void DemoWindowTables()
         static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
         PopStyleCompact();
 
         // When using ScrollX or ScrollY we need to specify a size for our table container!
         // Otherwise by default the table will fit all available space, like a BeginChild() call.
         ImVec2 outer_size = ImVec2(0.0f, TEXT_BASE_HEIGHT * 8);
-        if (ImGui::BeginTable("table_scrolly", 3, flags, outer_size))
+        if (HvkGui::BeginTable("table_scrolly", 3, flags, outer_size))
         {
-            ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
-            ImGui::TableSetupColumn("One", ImGuiTableColumnFlags_None);
-            ImGui::TableSetupColumn("Two", ImGuiTableColumnFlags_None);
-            ImGui::TableSetupColumn("Three", ImGuiTableColumnFlags_None);
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
+            HvkGui::TableSetupColumn("One", ImGuiTableColumnFlags_None);
+            HvkGui::TableSetupColumn("Two", ImGuiTableColumnFlags_None);
+            HvkGui::TableSetupColumn("Three", ImGuiTableColumnFlags_None);
+            HvkGui::TableHeadersRow();
 
             // Demonstrate using clipper for large vertical lists
             ImGuiListClipper clipper;
@@ -6262,23 +6262,23 @@ static void DemoWindowTables()
             {
                 for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
                 {
-                    ImGui::TableNextRow();
+                    HvkGui::TableNextRow();
                     for (int column = 0; column < 3; column++)
                     {
-                        ImGui::TableSetColumnIndex(column);
-                        ImGui::Text("Hello %d,%d", column, row);
+                        HvkGui::TableSetColumnIndex(column);
+                        HvkGui::Text("Hello %d,%d", column, row);
                     }
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Horizontal scrolling");
-    if (ImGui::TreeNode("Horizontal scrolling"))
+    if (HvkGui::TreeNode("Horizontal scrolling"))
     {
         HelpMarker(
             "When ScrollX is enabled, the default sizing policy becomes ImGuiTableFlags_SizingFixedFit, "
@@ -6291,32 +6291,32 @@ static void DemoWindowTables()
         static int freeze_rows = 1;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
-        ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
-        ImGui::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
-        ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
-        ImGui::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
+        HvkGui::SetNextItemWidth(HvkGui::GetFrameHeight());
+        HvkGui::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
+        HvkGui::SetNextItemWidth(HvkGui::GetFrameHeight());
+        HvkGui::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
         PopStyleCompact();
 
         // When using ScrollX or ScrollY we need to specify a size for our table container!
         // Otherwise by default the table will fit all available space, like a BeginChild() call.
         ImVec2 outer_size = ImVec2(0.0f, TEXT_BASE_HEIGHT * 8);
-        if (ImGui::BeginTable("table_scrollx", 7, flags, outer_size))
+        if (HvkGui::BeginTable("table_scrollx", 7, flags, outer_size))
         {
-            ImGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
-            ImGui::TableSetupColumn("Line #", ImGuiTableColumnFlags_NoHide); // Make the first column not hideable to match our use of TableSetupScrollFreeze()
-            ImGui::TableSetupColumn("One");
-            ImGui::TableSetupColumn("Two");
-            ImGui::TableSetupColumn("Three");
-            ImGui::TableSetupColumn("Four");
-            ImGui::TableSetupColumn("Five");
-            ImGui::TableSetupColumn("Six");
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
+            HvkGui::TableSetupColumn("Line #", ImGuiTableColumnFlags_NoHide); // Make the first column not hideable to match our use of TableSetupScrollFreeze()
+            HvkGui::TableSetupColumn("One");
+            HvkGui::TableSetupColumn("Two");
+            HvkGui::TableSetupColumn("Three");
+            HvkGui::TableSetupColumn("Four");
+            HvkGui::TableSetupColumn("Five");
+            HvkGui::TableSetupColumn("Six");
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 20; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 7; column++)
                 {
                     // Both TableNextColumn() and TableSetColumnIndex() return true when a column is visible or performing width measurement.
@@ -6325,20 +6325,20 @@ static void DemoWindowTables()
                     // - B) column 0 is always visible,
                     // We only always submit this one column and can skip others.
                     // More advanced per-column clipping behaviors may benefit from polling the status flags via TableGetColumnFlags().
-                    if (!ImGui::TableSetColumnIndex(column) && column > 0)
+                    if (!HvkGui::TableSetColumnIndex(column) && column > 0)
                         continue;
                     if (column == 0)
-                        ImGui::Text("Line %d", row);
+                        HvkGui::Text("Line %d", row);
                     else
-                        ImGui::Text("Hello world %d,%d", column, row);
+                        HvkGui::Text("Hello world %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
-        ImGui::Spacing();
-        ImGui::TextUnformatted("Stretch + ScrollX");
-        ImGui::SameLine();
+        HvkGui::Spacing();
+        HvkGui::TextUnformatted("Stretch + ScrollX");
+        HvkGui::SameLine();
         HelpMarker(
             "Showcase using Stretch columns + ScrollX together: "
             "this is rather unusual and only makes sense when specifying an 'inner_width' for the table!\n"
@@ -6347,29 +6347,29 @@ static void DemoWindowTables()
         static ImGuiTableFlags flags2 = ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_RowBg | ImGuiTableFlags_ContextMenuInBody;
         static float inner_width = 1000.0f;
         PushStyleCompact();
-        ImGui::PushID("flags3");
-        ImGui::PushItemWidth(TEXT_BASE_WIDTH * 30);
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags2, ImGuiTableFlags_ScrollX);
-        ImGui::DragFloat("inner_width", &inner_width, 1.0f, 0.0f, FLT_MAX, "%.1f");
-        ImGui::PopItemWidth();
-        ImGui::PopID();
+        HvkGui::PushID("flags3");
+        HvkGui::PushItemWidth(TEXT_BASE_WIDTH * 30);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags2, ImGuiTableFlags_ScrollX);
+        HvkGui::DragFloat("inner_width", &inner_width, 1.0f, 0.0f, FLT_MAX, "%.1f");
+        HvkGui::PopItemWidth();
+        HvkGui::PopID();
         PopStyleCompact();
-        if (ImGui::BeginTable("table2", 7, flags2, outer_size, inner_width))
+        if (HvkGui::BeginTable("table2", 7, flags2, outer_size, inner_width))
         {
             for (int cell = 0; cell < 20 * 7; cell++)
             {
-                ImGui::TableNextColumn();
-                ImGui::Text("Hello world %d,%d", ImGui::TableGetColumnIndex(), ImGui::TableGetRowIndex());
+                HvkGui::TableNextColumn();
+                HvkGui::Text("Hello world %d,%d", HvkGui::TableGetColumnIndex(), HvkGui::TableGetRowIndex());
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Columns flags");
-    if (ImGui::TreeNode("Columns flags"))
+    if (HvkGui::TreeNode("Columns flags"))
     {
         // Create a first table just to show all the options/flags we want to make visible in our example!
         const int column_count = 3;
@@ -6377,27 +6377,27 @@ static void DemoWindowTables()
         static ImGuiTableColumnFlags column_flags[column_count] = { ImGuiTableColumnFlags_DefaultSort, ImGuiTableColumnFlags_None, ImGuiTableColumnFlags_DefaultHide };
         static ImGuiTableColumnFlags column_flags_out[column_count] = { 0, 0, 0 }; // Output from TableGetColumnFlags()
 
-        if (ImGui::BeginTable("table_columns_flags_checkboxes", column_count, ImGuiTableFlags_None))
+        if (HvkGui::BeginTable("table_columns_flags_checkboxes", column_count, ImGuiTableFlags_None))
         {
             PushStyleCompact();
             for (int column = 0; column < column_count; column++)
             {
-                ImGui::TableNextColumn();
-                ImGui::PushID(column);
-                ImGui::AlignTextToFramePadding(); // FIXME-TABLE: Workaround for wrong text baseline propagation across columns
-                ImGui::Text("'%s'", column_names[column]);
-                ImGui::Spacing();
-                ImGui::Text("Input flags:");
+                HvkGui::TableNextColumn();
+                HvkGui::PushID(column);
+                HvkGui::AlignTextToFramePadding(); // FIXME-TABLE: Workaround for wrong text baseline propagation across columns
+                HvkGui::Text("'%s'", column_names[column]);
+                HvkGui::Spacing();
+                HvkGui::Text("Input flags:");
                 EditTableColumnsFlags(&column_flags[column]);
-                ImGui::Spacing();
-                ImGui::Text("Output flags:");
-                ImGui::BeginDisabled();
+                HvkGui::Spacing();
+                HvkGui::Text("Output flags:");
+                HvkGui::BeginDisabled();
                 ShowTableColumnsStatusFlags(column_flags_out[column]);
-                ImGui::EndDisabled();
-                ImGui::PopID();
+                HvkGui::EndDisabled();
+                HvkGui::PopID();
             }
             PopStyleCompact();
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // Create the real table we care about for the example!
@@ -6409,70 +6409,70 @@ static void DemoWindowTables()
             | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV
             | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable;
         ImVec2 outer_size = ImVec2(0.0f, TEXT_BASE_HEIGHT * 9);
-        if (ImGui::BeginTable("table_columns_flags", column_count, flags, outer_size))
+        if (HvkGui::BeginTable("table_columns_flags", column_count, flags, outer_size))
         {
             bool has_angled_header = false;
             for (int column = 0; column < column_count; column++)
             {
                 has_angled_header |= (column_flags[column] & ImGuiTableColumnFlags_AngledHeader) != 0;
-                ImGui::TableSetupColumn(column_names[column], column_flags[column]);
+                HvkGui::TableSetupColumn(column_names[column], column_flags[column]);
             }
             if (has_angled_header)
-                ImGui::TableAngledHeadersRow();
-            ImGui::TableHeadersRow();
+                HvkGui::TableAngledHeadersRow();
+            HvkGui::TableHeadersRow();
             for (int column = 0; column < column_count; column++)
-                column_flags_out[column] = ImGui::TableGetColumnFlags(column);
+                column_flags_out[column] = HvkGui::TableGetColumnFlags(column);
             float indent_step = (float)((int)TEXT_BASE_WIDTH / 2);
             for (int row = 0; row < 8; row++)
             {
                 // Add some indentation to demonstrate usage of per-column IndentEnable/IndentDisable flags.
-                ImGui::Indent(indent_step);
-                ImGui::TableNextRow();
+                HvkGui::Indent(indent_step);
+                HvkGui::TableNextRow();
                 for (int column = 0; column < column_count; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("%s %s", (column == 0) ? "Indented" : "Hello", ImGui::TableGetColumnName(column));
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("%s %s", (column == 0) ? "Indented" : "Hello", HvkGui::TableGetColumnName(column));
                 }
             }
-            ImGui::Unindent(indent_step * 8.0f);
+            HvkGui::Unindent(indent_step * 8.0f);
 
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Columns widths");
-    if (ImGui::TreeNode("Columns widths"))
+    if (HvkGui::TreeNode("Columns widths"))
     {
         HelpMarker("Using TableSetupColumn() to setup default width.");
 
         static ImGuiTableFlags flags1 = ImGuiTableFlags_Borders | ImGuiTableFlags_NoBordersInBodyUntilResize;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags1, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags1, ImGuiTableFlags_NoBordersInBodyUntilResize);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags1, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags1, ImGuiTableFlags_NoBordersInBodyUntilResize);
         PopStyleCompact();
-        if (ImGui::BeginTable("table1", 3, flags1))
+        if (HvkGui::BeginTable("table1", 3, flags1))
         {
             // We could also set ImGuiTableFlags_SizingFixedFit on the table and all columns will default to ImGuiTableColumnFlags_WidthFixed.
-            ImGui::TableSetupColumn("one", ImGuiTableColumnFlags_WidthFixed, 100.0f); // Default to 100.0f
-            ImGui::TableSetupColumn("two", ImGuiTableColumnFlags_WidthFixed, 200.0f); // Default to 200.0f
-            ImGui::TableSetupColumn("three", ImGuiTableColumnFlags_WidthFixed);       // Default to auto
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("one", ImGuiTableColumnFlags_WidthFixed, 100.0f); // Default to 100.0f
+            HvkGui::TableSetupColumn("two", ImGuiTableColumnFlags_WidthFixed, 200.0f); // Default to 200.0f
+            HvkGui::TableSetupColumn("three", ImGuiTableColumnFlags_WidthFixed);       // Default to auto
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 4; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
+                    HvkGui::TableSetColumnIndex(column);
                     if (row == 0)
-                        ImGui::Text("(w: %5.1f)", ImGui::GetContentRegionAvail().x);
+                        HvkGui::Text("(w: %5.1f)", HvkGui::GetContentRegionAvail().x);
                     else
-                        ImGui::Text("Hello %d,%d", column, row);
+                        HvkGui::Text("Hello %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         HelpMarker(
@@ -6481,217 +6481,217 @@ static void DemoWindowTables()
 
         static ImGuiTableFlags flags2 = ImGuiTableFlags_None;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoKeepColumnsVisible", &flags2, ImGuiTableFlags_NoKeepColumnsVisible);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags2, ImGuiTableFlags_BordersInnerV);
-        ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags2, ImGuiTableFlags_BordersOuterV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoKeepColumnsVisible", &flags2, ImGuiTableFlags_NoKeepColumnsVisible);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags2, ImGuiTableFlags_BordersInnerV);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags2, ImGuiTableFlags_BordersOuterV);
         PopStyleCompact();
-        if (ImGui::BeginTable("table2", 4, flags2))
+        if (HvkGui::BeginTable("table2", 4, flags2))
         {
             // We could also set ImGuiTableFlags_SizingFixedFit on the table and then all columns
             // will default to ImGuiTableColumnFlags_WidthFixed.
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 30.0f);
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 30.0f);
+            HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 15.0f);
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 4; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
+                    HvkGui::TableSetColumnIndex(column);
                     if (row == 0)
-                        ImGui::Text("(w: %5.1f)", ImGui::GetContentRegionAvail().x);
+                        HvkGui::Text("(w: %5.1f)", HvkGui::GetContentRegionAvail().x);
                     else
-                        ImGui::Text("Hello %d,%d", column, row);
+                        HvkGui::Text("Hello %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Nested tables");
-    if (ImGui::TreeNode("Nested tables"))
+    if (HvkGui::TreeNode("Nested tables"))
     {
         HelpMarker("This demonstrates embedding a table into another table cell.");
 
-        if (ImGui::BeginTable("table_nested1", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
+        if (HvkGui::BeginTable("table_nested1", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
         {
-            ImGui::TableSetupColumn("A0");
-            ImGui::TableSetupColumn("A1");
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("A0");
+            HvkGui::TableSetupColumn("A1");
+            HvkGui::TableHeadersRow();
 
-            ImGui::TableNextColumn();
-            ImGui::Text("A0 Row 0");
+            HvkGui::TableNextColumn();
+            HvkGui::Text("A0 Row 0");
             {
-                float rows_height = (TEXT_BASE_HEIGHT * 2.0f) + (ImGui::GetStyle().CellPadding.y * 2.0f);
-                if (ImGui::BeginTable("table_nested2", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
+                float rows_height = (TEXT_BASE_HEIGHT * 2.0f) + (HvkGui::GetStyle().CellPadding.y * 2.0f);
+                if (HvkGui::BeginTable("table_nested2", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
                 {
-                    ImGui::TableSetupColumn("B0");
-                    ImGui::TableSetupColumn("B1");
-                    ImGui::TableHeadersRow();
+                    HvkGui::TableSetupColumn("B0");
+                    HvkGui::TableSetupColumn("B1");
+                    HvkGui::TableHeadersRow();
 
-                    ImGui::TableNextRow(ImGuiTableRowFlags_None, rows_height);
-                    ImGui::TableNextColumn();
-                    ImGui::Text("B0 Row 0");
-                    ImGui::TableNextColumn();
-                    ImGui::Text("B1 Row 0");
-                    ImGui::TableNextRow(ImGuiTableRowFlags_None, rows_height);
-                    ImGui::TableNextColumn();
-                    ImGui::Text("B0 Row 1");
-                    ImGui::TableNextColumn();
-                    ImGui::Text("B1 Row 1");
+                    HvkGui::TableNextRow(ImGuiTableRowFlags_None, rows_height);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("B0 Row 0");
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("B1 Row 0");
+                    HvkGui::TableNextRow(ImGuiTableRowFlags_None, rows_height);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("B0 Row 1");
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("B1 Row 1");
 
-                    ImGui::EndTable();
+                    HvkGui::EndTable();
                 }
             }
-            ImGui::TableNextColumn(); ImGui::Text("A1 Row 0");
-            ImGui::TableNextColumn(); ImGui::Text("A0 Row 1");
-            ImGui::TableNextColumn(); ImGui::Text("A1 Row 1");
-            ImGui::EndTable();
+            HvkGui::TableNextColumn(); HvkGui::Text("A1 Row 0");
+            HvkGui::TableNextColumn(); HvkGui::Text("A0 Row 1");
+            HvkGui::TableNextColumn(); HvkGui::Text("A1 Row 1");
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Row height");
-    if (ImGui::TreeNode("Row height"))
+    if (HvkGui::TreeNode("Row height"))
     {
         HelpMarker(
             "You can pass a 'min_row_height' to TableNextRow().\n\nRows are padded with 'style.CellPadding.y' on top and bottom, "
             "so effectively the minimum row height will always be >= 'style.CellPadding.y * 2.0f'.\n\n"
             "We cannot honor a _maximum_ row height as that would require a unique clipping rectangle per row.");
-        if (ImGui::BeginTable("table_row_height", 1, ImGuiTableFlags_Borders))
+        if (HvkGui::BeginTable("table_row_height", 1, ImGuiTableFlags_Borders))
         {
             for (int row = 0; row < 8; row++)
             {
-                float min_row_height = (float)(int)(TEXT_BASE_HEIGHT * 0.30f * row + ImGui::GetStyle().CellPadding.y * 2.0f);
-                ImGui::TableNextRow(ImGuiTableRowFlags_None, min_row_height);
-                ImGui::TableNextColumn();
-                ImGui::Text("min_row_height = %.2f", min_row_height);
+                float min_row_height = (float)(int)(TEXT_BASE_HEIGHT * 0.30f * row + HvkGui::GetStyle().CellPadding.y * 2.0f);
+                HvkGui::TableNextRow(ImGuiTableRowFlags_None, min_row_height);
+                HvkGui::TableNextColumn();
+                HvkGui::Text("min_row_height = %.2f", min_row_height);
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         HelpMarker(
             "Showcase using SameLine(0,0) to share Current Line Height between cells.\n\n"
             "Please note that Tables Row Height is not the same thing as Current Line Height, "
             "as a table cell may contains multiple lines.");
-        if (ImGui::BeginTable("table_share_lineheight", 2, ImGuiTableFlags_Borders))
+        if (HvkGui::BeginTable("table_share_lineheight", 2, ImGuiTableFlags_Borders))
         {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::ColorButton("##1", ImVec4(0.13f, 0.26f, 0.40f, 1.0f), ImGuiColorEditFlags_None, ImVec2(40, 40));
-            ImGui::TableNextColumn();
-            ImGui::Text("Line 1");
-            ImGui::Text("Line 2");
+            HvkGui::TableNextRow();
+            HvkGui::TableNextColumn();
+            HvkGui::ColorButton("##1", ImVec4(0.13f, 0.26f, 0.40f, 1.0f), ImGuiColorEditFlags_None, ImVec2(40, 40));
+            HvkGui::TableNextColumn();
+            HvkGui::Text("Line 1");
+            HvkGui::Text("Line 2");
 
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::ColorButton("##2", ImVec4(0.13f, 0.26f, 0.40f, 1.0f), ImGuiColorEditFlags_None, ImVec2(40, 40));
-            ImGui::TableNextColumn();
-            ImGui::SameLine(0.0f, 0.0f); // Reuse line height from previous column
-            ImGui::Text("Line 1, with SameLine(0,0)");
-            ImGui::Text("Line 2");
+            HvkGui::TableNextRow();
+            HvkGui::TableNextColumn();
+            HvkGui::ColorButton("##2", ImVec4(0.13f, 0.26f, 0.40f, 1.0f), ImGuiColorEditFlags_None, ImVec2(40, 40));
+            HvkGui::TableNextColumn();
+            HvkGui::SameLine(0.0f, 0.0f); // Reuse line height from previous column
+            HvkGui::Text("Line 1, with SameLine(0,0)");
+            HvkGui::Text("Line 2");
 
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         HelpMarker("Showcase altering CellPadding.y between rows. Note that CellPadding.x is locked for the entire table.");
-        if (ImGui::BeginTable("table_changing_cellpadding_y", 1, ImGuiTableFlags_Borders))
+        if (HvkGui::BeginTable("table_changing_cellpadding_y", 1, ImGuiTableFlags_Borders))
         {
-            ImGuiStyle& style = ImGui::GetStyle();
+            ImGuiStyle& style = HvkGui::GetStyle();
             for (int row = 0; row < 8; row++)
             {
                 if ((row % 3) == 2)
-                    ImGui::PushStyleVarY(ImGuiStyleVar_CellPadding, 20.0f);
-                ImGui::TableNextRow(ImGuiTableRowFlags_None);
-                ImGui::TableNextColumn();
-                ImGui::Text("CellPadding.y = %.2f", style.CellPadding.y);
+                    HvkGui::PushStyleVarY(ImGuiStyleVar_CellPadding, 20.0f);
+                HvkGui::TableNextRow(ImGuiTableRowFlags_None);
+                HvkGui::TableNextColumn();
+                HvkGui::Text("CellPadding.y = %.2f", style.CellPadding.y);
                 if ((row % 3) == 2)
-                    ImGui::PopStyleVar();
+                    HvkGui::PopStyleVar();
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Outer size");
-    if (ImGui::TreeNode("Outer size"))
+    if (HvkGui::TreeNode("Outer size"))
     {
         // Showcasing use of ImGuiTableFlags_NoHostExtendX and ImGuiTableFlags_NoHostExtendY
         // Important to that note how the two flags have slightly different behaviors!
-        ImGui::Text("Using NoHostExtendX and NoHostExtendY:");
+        HvkGui::Text("Using NoHostExtendX and NoHostExtendY:");
         PushStyleCompact();
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_ContextMenuInBody | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX;
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
-        ImGui::SameLine(); HelpMarker("Make outer width auto-fit to columns, overriding outer_size.x value.\n\nOnly available when ScrollX/ScrollY are disabled and Stretch columns are not used.");
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendY", &flags, ImGuiTableFlags_NoHostExtendY);
-        ImGui::SameLine(); HelpMarker("Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit).\n\nOnly available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
+        HvkGui::SameLine(); HelpMarker("Make outer width auto-fit to columns, overriding outer_size.x value.\n\nOnly available when ScrollX/ScrollY are disabled and Stretch columns are not used.");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendY", &flags, ImGuiTableFlags_NoHostExtendY);
+        HvkGui::SameLine(); HelpMarker("Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit).\n\nOnly available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.");
         PopStyleCompact();
 
         ImVec2 outer_size = ImVec2(0.0f, TEXT_BASE_HEIGHT * 5.5f);
-        if (ImGui::BeginTable("table1", 3, flags, outer_size))
+        if (HvkGui::BeginTable("table1", 3, flags, outer_size))
         {
             for (int row = 0; row < 10; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableNextColumn();
-                    ImGui::Text("Cell %d,%d", column, row);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("Cell %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::SameLine();
-        ImGui::Text("Hello!");
+        HvkGui::SameLine();
+        HvkGui::Text("Hello!");
 
-        ImGui::Spacing();
+        HvkGui::Spacing();
 
-        ImGui::Text("Using explicit size:");
-        if (ImGui::BeginTable("table2", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg, ImVec2(TEXT_BASE_WIDTH * 30, 0.0f)))
+        HvkGui::Text("Using explicit size:");
+        if (HvkGui::BeginTable("table2", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg, ImVec2(TEXT_BASE_WIDTH * 30, 0.0f)))
         {
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableNextColumn();
-                    ImGui::Text("Cell %d,%d", column, row);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("Cell %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::SameLine();
-        if (ImGui::BeginTable("table3", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg, ImVec2(TEXT_BASE_WIDTH * 30, 0.0f)))
+        HvkGui::SameLine();
+        if (HvkGui::BeginTable("table3", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg, ImVec2(TEXT_BASE_WIDTH * 30, 0.0f)))
         {
-            const float rows_height = TEXT_BASE_HEIGHT * 1.5f + ImGui::GetStyle().CellPadding.y * 2.0f;
+            const float rows_height = TEXT_BASE_HEIGHT * 1.5f + HvkGui::GetStyle().CellPadding.y * 2.0f;
             for (int row = 0; row < 3; row++)
             {
-                ImGui::TableNextRow(0, rows_height);
+                HvkGui::TableNextRow(0, rows_height);
                 for (int column = 0; column < 3; column++)
                 {
-                    ImGui::TableNextColumn();
-                    ImGui::Text("Cell %d,%d", column, row);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("Cell %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Background color");
-    if (ImGui::TreeNode("Background color"))
+    if (HvkGui::TreeNode("Background color"))
     {
         static ImGuiTableFlags flags = ImGuiTableFlags_RowBg;
         static int row_bg_type = 1;
@@ -6699,75 +6699,75 @@ static void DemoWindowTables()
         static int cell_bg_type = 1;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags, ImGuiTableFlags_Borders);
-        ImGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
-        ImGui::SameLine(); HelpMarker("ImGuiTableFlags_RowBg automatically sets RowBg0 to alternative colors pulled from the Style.");
-        ImGui::Combo("row bg type", (int*)&row_bg_type, "None\0Red\0Gradient\0");
-        ImGui::Combo("row bg target", (int*)&row_bg_target, "RowBg0\0RowBg1\0"); ImGui::SameLine(); HelpMarker("Target RowBg0 to override the alternating odd/even colors,\nTarget RowBg1 to blend with them.");
-        ImGui::Combo("cell bg type", (int*)&cell_bg_type, "None\0Blue\0"); ImGui::SameLine(); HelpMarker("We are colorizing cells to B1->C2 here.");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Borders", &flags, ImGuiTableFlags_Borders);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
+        HvkGui::SameLine(); HelpMarker("ImGuiTableFlags_RowBg automatically sets RowBg0 to alternative colors pulled from the Style.");
+        HvkGui::Combo("row bg type", (int*)&row_bg_type, "None\0Red\0Gradient\0");
+        HvkGui::Combo("row bg target", (int*)&row_bg_target, "RowBg0\0RowBg1\0"); HvkGui::SameLine(); HelpMarker("Target RowBg0 to override the alternating odd/even colors,\nTarget RowBg1 to blend with them.");
+        HvkGui::Combo("cell bg type", (int*)&cell_bg_type, "None\0Blue\0"); HvkGui::SameLine(); HelpMarker("We are colorizing cells to B1->C2 here.");
         IM_ASSERT(row_bg_type >= 0 && row_bg_type <= 2);
         IM_ASSERT(row_bg_target >= 0 && row_bg_target <= 1);
         IM_ASSERT(cell_bg_type >= 0 && cell_bg_type <= 1);
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table1", 5, flags))
+        if (HvkGui::BeginTable("table1", 5, flags))
         {
             for (int row = 0; row < 6; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
 
-                // Demonstrate setting a row background color with 'ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBgX, ...)'
+                // Demonstrate setting a row background color with 'HvkGui::TableSetBgColor(ImGuiTableBgTarget_RowBgX, ...)'
                 // We use a transparent color so we can see the one behind in case our target is RowBg1 and RowBg0 was already targeted by the ImGuiTableFlags_RowBg flag.
                 if (row_bg_type != 0)
                 {
-                    ImU32 row_bg_color = ImGui::GetColorU32(row_bg_type == 1 ? ImVec4(0.7f, 0.3f, 0.3f, 0.65f) : ImVec4(0.2f + row * 0.1f, 0.2f, 0.2f, 0.65f)); // Flat or Gradient?
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0 + row_bg_target, row_bg_color);
+                    ImU32 row_bg_color = HvkGui::GetColorU32(row_bg_type == 1 ? ImVec4(0.7f, 0.3f, 0.3f, 0.65f) : ImVec4(0.2f + row * 0.1f, 0.2f, 0.2f, 0.65f)); // Flat or Gradient?
+                    HvkGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0 + row_bg_target, row_bg_color);
                 }
 
                 // Fill cells
                 for (int column = 0; column < 5; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("%c%c", 'A' + row, '0' + column);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("%c%c", 'A' + row, '0' + column);
 
                     // Change background of Cells B1->C2
-                    // Demonstrate setting a cell background color with 'ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ...)'
+                    // Demonstrate setting a cell background color with 'HvkGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ...)'
                     // (the CellBg color will be blended over the RowBg and ColumnBg colors)
                     // We can also pass a column number as a third parameter to TableSetBgColor() and do this outside the column loop.
                     if (row >= 1 && row <= 2 && column >= 1 && column <= 2 && cell_bg_type == 1)
                     {
-                        ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.7f, 0.65f));
-                        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                        ImU32 cell_bg_color = HvkGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.7f, 0.65f));
+                        HvkGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
                     }
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Tree view");
-    if (ImGui::TreeNode("Tree view"))
+    if (HvkGui::TreeNode("Tree view"))
     {
         static ImGuiTableFlags table_flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
 
         static ImGuiTreeNodeFlags tree_node_flags_base = ImGuiTreeNodeFlags_SpanAllColumns | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_DrawLinesFull;
-        ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanFullWidth",  &tree_node_flags_base, ImGuiTreeNodeFlags_SpanFullWidth);
-        ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanLabelWidth",  &tree_node_flags_base, ImGuiTreeNodeFlags_SpanLabelWidth);
-        ImGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAllColumns", &tree_node_flags_base, ImGuiTreeNodeFlags_SpanAllColumns);
-        ImGui::CheckboxFlags("ImGuiTreeNodeFlags_LabelSpanAllColumns", &tree_node_flags_base, ImGuiTreeNodeFlags_LabelSpanAllColumns);
-        ImGui::SameLine(); HelpMarker("Useful if you know that you aren't displaying contents in other columns");
+        HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanFullWidth",  &tree_node_flags_base, ImGuiTreeNodeFlags_SpanFullWidth);
+        HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanLabelWidth",  &tree_node_flags_base, ImGuiTreeNodeFlags_SpanLabelWidth);
+        HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_SpanAllColumns", &tree_node_flags_base, ImGuiTreeNodeFlags_SpanAllColumns);
+        HvkGui::CheckboxFlags("ImGuiTreeNodeFlags_LabelSpanAllColumns", &tree_node_flags_base, ImGuiTreeNodeFlags_LabelSpanAllColumns);
+        HvkGui::SameLine(); HelpMarker("Useful if you know that you aren't displaying contents in other columns");
 
         HelpMarker("See \"Columns flags\" section to configure how indentation is applied to individual columns.");
-        if (ImGui::BeginTable("3ways", 3, table_flags))
+        if (HvkGui::BeginTable("3ways", 3, table_flags))
         {
             // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
-            ImGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
-            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+            HvkGui::TableSetupColumn("Size", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
+            HvkGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
+            HvkGui::TableHeadersRow();
 
             // Simple storage to output a dummy file-system.
             struct MyTreeNode
@@ -6779,8 +6779,8 @@ static void DemoWindowTables()
                 int             ChildCount;
                 static void DisplayNode(const MyTreeNode* node, const MyTreeNode* all_nodes)
                 {
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn();
+                    HvkGui::TableNextRow();
+                    HvkGui::TableNextColumn();
                     const bool is_folder = (node->ChildCount > 0);
 
                     ImGuiTreeNodeFlags node_flags = tree_node_flags_base;
@@ -6789,28 +6789,28 @@ static void DemoWindowTables()
 
                     if (is_folder)
                     {
-                        bool open = ImGui::TreeNodeEx(node->Name, node_flags);
+                        bool open = HvkGui::TreeNodeEx(node->Name, node_flags);
                         if ((node_flags & ImGuiTreeNodeFlags_LabelSpanAllColumns) == 0)
                         {
-                            ImGui::TableNextColumn();
-                            ImGui::TextDisabled("--");
-                            ImGui::TableNextColumn();
-                            ImGui::TextUnformatted(node->Type);
+                            HvkGui::TableNextColumn();
+                            HvkGui::TextDisabled("--");
+                            HvkGui::TableNextColumn();
+                            HvkGui::TextUnformatted(node->Type);
                         }
                         if (open)
                         {
                             for (int child_n = 0; child_n < node->ChildCount; child_n++)
                                 DisplayNode(&all_nodes[node->ChildIdx + child_n], all_nodes);
-                            ImGui::TreePop();
+                            HvkGui::TreePop();
                         }
                     }
                     else
                     {
-                        ImGui::TreeNodeEx(node->Name, node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
-                        ImGui::TableNextColumn();
-                        ImGui::Text("%d", node->Size);
-                        ImGui::TableNextColumn();
-                        ImGui::TextUnformatted(node->Type);
+                        HvkGui::TreeNodeEx(node->Name, node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+                        HvkGui::TableNextColumn();
+                        HvkGui::Text("%d", node->Size);
+                        HvkGui::TableNextColumn();
+                        HvkGui::TextUnformatted(node->Type);
                     }
                 }
             };
@@ -6829,69 +6829,69 @@ static void DemoWindowTables()
 
             MyTreeNode::DisplayNode(&nodes[0], nodes);
 
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Item width");
-    if (ImGui::TreeNode("Item width"))
+    if (HvkGui::TreeNode("Item width"))
     {
         HelpMarker(
             "Showcase using PushItemWidth() and how it is preserved on a per-column basis.\n\n"
             "Note that on auto-resizing non-resizable fixed columns, querying the content width for "
             "e.g. right-alignment doesn't make sense.");
-        if (ImGui::BeginTable("table_item_width", 3, ImGuiTableFlags_Borders))
+        if (HvkGui::BeginTable("table_item_width", 3, ImGuiTableFlags_Borders))
         {
-            ImGui::TableSetupColumn("small");
-            ImGui::TableSetupColumn("half");
-            ImGui::TableSetupColumn("right-align");
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("small");
+            HvkGui::TableSetupColumn("half");
+            HvkGui::TableSetupColumn("right-align");
+            HvkGui::TableHeadersRow();
 
             for (int row = 0; row < 3; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 if (row == 0)
                 {
                     // Setup ItemWidth once (instead of setting up every time, which is also possible but less efficient)
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::PushItemWidth(TEXT_BASE_WIDTH * 3.0f); // Small
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f);
-                    ImGui::TableSetColumnIndex(2);
-                    ImGui::PushItemWidth(-FLT_MIN); // Right-aligned
+                    HvkGui::TableSetColumnIndex(0);
+                    HvkGui::PushItemWidth(TEXT_BASE_WIDTH * 3.0f); // Small
+                    HvkGui::TableSetColumnIndex(1);
+                    HvkGui::PushItemWidth(-HvkGui::GetContentRegionAvail().x * 0.5f);
+                    HvkGui::TableSetColumnIndex(2);
+                    HvkGui::PushItemWidth(-FLT_MIN); // Right-aligned
                 }
 
                 // Draw our contents
                 static float dummy_f = 0.0f;
-                ImGui::PushID(row);
-                ImGui::TableSetColumnIndex(0);
-                ImGui::SliderFloat("float0", &dummy_f, 0.0f, 1.0f);
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SliderFloat("float1", &dummy_f, 0.0f, 1.0f);
-                ImGui::TableSetColumnIndex(2);
-                ImGui::SliderFloat("##float2", &dummy_f, 0.0f, 1.0f); // No visible label since right-aligned
-                ImGui::PopID();
+                HvkGui::PushID(row);
+                HvkGui::TableSetColumnIndex(0);
+                HvkGui::SliderFloat("float0", &dummy_f, 0.0f, 1.0f);
+                HvkGui::TableSetColumnIndex(1);
+                HvkGui::SliderFloat("float1", &dummy_f, 0.0f, 1.0f);
+                HvkGui::TableSetColumnIndex(2);
+                HvkGui::SliderFloat("##float2", &dummy_f, 0.0f, 1.0f); // No visible label since right-aligned
+                HvkGui::PopID();
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // Demonstrate using TableHeader() calls instead of TableHeadersRow()
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Custom headers");
-    if (ImGui::TreeNode("Custom headers"))
+    if (HvkGui::TreeNode("Custom headers"))
     {
         const int COLUMNS_COUNT = 3;
-        if (ImGui::BeginTable("table_custom_headers", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
+        if (HvkGui::BeginTable("table_custom_headers", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
         {
-            ImGui::TableSetupColumn("Apricot");
-            ImGui::TableSetupColumn("Banana");
-            ImGui::TableSetupColumn("Cherry");
+            HvkGui::TableSetupColumn("Apricot");
+            HvkGui::TableSetupColumn("Banana");
+            HvkGui::TableSetupColumn("Cherry");
 
             // Dummy entire-column selection storage
             // FIXME: It would be nice to actually demonstrate full-featured selection using those checkbox.
@@ -6902,42 +6902,42 @@ static void DemoWindowTables()
             //    - Specify ImGuiTableColumnFlags_NoHeaderLabel in some TableSetupColumn() call.
             //    - Call TableHeadersRow() normally. This will submit TableHeader() with no name.
             //    - Then call TableSetColumnIndex() to position yourself in the column and submit your stuff e.g. Checkbox().)
-            ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+            HvkGui::TableNextRow(ImGuiTableRowFlags_Headers);
             for (int column = 0; column < COLUMNS_COUNT; column++)
             {
-                ImGui::TableSetColumnIndex(column);
-                const char* column_name = ImGui::TableGetColumnName(column); // Retrieve name passed to TableSetupColumn()
-                ImGui::PushID(column);
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-                ImGui::Checkbox("##checkall", &column_selected[column]);
-                ImGui::PopStyleVar();
-                ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-                ImGui::TableHeader(column_name);
-                ImGui::PopID();
+                HvkGui::TableSetColumnIndex(column);
+                const char* column_name = HvkGui::TableGetColumnName(column); // Retrieve name passed to TableSetupColumn()
+                HvkGui::PushID(column);
+                HvkGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+                HvkGui::Checkbox("##checkall", &column_selected[column]);
+                HvkGui::PopStyleVar();
+                HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+                HvkGui::TableHeader(column_name);
+                HvkGui::PopID();
             }
 
             // Submit table contents
             for (int row = 0; row < 5; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < 3; column++)
                 {
                     char buf[32];
                     sprintf(buf, "Cell %d,%d", column, row);
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Selectable(buf, column_selected[column]);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Selectable(buf, column_selected[column]);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // Demonstrate using ImGuiTableColumnFlags_AngledHeader flag to create angled headers
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Angled headers");
-    if (ImGui::TreeNode("Angled headers"))
+    if (HvkGui::TreeNode("Angled headers"))
     {
         const char* column_names[] = { "Track", "cabasa", "ride", "smash", "tom-hi", "tom-mid", "tom-low", "hihat-o", "hihat-c", "snare-s", "snare-c", "clap", "rim", "kick" };
         const int columns_count = IM_ARRAYSIZE(column_names);
@@ -6948,65 +6948,65 @@ static void DemoWindowTables()
         static bool bools[columns_count * rows_count] = {}; // Dummy storage selection storage
         static int frozen_cols = 1;
         static int frozen_rows = 2;
-        ImGui::CheckboxFlags("_ScrollX", &table_flags, ImGuiTableFlags_ScrollX);
-        ImGui::CheckboxFlags("_ScrollY", &table_flags, ImGuiTableFlags_ScrollY);
-        ImGui::CheckboxFlags("_Resizable", &table_flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("_Sortable", &table_flags, ImGuiTableFlags_Sortable);
-        ImGui::CheckboxFlags("_NoBordersInBody", &table_flags, ImGuiTableFlags_NoBordersInBody);
-        ImGui::CheckboxFlags("_HighlightHoveredColumn", &table_flags, ImGuiTableFlags_HighlightHoveredColumn);
-        ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-        ImGui::SliderInt("Frozen columns", &frozen_cols, 0, 2);
-        ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-        ImGui::SliderInt("Frozen rows", &frozen_rows, 0, 2);
-        ImGui::CheckboxFlags("Disable header contributing to column width", &column_flags, ImGuiTableColumnFlags_NoHeaderWidth);
+        HvkGui::CheckboxFlags("_ScrollX", &table_flags, ImGuiTableFlags_ScrollX);
+        HvkGui::CheckboxFlags("_ScrollY", &table_flags, ImGuiTableFlags_ScrollY);
+        HvkGui::CheckboxFlags("_Resizable", &table_flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("_Sortable", &table_flags, ImGuiTableFlags_Sortable);
+        HvkGui::CheckboxFlags("_NoBordersInBody", &table_flags, ImGuiTableFlags_NoBordersInBody);
+        HvkGui::CheckboxFlags("_HighlightHoveredColumn", &table_flags, ImGuiTableFlags_HighlightHoveredColumn);
+        HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+        HvkGui::SliderInt("Frozen columns", &frozen_cols, 0, 2);
+        HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+        HvkGui::SliderInt("Frozen rows", &frozen_rows, 0, 2);
+        HvkGui::CheckboxFlags("Disable header contributing to column width", &column_flags, ImGuiTableColumnFlags_NoHeaderWidth);
 
-        if (ImGui::TreeNode("Style settings"))
+        if (HvkGui::TreeNode("Style settings"))
         {
-            ImGui::SameLine();
+            HvkGui::SameLine();
             HelpMarker("Giving access to some ImGuiStyle value in this demo for convenience.");
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-            ImGui::SliderAngle("style.TableAngledHeadersAngle", &ImGui::GetStyle().TableAngledHeadersAngle, -50.0f, +50.0f);
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-            ImGui::SliderFloat2("style.TableAngledHeadersTextAlign", (float*)&ImGui::GetStyle().TableAngledHeadersTextAlign, 0.0f, 1.0f, "%.2f");
-            ImGui::TreePop();
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+            HvkGui::SliderAngle("style.TableAngledHeadersAngle", &HvkGui::GetStyle().TableAngledHeadersAngle, -50.0f, +50.0f);
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+            HvkGui::SliderFloat2("style.TableAngledHeadersTextAlign", (float*)&HvkGui::GetStyle().TableAngledHeadersTextAlign, 0.0f, 1.0f, "%.2f");
+            HvkGui::TreePop();
         }
 
-        if (ImGui::BeginTable("table_angled_headers", columns_count, table_flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 12)))
+        if (HvkGui::BeginTable("table_angled_headers", columns_count, table_flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 12)))
         {
-            ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
+            HvkGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
             for (int n = 1; n < columns_count; n++)
-                ImGui::TableSetupColumn(column_names[n], column_flags);
-            ImGui::TableSetupScrollFreeze(frozen_cols, frozen_rows);
+                HvkGui::TableSetupColumn(column_names[n], column_flags);
+            HvkGui::TableSetupScrollFreeze(frozen_cols, frozen_rows);
 
-            ImGui::TableAngledHeadersRow(); // Draw angled headers for all columns with the ImGuiTableColumnFlags_AngledHeader flag.
-            ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
+            HvkGui::TableAngledHeadersRow(); // Draw angled headers for all columns with the ImGuiTableColumnFlags_AngledHeader flag.
+            HvkGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
             for (int row = 0; row < rows_count; row++)
             {
-                ImGui::PushID(row);
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::AlignTextToFramePadding();
-                ImGui::Text("Track %d", row);
+                HvkGui::PushID(row);
+                HvkGui::TableNextRow();
+                HvkGui::TableSetColumnIndex(0);
+                HvkGui::AlignTextToFramePadding();
+                HvkGui::Text("Track %d", row);
                 for (int column = 1; column < columns_count; column++)
-                    if (ImGui::TableSetColumnIndex(column))
+                    if (HvkGui::TableSetColumnIndex(column))
                     {
-                        ImGui::PushID(column);
-                        ImGui::Checkbox("", &bools[row * columns_count + column]);
-                        ImGui::PopID();
+                        HvkGui::PushID(column);
+                        HvkGui::Checkbox("", &bools[row * columns_count + column]);
+                        HvkGui::PopID();
                     }
-                ImGui::PopID();
+                HvkGui::PopID();
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // Demonstrate creating custom context menus inside columns,
     // while playing it nice with context menus provided by TableHeadersRow()/TableHeader()
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Context menus");
-    if (ImGui::TreeNode("Context menus"))
+    if (HvkGui::TreeNode("Context menus"))
     {
         HelpMarker(
             "By default, right-clicking over a TableHeadersRow()/TableHeader() line will open the default context-menu.\n"
@@ -7014,33 +7014,33 @@ static void DemoWindowTables()
         static ImGuiTableFlags flags1 = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders | ImGuiTableFlags_ContextMenuInBody;
 
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_ContextMenuInBody", &flags1, ImGuiTableFlags_ContextMenuInBody);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ContextMenuInBody", &flags1, ImGuiTableFlags_ContextMenuInBody);
         PopStyleCompact();
 
         // Context Menus: first example
         // [1.1] Right-click on the TableHeadersRow() line to open the default table context menu.
         // [1.2] Right-click in columns also open the default table context menu (if ImGuiTableFlags_ContextMenuInBody is set)
         const int COLUMNS_COUNT = 3;
-        if (ImGui::BeginTable("table_context_menu", COLUMNS_COUNT, flags1))
+        if (HvkGui::BeginTable("table_context_menu", COLUMNS_COUNT, flags1))
         {
-            ImGui::TableSetupColumn("One");
-            ImGui::TableSetupColumn("Two");
-            ImGui::TableSetupColumn("Three");
+            HvkGui::TableSetupColumn("One");
+            HvkGui::TableSetupColumn("Two");
+            HvkGui::TableSetupColumn("Three");
 
             // [1.1]] Right-click on the TableHeadersRow() line to open the default table context menu.
-            ImGui::TableHeadersRow();
+            HvkGui::TableHeadersRow();
 
             // Submit dummy contents
             for (int row = 0; row < 4; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < COLUMNS_COUNT; column++)
                 {
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Cell %d,%d", column, row);
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Cell %d,%d", column, row);
                 }
             }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
 
         // Context Menus: second example
@@ -7051,35 +7051,35 @@ static void DemoWindowTables()
             "Demonstrate mixing table context menu (over header), item context button (over button) "
             "and custom per-column context menu (over column body).");
         ImGuiTableFlags flags2 = ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders;
-        if (ImGui::BeginTable("table_context_menu_2", COLUMNS_COUNT, flags2))
+        if (HvkGui::BeginTable("table_context_menu_2", COLUMNS_COUNT, flags2))
         {
-            ImGui::TableSetupColumn("One");
-            ImGui::TableSetupColumn("Two");
-            ImGui::TableSetupColumn("Three");
+            HvkGui::TableSetupColumn("One");
+            HvkGui::TableSetupColumn("Two");
+            HvkGui::TableSetupColumn("Three");
 
             // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
-            ImGui::TableHeadersRow();
+            HvkGui::TableHeadersRow();
             for (int row = 0; row < 4; row++)
             {
-                ImGui::TableNextRow();
+                HvkGui::TableNextRow();
                 for (int column = 0; column < COLUMNS_COUNT; column++)
                 {
                     // Submit dummy contents
-                    ImGui::TableSetColumnIndex(column);
-                    ImGui::Text("Cell %d,%d", column, row);
-                    ImGui::SameLine();
+                    HvkGui::TableSetColumnIndex(column);
+                    HvkGui::Text("Cell %d,%d", column, row);
+                    HvkGui::SameLine();
 
                     // [2.2] Right-click on the ".." to open a custom popup
-                    ImGui::PushID(row * COLUMNS_COUNT + column);
-                    ImGui::SmallButton("..");
-                    if (ImGui::BeginPopupContextItem())
+                    HvkGui::PushID(row * COLUMNS_COUNT + column);
+                    HvkGui::SmallButton("..");
+                    if (HvkGui::BeginPopupContextItem())
                     {
-                        ImGui::Text("This is the popup for Button(\"..\") in Cell %d,%d", column, row);
-                        if (ImGui::Button("Close"))
-                            ImGui::CloseCurrentPopup();
-                        ImGui::EndPopup();
+                        HvkGui::Text("This is the popup for Button(\"..\") in Cell %d,%d", column, row);
+                        if (HvkGui::Button("Close"))
+                            HvkGui::CloseCurrentPopup();
+                        HvkGui::EndPopup();
                     }
-                    ImGui::PopID();
+                    HvkGui::PopID();
                 }
             }
 
@@ -7089,64 +7089,64 @@ static void DemoWindowTables()
             int hovered_column = -1;
             for (int column = 0; column < COLUMNS_COUNT + 1; column++)
             {
-                ImGui::PushID(column);
-                if (ImGui::TableGetColumnFlags(column) & ImGuiTableColumnFlags_IsHovered)
+                HvkGui::PushID(column);
+                if (HvkGui::TableGetColumnFlags(column) & ImGuiTableColumnFlags_IsHovered)
                     hovered_column = column;
-                if (hovered_column == column && !ImGui::IsAnyItemHovered() && ImGui::IsMouseReleased(1))
-                    ImGui::OpenPopup("MyPopup");
-                if (ImGui::BeginPopup("MyPopup"))
+                if (hovered_column == column && !HvkGui::IsAnyItemHovered() && HvkGui::IsMouseReleased(1))
+                    HvkGui::OpenPopup("MyPopup");
+                if (HvkGui::BeginPopup("MyPopup"))
                 {
                     if (column == COLUMNS_COUNT)
-                        ImGui::Text("This is a custom popup for unused space after the last column.");
+                        HvkGui::Text("This is a custom popup for unused space after the last column.");
                     else
-                        ImGui::Text("This is a custom popup for Column %d", column);
-                    if (ImGui::Button("Close"))
-                        ImGui::CloseCurrentPopup();
-                    ImGui::EndPopup();
+                        HvkGui::Text("This is a custom popup for Column %d", column);
+                    if (HvkGui::Button("Close"))
+                        HvkGui::CloseCurrentPopup();
+                    HvkGui::EndPopup();
                 }
-                ImGui::PopID();
+                HvkGui::PopID();
             }
 
-            ImGui::EndTable();
-            ImGui::Text("Hovered column: %d", hovered_column);
+            HvkGui::EndTable();
+            HvkGui::Text("Hovered column: %d", hovered_column);
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // Demonstrate creating multiple tables with the same ID
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Synced instances");
-    if (ImGui::TreeNode("Synced instances"))
+    if (HvkGui::TreeNode("Synced instances"))
     {
         HelpMarker("Multiple tables with the same identifier will share their settings, width, visibility, order etc.");
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoSavedSettings;
-        ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
-        ImGui::CheckboxFlags("ImGuiTableFlags_SizingFixedFit", &flags, ImGuiTableFlags_SizingFixedFit);
-        ImGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_SizingFixedFit", &flags, ImGuiTableFlags_SizingFixedFit);
+        HvkGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
         for (int n = 0; n < 3; n++)
         {
             char buf[32];
             sprintf(buf, "Synced Table %d", n);
-            bool open = ImGui::CollapsingHeader(buf, ImGuiTreeNodeFlags_DefaultOpen);
-            if (open && ImGui::BeginTable("Table", 3, flags, ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 5)))
+            bool open = HvkGui::CollapsingHeader(buf, ImGuiTreeNodeFlags_DefaultOpen);
+            if (open && HvkGui::BeginTable("Table", 3, flags, ImVec2(0.0f, HvkGui::GetTextLineHeightWithSpacing() * 5)))
             {
-                ImGui::TableSetupColumn("One");
-                ImGui::TableSetupColumn("Two");
-                ImGui::TableSetupColumn("Three");
-                ImGui::TableHeadersRow();
+                HvkGui::TableSetupColumn("One");
+                HvkGui::TableSetupColumn("Two");
+                HvkGui::TableSetupColumn("Three");
+                HvkGui::TableHeadersRow();
                 const int cell_count = (n == 1) ? 27 : 9; // Make second table have a scrollbar to verify that additional decoration is not affecting column positions.
                 for (int cell = 0; cell < cell_count; cell++)
                 {
-                    ImGui::TableNextColumn();
-                    ImGui::Text("this cell %d", cell);
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("this cell %d", cell);
                 }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // Demonstrate using Sorting facilities
@@ -7158,9 +7158,9 @@ static void DemoWindowTables()
         "Kiwi", "Orange", "Pineapple", "Blueberry", "Plum", "Coconut", "Pear", "Apricot"
     };
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Sorting");
-    if (ImGui::TreeNode("Sorting"))
+    if (HvkGui::TreeNode("Sorting"))
     {
         // Create item list
         static ImVector<MyItem> items;
@@ -7183,13 +7183,13 @@ static void DemoWindowTables()
             | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoBordersInBody
             | ImGuiTableFlags_ScrollY;
         PushStyleCompact();
-        ImGui::CheckboxFlags("ImGuiTableFlags_SortMulti", &flags, ImGuiTableFlags_SortMulti);
-        ImGui::SameLine(); HelpMarker("When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).");
-        ImGui::CheckboxFlags("ImGuiTableFlags_SortTristate", &flags, ImGuiTableFlags_SortTristate);
-        ImGui::SameLine(); HelpMarker("When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_SortMulti", &flags, ImGuiTableFlags_SortMulti);
+        HvkGui::SameLine(); HelpMarker("When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).");
+        HvkGui::CheckboxFlags("ImGuiTableFlags_SortTristate", &flags, ImGuiTableFlags_SortTristate);
+        HvkGui::SameLine(); HelpMarker("When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).");
         PopStyleCompact();
 
-        if (ImGui::BeginTable("table_sorting", 4, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
+        if (HvkGui::BeginTable("table_sorting", 4, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 15), 0.0f))
         {
             // Declare columns
             // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
@@ -7198,15 +7198,15 @@ static void DemoWindowTables()
             // - ImGuiTableColumnFlags_DefaultSort
             // - ImGuiTableColumnFlags_NoSort / ImGuiTableColumnFlags_NoSortAscending / ImGuiTableColumnFlags_NoSortDescending
             // - ImGuiTableColumnFlags_PreferSortAscending / ImGuiTableColumnFlags_PreferSortDescending
-            ImGui::TableSetupColumn("ID",       ImGuiTableColumnFlags_DefaultSort          | ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_ID);
-            ImGui::TableSetupColumn("Name",                                                  ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_Name);
-            ImGui::TableSetupColumn("Action",   ImGuiTableColumnFlags_NoSort               | ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_Action);
-            ImGui::TableSetupColumn("Quantity", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, MyItemColumnID_Quantity);
-            ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
-            ImGui::TableHeadersRow();
+            HvkGui::TableSetupColumn("ID",       ImGuiTableColumnFlags_DefaultSort          | ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_ID);
+            HvkGui::TableSetupColumn("Name",                                                  ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_Name);
+            HvkGui::TableSetupColumn("Action",   ImGuiTableColumnFlags_NoSort               | ImGuiTableColumnFlags_WidthFixed,   0.0f, MyItemColumnID_Action);
+            HvkGui::TableSetupColumn("Quantity", ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_WidthStretch, 0.0f, MyItemColumnID_Quantity);
+            HvkGui::TableSetupScrollFreeze(0, 1); // Make row always visible
+            HvkGui::TableHeadersRow();
 
             // Sort our data if sort specs have been changed!
-            if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs())
+            if (ImGuiTableSortSpecs* sort_specs = HvkGui::TableGetSortSpecs())
                 if (sort_specs->SpecsDirty)
                 {
                     MyItem::SortWithSortSpecs(sort_specs, items.Data, items.Size);
@@ -7221,31 +7221,31 @@ static void DemoWindowTables()
                 {
                     // Display a data item
                     MyItem* item = &items[row_n];
-                    ImGui::PushID(item->ID);
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn();
-                    ImGui::Text("%04d", item->ID);
-                    ImGui::TableNextColumn();
-                    ImGui::TextUnformatted(item->Name);
-                    ImGui::TableNextColumn();
-                    ImGui::SmallButton("None");
-                    ImGui::TableNextColumn();
-                    ImGui::Text("%d", item->Quantity);
-                    ImGui::PopID();
+                    HvkGui::PushID(item->ID);
+                    HvkGui::TableNextRow();
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("%04d", item->ID);
+                    HvkGui::TableNextColumn();
+                    HvkGui::TextUnformatted(item->Name);
+                    HvkGui::TableNextColumn();
+                    HvkGui::SmallButton("None");
+                    HvkGui::TableNextColumn();
+                    HvkGui::Text("%d", item->Quantity);
+                    HvkGui::PopID();
                 }
-            ImGui::EndTable();
+            HvkGui::EndTable();
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
     // In this example we'll expose most table flags and settings.
     // For specific flags and settings refer to the corresponding section for more detailed explanation.
     // This section is mostly useful to experiment with combining certain flags or settings with each others.
-    //ImGui::SetNextItemOpen(true, ImGuiCond_Once); // [DEBUG]
+    //HvkGui::SetNextItemOpen(true, ImGuiCond_Once); // [DEBUG]
     if (open_action != -1)
-        ImGui::SetNextItemOpen(open_action != 0);
+        HvkGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Advanced");
-    if (ImGui::TreeNode("Advanced"))
+    if (HvkGui::TreeNode("Advanced"))
     {
         static ImGuiTableFlags flags =
             ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable
@@ -7268,102 +7268,102 @@ static void DemoWindowTables()
         static bool show_headers = true;
         static bool show_wrapped_text = false;
         //static ImGuiTextFilter filter;
-        //ImGui::SetNextItemOpen(true, ImGuiCond_Once); // FIXME-TABLE: Enabling this results in initial clipped first pass on table which tend to affect column sizing
-        if (ImGui::TreeNode("Options"))
+        //HvkGui::SetNextItemOpen(true, ImGuiCond_Once); // FIXME-TABLE: Enabling this results in initial clipped first pass on table which tend to affect column sizing
+        if (HvkGui::TreeNode("Options"))
         {
             // Make the UI compact because there are so many fields
             PushStyleCompact();
-            ImGui::PushItemWidth(TEXT_BASE_WIDTH * 28.0f);
+            HvkGui::PushItemWidth(TEXT_BASE_WIDTH * 28.0f);
 
-            if (ImGui::TreeNodeEx("Features:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Features:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
-                ImGui::CheckboxFlags("ImGuiTableFlags_Reorderable", &flags, ImGuiTableFlags_Reorderable);
-                ImGui::CheckboxFlags("ImGuiTableFlags_Hideable", &flags, ImGuiTableFlags_Hideable);
-                ImGui::CheckboxFlags("ImGuiTableFlags_Sortable", &flags, ImGuiTableFlags_Sortable);
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoSavedSettings", &flags, ImGuiTableFlags_NoSavedSettings);
-                ImGui::CheckboxFlags("ImGuiTableFlags_ContextMenuInBody", &flags, ImGuiTableFlags_ContextMenuInBody);
-                ImGui::TreePop();
+                HvkGui::CheckboxFlags("ImGuiTableFlags_Resizable", &flags, ImGuiTableFlags_Resizable);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_Reorderable", &flags, ImGuiTableFlags_Reorderable);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_Hideable", &flags, ImGuiTableFlags_Hideable);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_Sortable", &flags, ImGuiTableFlags_Sortable);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoSavedSettings", &flags, ImGuiTableFlags_NoSavedSettings);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_ContextMenuInBody", &flags, ImGuiTableFlags_ContextMenuInBody);
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Decorations:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Decorations:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags, ImGuiTableFlags_BordersOuterV);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags, ImGuiTableFlags_BordersInnerV);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags, ImGuiTableFlags_BordersH);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersOuterH", &flags, ImGuiTableFlags_BordersOuterH);
-                ImGui::CheckboxFlags("ImGuiTableFlags_BordersInnerH", &flags, ImGuiTableFlags_BordersInnerH);
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody); ImGui::SameLine(); HelpMarker("Disable vertical borders in columns Body (borders will always appear in Headers)");
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags, ImGuiTableFlags_NoBordersInBodyUntilResize); ImGui::SameLine(); HelpMarker("Disable vertical borders in columns Body until hovered for resize (borders will always appear in Headers)");
-                ImGui::TreePop();
+                HvkGui::CheckboxFlags("ImGuiTableFlags_RowBg", &flags, ImGuiTableFlags_RowBg);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersV", &flags, ImGuiTableFlags_BordersV);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterV", &flags, ImGuiTableFlags_BordersOuterV);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerV", &flags, ImGuiTableFlags_BordersInnerV);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersH", &flags, ImGuiTableFlags_BordersH);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersOuterH", &flags, ImGuiTableFlags_BordersOuterH);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_BordersInnerH", &flags, ImGuiTableFlags_BordersInnerH);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBody", &flags, ImGuiTableFlags_NoBordersInBody); HvkGui::SameLine(); HelpMarker("Disable vertical borders in columns Body (borders will always appear in Headers)");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoBordersInBodyUntilResize", &flags, ImGuiTableFlags_NoBordersInBodyUntilResize); HvkGui::SameLine(); HelpMarker("Disable vertical borders in columns Body until hovered for resize (borders will always appear in Headers)");
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Sizing:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Sizing:", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 EditTableSizingFlags(&flags);
-                ImGui::SameLine(); HelpMarker("In the Advanced demo we override the policy of each column so those table-wide settings have less effect that typical.");
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
-                ImGui::SameLine(); HelpMarker("Make outer width auto-fit to columns, overriding outer_size.x value.\n\nOnly available when ScrollX/ScrollY are disabled and Stretch columns are not used.");
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendY", &flags, ImGuiTableFlags_NoHostExtendY);
-                ImGui::SameLine(); HelpMarker("Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit).\n\nOnly available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.");
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoKeepColumnsVisible", &flags, ImGuiTableFlags_NoKeepColumnsVisible);
-                ImGui::SameLine(); HelpMarker("Only available if ScrollX is disabled.");
-                ImGui::CheckboxFlags("ImGuiTableFlags_PreciseWidths", &flags, ImGuiTableFlags_PreciseWidths);
-                ImGui::SameLine(); HelpMarker("Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.");
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoClip", &flags, ImGuiTableFlags_NoClip);
-                ImGui::SameLine(); HelpMarker("Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with ScrollFreeze options.");
-                ImGui::TreePop();
+                HvkGui::SameLine(); HelpMarker("In the Advanced demo we override the policy of each column so those table-wide settings have less effect that typical.");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendX", &flags, ImGuiTableFlags_NoHostExtendX);
+                HvkGui::SameLine(); HelpMarker("Make outer width auto-fit to columns, overriding outer_size.x value.\n\nOnly available when ScrollX/ScrollY are disabled and Stretch columns are not used.");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendY", &flags, ImGuiTableFlags_NoHostExtendY);
+                HvkGui::SameLine(); HelpMarker("Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit).\n\nOnly available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoKeepColumnsVisible", &flags, ImGuiTableFlags_NoKeepColumnsVisible);
+                HvkGui::SameLine(); HelpMarker("Only available if ScrollX is disabled.");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_PreciseWidths", &flags, ImGuiTableFlags_PreciseWidths);
+                HvkGui::SameLine(); HelpMarker("Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoClip", &flags, ImGuiTableFlags_NoClip);
+                HvkGui::SameLine(); HelpMarker("Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with ScrollFreeze options.");
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Padding:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Padding:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::CheckboxFlags("ImGuiTableFlags_PadOuterX", &flags, ImGuiTableFlags_PadOuterX);
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoPadOuterX", &flags, ImGuiTableFlags_NoPadOuterX);
-                ImGui::CheckboxFlags("ImGuiTableFlags_NoPadInnerX", &flags, ImGuiTableFlags_NoPadInnerX);
-                ImGui::TreePop();
+                HvkGui::CheckboxFlags("ImGuiTableFlags_PadOuterX", &flags, ImGuiTableFlags_PadOuterX);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoPadOuterX", &flags, ImGuiTableFlags_NoPadOuterX);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_NoPadInnerX", &flags, ImGuiTableFlags_NoPadInnerX);
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Scrolling:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Scrolling:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
-                ImGui::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
-                ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
-                ImGui::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
-                ImGui::TreePop();
+                HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollX", &flags, ImGuiTableFlags_ScrollX);
+                HvkGui::SameLine();
+                HvkGui::SetNextItemWidth(HvkGui::GetFrameHeight());
+                HvkGui::DragInt("freeze_cols", &freeze_cols, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
+                HvkGui::SameLine();
+                HvkGui::SetNextItemWidth(HvkGui::GetFrameHeight());
+                HvkGui::DragInt("freeze_rows", &freeze_rows, 0.2f, 0, 9, NULL, ImGuiSliderFlags_NoInput);
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Sorting:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Sorting:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::CheckboxFlags("ImGuiTableFlags_SortMulti", &flags, ImGuiTableFlags_SortMulti);
-                ImGui::SameLine(); HelpMarker("When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).");
-                ImGui::CheckboxFlags("ImGuiTableFlags_SortTristate", &flags, ImGuiTableFlags_SortTristate);
-                ImGui::SameLine(); HelpMarker("When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).");
-                ImGui::TreePop();
+                HvkGui::CheckboxFlags("ImGuiTableFlags_SortMulti", &flags, ImGuiTableFlags_SortMulti);
+                HvkGui::SameLine(); HelpMarker("When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).");
+                HvkGui::CheckboxFlags("ImGuiTableFlags_SortTristate", &flags, ImGuiTableFlags_SortTristate);
+                HvkGui::SameLine(); HelpMarker("When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).");
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Headers:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Headers:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("show_headers", &show_headers);
-                ImGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
-                ImGui::CheckboxFlags("ImGuiTableColumnFlags_AngledHeader", &columns_base_flags, ImGuiTableColumnFlags_AngledHeader);
-                ImGui::SameLine(); HelpMarker("Enable AngledHeader on all columns. Best enabled on selected narrow columns (see \"Angled headers\" section of the demo).");
-                ImGui::TreePop();
+                HvkGui::Checkbox("show_headers", &show_headers);
+                HvkGui::CheckboxFlags("ImGuiTableFlags_HighlightHoveredColumn", &flags, ImGuiTableFlags_HighlightHoveredColumn);
+                HvkGui::CheckboxFlags("ImGuiTableColumnFlags_AngledHeader", &columns_base_flags, ImGuiTableColumnFlags_AngledHeader);
+                HvkGui::SameLine(); HelpMarker("Enable AngledHeader on all columns. Best enabled on selected narrow columns (see \"Angled headers\" section of the demo).");
+                HvkGui::TreePop();
             }
 
-            if (ImGui::TreeNodeEx("Other:", ImGuiTreeNodeFlags_DefaultOpen))
+            if (HvkGui::TreeNodeEx("Other:", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("show_wrapped_text", &show_wrapped_text);
+                HvkGui::Checkbox("show_wrapped_text", &show_wrapped_text);
 
-                ImGui::DragFloat2("##OuterSize", &outer_size_value.x);
-                ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-                ImGui::Checkbox("outer_size", &outer_size_enabled);
-                ImGui::SameLine();
+                HvkGui::DragFloat2("##OuterSize", &outer_size_value.x);
+                HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+                HvkGui::Checkbox("outer_size", &outer_size_enabled);
+                HvkGui::SameLine();
                 HelpMarker("If scrolling is disabled (ScrollX and ScrollY not set):\n"
                     "- The table is output directly in the parent window.\n"
                     "- OuterSize.x < 0.0f will right-align the table.\n"
@@ -7372,21 +7372,21 @@ static void DemoWindowTables()
 
                 // From a user point of view we will tend to use 'inner_width' differently depending on whether our table is embedding scrolling.
                 // To facilitate toying with this demo we will actually pass 0.0f to the BeginTable() when ScrollX is disabled.
-                ImGui::DragFloat("inner_width (when ScrollX active)", &inner_width_with_scroll, 1.0f, 0.0f, FLT_MAX);
+                HvkGui::DragFloat("inner_width (when ScrollX active)", &inner_width_with_scroll, 1.0f, 0.0f, FLT_MAX);
 
-                ImGui::DragFloat("row_min_height", &row_min_height, 1.0f, 0.0f, FLT_MAX);
-                ImGui::SameLine(); HelpMarker("Specify height of the Selectable item.");
+                HvkGui::DragFloat("row_min_height", &row_min_height, 1.0f, 0.0f, FLT_MAX);
+                HvkGui::SameLine(); HelpMarker("Specify height of the Selectable item.");
 
-                ImGui::DragInt("items_count", &items_count, 0.1f, 0, 9999);
-                ImGui::Combo("items_type (first column)", &contents_type, contents_type_names, IM_ARRAYSIZE(contents_type_names));
+                HvkGui::DragInt("items_count", &items_count, 0.1f, 0, 9999);
+                HvkGui::Combo("items_type (first column)", &contents_type, contents_type_names, IM_ARRAYSIZE(contents_type_names));
                 //filter.Draw("filter");
-                ImGui::TreePop();
+                HvkGui::TreePop();
             }
 
-            ImGui::PopItemWidth();
+            HvkGui::PopItemWidth();
             PopStyleCompact();
-            ImGui::Spacing();
-            ImGui::TreePop();
+            HvkGui::Spacing();
+            HvkGui::TreePop();
         }
 
         // Update item list if we changed the number of items
@@ -7406,28 +7406,28 @@ static void DemoWindowTables()
             }
         }
 
-        const ImDrawList* parent_draw_list = ImGui::GetWindowDrawList();
+        const ImDrawList* parent_draw_list = HvkGui::GetWindowDrawList();
         const int parent_draw_list_draw_cmd_count = parent_draw_list->CmdBuffer.Size;
         ImVec2 table_scroll_cur, table_scroll_max; // For debug display
         const ImDrawList* table_draw_list = NULL;  // "
 
         // Submit table
         const float inner_width_to_use = (flags & ImGuiTableFlags_ScrollX) ? inner_width_with_scroll : 0.0f;
-        if (ImGui::BeginTable("table_advanced", 6, flags, outer_size_enabled ? outer_size_value : ImVec2(0, 0), inner_width_to_use))
+        if (HvkGui::BeginTable("table_advanced", 6, flags, outer_size_enabled ? outer_size_value : ImVec2(0, 0), inner_width_to_use))
         {
             // Declare columns
             // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
             // This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
-            ImGui::TableSetupColumn("ID",           columns_base_flags | ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, MyItemColumnID_ID);
-            ImGui::TableSetupColumn("Name",         columns_base_flags | ImGuiTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
-            ImGui::TableSetupColumn("Action",       columns_base_flags | ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Action);
-            ImGui::TableSetupColumn("Quantity",     columns_base_flags | ImGuiTableColumnFlags_PreferSortDescending, 0.0f, MyItemColumnID_Quantity);
-            ImGui::TableSetupColumn("Description",  columns_base_flags | ((flags & ImGuiTableFlags_NoHostExtendX) ? 0 : ImGuiTableColumnFlags_WidthStretch), 0.0f, MyItemColumnID_Description);
-            ImGui::TableSetupColumn("Hidden",       columns_base_flags |  ImGuiTableColumnFlags_DefaultHide | ImGuiTableColumnFlags_NoSort);
-            ImGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
+            HvkGui::TableSetupColumn("ID",           columns_base_flags | ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, MyItemColumnID_ID);
+            HvkGui::TableSetupColumn("Name",         columns_base_flags | ImGuiTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Name);
+            HvkGui::TableSetupColumn("Action",       columns_base_flags | ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, MyItemColumnID_Action);
+            HvkGui::TableSetupColumn("Quantity",     columns_base_flags | ImGuiTableColumnFlags_PreferSortDescending, 0.0f, MyItemColumnID_Quantity);
+            HvkGui::TableSetupColumn("Description",  columns_base_flags | ((flags & ImGuiTableFlags_NoHostExtendX) ? 0 : ImGuiTableColumnFlags_WidthStretch), 0.0f, MyItemColumnID_Description);
+            HvkGui::TableSetupColumn("Hidden",       columns_base_flags |  ImGuiTableColumnFlags_DefaultHide | ImGuiTableColumnFlags_NoSort);
+            HvkGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
 
             // Sort our data if sort specs have been changed!
-            ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs();
+            ImGuiTableSortSpecs* sort_specs = HvkGui::TableGetSortSpecs();
             if (sort_specs && sort_specs->SpecsDirty)
                 items_need_sort = true;
             if (sort_specs && items_need_sort && items.Size > 1)
@@ -7439,13 +7439,13 @@ static void DemoWindowTables()
 
             // Take note of whether we are currently sorting based on the Quantity field,
             // we will use this to trigger sorting when we know the data of this column has been modified.
-            const bool sorts_specs_using_quantity = (ImGui::TableGetColumnFlags(3) & ImGuiTableColumnFlags_IsSorted) != 0;
+            const bool sorts_specs_using_quantity = (HvkGui::TableGetColumnFlags(3) & ImGuiTableColumnFlags_IsSorted) != 0;
 
             // Show headers
             if (show_headers && (columns_base_flags & ImGuiTableColumnFlags_AngledHeader) != 0)
-                ImGui::TableAngledHeadersRow();
+                HvkGui::TableAngledHeadersRow();
             if (show_headers)
-                ImGui::TableHeadersRow();
+                HvkGui::TableHeadersRow();
 
             // Show data
             // FIXME-TABLE FIXME-NAV: How we can get decent up/down even though we have the buttons here?
@@ -7467,27 +7467,27 @@ static void DemoWindowTables()
                     //    continue;
 
                     const bool item_is_selected = selection.contains(item->ID);
-                    ImGui::PushID(item->ID);
-                    ImGui::TableNextRow(ImGuiTableRowFlags_None, row_min_height);
+                    HvkGui::PushID(item->ID);
+                    HvkGui::TableNextRow(ImGuiTableRowFlags_None, row_min_height);
 
                     // For the demo purpose we can select among different type of items submitted in the first column
-                    ImGui::TableSetColumnIndex(0);
+                    HvkGui::TableSetColumnIndex(0);
                     char label[32];
                     sprintf(label, "%04d", item->ID);
                     if (contents_type == CT_Text)
-                        ImGui::TextUnformatted(label);
+                        HvkGui::TextUnformatted(label);
                     else if (contents_type == CT_Button)
-                        ImGui::Button(label);
+                        HvkGui::Button(label);
                     else if (contents_type == CT_SmallButton)
-                        ImGui::SmallButton(label);
+                        HvkGui::SmallButton(label);
                     else if (contents_type == CT_FillButton)
-                        ImGui::Button(label, ImVec2(-FLT_MIN, 0.0f));
+                        HvkGui::Button(label, ImVec2(-FLT_MIN, 0.0f));
                     else if (contents_type == CT_Selectable || contents_type == CT_SelectableSpanRow)
                     {
                         ImGuiSelectableFlags selectable_flags = (contents_type == CT_SelectableSpanRow) ? ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap : ImGuiSelectableFlags_None;
-                        if (ImGui::Selectable(label, item_is_selected, selectable_flags, ImVec2(0, row_min_height)))
+                        if (HvkGui::Selectable(label, item_is_selected, selectable_flags, ImVec2(0, row_min_height)))
                         {
-                            if (ImGui::GetIO().KeyCtrl)
+                            if (HvkGui::GetIO().KeyCtrl)
                             {
                                 if (item_is_selected)
                                     selection.find_erase_unsorted(item->ID);
@@ -7502,66 +7502,66 @@ static void DemoWindowTables()
                         }
                     }
 
-                    if (ImGui::TableSetColumnIndex(1))
-                        ImGui::TextUnformatted(item->Name);
+                    if (HvkGui::TableSetColumnIndex(1))
+                        HvkGui::TextUnformatted(item->Name);
 
                     // Here we demonstrate marking our data set as needing to be sorted again if we modified a quantity,
                     // and we are currently sorting on the column showing the Quantity.
                     // To avoid triggering a sort while holding the button, we only trigger it when the button has been released.
                     // You will probably need some extra logic if you want to automatically sort when a specific entry changes.
-                    if (ImGui::TableSetColumnIndex(2))
+                    if (HvkGui::TableSetColumnIndex(2))
                     {
-                        if (ImGui::SmallButton("Chop")) { item->Quantity += 1; }
-                        if (sorts_specs_using_quantity && ImGui::IsItemDeactivated()) { items_need_sort = true; }
-                        ImGui::SameLine();
-                        if (ImGui::SmallButton("Eat")) { item->Quantity -= 1; }
-                        if (sorts_specs_using_quantity && ImGui::IsItemDeactivated()) { items_need_sort = true; }
+                        if (HvkGui::SmallButton("Chop")) { item->Quantity += 1; }
+                        if (sorts_specs_using_quantity && HvkGui::IsItemDeactivated()) { items_need_sort = true; }
+                        HvkGui::SameLine();
+                        if (HvkGui::SmallButton("Eat")) { item->Quantity -= 1; }
+                        if (sorts_specs_using_quantity && HvkGui::IsItemDeactivated()) { items_need_sort = true; }
                     }
 
-                    if (ImGui::TableSetColumnIndex(3))
-                        ImGui::Text("%d", item->Quantity);
+                    if (HvkGui::TableSetColumnIndex(3))
+                        HvkGui::Text("%d", item->Quantity);
 
-                    ImGui::TableSetColumnIndex(4);
+                    HvkGui::TableSetColumnIndex(4);
                     if (show_wrapped_text)
-                        ImGui::TextWrapped("Lorem ipsum dolor sit amet");
+                        HvkGui::TextWrapped("Lorem ipsum dolor sit amet");
                     else
-                        ImGui::Text("Lorem ipsum dolor sit amet");
+                        HvkGui::Text("Lorem ipsum dolor sit amet");
 
-                    if (ImGui::TableSetColumnIndex(5))
-                        ImGui::Text("1234");
+                    if (HvkGui::TableSetColumnIndex(5))
+                        HvkGui::Text("1234");
 
-                    ImGui::PopID();
+                    HvkGui::PopID();
                 }
             }
 
             // Store some info to display debug details below
-            table_scroll_cur = ImVec2(ImGui::GetScrollX(), ImGui::GetScrollY());
-            table_scroll_max = ImVec2(ImGui::GetScrollMaxX(), ImGui::GetScrollMaxY());
-            table_draw_list = ImGui::GetWindowDrawList();
-            ImGui::EndTable();
+            table_scroll_cur = ImVec2(HvkGui::GetScrollX(), HvkGui::GetScrollY());
+            table_scroll_max = ImVec2(HvkGui::GetScrollMaxX(), HvkGui::GetScrollMaxY());
+            table_draw_list = HvkGui::GetWindowDrawList();
+            HvkGui::EndTable();
         }
         static bool show_debug_details = false;
-        ImGui::Checkbox("Debug details", &show_debug_details);
+        HvkGui::Checkbox("Debug details", &show_debug_details);
         if (show_debug_details && table_draw_list)
         {
-            ImGui::SameLine(0.0f, 0.0f);
+            HvkGui::SameLine(0.0f, 0.0f);
             const int table_draw_list_draw_cmd_count = table_draw_list->CmdBuffer.Size;
             if (table_draw_list == parent_draw_list)
-                ImGui::Text(": DrawCmd: +%d (in same window)",
+                HvkGui::Text(": DrawCmd: +%d (in same window)",
                     table_draw_list_draw_cmd_count - parent_draw_list_draw_cmd_count);
             else
-                ImGui::Text(": DrawCmd: +%d (in child window), Scroll: (%.f/%.f) (%.f/%.f)",
+                HvkGui::Text(": DrawCmd: +%d (in child window), Scroll: (%.f/%.f) (%.f/%.f)",
                     table_draw_list_draw_cmd_count - 1, table_scroll_cur.x, table_scroll_max.x, table_scroll_cur.y, table_scroll_max.y);
         }
-        ImGui::TreePop();
+        HvkGui::TreePop();
     }
 
-    ImGui::PopID();
+    HvkGui::PopID();
 
     DemoWindowColumns();
 
     if (disable_indent)
-        ImGui::PopStyleVar();
+        HvkGui::PopStyleVar();
 }
 
 // Demonstrate old/legacy Columns API!
@@ -7569,38 +7569,38 @@ static void DemoWindowTables()
 static void DemoWindowColumns()
 {
     IMGUI_DEMO_MARKER("Columns (legacy API)");
-    bool open = ImGui::TreeNode("Legacy Columns API");
-    ImGui::SameLine();
+    bool open = HvkGui::TreeNode("Legacy Columns API");
+    HvkGui::SameLine();
     HelpMarker("Columns() is an old API! Prefer using the more flexible and powerful BeginTable() API!");
     if (!open)
         return;
 
     // Basic columns
     IMGUI_DEMO_MARKER("Columns (legacy API)/Basic");
-    if (ImGui::TreeNode("Basic"))
+    if (HvkGui::TreeNode("Basic"))
     {
-        ImGui::Text("Without border:");
-        ImGui::Columns(3, "mycolumns3", false);  // 3-ways, no border
-        ImGui::Separator();
+        HvkGui::Text("Without border:");
+        HvkGui::Columns(3, "mycolumns3", false);  // 3-ways, no border
+        HvkGui::Separator();
         for (int n = 0; n < 14; n++)
         {
             char label[32];
             sprintf(label, "Item %d", n);
-            if (ImGui::Selectable(label)) {}
-            //if (ImGui::Button(label, ImVec2(-FLT_MIN,0.0f))) {}
-            ImGui::NextColumn();
+            if (HvkGui::Selectable(label)) {}
+            //if (HvkGui::Button(label, ImVec2(-FLT_MIN,0.0f))) {}
+            HvkGui::NextColumn();
         }
-        ImGui::Columns(1);
-        ImGui::Separator();
+        HvkGui::Columns(1);
+        HvkGui::Separator();
 
-        ImGui::Text("With border:");
-        ImGui::Columns(4, "mycolumns"); // 4-ways, with border
-        ImGui::Separator();
-        ImGui::Text("ID"); ImGui::NextColumn();
-        ImGui::Text("Name"); ImGui::NextColumn();
-        ImGui::Text("Path"); ImGui::NextColumn();
-        ImGui::Text("Hovered"); ImGui::NextColumn();
-        ImGui::Separator();
+        HvkGui::Text("With border:");
+        HvkGui::Columns(4, "mycolumns"); // 4-ways, with border
+        HvkGui::Separator();
+        HvkGui::Text("ID"); HvkGui::NextColumn();
+        HvkGui::Text("Name"); HvkGui::NextColumn();
+        HvkGui::Text("Path"); HvkGui::NextColumn();
+        HvkGui::Text("Hovered"); HvkGui::NextColumn();
+        HvkGui::Separator();
         const char* names[3] = { "One", "Two", "Three" };
         const char* paths[3] = { "/path/one", "/path/two", "/path/three" };
         static int selected = -1;
@@ -7608,111 +7608,111 @@ static void DemoWindowColumns()
         {
             char label[32];
             sprintf(label, "%04d", i);
-            if (ImGui::Selectable(label, selected == i, ImGuiSelectableFlags_SpanAllColumns))
+            if (HvkGui::Selectable(label, selected == i, ImGuiSelectableFlags_SpanAllColumns))
                 selected = i;
-            bool hovered = ImGui::IsItemHovered();
-            ImGui::NextColumn();
-            ImGui::Text(names[i]); ImGui::NextColumn();
-            ImGui::Text(paths[i]); ImGui::NextColumn();
-            ImGui::Text("%d", hovered); ImGui::NextColumn();
+            bool hovered = HvkGui::IsItemHovered();
+            HvkGui::NextColumn();
+            HvkGui::Text(names[i]); HvkGui::NextColumn();
+            HvkGui::Text(paths[i]); HvkGui::NextColumn();
+            HvkGui::Text("%d", hovered); HvkGui::NextColumn();
         }
-        ImGui::Columns(1);
-        ImGui::Separator();
-        ImGui::TreePop();
+        HvkGui::Columns(1);
+        HvkGui::Separator();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Columns (legacy API)/Borders");
-    if (ImGui::TreeNode("Borders"))
+    if (HvkGui::TreeNode("Borders"))
     {
         // NB: Future columns API should allow automatic horizontal borders.
         static bool h_borders = true;
         static bool v_borders = true;
         static int columns_count = 4;
         const int lines_count = 3;
-        ImGui::SetNextItemWidth(ImGui::GetFontSize() * 8);
-        ImGui::DragInt("##columns_count", &columns_count, 0.1f, 2, 10, "%d columns");
+        HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 8);
+        HvkGui::DragInt("##columns_count", &columns_count, 0.1f, 2, 10, "%d columns");
         if (columns_count < 2)
             columns_count = 2;
-        ImGui::SameLine();
-        ImGui::Checkbox("horizontal", &h_borders);
-        ImGui::SameLine();
-        ImGui::Checkbox("vertical", &v_borders);
-        ImGui::Columns(columns_count, NULL, v_borders);
+        HvkGui::SameLine();
+        HvkGui::Checkbox("horizontal", &h_borders);
+        HvkGui::SameLine();
+        HvkGui::Checkbox("vertical", &v_borders);
+        HvkGui::Columns(columns_count, NULL, v_borders);
         for (int i = 0; i < columns_count * lines_count; i++)
         {
-            if (h_borders && ImGui::GetColumnIndex() == 0)
-                ImGui::Separator();
-            ImGui::PushID(i);
-            ImGui::Text("%c%c%c", 'a' + i, 'a' + i, 'a' + i);
-            ImGui::Text("Width %.2f", ImGui::GetColumnWidth());
-            ImGui::Text("Avail %.2f", ImGui::GetContentRegionAvail().x);
-            ImGui::Text("Offset %.2f", ImGui::GetColumnOffset());
-            ImGui::Text("Long text that is likely to clip");
-            ImGui::Button("Button", ImVec2(-FLT_MIN, 0.0f));
-            ImGui::PopID();
-            ImGui::NextColumn();
+            if (h_borders && HvkGui::GetColumnIndex() == 0)
+                HvkGui::Separator();
+            HvkGui::PushID(i);
+            HvkGui::Text("%c%c%c", 'a' + i, 'a' + i, 'a' + i);
+            HvkGui::Text("Width %.2f", HvkGui::GetColumnWidth());
+            HvkGui::Text("Avail %.2f", HvkGui::GetContentRegionAvail().x);
+            HvkGui::Text("Offset %.2f", HvkGui::GetColumnOffset());
+            HvkGui::Text("Long text that is likely to clip");
+            HvkGui::Button("Button", ImVec2(-FLT_MIN, 0.0f));
+            HvkGui::PopID();
+            HvkGui::NextColumn();
         }
-        ImGui::Columns(1);
+        HvkGui::Columns(1);
         if (h_borders)
-            ImGui::Separator();
-        ImGui::TreePop();
+            HvkGui::Separator();
+        HvkGui::TreePop();
     }
 
     // Create multiple items in a same cell before switching to next column
     IMGUI_DEMO_MARKER("Columns (legacy API)/Mixed items");
-    if (ImGui::TreeNode("Mixed items"))
+    if (HvkGui::TreeNode("Mixed items"))
     {
-        ImGui::Columns(3, "mixed");
-        ImGui::Separator();
+        HvkGui::Columns(3, "mixed");
+        HvkGui::Separator();
 
-        ImGui::Text("Hello");
-        ImGui::Button("Banana");
-        ImGui::NextColumn();
+        HvkGui::Text("Hello");
+        HvkGui::Button("Banana");
+        HvkGui::NextColumn();
 
-        ImGui::Text("ImGui");
-        ImGui::Button("Apple");
+        HvkGui::Text("ImGui");
+        HvkGui::Button("Apple");
         static float foo = 1.0f;
-        ImGui::InputFloat("red", &foo, 0.05f, 0, "%.3f");
-        ImGui::Text("An extra line here.");
-        ImGui::NextColumn();
+        HvkGui::InputFloat("red", &foo, 0.05f, 0, "%.3f");
+        HvkGui::Text("An extra line here.");
+        HvkGui::NextColumn();
 
-        ImGui::Text("Sailor");
-        ImGui::Button("Corniflower");
+        HvkGui::Text("Sailor");
+        HvkGui::Button("Corniflower");
         static float bar = 1.0f;
-        ImGui::InputFloat("blue", &bar, 0.05f, 0, "%.3f");
-        ImGui::NextColumn();
+        HvkGui::InputFloat("blue", &bar, 0.05f, 0, "%.3f");
+        HvkGui::NextColumn();
 
-        if (ImGui::CollapsingHeader("Category A")) { ImGui::Text("Blah blah blah"); } ImGui::NextColumn();
-        if (ImGui::CollapsingHeader("Category B")) { ImGui::Text("Blah blah blah"); } ImGui::NextColumn();
-        if (ImGui::CollapsingHeader("Category C")) { ImGui::Text("Blah blah blah"); } ImGui::NextColumn();
-        ImGui::Columns(1);
-        ImGui::Separator();
-        ImGui::TreePop();
+        if (HvkGui::CollapsingHeader("Category A")) { HvkGui::Text("Blah blah blah"); } HvkGui::NextColumn();
+        if (HvkGui::CollapsingHeader("Category B")) { HvkGui::Text("Blah blah blah"); } HvkGui::NextColumn();
+        if (HvkGui::CollapsingHeader("Category C")) { HvkGui::Text("Blah blah blah"); } HvkGui::NextColumn();
+        HvkGui::Columns(1);
+        HvkGui::Separator();
+        HvkGui::TreePop();
     }
 
     // Word wrapping
     IMGUI_DEMO_MARKER("Columns (legacy API)/Word-wrapping");
-    if (ImGui::TreeNode("Word-wrapping"))
+    if (HvkGui::TreeNode("Word-wrapping"))
     {
-        ImGui::Columns(2, "word-wrapping");
-        ImGui::Separator();
-        ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
-        ImGui::TextWrapped("Hello Left");
-        ImGui::NextColumn();
-        ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
-        ImGui::TextWrapped("Hello Right");
-        ImGui::Columns(1);
-        ImGui::Separator();
-        ImGui::TreePop();
+        HvkGui::Columns(2, "word-wrapping");
+        HvkGui::Separator();
+        HvkGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
+        HvkGui::TextWrapped("Hello Left");
+        HvkGui::NextColumn();
+        HvkGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
+        HvkGui::TextWrapped("Hello Right");
+        HvkGui::Columns(1);
+        HvkGui::Separator();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Columns (legacy API)/Horizontal Scrolling");
-    if (ImGui::TreeNode("Horizontal Scrolling"))
+    if (HvkGui::TreeNode("Horizontal Scrolling"))
     {
-        ImGui::SetNextWindowContentSize(ImVec2(1500.0f, 0.0f));
-        ImVec2 child_size = ImVec2(0, ImGui::GetFontSize() * 20.0f);
-        ImGui::BeginChild("##ScrollingRegion", child_size, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar);
-        ImGui::Columns(10);
+        HvkGui::SetNextWindowContentSize(ImVec2(1500.0f, 0.0f));
+        ImVec2 child_size = ImVec2(0, HvkGui::GetFontSize() * 20.0f);
+        HvkGui::BeginChild("##ScrollingRegion", child_size, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar);
+        HvkGui::Columns(10);
 
         // Also demonstrate using clipper for large vertical lists
         int ITEMS_COUNT = 2000;
@@ -7723,53 +7723,53 @@ static void DemoWindowColumns()
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
                 for (int j = 0; j < 10; j++)
                 {
-                    ImGui::Text("Line %d Column %d...", i, j);
-                    ImGui::NextColumn();
+                    HvkGui::Text("Line %d Column %d...", i, j);
+                    HvkGui::NextColumn();
                 }
         }
-        ImGui::Columns(1);
-        ImGui::EndChild();
-        ImGui::TreePop();
+        HvkGui::Columns(1);
+        HvkGui::EndChild();
+        HvkGui::TreePop();
     }
 
     IMGUI_DEMO_MARKER("Columns (legacy API)/Tree");
-    if (ImGui::TreeNode("Tree"))
+    if (HvkGui::TreeNode("Tree"))
     {
-        ImGui::Columns(2, "tree", true);
+        HvkGui::Columns(2, "tree", true);
         for (int x = 0; x < 3; x++)
         {
-            bool open1 = ImGui::TreeNode((void*)(intptr_t)x, "Node%d", x);
-            ImGui::NextColumn();
-            ImGui::Text("Node contents");
-            ImGui::NextColumn();
+            bool open1 = HvkGui::TreeNode((void*)(intptr_t)x, "Node%d", x);
+            HvkGui::NextColumn();
+            HvkGui::Text("Node contents");
+            HvkGui::NextColumn();
             if (open1)
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    bool open2 = ImGui::TreeNode((void*)(intptr_t)y, "Node%d.%d", x, y);
-                    ImGui::NextColumn();
-                    ImGui::Text("Node contents");
+                    bool open2 = HvkGui::TreeNode((void*)(intptr_t)y, "Node%d.%d", x, y);
+                    HvkGui::NextColumn();
+                    HvkGui::Text("Node contents");
                     if (open2)
                     {
-                        ImGui::Text("Even more contents");
-                        if (ImGui::TreeNode("Tree in column"))
+                        HvkGui::Text("Even more contents");
+                        if (HvkGui::TreeNode("Tree in column"))
                         {
-                            ImGui::Text("The quick brown fox jumps over the lazy dog");
-                            ImGui::TreePop();
+                            HvkGui::Text("The quick brown fox jumps over the lazy dog");
+                            HvkGui::TreePop();
                         }
                     }
-                    ImGui::NextColumn();
+                    HvkGui::NextColumn();
                     if (open2)
-                        ImGui::TreePop();
+                        HvkGui::TreePop();
                 }
-                ImGui::TreePop();
+                HvkGui::TreePop();
             }
         }
-        ImGui::Columns(1);
-        ImGui::TreePop();
+        HvkGui::Columns(1);
+        HvkGui::TreePop();
     }
 
-    ImGui::TreePop();
+    HvkGui::TreePop();
 }
 
 //-----------------------------------------------------------------------------
@@ -7779,31 +7779,31 @@ static void DemoWindowColumns()
 static void DemoWindowInputs()
 {
     IMGUI_DEMO_MARKER("Inputs & Focus");
-    if (ImGui::CollapsingHeader("Inputs & Focus"))
+    if (HvkGui::CollapsingHeader("Inputs & Focus"))
     {
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& io = HvkGui::GetIO();
 
         // Display inputs submitted to ImGuiIO
         IMGUI_DEMO_MARKER("Inputs & Focus/Inputs");
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        bool inputs_opened = ImGui::TreeNode("Inputs");
-        ImGui::SameLine();
+        HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
+        bool inputs_opened = HvkGui::TreeNode("Inputs");
+        HvkGui::SameLine();
         HelpMarker(
             "This is a simplified view. See more detailed input state:\n"
             "- in 'Tools->Metrics/Debugger->Inputs'.\n"
             "- in 'Tools->Debug Log->IO'.");
         if (inputs_opened)
         {
-            if (ImGui::IsMousePosValid())
-                ImGui::Text("Mouse pos: (%g, %g)", io.MousePos.x, io.MousePos.y);
+            if (HvkGui::IsMousePosValid())
+                HvkGui::Text("Mouse pos: (%g, %g)", io.MousePos.x, io.MousePos.y);
             else
-                ImGui::Text("Mouse pos: <INVALID>");
-            ImGui::Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
-            ImGui::Text("Mouse down:");
-            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseDown(i)) { ImGui::SameLine(); ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
-            ImGui::Text("Mouse wheel: %.1f", io.MouseWheel);
-            ImGui::Text("Mouse clicked count:");
-            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (io.MouseClickedCount[i] > 0) { ImGui::SameLine(); ImGui::Text("b%d: %d", i, io.MouseClickedCount[i]); }
+                HvkGui::Text("Mouse pos: <INVALID>");
+            HvkGui::Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
+            HvkGui::Text("Mouse down:");
+            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (HvkGui::IsMouseDown(i)) { HvkGui::SameLine(); HvkGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
+            HvkGui::Text("Mouse wheel: %.1f", io.MouseWheel);
+            HvkGui::Text("Mouse clicked count:");
+            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (io.MouseClickedCount[i] > 0) { HvkGui::SameLine(); HvkGui::Text("b%d: %d", i, io.MouseClickedCount[i]); }
 
             // We iterate both legacy native range and named ImGuiKey ranges. This is a little unusual/odd but this allows
             // displaying the data for old/new backends.
@@ -7811,18 +7811,18 @@ static void DemoWindowInputs()
             // You can generally iterate between ImGuiKey_NamedKey_BEGIN and ImGuiKey_NamedKey_END.
             struct funcs { static bool IsLegacyNativeDupe(ImGuiKey) { return false; } };
             ImGuiKey start_key = ImGuiKey_NamedKey_BEGIN;
-            ImGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key)) continue; ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key); }
-            ImGui::Text("Keys mods: %s%s%s%s", io.KeyCtrl ? "CTRL " : "", io.KeyShift ? "SHIFT " : "", io.KeyAlt ? "ALT " : "", io.KeySuper ? "SUPER " : "");
-            ImGui::Text("Chars queue:");       for (int i = 0; i < io.InputQueueCharacters.Size; i++) { ImWchar c = io.InputQueueCharacters[i]; ImGui::SameLine();  ImGui::Text("\'%c\' (0x%04X)", (c > ' ' && c <= 255) ? (char)c : '?', c); } // FIXME: We should convert 'c' to UTF-8 here but the functions are not public.
+            HvkGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !HvkGui::IsKeyDown(key)) continue; HvkGui::SameLine(); HvkGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", HvkGui::GetKeyName(key), key); }
+            HvkGui::Text("Keys mods: %s%s%s%s", io.KeyCtrl ? "CTRL " : "", io.KeyShift ? "SHIFT " : "", io.KeyAlt ? "ALT " : "", io.KeySuper ? "SUPER " : "");
+            HvkGui::Text("Chars queue:");       for (int i = 0; i < io.InputQueueCharacters.Size; i++) { ImWchar c = io.InputQueueCharacters[i]; HvkGui::SameLine();  HvkGui::Text("\'%c\' (0x%04X)", (c > ' ' && c <= 255) ? (char)c : '?', c); } // FIXME: We should convert 'c' to UTF-8 here but the functions are not public.
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Display ImGuiIO output flags
         IMGUI_DEMO_MARKER("Inputs & Focus/Outputs");
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        bool outputs_opened = ImGui::TreeNode("Outputs");
-        ImGui::SameLine();
+        HvkGui::SetNextItemOpen(true, ImGuiCond_Once);
+        bool outputs_opened = HvkGui::TreeNode("Outputs");
+        HvkGui::SameLine();
         HelpMarker(
             "The value of io.WantCaptureMouse and io.WantCaptureKeyboard are normally set by Dear ImGui "
             "to instruct your application of how to route inputs. Typically, when a value is true, it means "
@@ -7832,15 +7832,15 @@ static void DemoWindowInputs()
             "rules leading to how those flags are set).");
         if (outputs_opened)
         {
-            ImGui::Text("io.WantCaptureMouse: %d", io.WantCaptureMouse);
-            ImGui::Text("io.WantCaptureMouseUnlessPopupClose: %d", io.WantCaptureMouseUnlessPopupClose);
-            ImGui::Text("io.WantCaptureKeyboard: %d", io.WantCaptureKeyboard);
-            ImGui::Text("io.WantTextInput: %d", io.WantTextInput);
-            ImGui::Text("io.WantSetMousePos: %d", io.WantSetMousePos);
-            ImGui::Text("io.NavActive: %d, io.NavVisible: %d", io.NavActive, io.NavVisible);
+            HvkGui::Text("io.WantCaptureMouse: %d", io.WantCaptureMouse);
+            HvkGui::Text("io.WantCaptureMouseUnlessPopupClose: %d", io.WantCaptureMouseUnlessPopupClose);
+            HvkGui::Text("io.WantCaptureKeyboard: %d", io.WantCaptureKeyboard);
+            HvkGui::Text("io.WantTextInput: %d", io.WantTextInput);
+            HvkGui::Text("io.WantSetMousePos: %d", io.WantSetMousePos);
+            HvkGui::Text("io.NavActive: %d, io.NavVisible: %d", io.NavActive, io.NavVisible);
 
             IMGUI_DEMO_MARKER("Inputs & Focus/Outputs/WantCapture override");
-            if (ImGui::TreeNode("WantCapture override"))
+            if (HvkGui::TreeNode("WantCapture override"))
             {
                 HelpMarker(
                     "Hovering the colored canvas will override io.WantCaptureXXX fields.\n"
@@ -7849,20 +7849,20 @@ static void DemoWindowInputs()
                 static int capture_override_mouse = -1;
                 static int capture_override_keyboard = -1;
                 const char* capture_override_desc[] = { "None", "Set to false", "Set to true" };
-                ImGui::SetNextItemWidth(ImGui::GetFontSize() * 15);
-                ImGui::SliderInt("SetNextFrameWantCaptureMouse() on hover", &capture_override_mouse, -1, +1, capture_override_desc[capture_override_mouse + 1], ImGuiSliderFlags_AlwaysClamp);
-                ImGui::SetNextItemWidth(ImGui::GetFontSize() * 15);
-                ImGui::SliderInt("SetNextFrameWantCaptureKeyboard() on hover", &capture_override_keyboard, -1, +1, capture_override_desc[capture_override_keyboard + 1], ImGuiSliderFlags_AlwaysClamp);
+                HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 15);
+                HvkGui::SliderInt("SetNextFrameWantCaptureMouse() on hover", &capture_override_mouse, -1, +1, capture_override_desc[capture_override_mouse + 1], ImGuiSliderFlags_AlwaysClamp);
+                HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 15);
+                HvkGui::SliderInt("SetNextFrameWantCaptureKeyboard() on hover", &capture_override_keyboard, -1, +1, capture_override_desc[capture_override_keyboard + 1], ImGuiSliderFlags_AlwaysClamp);
 
-                ImGui::ColorButton("##panel", ImVec4(0.7f, 0.1f, 0.7f, 1.0f), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoDragDrop, ImVec2(128.0f, 96.0f)); // Dummy item
-                if (ImGui::IsItemHovered() && capture_override_mouse != -1)
-                    ImGui::SetNextFrameWantCaptureMouse(capture_override_mouse == 1);
-                if (ImGui::IsItemHovered() && capture_override_keyboard != -1)
-                    ImGui::SetNextFrameWantCaptureKeyboard(capture_override_keyboard == 1);
+                HvkGui::ColorButton("##panel", ImVec4(0.7f, 0.1f, 0.7f, 1.0f), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoDragDrop, ImVec2(128.0f, 96.0f)); // Dummy item
+                if (HvkGui::IsItemHovered() && capture_override_mouse != -1)
+                    HvkGui::SetNextFrameWantCaptureMouse(capture_override_mouse == 1);
+                if (HvkGui::IsItemHovered() && capture_override_keyboard != -1)
+                    HvkGui::SetNextFrameWantCaptureKeyboard(capture_override_keyboard == 1);
 
-                ImGui::TreePop();
+                HvkGui::TreePop();
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Demonstrate using Shortcut() and Routing Policies.
@@ -7876,206 +7876,206 @@ static void DemoWindowInputs()
         // TL;DR: Most uses will simply be:
         // - Shortcut(ImGuiMod_Ctrl | ImGuiKey_A); // Use ImGuiInputFlags_RouteFocused policy.
         IMGUI_DEMO_MARKER("Inputs & Focus/Shortcuts");
-        if (ImGui::TreeNode("Shortcuts"))
+        if (HvkGui::TreeNode("Shortcuts"))
         {
             static ImGuiInputFlags route_options = ImGuiInputFlags_Repeat;
             static ImGuiInputFlags route_type = ImGuiInputFlags_RouteFocused;
-            ImGui::CheckboxFlags("ImGuiInputFlags_Repeat", &route_options, ImGuiInputFlags_Repeat);
-            ImGui::RadioButton("ImGuiInputFlags_RouteActive", &route_type, ImGuiInputFlags_RouteActive);
-            ImGui::RadioButton("ImGuiInputFlags_RouteFocused (default)", &route_type, ImGuiInputFlags_RouteFocused);
-            ImGui::RadioButton("ImGuiInputFlags_RouteGlobal", &route_type, ImGuiInputFlags_RouteGlobal);
-            ImGui::Indent();
-            ImGui::BeginDisabled(route_type != ImGuiInputFlags_RouteGlobal);
-            ImGui::CheckboxFlags("ImGuiInputFlags_RouteOverFocused", &route_options, ImGuiInputFlags_RouteOverFocused);
-            ImGui::CheckboxFlags("ImGuiInputFlags_RouteOverActive", &route_options, ImGuiInputFlags_RouteOverActive);
-            ImGui::CheckboxFlags("ImGuiInputFlags_RouteUnlessBgFocused", &route_options, ImGuiInputFlags_RouteUnlessBgFocused);
-            ImGui::EndDisabled();
-            ImGui::Unindent();
-            ImGui::RadioButton("ImGuiInputFlags_RouteAlways", &route_type, ImGuiInputFlags_RouteAlways);
+            HvkGui::CheckboxFlags("ImGuiInputFlags_Repeat", &route_options, ImGuiInputFlags_Repeat);
+            HvkGui::RadioButton("ImGuiInputFlags_RouteActive", &route_type, ImGuiInputFlags_RouteActive);
+            HvkGui::RadioButton("ImGuiInputFlags_RouteFocused (default)", &route_type, ImGuiInputFlags_RouteFocused);
+            HvkGui::RadioButton("ImGuiInputFlags_RouteGlobal", &route_type, ImGuiInputFlags_RouteGlobal);
+            HvkGui::Indent();
+            HvkGui::BeginDisabled(route_type != ImGuiInputFlags_RouteGlobal);
+            HvkGui::CheckboxFlags("ImGuiInputFlags_RouteOverFocused", &route_options, ImGuiInputFlags_RouteOverFocused);
+            HvkGui::CheckboxFlags("ImGuiInputFlags_RouteOverActive", &route_options, ImGuiInputFlags_RouteOverActive);
+            HvkGui::CheckboxFlags("ImGuiInputFlags_RouteUnlessBgFocused", &route_options, ImGuiInputFlags_RouteUnlessBgFocused);
+            HvkGui::EndDisabled();
+            HvkGui::Unindent();
+            HvkGui::RadioButton("ImGuiInputFlags_RouteAlways", &route_type, ImGuiInputFlags_RouteAlways);
             ImGuiInputFlags flags = route_type | route_options; // Merged flags
             if (route_type != ImGuiInputFlags_RouteGlobal)
                 flags &= ~(ImGuiInputFlags_RouteOverFocused | ImGuiInputFlags_RouteOverActive | ImGuiInputFlags_RouteUnlessBgFocused);
 
-            ImGui::SeparatorText("Using SetNextItemShortcut()");
-            ImGui::Text("Ctrl+S");
-            ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_S, flags | ImGuiInputFlags_Tooltip);
-            ImGui::Button("Save");
-            ImGui::Text("Alt+F");
-            ImGui::SetNextItemShortcut(ImGuiMod_Alt | ImGuiKey_F, flags | ImGuiInputFlags_Tooltip);
+            HvkGui::SeparatorText("Using SetNextItemShortcut()");
+            HvkGui::Text("Ctrl+S");
+            HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_S, flags | ImGuiInputFlags_Tooltip);
+            HvkGui::Button("Save");
+            HvkGui::Text("Alt+F");
+            HvkGui::SetNextItemShortcut(ImGuiMod_Alt | ImGuiKey_F, flags | ImGuiInputFlags_Tooltip);
             static float f = 0.5f;
-            ImGui::SliderFloat("Factor", &f, 0.0f, 1.0f);
+            HvkGui::SliderFloat("Factor", &f, 0.0f, 1.0f);
 
-            ImGui::SeparatorText("Using Shortcut()");
-            const float line_height = ImGui::GetTextLineHeightWithSpacing();
+            HvkGui::SeparatorText("Using Shortcut()");
+            const float line_height = HvkGui::GetTextLineHeightWithSpacing();
             const ImGuiKeyChord key_chord = ImGuiMod_Ctrl | ImGuiKey_A;
 
-            ImGui::Text("Ctrl+A");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
+            HvkGui::Text("Ctrl+A");
+            HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
 
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(1.0f, 0.0f, 1.0f, 0.1f));
+            HvkGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(1.0f, 0.0f, 1.0f, 0.1f));
 
-            ImGui::BeginChild("WindowA", ImVec2(-FLT_MIN, line_height * 14), true);
-            ImGui::Text("Press Ctrl+A and see who receives it!");
-            ImGui::Separator();
+            HvkGui::BeginChild("WindowA", ImVec2(-FLT_MIN, line_height * 14), true);
+            HvkGui::Text("Press Ctrl+A and see who receives it!");
+            HvkGui::Separator();
 
             // 1: Window polling for Ctrl+A
-            ImGui::Text("(in WindowA)");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
+            HvkGui::Text("(in WindowA)");
+            HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
 
             // 2: InputText also polling for Ctrl+A: it always uses _RouteFocused internally (gets priority when active)
             // (Commented because the owner-aware version of Shortcut() is still in imgui_internal.h)
             //char str[16] = "Press Ctrl+A";
-            //ImGui::Spacing();
-            //ImGui::InputText("InputTextB", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
-            //ImGuiID item_id = ImGui::GetItemID();
-            //ImGui::SameLine(); HelpMarker("Internal widgets always use _RouteFocused");
-            //ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags, item_id) ? "PRESSED" : "...");
+            //HvkGui::Spacing();
+            //HvkGui::InputText("InputTextB", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
+            //ImGuiID item_id = HvkGui::GetItemID();
+            //HvkGui::SameLine(); HelpMarker("Internal widgets always use _RouteFocused");
+            //HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags, item_id) ? "PRESSED" : "...");
 
             // 3: Dummy child is not claiming the route: focusing them shouldn't steal route away from WindowA
-            ImGui::BeginChild("ChildD", ImVec2(-FLT_MIN, line_height * 4), true);
-            ImGui::Text("(in ChildD: not using same Shortcut)");
-            ImGui::Text("IsWindowFocused: %d", ImGui::IsWindowFocused());
-            ImGui::EndChild();
+            HvkGui::BeginChild("ChildD", ImVec2(-FLT_MIN, line_height * 4), true);
+            HvkGui::Text("(in ChildD: not using same Shortcut)");
+            HvkGui::Text("IsWindowFocused: %d", HvkGui::IsWindowFocused());
+            HvkGui::EndChild();
 
             // 4: Child window polling for Ctrl+A. It is deeper than WindowA and gets priority when focused.
-            ImGui::BeginChild("ChildE", ImVec2(-FLT_MIN, line_height * 4), true);
-            ImGui::Text("(in ChildE: using same Shortcut)");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
-            ImGui::EndChild();
+            HvkGui::BeginChild("ChildE", ImVec2(-FLT_MIN, line_height * 4), true);
+            HvkGui::Text("(in ChildE: using same Shortcut)");
+            HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
+            HvkGui::EndChild();
 
             // 5: In a popup
-            if (ImGui::Button("Open Popup"))
-                ImGui::OpenPopup("PopupF");
-            if (ImGui::BeginPopup("PopupF"))
+            if (HvkGui::Button("Open Popup"))
+                HvkGui::OpenPopup("PopupF");
+            if (HvkGui::BeginPopup("PopupF"))
             {
-                ImGui::Text("(in PopupF)");
-                ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
+                HvkGui::Text("(in PopupF)");
+                HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
                 // (Commented because the owner-aware version of Shortcut() is still in imgui_internal.h)
-                //ImGui::InputText("InputTextG", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
-                //ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, flags, ImGui::GetItemID()) ? "PRESSED" : "...");
-                ImGui::EndPopup();
+                //HvkGui::InputText("InputTextG", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
+                //HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags, HvkGui::GetItemID()) ? "PRESSED" : "...");
+                HvkGui::EndPopup();
             }
-            ImGui::EndChild();
-            ImGui::PopStyleColor();
+            HvkGui::EndChild();
+            HvkGui::PopStyleColor();
 
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         // Display mouse cursors
         IMGUI_DEMO_MARKER("Inputs & Focus/Mouse Cursors");
-        if (ImGui::TreeNode("Mouse Cursors"))
+        if (HvkGui::TreeNode("Mouse Cursors"))
         {
             const char* mouse_cursors_names[] = { "Arrow", "TextInput", "ResizeAll", "ResizeNS", "ResizeEW", "ResizeNESW", "ResizeNWSE", "Hand", "Wait", "Progress", "NotAllowed" };
             IM_ASSERT(IM_ARRAYSIZE(mouse_cursors_names) == ImGuiMouseCursor_COUNT);
 
-            ImGuiMouseCursor current = ImGui::GetMouseCursor();
+            ImGuiMouseCursor current = HvkGui::GetMouseCursor();
             const char* cursor_name = (current >= ImGuiMouseCursor_Arrow) && (current < ImGuiMouseCursor_COUNT) ? mouse_cursors_names[current] : "N/A";
-            ImGui::Text("Current mouse cursor = %d: %s", current, cursor_name);
-            ImGui::BeginDisabled(true);
-            ImGui::CheckboxFlags("io.BackendFlags: HasMouseCursors", &io.BackendFlags, ImGuiBackendFlags_HasMouseCursors);
-            ImGui::EndDisabled();
+            HvkGui::Text("Current mouse cursor = %d: %s", current, cursor_name);
+            HvkGui::BeginDisabled(true);
+            HvkGui::CheckboxFlags("io.BackendFlags: HasMouseCursors", &io.BackendFlags, ImGuiBackendFlags_HasMouseCursors);
+            HvkGui::EndDisabled();
 
-            ImGui::Text("Hover to see mouse cursors:");
-            ImGui::SameLine(); HelpMarker(
-                "Your application can render a different mouse cursor based on what ImGui::GetMouseCursor() returns. "
+            HvkGui::Text("Hover to see mouse cursors:");
+            HvkGui::SameLine(); HelpMarker(
+                "Your application can render a different mouse cursor based on what HvkGui::GetMouseCursor() returns. "
                 "If software cursor rendering (io.MouseDrawCursor) is set ImGui will draw the right cursor for you, "
                 "otherwise your backend needs to handle it.");
             for (int i = 0; i < ImGuiMouseCursor_COUNT; i++)
             {
                 char label[32];
                 sprintf(label, "Mouse cursor %d: %s", i, mouse_cursors_names[i]);
-                ImGui::Bullet(); ImGui::Selectable(label, false);
-                if (ImGui::IsItemHovered())
-                    ImGui::SetMouseCursor(i);
+                HvkGui::Bullet(); HvkGui::Selectable(label, false);
+                if (HvkGui::IsItemHovered())
+                    HvkGui::SetMouseCursor(i);
             }
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Inputs & Focus/Tabbing");
-        if (ImGui::TreeNode("Tabbing"))
+        if (HvkGui::TreeNode("Tabbing"))
         {
-            ImGui::Text("Use Tab/Shift+Tab to cycle through keyboard editable fields.");
+            HvkGui::Text("Use Tab/Shift+Tab to cycle through keyboard editable fields.");
             static char buf[32] = "hello";
-            ImGui::InputText("1", buf, IM_ARRAYSIZE(buf));
-            ImGui::InputText("2", buf, IM_ARRAYSIZE(buf));
-            ImGui::InputText("3", buf, IM_ARRAYSIZE(buf));
-            ImGui::PushItemFlag(ImGuiItemFlags_NoTabStop, true);
-            ImGui::InputText("4 (tab skip)", buf, IM_ARRAYSIZE(buf));
-            ImGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
-            ImGui::PopItemFlag();
-            ImGui::InputText("5", buf, IM_ARRAYSIZE(buf));
-            ImGui::TreePop();
+            HvkGui::InputText("1", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("2", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("3", buf, IM_ARRAYSIZE(buf));
+            HvkGui::PushItemFlag(ImGuiItemFlags_NoTabStop, true);
+            HvkGui::InputText("4 (tab skip)", buf, IM_ARRAYSIZE(buf));
+            HvkGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
+            HvkGui::PopItemFlag();
+            HvkGui::InputText("5", buf, IM_ARRAYSIZE(buf));
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Inputs & Focus/Focus from code");
-        if (ImGui::TreeNode("Focus from code"))
+        if (HvkGui::TreeNode("Focus from code"))
         {
-            bool focus_1 = ImGui::Button("Focus on 1"); ImGui::SameLine();
-            bool focus_2 = ImGui::Button("Focus on 2"); ImGui::SameLine();
-            bool focus_3 = ImGui::Button("Focus on 3");
+            bool focus_1 = HvkGui::Button("Focus on 1"); HvkGui::SameLine();
+            bool focus_2 = HvkGui::Button("Focus on 2"); HvkGui::SameLine();
+            bool focus_3 = HvkGui::Button("Focus on 3");
             int has_focus = 0;
             static char buf[128] = "click on a button to set focus";
 
-            if (focus_1) ImGui::SetKeyboardFocusHere();
-            ImGui::InputText("1", buf, IM_ARRAYSIZE(buf));
-            if (ImGui::IsItemActive()) has_focus = 1;
+            if (focus_1) HvkGui::SetKeyboardFocusHere();
+            HvkGui::InputText("1", buf, IM_ARRAYSIZE(buf));
+            if (HvkGui::IsItemActive()) has_focus = 1;
 
-            if (focus_2) ImGui::SetKeyboardFocusHere();
-            ImGui::InputText("2", buf, IM_ARRAYSIZE(buf));
-            if (ImGui::IsItemActive()) has_focus = 2;
+            if (focus_2) HvkGui::SetKeyboardFocusHere();
+            HvkGui::InputText("2", buf, IM_ARRAYSIZE(buf));
+            if (HvkGui::IsItemActive()) has_focus = 2;
 
-            ImGui::PushItemFlag(ImGuiItemFlags_NoTabStop, true);
-            if (focus_3) ImGui::SetKeyboardFocusHere();
-            ImGui::InputText("3 (tab skip)", buf, IM_ARRAYSIZE(buf));
-            if (ImGui::IsItemActive()) has_focus = 3;
-            ImGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
-            ImGui::PopItemFlag();
+            HvkGui::PushItemFlag(ImGuiItemFlags_NoTabStop, true);
+            if (focus_3) HvkGui::SetKeyboardFocusHere();
+            HvkGui::InputText("3 (tab skip)", buf, IM_ARRAYSIZE(buf));
+            if (HvkGui::IsItemActive()) has_focus = 3;
+            HvkGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
+            HvkGui::PopItemFlag();
 
             if (has_focus)
-                ImGui::Text("Item with focus: %d", has_focus);
+                HvkGui::Text("Item with focus: %d", has_focus);
             else
-                ImGui::Text("Item with focus: <none>");
+                HvkGui::Text("Item with focus: <none>");
 
             // Use >= 0 parameter to SetKeyboardFocusHere() to focus an upcoming item
             static float f3[3] = { 0.0f, 0.0f, 0.0f };
             int focus_ahead = -1;
-            if (ImGui::Button("Focus on X")) { focus_ahead = 0; } ImGui::SameLine();
-            if (ImGui::Button("Focus on Y")) { focus_ahead = 1; } ImGui::SameLine();
-            if (ImGui::Button("Focus on Z")) { focus_ahead = 2; }
-            if (focus_ahead != -1) ImGui::SetKeyboardFocusHere(focus_ahead);
-            ImGui::SliderFloat3("Float3", &f3[0], 0.0f, 1.0f);
+            if (HvkGui::Button("Focus on X")) { focus_ahead = 0; } HvkGui::SameLine();
+            if (HvkGui::Button("Focus on Y")) { focus_ahead = 1; } HvkGui::SameLine();
+            if (HvkGui::Button("Focus on Z")) { focus_ahead = 2; }
+            if (focus_ahead != -1) HvkGui::SetKeyboardFocusHere(focus_ahead);
+            HvkGui::SliderFloat3("Float3", &f3[0], 0.0f, 1.0f);
 
-            ImGui::TextWrapped("NB: Cursor & selection are preserved when refocusing last used item in code.");
-            ImGui::TreePop();
+            HvkGui::TextWrapped("NB: Cursor & selection are preserved when refocusing last used item in code.");
+            HvkGui::TreePop();
         }
 
         IMGUI_DEMO_MARKER("Inputs & Focus/Dragging");
-        if (ImGui::TreeNode("Dragging"))
+        if (HvkGui::TreeNode("Dragging"))
         {
-            ImGui::TextWrapped("You can use ImGui::GetMouseDragDelta(0) to query for the dragged amount on any widget.");
+            HvkGui::TextWrapped("You can use HvkGui::GetMouseDragDelta(0) to query for the dragged amount on any widget.");
             for (int button = 0; button < 3; button++)
             {
-                ImGui::Text("IsMouseDragging(%d):", button);
-                ImGui::Text("  w/ default threshold: %d,", ImGui::IsMouseDragging(button));
-                ImGui::Text("  w/ zero threshold: %d,", ImGui::IsMouseDragging(button, 0.0f));
-                ImGui::Text("  w/ large threshold: %d,", ImGui::IsMouseDragging(button, 20.0f));
+                HvkGui::Text("IsMouseDragging(%d):", button);
+                HvkGui::Text("  w/ default threshold: %d,", HvkGui::IsMouseDragging(button));
+                HvkGui::Text("  w/ zero threshold: %d,", HvkGui::IsMouseDragging(button, 0.0f));
+                HvkGui::Text("  w/ large threshold: %d,", HvkGui::IsMouseDragging(button, 20.0f));
             }
 
-            ImGui::Button("Drag Me");
-            if (ImGui::IsItemActive())
-                ImGui::GetForegroundDrawList()->AddLine(io.MouseClickedPos[0], io.MousePos, ImGui::GetColorU32(ImGuiCol_Button), 4.0f); // Draw a line between the button and the mouse cursor
+            HvkGui::Button("Drag Me");
+            if (HvkGui::IsItemActive())
+                HvkGui::GetForegroundDrawList()->AddLine(io.MouseClickedPos[0], io.MousePos, HvkGui::GetColorU32(ImGuiCol_Button), 4.0f); // Draw a line between the button and the mouse cursor
 
             // Drag operations gets "unlocked" when the mouse has moved past a certain threshold
             // (the default threshold is stored in io.MouseDragThreshold). You can request a lower or higher
             // threshold using the second parameter of IsMouseDragging() and GetMouseDragDelta().
-            ImVec2 value_raw = ImGui::GetMouseDragDelta(0, 0.0f);
-            ImVec2 value_with_lock_threshold = ImGui::GetMouseDragDelta(0);
+            ImVec2 value_raw = HvkGui::GetMouseDragDelta(0, 0.0f);
+            ImVec2 value_with_lock_threshold = HvkGui::GetMouseDragDelta(0);
             ImVec2 mouse_delta = io.MouseDelta;
-            ImGui::Text("GetMouseDragDelta(0):");
-            ImGui::Text("  w/ default threshold: (%.1f, %.1f)", value_with_lock_threshold.x, value_with_lock_threshold.y);
-            ImGui::Text("  w/ zero threshold: (%.1f, %.1f)", value_raw.x, value_raw.y);
-            ImGui::Text("io.MouseDelta: (%.1f, %.1f)", mouse_delta.x, mouse_delta.y);
-            ImGui::TreePop();
+            HvkGui::Text("GetMouseDragDelta(0):");
+            HvkGui::Text("  w/ default threshold: (%.1f, %.1f)", value_with_lock_threshold.x, value_with_lock_threshold.y);
+            HvkGui::Text("  w/ zero threshold: (%.1f, %.1f)", value_raw.x, value_raw.y);
+            HvkGui::Text("io.MouseDelta: (%.1f, %.1f)", mouse_delta.x, mouse_delta.y);
+            HvkGui::TreePop();
         }
     }
 }
@@ -8085,126 +8085,126 @@ static void DemoWindowInputs()
 // Access from Dear ImGui Demo -> Tools -> About
 //-----------------------------------------------------------------------------
 
-void ImGui::ShowAboutWindow(bool* p_open)
+void HvkGui::ShowAboutWindow(bool* p_open)
 {
-    if (!ImGui::Begin("About Dear ImGui", p_open, ImGuiWindowFlags_AlwaysAutoResize))
+    if (!HvkGui::Begin("About Dear ImGui", p_open, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
     IMGUI_DEMO_MARKER("Tools/About Dear ImGui");
-    ImGui::Text("Dear ImGui %s (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
+    HvkGui::Text("Dear ImGui %s (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
 
-    ImGui::TextLinkOpenURL("Homepage", "https://github.com/ocornut/imgui");
-    ImGui::SameLine();
-    ImGui::TextLinkOpenURL("FAQ", "https://github.com/ocornut/imgui/blob/master/docs/FAQ.md");
-    ImGui::SameLine();
-    ImGui::TextLinkOpenURL("Wiki", "https://github.com/ocornut/imgui/wiki");
-    ImGui::SameLine();
-    ImGui::TextLinkOpenURL("Extensions", "https://github.com/ocornut/imgui/wiki/Useful-Extensions");
-    ImGui::SameLine();
-    ImGui::TextLinkOpenURL("Releases", "https://github.com/ocornut/imgui/releases");
-    ImGui::SameLine();
-    ImGui::TextLinkOpenURL("Funding", "https://github.com/ocornut/imgui/wiki/Funding");
+    HvkGui::TextLinkOpenURL("Homepage", "https://github.com/ocornut/imgui");
+    HvkGui::SameLine();
+    HvkGui::TextLinkOpenURL("FAQ", "https://github.com/ocornut/imgui/blob/master/docs/FAQ.md");
+    HvkGui::SameLine();
+    HvkGui::TextLinkOpenURL("Wiki", "https://github.com/ocornut/imgui/wiki");
+    HvkGui::SameLine();
+    HvkGui::TextLinkOpenURL("Extensions", "https://github.com/ocornut/imgui/wiki/Useful-Extensions");
+    HvkGui::SameLine();
+    HvkGui::TextLinkOpenURL("Releases", "https://github.com/ocornut/imgui/releases");
+    HvkGui::SameLine();
+    HvkGui::TextLinkOpenURL("Funding", "https://github.com/ocornut/imgui/wiki/Funding");
 
-    ImGui::Separator();
-    ImGui::Text("(c) 2014-2025 Omar Cornut");
-    ImGui::Text("Developed by Omar Cornut and all Dear ImGui contributors.");
-    ImGui::Text("Dear ImGui is licensed under the MIT License, see LICENSE for more information.");
-    ImGui::Text("If your company uses this, please consider funding the project.");
+    HvkGui::Separator();
+    HvkGui::Text("(c) 2014-2025 Omar Cornut");
+    HvkGui::Text("Developed by Omar Cornut and all Dear ImGui contributors.");
+    HvkGui::Text("Dear ImGui is licensed under the MIT License, see LICENSE for more information.");
+    HvkGui::Text("If your company uses this, please consider funding the project.");
 
     static bool show_config_info = false;
-    ImGui::Checkbox("Config/Build Information", &show_config_info);
+    HvkGui::Checkbox("Config/Build Information", &show_config_info);
     if (show_config_info)
     {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuiStyle& style = ImGui::GetStyle();
+        ImGuiIO& io = HvkGui::GetIO();
+        ImGuiStyle& style = HvkGui::GetStyle();
 
-        bool copy_to_clipboard = ImGui::Button("Copy to clipboard");
-        ImVec2 child_size = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 18);
-        ImGui::BeginChild(ImGui::GetID("cfg_infos"), child_size, ImGuiChildFlags_FrameStyle);
+        bool copy_to_clipboard = HvkGui::Button("Copy to clipboard");
+        ImVec2 child_size = ImVec2(0, HvkGui::GetTextLineHeightWithSpacing() * 18);
+        HvkGui::BeginChild(HvkGui::GetID("cfg_infos"), child_size, ImGuiChildFlags_FrameStyle);
         if (copy_to_clipboard)
         {
-            ImGui::LogToClipboard();
-            ImGui::LogText("```cpp\n"); // Back quotes will make text appears without formatting when pasting on GitHub
+            HvkGui::LogToClipboard();
+            HvkGui::LogText("```cpp\n"); // Back quotes will make text appears without formatting when pasting on GitHub
         }
 
-        ImGui::Text("Dear ImGui %s (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
-        ImGui::Separator();
-        ImGui::Text("sizeof(size_t): %d, sizeof(ImDrawIdx): %d, sizeof(ImDrawVert): %d", (int)sizeof(size_t), (int)sizeof(ImDrawIdx), (int)sizeof(ImDrawVert));
-        ImGui::Text("define: __cplusplus=%d", (int)__cplusplus);
+        HvkGui::Text("Dear ImGui %s (%d)", IMGUI_VERSION, IMGUI_VERSION_NUM);
+        HvkGui::Separator();
+        HvkGui::Text("sizeof(size_t): %d, sizeof(ImDrawIdx): %d, sizeof(ImDrawVert): %d", (int)sizeof(size_t), (int)sizeof(ImDrawIdx), (int)sizeof(ImDrawVert));
+        HvkGui::Text("define: __cplusplus=%d", (int)__cplusplus);
 #ifdef IMGUI_ENABLE_TEST_ENGINE
-        ImGui::Text("define: IMGUI_ENABLE_TEST_ENGINE");
+        HvkGui::Text("define: IMGUI_ENABLE_TEST_ENGINE");
 #endif
 #ifdef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_OBSOLETE_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_OBSOLETE_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_WIN32_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_WIN32_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_WIN32_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_DEFAULT_FORMAT_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_DEFAULT_FORMAT_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_DEFAULT_FORMAT_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_FILE_FUNCTIONS
-        ImGui::Text("define: IMGUI_DISABLE_FILE_FUNCTIONS");
+        HvkGui::Text("define: IMGUI_DISABLE_FILE_FUNCTIONS");
 #endif
 #ifdef IMGUI_DISABLE_DEFAULT_ALLOCATORS
-        ImGui::Text("define: IMGUI_DISABLE_DEFAULT_ALLOCATORS");
+        HvkGui::Text("define: IMGUI_DISABLE_DEFAULT_ALLOCATORS");
 #endif
 #ifdef IMGUI_USE_BGRA_PACKED_COLOR
-        ImGui::Text("define: IMGUI_USE_BGRA_PACKED_COLOR");
+        HvkGui::Text("define: IMGUI_USE_BGRA_PACKED_COLOR");
 #endif
 #ifdef _WIN32
-        ImGui::Text("define: _WIN32");
+        HvkGui::Text("define: _WIN32");
 #endif
 #ifdef _WIN64
-        ImGui::Text("define: _WIN64");
+        HvkGui::Text("define: _WIN64");
 #endif
 #ifdef __linux__
-        ImGui::Text("define: __linux__");
+        HvkGui::Text("define: __linux__");
 #endif
 #ifdef __APPLE__
-        ImGui::Text("define: __APPLE__");
+        HvkGui::Text("define: __APPLE__");
 #endif
 #ifdef _MSC_VER
-        ImGui::Text("define: _MSC_VER=%d", _MSC_VER);
+        HvkGui::Text("define: _MSC_VER=%d", _MSC_VER);
 #endif
 #ifdef _MSVC_LANG
-        ImGui::Text("define: _MSVC_LANG=%d", (int)_MSVC_LANG);
+        HvkGui::Text("define: _MSVC_LANG=%d", (int)_MSVC_LANG);
 #endif
 #ifdef __MINGW32__
-        ImGui::Text("define: __MINGW32__");
+        HvkGui::Text("define: __MINGW32__");
 #endif
 #ifdef __MINGW64__
-        ImGui::Text("define: __MINGW64__");
+        HvkGui::Text("define: __MINGW64__");
 #endif
 #ifdef __GNUC__
-        ImGui::Text("define: __GNUC__=%d", (int)__GNUC__);
+        HvkGui::Text("define: __GNUC__=%d", (int)__GNUC__);
 #endif
 #ifdef __clang_version__
-        ImGui::Text("define: __clang_version__=%s", __clang_version__);
+        HvkGui::Text("define: __clang_version__=%s", __clang_version__);
 #endif
 #ifdef __EMSCRIPTEN__
-        ImGui::Text("define: __EMSCRIPTEN__");
-        ImGui::Text("Emscripten: %d.%d.%d", __EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__);
+        HvkGui::Text("define: __EMSCRIPTEN__");
+        HvkGui::Text("Emscripten: %d.%d.%d", __EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__);
 #endif
 #ifdef NDEBUG
-        ImGui::Text("define: NDEBUG");
+        HvkGui::Text("define: NDEBUG");
 #endif
 
         // Heuristic to detect no-op IM_ASSERT() macros
@@ -8214,59 +8214,59 @@ void ImGui::ShowAboutWindow(bool* p_open)
         IM_ASSERT(++assert_runs_expression);
         int assert_expand_len = (int)strlen(IM_STRINGIFY((IM_ASSERT(true))));
         bool assert_maybe_disabled = (!assert_runs_expression || assert_expand_len <= 16);
-        ImGui::Text("IM_ASSERT: runs expression: %s. expand size: %s%s",
+        HvkGui::Text("IM_ASSERT: runs expression: %s. expand size: %s%s",
             assert_runs_expression ? "OK" : "KO", (assert_expand_len > 16) ? "OK" : "KO", assert_maybe_disabled ? " (MAYBE DISABLED?!)" : "");
         if (assert_maybe_disabled)
         {
-            ImGui::SameLine();
+            HvkGui::SameLine();
             HelpMarker("IM_ASSERT() calls assert() by default. Compiling with NDEBUG will usually strip out assert() to nothing, which is NOT recommended because we use asserts to notify of programmer mistakes!");
         }
 
-        ImGui::Separator();
-        ImGui::Text("io.BackendPlatformName: %s", io.BackendPlatformName ? io.BackendPlatformName : "NULL");
-        ImGui::Text("io.BackendRendererName: %s", io.BackendRendererName ? io.BackendRendererName : "NULL");
-        ImGui::Text("io.ConfigFlags: 0x%08X", io.ConfigFlags);
-        if (io.ConfigFlags & ImGuiConfigFlags_NavEnableKeyboard)        ImGui::Text(" NavEnableKeyboard");
-        if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad)         ImGui::Text(" NavEnableGamepad");
-        if (io.ConfigFlags & ImGuiConfigFlags_NoMouse)                  ImGui::Text(" NoMouse");
-        if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)      ImGui::Text(" NoMouseCursorChange");
-        if (io.ConfigFlags & ImGuiConfigFlags_NoKeyboard)               ImGui::Text(" NoKeyboard");
-        if (io.MouseDrawCursor)                                         ImGui::Text("io.MouseDrawCursor");
-        if (io.ConfigMacOSXBehaviors)                                   ImGui::Text("io.ConfigMacOSXBehaviors");
-        if (io.ConfigNavMoveSetMousePos)                                ImGui::Text("io.ConfigNavMoveSetMousePos");
-        if (io.ConfigNavCaptureKeyboard)                                ImGui::Text("io.ConfigNavCaptureKeyboard");
-        if (io.ConfigInputTextCursorBlink)                              ImGui::Text("io.ConfigInputTextCursorBlink");
-        if (io.ConfigWindowsResizeFromEdges)                            ImGui::Text("io.ConfigWindowsResizeFromEdges");
-        if (io.ConfigWindowsMoveFromTitleBarOnly)                       ImGui::Text("io.ConfigWindowsMoveFromTitleBarOnly");
-        if (io.ConfigMemoryCompactTimer >= 0.0f)                        ImGui::Text("io.ConfigMemoryCompactTimer = %.1f", io.ConfigMemoryCompactTimer);
-        ImGui::Text("io.BackendFlags: 0x%08X", io.BackendFlags);
-        if (io.BackendFlags & ImGuiBackendFlags_HasGamepad)             ImGui::Text(" HasGamepad");
-        if (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors)        ImGui::Text(" HasMouseCursors");
-        if (io.BackendFlags & ImGuiBackendFlags_HasSetMousePos)         ImGui::Text(" HasSetMousePos");
-        if (io.BackendFlags & ImGuiBackendFlags_RendererHasVtxOffset)   ImGui::Text(" RendererHasVtxOffset");
-        if (io.BackendFlags & ImGuiBackendFlags_RendererHasTextures)    ImGui::Text(" RendererHasTextures");
-        ImGui::Separator();
-        ImGui::Text("io.Fonts: %d fonts, Flags: 0x%08X, TexSize: %d,%d", io.Fonts->Fonts.Size, io.Fonts->Flags, io.Fonts->TexData->Width, io.Fonts->TexData->Height);
-        ImGui::Text("io.Fonts->FontLoaderName: %s", io.Fonts->FontLoaderName ? io.Fonts->FontLoaderName : "NULL");
-        ImGui::Text("io.DisplaySize: %.2f,%.2f", io.DisplaySize.x, io.DisplaySize.y);
-        ImGui::Text("io.DisplayFramebufferScale: %.2f,%.2f", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-        ImGui::Separator();
-        ImGui::Text("style.WindowPadding: %.2f,%.2f", style.WindowPadding.x, style.WindowPadding.y);
-        ImGui::Text("style.WindowBorderSize: %.2f", style.WindowBorderSize);
-        ImGui::Text("style.FramePadding: %.2f,%.2f", style.FramePadding.x, style.FramePadding.y);
-        ImGui::Text("style.FrameRounding: %.2f", style.FrameRounding);
-        ImGui::Text("style.FrameBorderSize: %.2f", style.FrameBorderSize);
-        ImGui::Text("style.ItemSpacing: %.2f,%.2f", style.ItemSpacing.x, style.ItemSpacing.y);
-        ImGui::Text("style.ItemInnerSpacing: %.2f,%.2f", style.ItemInnerSpacing.x, style.ItemInnerSpacing.y);
+        HvkGui::Separator();
+        HvkGui::Text("io.BackendPlatformName: %s", io.BackendPlatformName ? io.BackendPlatformName : "NULL");
+        HvkGui::Text("io.BackendRendererName: %s", io.BackendRendererName ? io.BackendRendererName : "NULL");
+        HvkGui::Text("io.ConfigFlags: 0x%08X", io.ConfigFlags);
+        if (io.ConfigFlags & ImGuiConfigFlags_NavEnableKeyboard)        HvkGui::Text(" NavEnableKeyboard");
+        if (io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad)         HvkGui::Text(" NavEnableGamepad");
+        if (io.ConfigFlags & ImGuiConfigFlags_NoMouse)                  HvkGui::Text(" NoMouse");
+        if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)      HvkGui::Text(" NoMouseCursorChange");
+        if (io.ConfigFlags & ImGuiConfigFlags_NoKeyboard)               HvkGui::Text(" NoKeyboard");
+        if (io.MouseDrawCursor)                                         HvkGui::Text("io.MouseDrawCursor");
+        if (io.ConfigMacOSXBehaviors)                                   HvkGui::Text("io.ConfigMacOSXBehaviors");
+        if (io.ConfigNavMoveSetMousePos)                                HvkGui::Text("io.ConfigNavMoveSetMousePos");
+        if (io.ConfigNavCaptureKeyboard)                                HvkGui::Text("io.ConfigNavCaptureKeyboard");
+        if (io.ConfigInputTextCursorBlink)                              HvkGui::Text("io.ConfigInputTextCursorBlink");
+        if (io.ConfigWindowsResizeFromEdges)                            HvkGui::Text("io.ConfigWindowsResizeFromEdges");
+        if (io.ConfigWindowsMoveFromTitleBarOnly)                       HvkGui::Text("io.ConfigWindowsMoveFromTitleBarOnly");
+        if (io.ConfigMemoryCompactTimer >= 0.0f)                        HvkGui::Text("io.ConfigMemoryCompactTimer = %.1f", io.ConfigMemoryCompactTimer);
+        HvkGui::Text("io.BackendFlags: 0x%08X", io.BackendFlags);
+        if (io.BackendFlags & ImGuiBackendFlags_HasGamepad)             HvkGui::Text(" HasGamepad");
+        if (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors)        HvkGui::Text(" HasMouseCursors");
+        if (io.BackendFlags & ImGuiBackendFlags_HasSetMousePos)         HvkGui::Text(" HasSetMousePos");
+        if (io.BackendFlags & ImGuiBackendFlags_RendererHasVtxOffset)   HvkGui::Text(" RendererHasVtxOffset");
+        if (io.BackendFlags & ImGuiBackendFlags_RendererHasTextures)    HvkGui::Text(" RendererHasTextures");
+        HvkGui::Separator();
+        HvkGui::Text("io.Fonts: %d fonts, Flags: 0x%08X, TexSize: %d,%d", io.Fonts->Fonts.Size, io.Fonts->Flags, io.Fonts->TexData->Width, io.Fonts->TexData->Height);
+        HvkGui::Text("io.Fonts->FontLoaderName: %s", io.Fonts->FontLoaderName ? io.Fonts->FontLoaderName : "NULL");
+        HvkGui::Text("io.DisplaySize: %.2f,%.2f", io.DisplaySize.x, io.DisplaySize.y);
+        HvkGui::Text("io.DisplayFramebufferScale: %.2f,%.2f", io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+        HvkGui::Separator();
+        HvkGui::Text("style.WindowPadding: %.2f,%.2f", style.WindowPadding.x, style.WindowPadding.y);
+        HvkGui::Text("style.WindowBorderSize: %.2f", style.WindowBorderSize);
+        HvkGui::Text("style.FramePadding: %.2f,%.2f", style.FramePadding.x, style.FramePadding.y);
+        HvkGui::Text("style.FrameRounding: %.2f", style.FrameRounding);
+        HvkGui::Text("style.FrameBorderSize: %.2f", style.FrameBorderSize);
+        HvkGui::Text("style.ItemSpacing: %.2f,%.2f", style.ItemSpacing.x, style.ItemSpacing.y);
+        HvkGui::Text("style.ItemInnerSpacing: %.2f,%.2f", style.ItemInnerSpacing.x, style.ItemInnerSpacing.y);
 
         if (copy_to_clipboard)
         {
-            ImGui::LogText("\n```\n");
-            ImGui::LogFinish();
+            HvkGui::LogText("\n```\n");
+            HvkGui::LogFinish();
         }
-        ImGui::EndChild();
+        HvkGui::EndChild();
     }
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -8277,32 +8277,32 @@ void ImGui::ShowAboutWindow(bool* p_open)
 //-----------------------------------------------------------------------------
 
 // Demo helper function to select among default colors. See ShowStyleEditor() for more advanced options.
-bool ImGui::ShowStyleSelector(const char* label)
+bool HvkGui::ShowStyleSelector(const char* label)
 {
     // FIXME: This is a bit tricky to get right as style are functions, they don't register a name nor the fact that one is active.
     // So we keep track of last active one among our limited selection.
     static int style_idx = -1;
     const char* style_names[] = { "Dark", "Light", "Classic" };
     bool ret = false;
-    if (ImGui::BeginCombo(label, (style_idx >= 0 && style_idx < IM_ARRAYSIZE(style_names)) ? style_names[style_idx] : ""))
+    if (HvkGui::BeginCombo(label, (style_idx >= 0 && style_idx < IM_ARRAYSIZE(style_names)) ? style_names[style_idx] : ""))
     {
         for (int n = 0; n < IM_ARRAYSIZE(style_names); n++)
         {
-            if (ImGui::Selectable(style_names[n], style_idx == n, ImGuiSelectableFlags_SelectOnNav))
+            if (HvkGui::Selectable(style_names[n], style_idx == n, ImGuiSelectableFlags_SelectOnNav))
             {
                 style_idx = n;
                 ret = true;
                 switch (style_idx)
                 {
-                case 0: ImGui::StyleColorsDark(); break;
-                case 1: ImGui::StyleColorsLight(); break;
-                case 2: ImGui::StyleColorsClassic(); break;
+                case 0: HvkGui::StyleColorsDark(); break;
+                case 1: HvkGui::StyleColorsLight(); break;
+                case 2: HvkGui::StyleColorsClassic(); break;
                 }
             }
             else if (style_idx == n)
-                ImGui::SetItemDefaultFocus();
+                HvkGui::SetItemDefaultFocus();
         }
-        ImGui::EndCombo();
+        HvkGui::EndCombo();
     }
     return ret;
 }
@@ -8315,8 +8315,8 @@ static const char* GetTreeLinesFlagsName(ImGuiTreeNodeFlags flags)
     return "";
 }
 
-// We omit the ImGui:: prefix in this function, as we don't expect user to be copy and pasting this code.
-void ImGui::ShowStyleEditor(ImGuiStyle* ref)
+// We omit the HvkGui:: prefix in this function, as we don't expect user to be copy and pasting this code.
+void HvkGui::ShowStyleEditor(ImGuiStyle* ref)
 {
     IMGUI_DEMO_MARKER("Tools/Style Editor");
     // You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
@@ -8654,8 +8654,8 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 // [SECTION] User Guide / ShowUserGuide()
 //-----------------------------------------------------------------------------
 
-// We omit the ImGui:: prefix in this function, as we don't expect user to be copy and pasting this code.
-void ImGui::ShowUserGuide()
+// We omit the HvkGui:: prefix in this function, as we don't expect user to be copy and pasting this code.
+void HvkGui::ShowUserGuide()
 {
     ImGuiIO& io = GetIO();
     BulletText("Double-click on title bar to collapse window.");
@@ -8698,24 +8698,24 @@ void ImGui::ShowUserGuide()
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport + call BeginMenuBar() into it.
 static void ShowExampleAppMainMenuBar()
 {
-    if (ImGui::BeginMainMenuBar())
+    if (HvkGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (HvkGui::BeginMenu("File"))
         {
             ShowExampleMenuFile();
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit"))
+        if (HvkGui::BeginMenu("Edit"))
         {
-            if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
-            if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) {} // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "Ctrl+X")) {}
-            if (ImGui::MenuItem("Copy", "Ctrl+C")) {}
-            if (ImGui::MenuItem("Paste", "Ctrl+V")) {}
-            ImGui::EndMenu();
+            if (HvkGui::MenuItem("Undo", "Ctrl+Z")) {}
+            if (HvkGui::MenuItem("Redo", "Ctrl+Y", false, false)) {} // Disabled item
+            HvkGui::Separator();
+            if (HvkGui::MenuItem("Cut", "Ctrl+X")) {}
+            if (HvkGui::MenuItem("Copy", "Ctrl+C")) {}
+            if (HvkGui::MenuItem("Paste", "Ctrl+V")) {}
+            HvkGui::EndMenu();
         }
-        ImGui::EndMainMenuBar();
+        HvkGui::EndMainMenuBar();
     }
 }
 
@@ -8724,82 +8724,82 @@ static void ShowExampleAppMainMenuBar()
 static void ShowExampleMenuFile()
 {
     IMGUI_DEMO_MARKER("Examples/Menu");
-    ImGui::MenuItem("(demo menu)", NULL, false, false);
-    if (ImGui::MenuItem("New")) {}
-    if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-    if (ImGui::BeginMenu("Open Recent"))
+    HvkGui::MenuItem("(demo menu)", NULL, false, false);
+    if (HvkGui::MenuItem("New")) {}
+    if (HvkGui::MenuItem("Open", "Ctrl+O")) {}
+    if (HvkGui::BeginMenu("Open Recent"))
     {
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        if (ImGui::BeginMenu("More.."))
+        HvkGui::MenuItem("fish_hat.c");
+        HvkGui::MenuItem("fish_hat.inl");
+        HvkGui::MenuItem("fish_hat.h");
+        if (HvkGui::BeginMenu("More.."))
         {
-            ImGui::MenuItem("Hello");
-            ImGui::MenuItem("Sailor");
-            if (ImGui::BeginMenu("Recurse.."))
+            HvkGui::MenuItem("Hello");
+            HvkGui::MenuItem("Sailor");
+            if (HvkGui::BeginMenu("Recurse.."))
             {
                 ShowExampleMenuFile();
-                ImGui::EndMenu();
+                HvkGui::EndMenu();
             }
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        ImGui::EndMenu();
+        HvkGui::EndMenu();
     }
-    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-    if (ImGui::MenuItem("Save As..")) {}
+    if (HvkGui::MenuItem("Save", "Ctrl+S")) {}
+    if (HvkGui::MenuItem("Save As..")) {}
 
-    ImGui::Separator();
+    HvkGui::Separator();
     IMGUI_DEMO_MARKER("Examples/Menu/Options");
-    if (ImGui::BeginMenu("Options"))
+    if (HvkGui::BeginMenu("Options"))
     {
         static bool enabled = true;
-        ImGui::MenuItem("Enabled", "", &enabled);
-        ImGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Borders);
+        HvkGui::MenuItem("Enabled", "", &enabled);
+        HvkGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Borders);
         for (int i = 0; i < 10; i++)
-            ImGui::Text("Scrolling Text %d", i);
-        ImGui::EndChild();
+            HvkGui::Text("Scrolling Text %d", i);
+        HvkGui::EndChild();
         static float f = 0.5f;
         static int n = 0;
-        ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-        ImGui::InputFloat("Input", &f, 0.1f);
-        ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-        ImGui::EndMenu();
+        HvkGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+        HvkGui::InputFloat("Input", &f, 0.1f);
+        HvkGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+        HvkGui::EndMenu();
     }
 
     IMGUI_DEMO_MARKER("Examples/Menu/Colors");
-    if (ImGui::BeginMenu("Colors"))
+    if (HvkGui::BeginMenu("Colors"))
     {
-        float sz = ImGui::GetTextLineHeight();
+        float sz = HvkGui::GetTextLineHeight();
         for (int i = 0; i < ImGuiCol_COUNT; i++)
         {
-            const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
-            ImVec2 p = ImGui::GetCursorScreenPos();
-            ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
-            ImGui::Dummy(ImVec2(sz, sz));
-            ImGui::SameLine();
-            ImGui::MenuItem(name);
+            const char* name = HvkGui::GetStyleColorName((ImGuiCol)i);
+            ImVec2 p = HvkGui::GetCursorScreenPos();
+            HvkGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), HvkGui::GetColorU32((ImGuiCol)i));
+            HvkGui::Dummy(ImVec2(sz, sz));
+            HvkGui::SameLine();
+            HvkGui::MenuItem(name);
         }
-        ImGui::EndMenu();
+        HvkGui::EndMenu();
     }
 
     // Here we demonstrate appending again to the "Options" menu (which we already created above)
     // Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
     // In a real code-base using it would make senses to use this feature from very different code locations.
-    if (ImGui::BeginMenu("Options")) // <-- Append!
+    if (HvkGui::BeginMenu("Options")) // <-- Append!
     {
         IMGUI_DEMO_MARKER("Examples/Menu/Append to an existing menu");
         static bool b = true;
-        ImGui::Checkbox("SomeOption", &b);
-        ImGui::EndMenu();
+        HvkGui::Checkbox("SomeOption", &b);
+        HvkGui::EndMenu();
     }
 
-    if (ImGui::BeginMenu("Disabled", false)) // Disabled
+    if (HvkGui::BeginMenu("Disabled", false)) // Disabled
     {
         IM_ASSERT(0);
     }
-    if (ImGui::MenuItem("Checked", NULL, true)) {}
-    ImGui::Separator();
-    if (ImGui::MenuItem("Quit", "Alt+F4")) {}
+    if (HvkGui::MenuItem("Checked", NULL, true)) {}
+    HvkGui::Separator();
+    if (HvkGui::MenuItem("Quit", "Alt+F4")) {}
 }
 
 //-----------------------------------------------------------------------------
@@ -8839,19 +8839,19 @@ struct ExampleAppConsole
     {
         ClearLog();
         for (int i = 0; i < History.Size; i++)
-            ImGui::MemFree(History[i]);
+            HvkGui::MemFree(History[i]);
     }
 
     // Portable helpers
     static int   Stricmp(const char* s1, const char* s2)         { int d; while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; } return d; }
     static int   Strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
-    static char* Strdup(const char* s)                           { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = ImGui::MemAlloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
+    static char* Strdup(const char* s)                           { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = HvkGui::MemAlloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
     static void  Strtrim(char* s)                                { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
     void    ClearLog()
     {
         for (int i = 0; i < Items.Size; i++)
-            ImGui::MemFree(Items[i]);
+            HvkGui::MemFree(Items[i]);
         Items.clear();
     }
 
@@ -8869,68 +8869,68 @@ struct ExampleAppConsole
 
     void    Draw(const char* title, bool* p_open)
     {
-        ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-        if (!ImGui::Begin(title, p_open))
+        HvkGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+        if (!HvkGui::Begin(title, p_open))
         {
-            ImGui::End();
+            HvkGui::End();
             return;
         }
 
         // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar.
         // So e.g. IsItemHovered() will return true when hovering the title bar.
         // Here we create a context menu only available from the title bar.
-        if (ImGui::BeginPopupContextItem())
+        if (HvkGui::BeginPopupContextItem())
         {
-            if (ImGui::MenuItem("Close Console"))
+            if (HvkGui::MenuItem("Close Console"))
                 *p_open = false;
-            ImGui::EndPopup();
+            HvkGui::EndPopup();
         }
 
-        ImGui::TextWrapped(
+        HvkGui::TextWrapped(
             "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
             "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");
-        ImGui::TextWrapped("Enter 'HELP' for help.");
+        HvkGui::TextWrapped("Enter 'HELP' for help.");
 
         // TODO: display items starting from the bottom
 
-        if (ImGui::SmallButton("Add Debug Text"))  { AddLog("%d some text", Items.Size); AddLog("some more text"); AddLog("display very important message here!"); }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Add Debug Error")) { AddLog("[error] something went wrong"); }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Clear"))           { ClearLog(); }
-        ImGui::SameLine();
-        bool copy_to_clipboard = ImGui::SmallButton("Copy");
-        //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
+        if (HvkGui::SmallButton("Add Debug Text"))  { AddLog("%d some text", Items.Size); AddLog("some more text"); AddLog("display very important message here!"); }
+        HvkGui::SameLine();
+        if (HvkGui::SmallButton("Add Debug Error")) { AddLog("[error] something went wrong"); }
+        HvkGui::SameLine();
+        if (HvkGui::SmallButton("Clear"))           { ClearLog(); }
+        HvkGui::SameLine();
+        bool copy_to_clipboard = HvkGui::SmallButton("Copy");
+        //static float t = 0.0f; if (HvkGui::GetTime() - t > 0.02f) { t = HvkGui::GetTime(); AddLog("Spam %f", t); }
 
-        ImGui::Separator();
+        HvkGui::Separator();
 
         // Options menu
-        if (ImGui::BeginPopup("Options"))
+        if (HvkGui::BeginPopup("Options"))
         {
-            ImGui::Checkbox("Auto-scroll", &AutoScroll);
-            ImGui::EndPopup();
+            HvkGui::Checkbox("Auto-scroll", &AutoScroll);
+            HvkGui::EndPopup();
         }
 
         // Options, Filter
-        ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_O, ImGuiInputFlags_Tooltip);
-        if (ImGui::Button("Options"))
-            ImGui::OpenPopup("Options");
-        ImGui::SameLine();
+        HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_O, ImGuiInputFlags_Tooltip);
+        if (HvkGui::Button("Options"))
+            HvkGui::OpenPopup("Options");
+        HvkGui::SameLine();
         Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
-        ImGui::Separator();
+        HvkGui::Separator();
 
         // Reserve enough left-over height for 1 separator + 1 input text
-        const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_HorizontalScrollbar))
+        const float footer_height_to_reserve = HvkGui::GetStyle().ItemSpacing.y + HvkGui::GetFrameHeightWithSpacing();
+        if (HvkGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_HorizontalScrollbar))
         {
-            if (ImGui::BeginPopupContextWindow())
+            if (HvkGui::BeginPopupContextWindow())
             {
-                if (ImGui::Selectable("Clear")) ClearLog();
-                ImGui::EndPopup();
+                if (HvkGui::Selectable("Clear")) ClearLog();
+                HvkGui::EndPopup();
             }
 
             // Display every line as a separate entry so we can change their color or add custom widgets.
-            // If you only want raw text you can use ImGui::TextUnformatted(log.begin(), log.end());
+            // If you only want raw text you can use HvkGui::TextUnformatted(log.begin(), log.end());
             // NB- if you have thousands of entries this approach may be too inefficient and may require user-side clipping
             // to only process visible items. The clipper will automatically measure the height of your first item and then
             // "seek" to display only items in the visible area.
@@ -8953,9 +8953,9 @@ struct ExampleAppConsole
             // If your items are of variable height:
             // - Split them into same height items would be simpler and facilitate random-seeking into your list.
             // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your items.
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
             if (copy_to_clipboard)
-                ImGui::LogToClipboard();
+                HvkGui::LogToClipboard();
             for (const char* item : Items)
             {
                 if (!Filter.PassFilter(item))
@@ -8968,29 +8968,29 @@ struct ExampleAppConsole
                 if (strstr(item, "[error]")) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
                 else if (strncmp(item, "# ", 2) == 0) { color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); has_color = true; }
                 if (has_color)
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                ImGui::TextUnformatted(item);
+                    HvkGui::PushStyleColor(ImGuiCol_Text, color);
+                HvkGui::TextUnformatted(item);
                 if (has_color)
-                    ImGui::PopStyleColor();
+                    HvkGui::PopStyleColor();
             }
             if (copy_to_clipboard)
-                ImGui::LogFinish();
+                HvkGui::LogFinish();
 
             // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
             // Using a scrollbar or mouse-wheel will take away from the bottom edge.
-            if (ScrollToBottom || (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
-                ImGui::SetScrollHereY(1.0f);
+            if (ScrollToBottom || (AutoScroll && HvkGui::GetScrollY() >= HvkGui::GetScrollMaxY()))
+                HvkGui::SetScrollHereY(1.0f);
             ScrollToBottom = false;
 
-            ImGui::PopStyleVar();
+            HvkGui::PopStyleVar();
         }
-        ImGui::EndChild();
-        ImGui::Separator();
+        HvkGui::EndChild();
+        HvkGui::Separator();
 
         // Command-line
         bool reclaim_focus = false;
         ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-        if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
+        if (HvkGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
         {
             char* s = InputBuf;
             Strtrim(s);
@@ -9001,11 +9001,11 @@ struct ExampleAppConsole
         }
 
         // Auto-focus on window apparition
-        ImGui::SetItemDefaultFocus();
+        HvkGui::SetItemDefaultFocus();
         if (reclaim_focus)
-            ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
+            HvkGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 
-        ImGui::End();
+        HvkGui::End();
     }
 
     void    ExecCommand(const char* command_line)
@@ -9018,7 +9018,7 @@ struct ExampleAppConsole
         for (int i = History.Size - 1; i >= 0; i--)
             if (Stricmp(History[i], command_line) == 0)
             {
-                ImGui::MemFree(History[i]);
+                HvkGui::MemFree(History[i]);
                 History.erase(History.begin() + i);
                 break;
             }
@@ -9207,39 +9207,39 @@ struct ExampleAppLog
 
     void    Draw(const char* title, bool* p_open = NULL)
     {
-        if (!ImGui::Begin(title, p_open))
+        if (!HvkGui::Begin(title, p_open))
         {
-            ImGui::End();
+            HvkGui::End();
             return;
         }
 
         // Options menu
-        if (ImGui::BeginPopup("Options"))
+        if (HvkGui::BeginPopup("Options"))
         {
-            ImGui::Checkbox("Auto-scroll", &AutoScroll);
-            ImGui::EndPopup();
+            HvkGui::Checkbox("Auto-scroll", &AutoScroll);
+            HvkGui::EndPopup();
         }
 
         // Main window
-        if (ImGui::Button("Options"))
-            ImGui::OpenPopup("Options");
-        ImGui::SameLine();
-        bool clear = ImGui::Button("Clear");
-        ImGui::SameLine();
-        bool copy = ImGui::Button("Copy");
-        ImGui::SameLine();
+        if (HvkGui::Button("Options"))
+            HvkGui::OpenPopup("Options");
+        HvkGui::SameLine();
+        bool clear = HvkGui::Button("Clear");
+        HvkGui::SameLine();
+        bool copy = HvkGui::Button("Copy");
+        HvkGui::SameLine();
         Filter.Draw("Filter", -100.0f);
 
-        ImGui::Separator();
+        HvkGui::Separator();
 
-        if (ImGui::BeginChild("scrolling", ImVec2(0, 0), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+        if (HvkGui::BeginChild("scrolling", ImVec2(0, 0), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
         {
             if (clear)
                 Clear();
             if (copy)
-                ImGui::LogToClipboard();
+                HvkGui::LogToClipboard();
 
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
             const char* buf = Buf.begin();
             const char* buf_end = Buf.end();
             if (Filter.IsActive())
@@ -9253,13 +9253,13 @@ struct ExampleAppLog
                     const char* line_start = buf + LineOffsets[line_no];
                     const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
                     if (Filter.PassFilter(line_start, line_end))
-                        ImGui::TextUnformatted(line_start, line_end);
+                        HvkGui::TextUnformatted(line_start, line_end);
                 }
             }
             else
             {
                 // The simplest and easy way to display the entire buffer:
-                //   ImGui::TextUnformatted(buf_begin, buf_end);
+                //   HvkGui::TextUnformatted(buf_begin, buf_end);
                 // And it'll just work. TextUnformatted() has specialization for large blob of text and will fast-forward
                 // to skip non-visible lines. Here we instead demonstrate using the clipper to only process lines that are
                 // within the visible area.
@@ -9279,20 +9279,20 @@ struct ExampleAppLog
                     {
                         const char* line_start = buf + LineOffsets[line_no];
                         const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-                        ImGui::TextUnformatted(line_start, line_end);
+                        HvkGui::TextUnformatted(line_start, line_end);
                     }
                 }
                 clipper.End();
             }
-            ImGui::PopStyleVar();
+            HvkGui::PopStyleVar();
 
             // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
             // Using a scrollbar or mouse-wheel will take away from the bottom edge.
-            if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-                ImGui::SetScrollHereY(1.0f);
+            if (AutoScroll && HvkGui::GetScrollY() >= HvkGui::GetScrollMaxY())
+                HvkGui::SetScrollHereY(1.0f);
         }
-        ImGui::EndChild();
-        ImGui::End();
+        HvkGui::EndChild();
+        HvkGui::End();
     }
 };
 
@@ -9304,10 +9304,10 @@ static void ShowExampleAppLog(bool* p_open)
     // For the demo: add a debug button _BEFORE_ the normal log window contents
     // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
     // Most of the contents of the window will be added by the log.Draw() call.
-    ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Example: Log", p_open);
+    HvkGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+    HvkGui::Begin("Example: Log", p_open);
     IMGUI_DEMO_MARKER("Examples/Log");
-    if (ImGui::SmallButton("[Debug] Add 5 entries"))
+    if (HvkGui::SmallButton("[Debug] Add 5 entries"))
     {
         static int counter = 0;
         const char* categories[3] = { "info", "warn", "error" };
@@ -9317,11 +9317,11 @@ static void ShowExampleAppLog(bool* p_open)
             const char* category = categories[counter % IM_ARRAYSIZE(categories)];
             const char* word = words[counter % IM_ARRAYSIZE(words)];
             log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-                ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
+                HvkGui::GetFrameCount(), category, HvkGui::GetTime(), word);
             counter++;
         }
     }
-    ImGui::End();
+    HvkGui::End();
 
     // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
     log.Draw("Example: Log", p_open);
@@ -9334,63 +9334,63 @@ static void ShowExampleAppLog(bool* p_open)
 // Demonstrate create a window with multiple child windows.
 static void ShowExampleAppLayout(bool* p_open)
 {
-    ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Example: Simple layout", p_open, ImGuiWindowFlags_MenuBar))
+    HvkGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
+    if (HvkGui::Begin("Example: Simple layout", p_open, ImGuiWindowFlags_MenuBar))
     {
         IMGUI_DEMO_MARKER("Examples/Simple layout");
-        if (ImGui::BeginMenuBar())
+        if (HvkGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (HvkGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Close", "Ctrl+W")) { *p_open = false; }
-                ImGui::EndMenu();
+                if (HvkGui::MenuItem("Close", "Ctrl+W")) { *p_open = false; }
+                HvkGui::EndMenu();
             }
-            ImGui::EndMenuBar();
+            HvkGui::EndMenuBar();
         }
 
         // Left
         static int selected = 0;
         {
-            ImGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+            HvkGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
             for (int i = 0; i < 100; i++)
             {
                 char label[128];
                 sprintf(label, "MyObject %d", i);
-                if (ImGui::Selectable(label, selected == i, ImGuiSelectableFlags_SelectOnNav))
+                if (HvkGui::Selectable(label, selected == i, ImGuiSelectableFlags_SelectOnNav))
                     selected = i;
             }
-            ImGui::EndChild();
+            HvkGui::EndChild();
         }
-        ImGui::SameLine();
+        HvkGui::SameLine();
 
         // Right
         {
-            ImGui::BeginGroup();
-            ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-            ImGui::Text("MyObject: %d", selected);
-            ImGui::Separator();
-            if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
+            HvkGui::BeginGroup();
+            HvkGui::BeginChild("item view", ImVec2(0, -HvkGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+            HvkGui::Text("MyObject: %d", selected);
+            HvkGui::Separator();
+            if (HvkGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
             {
-                if (ImGui::BeginTabItem("Description"))
+                if (HvkGui::BeginTabItem("Description"))
                 {
-                    ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
-                    ImGui::EndTabItem();
+                    HvkGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+                    HvkGui::EndTabItem();
                 }
-                if (ImGui::BeginTabItem("Details"))
+                if (HvkGui::BeginTabItem("Details"))
                 {
-                    ImGui::Text("ID: 0123456789");
-                    ImGui::EndTabItem();
+                    HvkGui::Text("ID: 0123456789");
+                    HvkGui::EndTabItem();
                 }
-                ImGui::EndTabBar();
+                HvkGui::EndTabBar();
             }
-            ImGui::EndChild();
-            if (ImGui::Button("Revert")) {}
-            ImGui::SameLine();
-            if (ImGui::Button("Save")) {}
-            ImGui::EndGroup();
+            HvkGui::EndChild();
+            if (HvkGui::Button("Revert")) {}
+            HvkGui::SameLine();
+            if (HvkGui::Button("Save")) {}
+            HvkGui::EndGroup();
         }
     }
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9411,40 +9411,40 @@ struct ExampleAppPropertyEditor
     {
         // Left side: draw tree
         // - Currently using a table to benefit from RowBg feature
-        if (ImGui::BeginChild("##tree", ImVec2(300, 0), ImGuiChildFlags_ResizeX | ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened))
+        if (HvkGui::BeginChild("##tree", ImVec2(300, 0), ImGuiChildFlags_ResizeX | ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened))
         {
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F, ImGuiInputFlags_Tooltip);
-            ImGui::PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
-            if (ImGui::InputTextWithHint("##Filter", "incl,-excl", Filter.InputBuf, IM_ARRAYSIZE(Filter.InputBuf), ImGuiInputTextFlags_EscapeClearsAll))
+            HvkGui::SetNextItemWidth(-FLT_MIN);
+            HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F, ImGuiInputFlags_Tooltip);
+            HvkGui::PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
+            if (HvkGui::InputTextWithHint("##Filter", "incl,-excl", Filter.InputBuf, IM_ARRAYSIZE(Filter.InputBuf), ImGuiInputTextFlags_EscapeClearsAll))
                 Filter.Build();
-            ImGui::PopItemFlag();
+            HvkGui::PopItemFlag();
 
-            if (ImGui::BeginTable("##bg", 1, ImGuiTableFlags_RowBg))
+            if (HvkGui::BeginTable("##bg", 1, ImGuiTableFlags_RowBg))
             {
                 for (ExampleTreeNode* node : root_node->Childs)
                     if (Filter.PassFilter(node->Name)) // Filter root node
                         DrawTreeNode(node);
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
         }
-        ImGui::EndChild();
+        HvkGui::EndChild();
 
         // Right side: draw properties
-        ImGui::SameLine();
+        HvkGui::SameLine();
 
-        ImGui::BeginGroup(); // Lock X position
+        HvkGui::BeginGroup(); // Lock X position
         if (ExampleTreeNode* node = VisibleNode)
         {
-            ImGui::Text("%s", node->Name);
-            ImGui::TextDisabled("UID: 0x%08X", node->UID);
-            ImGui::Separator();
-            if (ImGui::BeginTable("##properties", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY))
+            HvkGui::Text("%s", node->Name);
+            HvkGui::TextDisabled("UID: 0x%08X", node->UID);
+            HvkGui::Separator();
+            if (HvkGui::BeginTable("##properties", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY))
             {
                 // Push object ID after we entered the table, so table is shared for all objects
-                ImGui::PushID((int)node->UID);
-                ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 2.0f); // Default twice larger
+                HvkGui::PushID((int)node->UID);
+                HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);
+                HvkGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch, 2.0f); // Default twice larger
                 if (node->HasData)
                 {
                     // In a typical application, the structure description would be derived from a data-driven system.
@@ -9452,56 +9452,56 @@ struct ExampleAppPropertyEditor
                     // - Limits and some details are hard-coded to simplify the demo.
                     for (const ExampleMemberInfo& field_desc : ExampleTreeNodeMemberInfos)
                     {
-                        ImGui::TableNextRow();
-                        ImGui::PushID(field_desc.Name);
-                        ImGui::TableNextColumn();
-                        ImGui::AlignTextToFramePadding();
-                        ImGui::TextUnformatted(field_desc.Name);
-                        ImGui::TableNextColumn();
+                        HvkGui::TableNextRow();
+                        HvkGui::PushID(field_desc.Name);
+                        HvkGui::TableNextColumn();
+                        HvkGui::AlignTextToFramePadding();
+                        HvkGui::TextUnformatted(field_desc.Name);
+                        HvkGui::TableNextColumn();
                         void* field_ptr = (void*)(((unsigned char*)node) + field_desc.Offset);
                         switch (field_desc.DataType)
                         {
                         case ImGuiDataType_Bool:
                         {
                             IM_ASSERT(field_desc.DataCount == 1);
-                            ImGui::Checkbox("##Editor", (bool*)field_ptr);
+                            HvkGui::Checkbox("##Editor", (bool*)field_ptr);
                             break;
                         }
                         case ImGuiDataType_S32:
                         {
                             int v_min = INT_MIN, v_max = INT_MAX;
-                            ImGui::SetNextItemWidth(-FLT_MIN);
-                            ImGui::DragScalarN("##Editor", field_desc.DataType, field_ptr, field_desc.DataCount, 1.0f, &v_min, &v_max);
+                            HvkGui::SetNextItemWidth(-FLT_MIN);
+                            HvkGui::DragScalarN("##Editor", field_desc.DataType, field_ptr, field_desc.DataCount, 1.0f, &v_min, &v_max);
                             break;
                         }
                         case ImGuiDataType_Float:
                         {
                             float v_min = 0.0f, v_max = 1.0f;
-                            ImGui::SetNextItemWidth(-FLT_MIN);
-                            ImGui::SliderScalarN("##Editor", field_desc.DataType, field_ptr, field_desc.DataCount, &v_min, &v_max);
+                            HvkGui::SetNextItemWidth(-FLT_MIN);
+                            HvkGui::SliderScalarN("##Editor", field_desc.DataType, field_ptr, field_desc.DataCount, &v_min, &v_max);
                             break;
                         }
                         case ImGuiDataType_String:
                         {
-                            ImGui::InputText("##Editor", reinterpret_cast<char*>(field_ptr), 28);
+                            HvkGui::InputText("##Editor", reinterpret_cast<char*>(field_ptr), 28);
                             break;
                         }
                         }
-                        ImGui::PopID();
+                        HvkGui::PopID();
                     }
                 }
-                ImGui::PopID();
-                ImGui::EndTable();
+                HvkGui::PopID();
+                HvkGui::EndTable();
             }
         }
-        ImGui::EndGroup();
+        HvkGui::EndGroup();
     }
 
     void DrawTreeNode(ExampleTreeNode* node)
     {
-        ImGui::TableNextRow();
-        ImGui::TableNextColumn();
-        ImGui::PushID(node->UID);
+        HvkGui::TableNextRow();
+        HvkGui::TableNextColumn();
+        HvkGui::PushID(node->UID);
         ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_None;
         tree_flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;// Standard opening mode as we are likely to want to add selection afterwards
         tree_flags |= ImGuiTreeNodeFlags_NavLeftJumpsToParent;  // Left arrow support
@@ -9512,29 +9512,29 @@ struct ExampleAppPropertyEditor
         if (node->Childs.Size == 0)
             tree_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet;
         if (node->DataMyBool == false)
-            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-        bool node_open = ImGui::TreeNodeEx("", tree_flags, "%s", node->Name);
+            HvkGui::PushStyleColor(ImGuiCol_Text, HvkGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+        bool node_open = HvkGui::TreeNodeEx("", tree_flags, "%s", node->Name);
         if (node->DataMyBool == false)
-            ImGui::PopStyleColor();
-        if (ImGui::IsItemFocused())
+            HvkGui::PopStyleColor();
+        if (HvkGui::IsItemFocused())
             VisibleNode = node;
         if (node_open)
         {
             for (ExampleTreeNode* child : node->Childs)
                 DrawTreeNode(child);
-            ImGui::TreePop();
+            HvkGui::TreePop();
         }
-        ImGui::PopID();
+        HvkGui::PopID();
     }
 };
 
 // Demonstrate creating a simple property editor.
 static void ShowExampleAppPropertyEditor(bool* p_open, ImGuiDemoWindowData* demo_data)
 {
-    ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Example: Property editor", p_open))
+    HvkGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+    if (!HvkGui::Begin("Example: Property editor", p_open))
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
 
@@ -9544,7 +9544,7 @@ static void ShowExampleAppPropertyEditor(bool* p_open, ImGuiDemoWindowData* demo
         demo_data->DemoTree = ExampleTree_CreateDemoTree();
     property_editor.Draw(demo_data->DemoTree);
 
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9554,10 +9554,10 @@ static void ShowExampleAppPropertyEditor(bool* p_open, ImGuiDemoWindowData* demo
 // Demonstrate/test rendering huge amount of text, and the incidence of clipping.
 static void ShowExampleAppLongText(bool* p_open)
 {
-    ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Example: Long text display", p_open))
+    HvkGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+    if (!HvkGui::Begin("Example: Long text display", p_open))
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
     IMGUI_DEMO_MARKER("Examples/Long text display");
@@ -9565,49 +9565,49 @@ static void ShowExampleAppLongText(bool* p_open)
     static int test_type = 0;
     static ImGuiTextBuffer log;
     static int lines = 0;
-    ImGui::Text("Printing unusually long amount of text.");
-    ImGui::Combo("Test type", &test_type,
+    HvkGui::Text("Printing unusually long amount of text.");
+    HvkGui::Combo("Test type", &test_type,
         "Single call to TextUnformatted()\0"
         "Multiple calls to Text(), clipped\0"
         "Multiple calls to Text(), not clipped (slow)\0");
-    ImGui::Text("Buffer contents: %d lines, %d bytes", lines, log.size());
-    if (ImGui::Button("Clear")) { log.clear(); lines = 0; }
-    ImGui::SameLine();
-    if (ImGui::Button("Add 1000 lines"))
+    HvkGui::Text("Buffer contents: %d lines, %d bytes", lines, log.size());
+    if (HvkGui::Button("Clear")) { log.clear(); lines = 0; }
+    HvkGui::SameLine();
+    if (HvkGui::Button("Add 1000 lines"))
     {
         for (int i = 0; i < 1000; i++)
             log.appendf("%i The quick brown fox jumps over the lazy dog\n", lines + i);
         lines += 1000;
     }
-    ImGui::BeginChild("Log");
+    HvkGui::BeginChild("Log");
     switch (test_type)
     {
     case 0:
         // Single call to TextUnformatted() with a big buffer
-        ImGui::TextUnformatted(log.begin(), log.end());
+        HvkGui::TextUnformatted(log.begin(), log.end());
         break;
     case 1:
         {
             // Multiple calls to Text(), manually coarsely clipped - demonstrate how to use the ImGuiListClipper helper.
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
             ImGuiListClipper clipper;
             clipper.Begin(lines);
             while (clipper.Step())
                 for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-                    ImGui::Text("%i The quick brown fox jumps over the lazy dog", i);
-            ImGui::PopStyleVar();
+                    HvkGui::Text("%i The quick brown fox jumps over the lazy dog", i);
+            HvkGui::PopStyleVar();
             break;
         }
     case 2:
         // Multiple calls to Text(), not clipped (slow)
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
         for (int i = 0; i < lines; i++)
-            ImGui::Text("%i The quick brown fox jumps over the lazy dog", i);
-        ImGui::PopStyleVar();
+            HvkGui::Text("%i The quick brown fox jumps over the lazy dog", i);
+        HvkGui::PopStyleVar();
         break;
     }
-    ImGui::EndChild();
-    ImGui::End();
+    HvkGui::EndChild();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9617,22 +9617,22 @@ static void ShowExampleAppLongText(bool* p_open)
 // Demonstrate creating a window which gets auto-resized according to its content.
 static void ShowExampleAppAutoResize(bool* p_open)
 {
-    if (!ImGui::Begin("Example: Auto-resizing window", p_open, ImGuiWindowFlags_AlwaysAutoResize))
+    if (!HvkGui::Begin("Example: Auto-resizing window", p_open, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
     IMGUI_DEMO_MARKER("Examples/Auto-resizing window");
 
     static int lines = 10;
-    ImGui::TextUnformatted(
+    HvkGui::TextUnformatted(
         "Window will resize every-frame to the size of its content.\n"
         "Note that you probably don't want to query the window size to\n"
         "output your content because that would create a feedback loop.");
-    ImGui::SliderInt("Number of lines", &lines, 1, 20);
+    HvkGui::SliderInt("Number of lines", &lines, 1, 20);
     for (int i = 0; i < lines; i++)
-        ImGui::Text("%*sThis is line %d", i * 4, "", i); // Pad with space to extend size horizontally
-    ImGui::End();
+        HvkGui::Text("%*sThis is line %d", i * 4, "", i); // Pad with space to extend size horizontally
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9686,52 +9686,52 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
     // Submit constraint
     float aspect_ratio = 16.0f / 9.0f;
     float fixed_step = 100.0f;
-    if (type == 0) ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(500, 500));         // Between 100x100 and 500x500
-    if (type == 1) ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX)); // Width > 100, Height > 100
-    if (type == 2) ImGui::SetNextWindowSizeConstraints(ImVec2(-1, 0),    ImVec2(-1, FLT_MAX));      // Resize vertical + lock current width
-    if (type == 3) ImGui::SetNextWindowSizeConstraints(ImVec2(0, -1),    ImVec2(FLT_MAX, -1));      // Resize horizontal + lock current height
-    if (type == 4) ImGui::SetNextWindowSizeConstraints(ImVec2(400, -1),  ImVec2(500, -1));          // Width Between and 400 and 500
-    if (type == 5) ImGui::SetNextWindowSizeConstraints(ImVec2(-1, 400),  ImVec2(-1, FLT_MAX));      // Height at least 400
-    if (type == 6) ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::AspectRatio, (void*)&aspect_ratio);   // Aspect ratio
-    if (type == 7) ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::Square);                              // Always Square
-    if (type == 8) ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::Step, (void*)&fixed_step);            // Fixed Step
+    if (type == 0) HvkGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(500, 500));         // Between 100x100 and 500x500
+    if (type == 1) HvkGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(FLT_MAX, FLT_MAX)); // Width > 100, Height > 100
+    if (type == 2) HvkGui::SetNextWindowSizeConstraints(ImVec2(-1, 0),    ImVec2(-1, FLT_MAX));      // Resize vertical + lock current width
+    if (type == 3) HvkGui::SetNextWindowSizeConstraints(ImVec2(0, -1),    ImVec2(FLT_MAX, -1));      // Resize horizontal + lock current height
+    if (type == 4) HvkGui::SetNextWindowSizeConstraints(ImVec2(400, -1),  ImVec2(500, -1));          // Width Between and 400 and 500
+    if (type == 5) HvkGui::SetNextWindowSizeConstraints(ImVec2(-1, 400),  ImVec2(-1, FLT_MAX));      // Height at least 400
+    if (type == 6) HvkGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::AspectRatio, (void*)&aspect_ratio);   // Aspect ratio
+    if (type == 7) HvkGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::Square);                              // Always Square
+    if (type == 8) HvkGui::SetNextWindowSizeConstraints(ImVec2(0, 0),     ImVec2(FLT_MAX, FLT_MAX), CustomConstraints::Step, (void*)&fixed_step);            // Fixed Step
 
     // Submit window
     if (!window_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        HvkGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     const ImGuiWindowFlags window_flags = auto_resize ? ImGuiWindowFlags_AlwaysAutoResize : 0;
-    const bool window_open = ImGui::Begin("Example: Constrained Resize", p_open, window_flags);
+    const bool window_open = HvkGui::Begin("Example: Constrained Resize", p_open, window_flags);
     if (!window_padding)
-        ImGui::PopStyleVar();
+        HvkGui::PopStyleVar();
     if (window_open)
     {
         IMGUI_DEMO_MARKER("Examples/Constrained Resizing window");
-        if (ImGui::GetIO().KeyShift)
+        if (HvkGui::GetIO().KeyShift)
         {
             // Display a dummy viewport (in your real app you would likely use ImageButton() to display a texture)
-            ImVec2 avail_size = ImGui::GetContentRegionAvail();
-            ImVec2 pos = ImGui::GetCursorScreenPos();
-            ImGui::ColorButton("viewport", ImVec4(0.5f, 0.2f, 0.5f, 1.0f), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoDragDrop, avail_size);
-            ImGui::SetCursorScreenPos(ImVec2(pos.x + 10, pos.y + 10));
-            ImGui::Text("%.2f x %.2f", avail_size.x, avail_size.y);
+            ImVec2 avail_size = HvkGui::GetContentRegionAvail();
+            ImVec2 pos = HvkGui::GetCursorScreenPos();
+            HvkGui::ColorButton("viewport", ImVec4(0.5f, 0.2f, 0.5f, 1.0f), ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoDragDrop, avail_size);
+            HvkGui::SetCursorScreenPos(ImVec2(pos.x + 10, pos.y + 10));
+            HvkGui::Text("%.2f x %.2f", avail_size.x, avail_size.y);
         }
         else
         {
-            ImGui::Text("(Hold Shift to display a dummy viewport)");
-            if (ImGui::Button("Set 200x200")) { ImGui::SetWindowSize(ImVec2(200, 200)); } ImGui::SameLine();
-            if (ImGui::Button("Set 500x500")) { ImGui::SetWindowSize(ImVec2(500, 500)); } ImGui::SameLine();
-            if (ImGui::Button("Set 800x200")) { ImGui::SetWindowSize(ImVec2(800, 200)); }
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 20);
-            ImGui::Combo("Constraint", &type, test_desc, IM_ARRAYSIZE(test_desc));
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 20);
-            ImGui::DragInt("Lines", &display_lines, 0.2f, 1, 100);
-            ImGui::Checkbox("Auto-resize", &auto_resize);
-            ImGui::Checkbox("Window padding", &window_padding);
+            HvkGui::Text("(Hold Shift to display a dummy viewport)");
+            if (HvkGui::Button("Set 200x200")) { HvkGui::SetWindowSize(ImVec2(200, 200)); } HvkGui::SameLine();
+            if (HvkGui::Button("Set 500x500")) { HvkGui::SetWindowSize(ImVec2(500, 500)); } HvkGui::SameLine();
+            if (HvkGui::Button("Set 800x200")) { HvkGui::SetWindowSize(ImVec2(800, 200)); }
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 20);
+            HvkGui::Combo("Constraint", &type, test_desc, IM_ARRAYSIZE(test_desc));
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 20);
+            HvkGui::DragInt("Lines", &display_lines, 0.2f, 1, 100);
+            HvkGui::Checkbox("Auto-resize", &auto_resize);
+            HvkGui::Checkbox("Window padding", &window_padding);
             for (int i = 0; i < display_lines; i++)
-                ImGui::Text("%*sHello, sailor! Making this line long enough for the example.", i * 4, "");
+                HvkGui::Text("%*sHello, sailor! Making this line long enough for the example.", i * 4, "");
         }
     }
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9743,12 +9743,12 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
 static void ShowExampleAppSimpleOverlay(bool* p_open)
 {
     static int location = 0;
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = HvkGui::GetIO();
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
     if (location >= 0)
     {
         const float PAD = 10.0f;
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        const ImGuiViewport* viewport = HvkGui::GetMainViewport();
         ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
         ImVec2 work_size = viewport->WorkSize;
         ImVec2 window_pos, window_pos_pivot;
@@ -9756,38 +9756,38 @@ static void ShowExampleAppSimpleOverlay(bool* p_open)
         window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
         window_pos_pivot.x = (location & 1) ? 1.0f : 0.0f;
         window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
-        ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+        HvkGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
         window_flags |= ImGuiWindowFlags_NoMove;
     }
     else if (location == -2)
     {
         // Center window
-        ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        HvkGui::SetNextWindowPos(HvkGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         window_flags |= ImGuiWindowFlags_NoMove;
     }
-    ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
-    if (ImGui::Begin("Example: Simple overlay", p_open, window_flags))
+    HvkGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+    if (HvkGui::Begin("Example: Simple overlay", p_open, window_flags))
     {
         IMGUI_DEMO_MARKER("Examples/Simple Overlay");
-        ImGui::Text("Simple overlay\n" "(right-click to change position)");
-        ImGui::Separator();
-        if (ImGui::IsMousePosValid())
-            ImGui::Text("Mouse Position: (%.1f,%.1f)", io.MousePos.x, io.MousePos.y);
+        HvkGui::Text("Simple overlay\n" "(right-click to change position)");
+        HvkGui::Separator();
+        if (HvkGui::IsMousePosValid())
+            HvkGui::Text("Mouse Position: (%.1f,%.1f)", io.MousePos.x, io.MousePos.y);
         else
-            ImGui::Text("Mouse Position: <invalid>");
-        if (ImGui::BeginPopupContextWindow())
+            HvkGui::Text("Mouse Position: <invalid>");
+        if (HvkGui::BeginPopupContextWindow())
         {
-            if (ImGui::MenuItem("Custom",       NULL, location == -1)) location = -1;
-            if (ImGui::MenuItem("Center",       NULL, location == -2)) location = -2;
-            if (ImGui::MenuItem("Top-left",     NULL, location == 0)) location = 0;
-            if (ImGui::MenuItem("Top-right",    NULL, location == 1)) location = 1;
-            if (ImGui::MenuItem("Bottom-left",  NULL, location == 2)) location = 2;
-            if (ImGui::MenuItem("Bottom-right", NULL, location == 3)) location = 3;
-            if (p_open && ImGui::MenuItem("Close")) *p_open = false;
-            ImGui::EndPopup();
+            if (HvkGui::MenuItem("Custom",       NULL, location == -1)) location = -1;
+            if (HvkGui::MenuItem("Center",       NULL, location == -2)) location = -2;
+            if (HvkGui::MenuItem("Top-left",     NULL, location == 0)) location = 0;
+            if (HvkGui::MenuItem("Top-right",    NULL, location == 1)) location = 1;
+            if (HvkGui::MenuItem("Bottom-left",  NULL, location == 2)) location = 2;
+            if (HvkGui::MenuItem("Bottom-right", NULL, location == 3)) location = 3;
+            if (p_open && HvkGui::MenuItem("Close")) *p_open = false;
+            HvkGui::EndPopup();
         }
     }
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9802,28 +9802,28 @@ static void ShowExampleAppFullscreen(bool* p_open)
 
     // We demonstrate using the full viewport area or the work area (without menu-bars, task-bars etc.)
     // Based on your use case you may want one or the other.
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
-    ImGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
+    const ImGuiViewport* viewport = HvkGui::GetMainViewport();
+    HvkGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
+    HvkGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
 
-    if (ImGui::Begin("Example: Fullscreen window", p_open, flags))
+    if (HvkGui::Begin("Example: Fullscreen window", p_open, flags))
     {
-        ImGui::Checkbox("Use work area instead of main area", &use_work_area);
-        ImGui::SameLine();
+        HvkGui::Checkbox("Use work area instead of main area", &use_work_area);
+        HvkGui::SameLine();
         HelpMarker("Main Area = entire viewport,\nWork Area = entire viewport minus sections used by the main menu bars, task bars etc.\n\nEnable the main-menu bar in Examples menu to see the difference.");
 
-        ImGui::CheckboxFlags("ImGuiWindowFlags_NoBackground", &flags, ImGuiWindowFlags_NoBackground);
-        ImGui::CheckboxFlags("ImGuiWindowFlags_NoDecoration", &flags, ImGuiWindowFlags_NoDecoration);
-        ImGui::Indent();
-        ImGui::CheckboxFlags("ImGuiWindowFlags_NoTitleBar", &flags, ImGuiWindowFlags_NoTitleBar);
-        ImGui::CheckboxFlags("ImGuiWindowFlags_NoCollapse", &flags, ImGuiWindowFlags_NoCollapse);
-        ImGui::CheckboxFlags("ImGuiWindowFlags_NoScrollbar", &flags, ImGuiWindowFlags_NoScrollbar);
-        ImGui::Unindent();
+        HvkGui::CheckboxFlags("ImGuiWindowFlags_NoBackground", &flags, ImGuiWindowFlags_NoBackground);
+        HvkGui::CheckboxFlags("ImGuiWindowFlags_NoDecoration", &flags, ImGuiWindowFlags_NoDecoration);
+        HvkGui::Indent();
+        HvkGui::CheckboxFlags("ImGuiWindowFlags_NoTitleBar", &flags, ImGuiWindowFlags_NoTitleBar);
+        HvkGui::CheckboxFlags("ImGuiWindowFlags_NoCollapse", &flags, ImGuiWindowFlags_NoCollapse);
+        HvkGui::CheckboxFlags("ImGuiWindowFlags_NoScrollbar", &flags, ImGuiWindowFlags_NoScrollbar);
+        HvkGui::Unindent();
 
-        if (p_open && ImGui::Button("Close this window"))
+        if (p_open && HvkGui::Button("Close this window"))
             *p_open = false;
     }
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9835,31 +9835,31 @@ static void ShowExampleAppFullscreen(bool* p_open)
 // Read FAQ section "How can I have multiple widgets with the same label?" for details.
 static void ShowExampleAppWindowTitles(bool*)
 {
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    const ImGuiViewport* viewport = HvkGui::GetMainViewport();
     const ImVec2 base_pos = viewport->Pos;
 
     // By default, Windows are uniquely identified by their title.
     // You can use the "##" and "###" markers to manipulate the display/ID.
 
     // Using "##" to display same title but have unique identifier.
-    ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Same title as another window##1");
+    HvkGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 100), ImGuiCond_FirstUseEver);
+    HvkGui::Begin("Same title as another window##1");
     IMGUI_DEMO_MARKER("Examples/Manipulating window titles");
-    ImGui::Text("This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
-    ImGui::End();
+    HvkGui::Text("This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
+    HvkGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 200), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Same title as another window##2");
-    ImGui::Text("This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
-    ImGui::End();
+    HvkGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 200), ImGuiCond_FirstUseEver);
+    HvkGui::Begin("Same title as another window##2");
+    HvkGui::Text("This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
+    HvkGui::End();
 
     // Using "###" to display a changing title but keep a static identifier "AnimatedTitle"
     char buf[128];
-    sprintf(buf, "Animated title %c %d###AnimatedTitle", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], ImGui::GetFrameCount());
-    ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 300), ImGuiCond_FirstUseEver);
-    ImGui::Begin(buf);
-    ImGui::Text("This window has a changing title.");
-    ImGui::End();
+    sprintf(buf, "Animated title %c %d###AnimatedTitle", "|/-\\"[(int)(HvkGui::GetTime() / 0.25f) & 3], HvkGui::GetFrameCount());
+    HvkGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 300), ImGuiCond_FirstUseEver);
+    HvkGui::Begin(buf);
+    HvkGui::Text("This window has a changing title.");
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -9877,9 +9877,9 @@ static void PathConcaveShape(ImDrawList* draw_list, float x, float y, float sz)
 // Demonstrate using the low-level ImDrawList to draw custom shapes.
 static void ShowExampleAppCustomRendering(bool* p_open)
 {
-    if (!ImGui::Begin("Example: Custom rendering", p_open))
+    if (!HvkGui::Begin("Example: Custom rendering", p_open))
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
     IMGUI_DEMO_MARKER("Examples/Custom Rendering");
@@ -9889,37 +9889,37 @@ static void ShowExampleAppCustomRendering(bool* p_open)
     // types and ImVec2/ImVec4. Dear ImGui defines overloaded operators but they are internal to imgui.cpp and not
     // exposed outside (to avoid messing with your types) In this example we are not using the maths operators!
 
-    if (ImGui::BeginTabBar("##TabBar"))
+    if (HvkGui::BeginTabBar("##TabBar"))
     {
-        if (ImGui::BeginTabItem("Primitives"))
+        if (HvkGui::BeginTabItem("Primitives"))
         {
-            ImGui::PushItemWidth(-ImGui::GetFontSize() * 15);
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            HvkGui::PushItemWidth(-HvkGui::GetFontSize() * 15);
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
 
             // Draw gradients
             // (note that those are currently exacerbating our sRGB/Linear issues)
-            // Calling ImGui::GetColorU32() multiplies the given colors by the current Style Alpha, but you may pass the IM_COL32() directly as well..
-            ImGui::Text("Gradients");
-            ImVec2 gradient_size = ImVec2(ImGui::CalcItemWidth(), ImGui::GetFrameHeight());
+            // Calling HvkGui::GetColorU32() multiplies the given colors by the current Style Alpha, but you may pass the IM_COL32() directly as well..
+            HvkGui::Text("Gradients");
+            ImVec2 gradient_size = ImVec2(HvkGui::CalcItemWidth(), HvkGui::GetFrameHeight());
             {
-                ImVec2 p0 = ImGui::GetCursorScreenPos();
+                ImVec2 p0 = HvkGui::GetCursorScreenPos();
                 ImVec2 p1 = ImVec2(p0.x + gradient_size.x, p0.y + gradient_size.y);
-                ImU32 col_a = ImGui::GetColorU32(IM_COL32(0, 0, 0, 255));
-                ImU32 col_b = ImGui::GetColorU32(IM_COL32(255, 255, 255, 255));
+                ImU32 col_a = HvkGui::GetColorU32(IM_COL32(0, 0, 0, 255));
+                ImU32 col_b = HvkGui::GetColorU32(IM_COL32(255, 255, 255, 255));
                 draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
-                ImGui::InvisibleButton("##gradient1", gradient_size);
+                HvkGui::InvisibleButton("##gradient1", gradient_size);
             }
             {
-                ImVec2 p0 = ImGui::GetCursorScreenPos();
+                ImVec2 p0 = HvkGui::GetCursorScreenPos();
                 ImVec2 p1 = ImVec2(p0.x + gradient_size.x, p0.y + gradient_size.y);
-                ImU32 col_a = ImGui::GetColorU32(IM_COL32(0, 255, 0, 255));
-                ImU32 col_b = ImGui::GetColorU32(IM_COL32(255, 0, 0, 255));
+                ImU32 col_a = HvkGui::GetColorU32(IM_COL32(0, 255, 0, 255));
+                ImU32 col_b = HvkGui::GetColorU32(IM_COL32(255, 0, 0, 255));
                 draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
-                ImGui::InvisibleButton("##gradient2", gradient_size);
+                HvkGui::InvisibleButton("##gradient2", gradient_size);
             }
 
             // Draw a bunch of primitives
-            ImGui::Text("All primitives");
+            HvkGui::Text("All primitives");
             static float sz = 36.0f;
             static float thickness = 3.0f;
             static int ngon_sides = 6;
@@ -9928,18 +9928,18 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             static bool curve_segments_override = false;
             static int curve_segments_override_v = 8;
             static ImVec4 colf = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
-            ImGui::DragFloat("Size", &sz, 0.2f, 2.0f, 100.0f, "%.0f");
-            ImGui::DragFloat("Thickness", &thickness, 0.05f, 1.0f, 8.0f, "%.02f");
-            ImGui::SliderInt("N-gon sides", &ngon_sides, 3, 12);
-            ImGui::Checkbox("##circlesegmentoverride", &circle_segments_override);
-            ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-            circle_segments_override |= ImGui::SliderInt("Circle segments override", &circle_segments_override_v, 3, 40);
-            ImGui::Checkbox("##curvessegmentoverride", &curve_segments_override);
-            ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-            curve_segments_override |= ImGui::SliderInt("Curves segments override", &curve_segments_override_v, 3, 40);
-            ImGui::ColorEdit4("Color", &colf.x);
+            HvkGui::DragFloat("Size", &sz, 0.2f, 2.0f, 100.0f, "%.0f");
+            HvkGui::DragFloat("Thickness", &thickness, 0.05f, 1.0f, 8.0f, "%.02f");
+            HvkGui::SliderInt("N-gon sides", &ngon_sides, 3, 12);
+            HvkGui::Checkbox("##circlesegmentoverride", &circle_segments_override);
+            HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+            circle_segments_override |= HvkGui::SliderInt("Circle segments override", &circle_segments_override_v, 3, 40);
+            HvkGui::Checkbox("##curvessegmentoverride", &curve_segments_override);
+            HvkGui::SameLine(0.0f, HvkGui::GetStyle().ItemInnerSpacing.x);
+            curve_segments_override |= HvkGui::SliderInt("Curves segments override", &curve_segments_override_v, 3, 40);
+            HvkGui::ColorEdit4("Color", &colf.x);
 
-            const ImVec2 p = ImGui::GetCursorScreenPos();
+            const ImVec2 p = HvkGui::GetCursorScreenPos();
             const ImU32 col = ImColor(colf);
             const float spacing = 10.0f;
             const ImDrawFlags corners_tl_br = ImDrawFlags_RoundCornersTopLeft | ImDrawFlags_RoundCornersBottomRight;
@@ -10013,12 +10013,12 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             draw_list->AddRectFilledMultiColor(ImVec2(x, y), ImVec2(x + sz, y + sz), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
             x += sz + spacing;
 
-            ImGui::Dummy(ImVec2((sz + spacing) * 13.2f, (sz + spacing) * 3.0f));
-            ImGui::PopItemWidth();
-            ImGui::EndTabItem();
+            HvkGui::Dummy(ImVec2((sz + spacing) * 13.2f, (sz + spacing) * 3.0f));
+            HvkGui::PopItemWidth();
+            HvkGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("Canvas"))
+        if (HvkGui::BeginTabItem("Canvas"))
         {
             static ImVector<ImVec2> points;
             static ImVec2 scrolling(0.0f, 0.0f);
@@ -10026,43 +10026,43 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             static bool opt_enable_context_menu = true;
             static bool adding_line = false;
 
-            ImGui::Checkbox("Enable grid", &opt_enable_grid);
-            ImGui::Checkbox("Enable context menu", &opt_enable_context_menu);
-            ImGui::Text("Mouse Left: drag to add lines,\nMouse Right: drag to scroll, click for context menu.");
+            HvkGui::Checkbox("Enable grid", &opt_enable_grid);
+            HvkGui::Checkbox("Enable context menu", &opt_enable_context_menu);
+            HvkGui::Text("Mouse Left: drag to add lines,\nMouse Right: drag to scroll, click for context menu.");
 
             // Typically you would use a BeginChild()/EndChild() pair to benefit from a clipping region + own scrolling.
             // Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
             // To use a child window instead we could use, e.g:
-            //      ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));      // Disable padding
-            //      ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(50, 50, 50, 255));  // Set a background color
-            //      ImGui::BeginChild("canvas", ImVec2(0.0f, 0.0f), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoMove);
-            //      ImGui::PopStyleColor();
-            //      ImGui::PopStyleVar();
+            //      HvkGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));      // Disable padding
+            //      HvkGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(50, 50, 50, 255));  // Set a background color
+            //      HvkGui::BeginChild("canvas", ImVec2(0.0f, 0.0f), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoMove);
+            //      HvkGui::PopStyleColor();
+            //      HvkGui::PopStyleVar();
             //      [...]
-            //      ImGui::EndChild();
+            //      HvkGui::EndChild();
 
             // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-            ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-            ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
+            ImVec2 canvas_p0 = HvkGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+            ImVec2 canvas_sz = HvkGui::GetContentRegionAvail();   // Resize canvas to what's available
             if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
             if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
             ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
             // Draw border and background color
-            ImGuiIO& io = ImGui::GetIO();
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImGuiIO& io = HvkGui::GetIO();
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
             draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
             draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
 
             // This will catch our interactions
-            ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-            const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-            const bool is_active = ImGui::IsItemActive();   // Held
+            HvkGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+            const bool is_hovered = HvkGui::IsItemHovered(); // Hovered
+            const bool is_active = HvkGui::IsItemActive();   // Held
             const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y); // Lock scrolled origin
             const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
 
             // Add first and second point
-            if (is_hovered && !adding_line && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+            if (is_hovered && !adding_line && HvkGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
                 points.push_back(mouse_pos_in_canvas);
                 points.push_back(mouse_pos_in_canvas);
@@ -10071,31 +10071,31 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             if (adding_line)
             {
                 points.back() = mouse_pos_in_canvas;
-                if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
+                if (!HvkGui::IsMouseDown(ImGuiMouseButton_Left))
                     adding_line = false;
             }
 
             // Pan (we use a zero mouse threshold when there's no context menu)
             // You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
             const float mouse_threshold_for_pan = opt_enable_context_menu ? -1.0f : 0.0f;
-            if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+            if (is_active && HvkGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
             {
                 scrolling.x += io.MouseDelta.x;
                 scrolling.y += io.MouseDelta.y;
             }
 
             // Context menu (under default mouse threshold)
-            ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+            ImVec2 drag_delta = HvkGui::GetMouseDragDelta(ImGuiMouseButton_Right);
             if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-                ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-            if (ImGui::BeginPopup("context"))
+                HvkGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
+            if (HvkGui::BeginPopup("context"))
             {
                 if (adding_line)
                     points.resize(points.size() - 2);
                 adding_line = false;
-                if (ImGui::MenuItem("Remove one", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
-                if (ImGui::MenuItem("Remove all", NULL, false, points.Size > 0)) { points.clear(); }
-                ImGui::EndPopup();
+                if (HvkGui::MenuItem("Remove one", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
+                if (HvkGui::MenuItem("Remove all", NULL, false, points.Size > 0)) { points.clear(); }
+                HvkGui::EndPopup();
             }
 
             // Draw grid + all lines in the canvas
@@ -10112,46 +10112,46 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
             draw_list->PopClipRect();
 
-            ImGui::EndTabItem();
+            HvkGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("BG/FG draw lists"))
+        if (HvkGui::BeginTabItem("BG/FG draw lists"))
         {
             static bool draw_bg = true;
             static bool draw_fg = true;
-            ImGui::Checkbox("Draw in Background draw list", &draw_bg);
-            ImGui::SameLine(); HelpMarker("The Background draw list will be rendered below every Dear ImGui windows.");
-            ImGui::Checkbox("Draw in Foreground draw list", &draw_fg);
-            ImGui::SameLine(); HelpMarker("The Foreground draw list will be rendered over every Dear ImGui windows.");
-            ImVec2 window_pos = ImGui::GetWindowPos();
-            ImVec2 window_size = ImGui::GetWindowSize();
+            HvkGui::Checkbox("Draw in Background draw list", &draw_bg);
+            HvkGui::SameLine(); HelpMarker("The Background draw list will be rendered below every Dear ImGui windows.");
+            HvkGui::Checkbox("Draw in Foreground draw list", &draw_fg);
+            HvkGui::SameLine(); HelpMarker("The Foreground draw list will be rendered over every Dear ImGui windows.");
+            ImVec2 window_pos = HvkGui::GetWindowPos();
+            ImVec2 window_size = HvkGui::GetWindowSize();
             ImVec2 window_center = ImVec2(window_pos.x + window_size.x * 0.5f, window_pos.y + window_size.y * 0.5f);
             if (draw_bg)
-                ImGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * 0.6f, IM_COL32(255, 0, 0, 200), 0, 10 + 4);
+                HvkGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * 0.6f, IM_COL32(255, 0, 0, 200), 0, 10 + 4);
             if (draw_fg)
-                ImGui::GetForegroundDrawList()->AddCircle(window_center, window_size.y * 0.6f, IM_COL32(0, 255, 0, 200), 0, 10);
-            ImGui::EndTabItem();
+                HvkGui::GetForegroundDrawList()->AddCircle(window_center, window_size.y * 0.6f, IM_COL32(0, 255, 0, 200), 0, 10);
+            HvkGui::EndTabItem();
         }
 
         // Demonstrate out-of-order rendering via channels splitting
         // We use functions in ImDrawList as each draw list contains a convenience splitter,
         // but you can also instantiate your own ImDrawListSplitter if you need to nest them.
-        if (ImGui::BeginTabItem("Draw Channels"))
+        if (HvkGui::BeginTabItem("Draw Channels"))
         {
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
             {
-                ImGui::Text("Blue shape is drawn first: appears in back");
-                ImGui::Text("Red shape is drawn after: appears in front");
-                ImVec2 p0 = ImGui::GetCursorScreenPos();
+                HvkGui::Text("Blue shape is drawn first: appears in back");
+                HvkGui::Text("Red shape is drawn after: appears in front");
+                ImVec2 p0 = HvkGui::GetCursorScreenPos();
                 draw_list->AddRectFilled(ImVec2(p0.x, p0.y), ImVec2(p0.x + 50, p0.y + 50), IM_COL32(0, 0, 255, 255)); // Blue
                 draw_list->AddRectFilled(ImVec2(p0.x + 25, p0.y + 25), ImVec2(p0.x + 75, p0.y + 75), IM_COL32(255, 0, 0, 255)); // Red
-                ImGui::Dummy(ImVec2(75, 75));
+                HvkGui::Dummy(ImVec2(75, 75));
             }
-            ImGui::Separator();
+            HvkGui::Separator();
             {
-                ImGui::Text("Blue shape is drawn first, into channel 1: appears in front");
-                ImGui::Text("Red shape is drawn after, into channel 0: appears in back");
-                ImVec2 p1 = ImGui::GetCursorScreenPos();
+                HvkGui::Text("Blue shape is drawn first, into channel 1: appears in front");
+                HvkGui::Text("Red shape is drawn after, into channel 0: appears in back");
+                ImVec2 p1 = HvkGui::GetCursorScreenPos();
 
                 // Create 2 channels and draw a Blue shape THEN a Red shape.
                 // You can create any number of channels. Tables API use 1 channel per column in order to better batch draw calls.
@@ -10164,16 +10164,16 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 // Flatten/reorder channels. Red shape is in channel 0 and it appears below the Blue shape in channel 1.
                 // This works by copying draw indices only (vertices are not copied).
                 draw_list->ChannelsMerge();
-                ImGui::Dummy(ImVec2(75, 75));
-                ImGui::Text("After reordering, contents of channel 0 appears below channel 1.");
+                HvkGui::Dummy(ImVec2(75, 75));
+                HvkGui::Text("After reordering, contents of channel 0 appears below channel 1.");
             }
-            ImGui::EndTabItem();
+            HvkGui::EndTabItem();
         }
 
-        ImGui::EndTabBar();
+        HvkGui::EndTabBar();
     }
 
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -10229,52 +10229,52 @@ struct ExampleAppDocuments
     // Display placeholder contents for the Document
     void DisplayDocContents(MyDocument* doc)
     {
-        ImGui::PushID(doc);
-        ImGui::Text("Document \"%s\"", doc->Name);
-        ImGui::PushStyleColor(ImGuiCol_Text, doc->Color);
-        ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-        ImGui::PopStyleColor();
+        HvkGui::PushID(doc);
+        HvkGui::Text("Document \"%s\"", doc->Name);
+        HvkGui::PushStyleColor(ImGuiCol_Text, doc->Color);
+        HvkGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+        HvkGui::PopStyleColor();
 
-        ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_R, ImGuiInputFlags_Tooltip);
-        if (ImGui::Button("Rename.."))
+        HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_R, ImGuiInputFlags_Tooltip);
+        if (HvkGui::Button("Rename.."))
         {
             RenamingDoc = doc;
             RenamingStarted = true;
         }
-        ImGui::SameLine();
+        HvkGui::SameLine();
 
-        ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_M, ImGuiInputFlags_Tooltip);
-        if (ImGui::Button("Modify"))
+        HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_M, ImGuiInputFlags_Tooltip);
+        if (HvkGui::Button("Modify"))
             doc->Dirty = true;
 
-        ImGui::SameLine();
-        ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_S, ImGuiInputFlags_Tooltip);
-        if (ImGui::Button("Save"))
+        HvkGui::SameLine();
+        HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_S, ImGuiInputFlags_Tooltip);
+        if (HvkGui::Button("Save"))
             doc->DoSave();
 
-        ImGui::SameLine();
-        ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_W, ImGuiInputFlags_Tooltip);
-        if (ImGui::Button("Close"))
+        HvkGui::SameLine();
+        HvkGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_W, ImGuiInputFlags_Tooltip);
+        if (HvkGui::Button("Close"))
             CloseQueue.push_back(doc);
-        ImGui::ColorEdit3("color", &doc->Color.x);  // Useful to test drag and drop and hold-dragged-to-open-tab behavior.
-        ImGui::PopID();
+        HvkGui::ColorEdit3("color", &doc->Color.x);  // Useful to test drag and drop and hold-dragged-to-open-tab behavior.
+        HvkGui::PopID();
     }
 
     // Display context menu for the Document
     void DisplayDocContextMenu(MyDocument* doc)
     {
-        if (!ImGui::BeginPopupContextItem())
+        if (!HvkGui::BeginPopupContextItem())
             return;
 
         char buf[256];
         sprintf(buf, "Save %s", doc->Name);
-        if (ImGui::MenuItem(buf, "Ctrl+S", false, doc->Open))
+        if (HvkGui::MenuItem(buf, "Ctrl+S", false, doc->Open))
             doc->DoSave();
-        if (ImGui::MenuItem("Rename...", "Ctrl+R", false, doc->Open))
+        if (HvkGui::MenuItem("Rename...", "Ctrl+R", false, doc->Open))
             RenamingDoc = doc;
-        if (ImGui::MenuItem("Close", "Ctrl+W", false, doc->Open))
+        if (HvkGui::MenuItem("Close", "Ctrl+W", false, doc->Open))
             CloseQueue.push_back(doc);
-        ImGui::EndPopup();
+        HvkGui::EndPopup();
     }
 
     // [Optional] Notify the system of Tabs/Windows closure that happened outside the regular tab interface.
@@ -10290,7 +10290,7 @@ struct ExampleAppDocuments
         for (MyDocument& doc : Documents)
         {
             if (!doc.Open && doc.OpenPrev)
-                ImGui::SetTabItemClosed(doc.Name);
+                HvkGui::SetTabItemClosed(doc.Name);
             doc.OpenPrev = doc.Open;
         }
     }
@@ -10304,37 +10304,37 @@ void ShowExampleAppDocuments(bool* p_open)
     static bool opt_reorderable = true;
     static ImGuiTabBarFlags opt_fitting_flags = ImGuiTabBarFlags_FittingPolicyDefault_;
 
-    bool window_contents_visible = ImGui::Begin("Example: Documents", p_open, ImGuiWindowFlags_MenuBar);
+    bool window_contents_visible = HvkGui::Begin("Example: Documents", p_open, ImGuiWindowFlags_MenuBar);
     if (!window_contents_visible)
     {
-        ImGui::End();
+        HvkGui::End();
         return;
     }
 
     // Menu
-    if (ImGui::BeginMenuBar())
+    if (HvkGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (HvkGui::BeginMenu("File"))
         {
             int open_count = 0;
             for (MyDocument& doc : app.Documents)
                 open_count += doc.Open ? 1 : 0;
 
-            if (ImGui::BeginMenu("Open", open_count < app.Documents.Size))
+            if (HvkGui::BeginMenu("Open", open_count < app.Documents.Size))
             {
                 for (MyDocument& doc : app.Documents)
-                    if (!doc.Open && ImGui::MenuItem(doc.Name))
+                    if (!doc.Open && HvkGui::MenuItem(doc.Name))
                         doc.DoOpen();
-                ImGui::EndMenu();
+                HvkGui::EndMenu();
             }
-            if (ImGui::MenuItem("Close All Documents", NULL, false, open_count > 0))
+            if (HvkGui::MenuItem("Close All Documents", NULL, false, open_count > 0))
                 for (MyDocument& doc : app.Documents)
                     app.CloseQueue.push_back(&doc);
-            if (ImGui::MenuItem("Exit") && p_open)
+            if (HvkGui::MenuItem("Exit") && p_open)
                 *p_open = false;
-            ImGui::EndMenu();
+            HvkGui::EndMenu();
         }
-        ImGui::EndMenuBar();
+        HvkGui::EndMenuBar();
     }
 
     // [Debug] List documents with one checkbox for each
@@ -10342,15 +10342,15 @@ void ShowExampleAppDocuments(bool* p_open)
     {
         MyDocument& doc = app.Documents[doc_n];
         if (doc_n > 0)
-            ImGui::SameLine();
-        ImGui::PushID(&doc);
-        if (ImGui::Checkbox(doc.Name, &doc.Open))
+            HvkGui::SameLine();
+        HvkGui::PushID(&doc);
+        if (HvkGui::Checkbox(doc.Name, &doc.Open))
             if (!doc.Open)
                 doc.DoForceClose();
-        ImGui::PopID();
+        HvkGui::PopID();
     }
 
-    ImGui::Separator();
+    HvkGui::Separator();
 
     // About the ImGuiWindowFlags_UnsavedDocument / ImGuiTabItemFlags_UnsavedDocument flags.
     // They have multiple effects:
@@ -10366,14 +10366,14 @@ void ShowExampleAppDocuments(bool* p_open)
     {
         ImGuiTabBarFlags tab_bar_flags = (opt_fitting_flags) | (opt_reorderable ? ImGuiTabBarFlags_Reorderable : 0);
         tab_bar_flags |= ImGuiTabBarFlags_DrawSelectedOverline;
-        if (ImGui::BeginTabBar("##tabs", tab_bar_flags))
+        if (HvkGui::BeginTabBar("##tabs", tab_bar_flags))
         {
             if (opt_reorderable)
                 app.NotifyOfDocumentsClosedElsewhere();
 
             // [DEBUG] Stress tests
-            //if ((ImGui::GetFrameCount() % 30) == 0) docs[1].Open ^= 1;            // [DEBUG] Automatically show/hide a tab. Test various interactions e.g. dragging with this on.
-            //if (ImGui::GetIO().KeyCtrl) ImGui::SetTabItemSelected(docs[1].Name);  // [DEBUG] Test SetTabItemSelected(), probably not very useful as-is anyway..
+            //if ((HvkGui::GetFrameCount() % 30) == 0) docs[1].Open ^= 1;            // [DEBUG] Automatically show/hide a tab. Test various interactions e.g. dragging with this on.
+            //if (HvkGui::GetIO().KeyCtrl) HvkGui::SetTabItemSelected(docs[1].Name);  // [DEBUG] Test SetTabItemSelected(), probably not very useful as-is anyway..
 
             // Submit Tabs
             for (MyDocument& doc : app.Documents)
@@ -10385,7 +10385,7 @@ void ShowExampleAppDocuments(bool* p_open)
                 char doc_name_buf[64];
                 app.GetTabName(&doc, doc_name_buf, sizeof(doc_name_buf));
                 ImGuiTabItemFlags tab_flags = (doc.Dirty ? ImGuiTabItemFlags_UnsavedDocument : 0);
-                bool visible = ImGui::BeginTabItem(doc_name_buf, &doc.Open, tab_flags);
+                bool visible = HvkGui::BeginTabItem(doc_name_buf, &doc.Open, tab_flags);
 
                 // Cancel attempt to close when unsaved add to save queue so we can display a popup.
                 if (!doc.Open && doc.Dirty)
@@ -10398,11 +10398,11 @@ void ShowExampleAppDocuments(bool* p_open)
                 if (visible)
                 {
                     app.DisplayDocContents(&doc);
-                    ImGui::EndTabItem();
+                    HvkGui::EndTabItem();
                 }
             }
 
-            ImGui::EndTabBar();
+            HvkGui::EndTabBar();
         }
     }
 
@@ -10410,18 +10410,18 @@ void ShowExampleAppDocuments(bool* p_open)
     if (app.RenamingDoc != NULL)
     {
         if (app.RenamingStarted)
-            ImGui::OpenPopup("Rename");
-        if (ImGui::BeginPopup("Rename"))
+            HvkGui::OpenPopup("Rename");
+        if (HvkGui::BeginPopup("Rename"))
         {
-            ImGui::SetNextItemWidth(ImGui::GetFontSize() * 30);
-            if (ImGui::InputText("###Name", app.RenamingDoc->Name, IM_ARRAYSIZE(app.RenamingDoc->Name), ImGuiInputTextFlags_EnterReturnsTrue))
+            HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 30);
+            if (HvkGui::InputText("###Name", app.RenamingDoc->Name, IM_ARRAYSIZE(app.RenamingDoc->Name), ImGuiInputTextFlags_EnterReturnsTrue))
             {
-                ImGui::CloseCurrentPopup();
+                HvkGui::CloseCurrentPopup();
                 app.RenamingDoc = NULL;
             }
             if (app.RenamingStarted)
-                ImGui::SetKeyboardFocusHere(-1);
-            ImGui::EndPopup();
+                HvkGui::SetKeyboardFocusHere(-1);
+            HvkGui::EndPopup();
         }
         else
         {
@@ -10447,20 +10447,20 @@ void ShowExampleAppDocuments(bool* p_open)
         }
         else
         {
-            if (!ImGui::IsPopupOpen("Save?"))
-                ImGui::OpenPopup("Save?");
-            if (ImGui::BeginPopupModal("Save?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            if (!HvkGui::IsPopupOpen("Save?"))
+                HvkGui::OpenPopup("Save?");
+            if (HvkGui::BeginPopupModal("Save?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
             {
-                ImGui::Text("Save change to the following items?");
-                float item_height = ImGui::GetTextLineHeightWithSpacing();
-                if (ImGui::BeginChild(ImGui::GetID("frame"), ImVec2(-FLT_MIN, 6.25f * item_height), ImGuiChildFlags_FrameStyle))
+                HvkGui::Text("Save change to the following items?");
+                float item_height = HvkGui::GetTextLineHeightWithSpacing();
+                if (HvkGui::BeginChild(HvkGui::GetID("frame"), ImVec2(-FLT_MIN, 6.25f * item_height), ImGuiChildFlags_FrameStyle))
                     for (MyDocument* doc : app.CloseQueue)
                         if (doc->Dirty)
-                            ImGui::Text("%s", doc->Name);
-                ImGui::EndChild();
+                            HvkGui::Text("%s", doc->Name);
+                HvkGui::EndChild();
 
-                ImVec2 button_size(ImGui::GetFontSize() * 7.0f, 0.0f);
-                if (ImGui::Button("Yes", button_size))
+                ImVec2 button_size(HvkGui::GetFontSize() * 7.0f, 0.0f);
+                if (HvkGui::Button("Yes", button_size))
                 {
                     for (MyDocument* doc : app.CloseQueue)
                     {
@@ -10469,28 +10469,28 @@ void ShowExampleAppDocuments(bool* p_open)
                         doc->DoForceClose();
                     }
                     app.CloseQueue.clear();
-                    ImGui::CloseCurrentPopup();
+                    HvkGui::CloseCurrentPopup();
                 }
-                ImGui::SameLine();
-                if (ImGui::Button("No", button_size))
+                HvkGui::SameLine();
+                if (HvkGui::Button("No", button_size))
                 {
                     for (MyDocument* doc : app.CloseQueue)
                         doc->DoForceClose();
                     app.CloseQueue.clear();
-                    ImGui::CloseCurrentPopup();
+                    HvkGui::CloseCurrentPopup();
                 }
-                ImGui::SameLine();
-                if (ImGui::Button("Cancel", button_size))
+                HvkGui::SameLine();
+                if (HvkGui::Button("Cancel", button_size))
                 {
                     app.CloseQueue.clear();
-                    ImGui::CloseCurrentPopup();
+                    HvkGui::CloseCurrentPopup();
                 }
-                ImGui::EndPopup();
+                HvkGui::EndPopup();
             }
         }
     }
 
-    ImGui::End();
+    HvkGui::End();
 }
 
 //-----------------------------------------------------------------------------
@@ -10613,91 +10613,91 @@ struct ExampleAssetsBrowser
 
     void Draw(const char* title, bool* p_open)
     {
-        ImGui::SetNextWindowSize(ImVec2(IconSize * 25, IconSize * 15), ImGuiCond_FirstUseEver);
-        if (!ImGui::Begin(title, p_open, ImGuiWindowFlags_MenuBar))
+        HvkGui::SetNextWindowSize(ImVec2(IconSize * 25, IconSize * 15), ImGuiCond_FirstUseEver);
+        if (!HvkGui::Begin(title, p_open, ImGuiWindowFlags_MenuBar))
         {
-            ImGui::End();
+            HvkGui::End();
             return;
         }
 
         // Menu bar
-        if (ImGui::BeginMenuBar())
+        if (HvkGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (HvkGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Add 10000 items"))
+                if (HvkGui::MenuItem("Add 10000 items"))
                     AddItems(10000);
-                if (ImGui::MenuItem("Clear items"))
+                if (HvkGui::MenuItem("Clear items"))
                     ClearItems();
-                ImGui::Separator();
-                if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
+                HvkGui::Separator();
+                if (HvkGui::MenuItem("Close", NULL, false, p_open != NULL))
                     *p_open = false;
-                ImGui::EndMenu();
+                HvkGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Edit"))
+            if (HvkGui::BeginMenu("Edit"))
             {
-                if (ImGui::MenuItem("Delete", "Del", false, Selection.Size > 0))
+                if (HvkGui::MenuItem("Delete", "Del", false, Selection.Size > 0))
                     RequestDelete = true;
-                ImGui::EndMenu();
+                HvkGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Options"))
+            if (HvkGui::BeginMenu("Options"))
             {
-                ImGui::PushItemWidth(ImGui::GetFontSize() * 10);
+                HvkGui::PushItemWidth(HvkGui::GetFontSize() * 10);
 
-                ImGui::SeparatorText("Contents");
-                ImGui::Checkbox("Show Type Overlay", &ShowTypeOverlay);
-                ImGui::Checkbox("Allow Sorting", &AllowSorting);
+                HvkGui::SeparatorText("Contents");
+                HvkGui::Checkbox("Show Type Overlay", &ShowTypeOverlay);
+                HvkGui::Checkbox("Allow Sorting", &AllowSorting);
 
-                ImGui::SeparatorText("Selection Behavior");
-                ImGui::Checkbox("Allow dragging unselected item", &AllowDragUnselected);
-                ImGui::Checkbox("Allow box-selection", &AllowBoxSelect);
+                HvkGui::SeparatorText("Selection Behavior");
+                HvkGui::Checkbox("Allow dragging unselected item", &AllowDragUnselected);
+                HvkGui::Checkbox("Allow box-selection", &AllowBoxSelect);
 
-                ImGui::SeparatorText("Layout");
-                ImGui::SliderFloat("Icon Size", &IconSize, 16.0f, 128.0f, "%.0f");
-                ImGui::SameLine(); HelpMarker("Use Ctrl+Wheel to zoom");
-                ImGui::SliderInt("Icon Spacing", &IconSpacing, 0, 32);
-                ImGui::SliderInt("Icon Hit Spacing", &IconHitSpacing, 0, 32);
-                ImGui::Checkbox("Stretch Spacing", &StretchSpacing);
-                ImGui::PopItemWidth();
-                ImGui::EndMenu();
+                HvkGui::SeparatorText("Layout");
+                HvkGui::SliderFloat("Icon Size", &IconSize, 16.0f, 128.0f, "%.0f");
+                HvkGui::SameLine(); HelpMarker("Use Ctrl+Wheel to zoom");
+                HvkGui::SliderInt("Icon Spacing", &IconSpacing, 0, 32);
+                HvkGui::SliderInt("Icon Hit Spacing", &IconHitSpacing, 0, 32);
+                HvkGui::Checkbox("Stretch Spacing", &StretchSpacing);
+                HvkGui::PopItemWidth();
+                HvkGui::EndMenu();
             }
-            ImGui::EndMenuBar();
+            HvkGui::EndMenuBar();
         }
 
         // Show a table with ONLY one header row to showcase the idea/possibility of using this to provide a sorting UI
         if (AllowSorting)
         {
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
             ImGuiTableFlags table_flags_for_sort_specs = ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Borders;
-            if (ImGui::BeginTable("for_sort_specs_only", 2, table_flags_for_sort_specs, ImVec2(0.0f, ImGui::GetFrameHeight())))
+            if (HvkGui::BeginTable("for_sort_specs_only", 2, table_flags_for_sort_specs, ImVec2(0.0f, HvkGui::GetFrameHeight())))
             {
-                ImGui::TableSetupColumn("Index");
-                ImGui::TableSetupColumn("Type");
-                ImGui::TableHeadersRow();
-                if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs())
+                HvkGui::TableSetupColumn("Index");
+                HvkGui::TableSetupColumn("Type");
+                HvkGui::TableHeadersRow();
+                if (ImGuiTableSortSpecs* sort_specs = HvkGui::TableGetSortSpecs())
                     if (sort_specs->SpecsDirty || RequestSort)
                     {
                         ExampleAsset::SortWithSortSpecs(sort_specs, Items.Data, Items.Size);
                         sort_specs->SpecsDirty = RequestSort = false;
                     }
-                ImGui::EndTable();
+                HvkGui::EndTable();
             }
-            ImGui::PopStyleVar();
+            HvkGui::PopStyleVar();
         }
 
-        ImGuiIO& io = ImGui::GetIO();
-        ImGui::SetNextWindowContentSize(ImVec2(0.0f, LayoutOuterPadding + LayoutLineCount * (LayoutItemSize.y + LayoutItemSpacing)));
-        if (ImGui::BeginChild("Assets", ImVec2(0.0f, -ImGui::GetTextLineHeightWithSpacing()), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoMove))
+        ImGuiIO& io = HvkGui::GetIO();
+        HvkGui::SetNextWindowContentSize(ImVec2(0.0f, LayoutOuterPadding + LayoutLineCount * (LayoutItemSize.y + LayoutItemSpacing)));
+        if (HvkGui::BeginChild("Assets", ImVec2(0.0f, -HvkGui::GetTextLineHeightWithSpacing()), ImGuiChildFlags_Borders, ImGuiWindowFlags_NoMove))
         {
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImDrawList* draw_list = HvkGui::GetWindowDrawList();
 
-            const float avail_width = ImGui::GetContentRegionAvail().x;
+            const float avail_width = HvkGui::GetContentRegionAvail().x;
             UpdateLayoutSizes(avail_width);
 
             // Calculate and store start position.
-            ImVec2 start_pos = ImGui::GetCursorScreenPos();
+            ImVec2 start_pos = HvkGui::GetCursorScreenPos();
             start_pos = ImVec2(start_pos.x + LayoutOuterPadding, start_pos.y + LayoutOuterPadding);
-            ImGui::SetCursorScreenPos(start_pos);
+            HvkGui::SetCursorScreenPos(start_pos);
 
             // Multi-select
             ImGuiMultiSelectFlags ms_flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_ClearOnClickVoid;
@@ -10712,18 +10712,18 @@ struct ExampleAssetsBrowser
 
             // - Enable keyboard wrapping on X axis
             // (FIXME-MULTISELECT: We haven't designed/exposed a general nav wrapping api yet, so this flag is provided as a courtesy to avoid doing:
-            //    ImGui::NavMoveRequestTryWrapping(ImGui::GetCurrentWindow(), ImGuiNavMoveFlags_WrapX);
+            //    HvkGui::NavMoveRequestTryWrapping(HvkGui::GetCurrentWindow(), ImGuiNavMoveFlags_WrapX);
             // When we finish implementing a more general API for this, we will obsolete this flag in favor of the new system)
             ms_flags |= ImGuiMultiSelectFlags_NavWrapX;
 
-            ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(ms_flags, Selection.Size, Items.Size);
+            ImGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(ms_flags, Selection.Size, Items.Size);
 
             // Use custom selection adapter: store ID in selection (recommended)
             Selection.UserData = this;
             Selection.AdapterIndexToStorageId = [](ImGuiSelectionBasicStorage* self_, int idx) { ExampleAssetsBrowser* self = (ExampleAssetsBrowser*)self_->UserData; return self->Items[idx].ID; };
             Selection.ApplyRequests(ms_io);
 
-            const bool want_delete = (ImGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (Selection.Size > 0)) || RequestDelete;
+            const bool want_delete = (HvkGui::Shortcut(ImGuiKey_Delete, ImGuiInputFlags_Repeat) && (Selection.Size > 0)) || RequestDelete;
             const int item_curr_idx_to_focus = want_delete ? Selection.ApplyDeletionPreLoop(ms_io, Items.Size) : -1;
             RequestDelete = false;
 
@@ -10732,13 +10732,13 @@ struct ExampleAssetsBrowser
             // But it is necessary for two reasons:
             // - Selectables uses it by default to visually fill the space between two items.
             // - The vertical spacing would be measured by Clipper to calculate line height if we didn't provide it explicitly (here we do).
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(LayoutSelectableSpacing, LayoutSelectableSpacing));
+            HvkGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(LayoutSelectableSpacing, LayoutSelectableSpacing));
 
             // Rendering parameters
             const ImU32 icon_type_overlay_colors[3] = { 0, IM_COL32(200, 70, 70, 255), IM_COL32(70, 170, 70, 255) };
-            const ImU32 icon_bg_color = ImGui::GetColorU32(IM_COL32(35, 35, 35, 220));
+            const ImU32 icon_bg_color = HvkGui::GetColorU32(IM_COL32(35, 35, 35, 220));
             const ImVec2 icon_type_overlay_size = ImVec2(4.0f, 4.0f);
-            const bool display_label = (LayoutItemSize.x >= ImGui::CalcTextSize("999").x);
+            const bool display_label = (LayoutItemSize.x >= HvkGui::CalcTextSize("999").x);
 
             const int column_count = LayoutColumnCount;
             ImGuiListClipper clipper;
@@ -10756,32 +10756,32 @@ struct ExampleAssetsBrowser
                     for (int item_idx = item_min_idx_for_current_line; item_idx < item_max_idx_for_current_line; ++item_idx)
                     {
                         ExampleAsset* item_data = &Items[item_idx];
-                        ImGui::PushID((int)item_data->ID);
+                        HvkGui::PushID((int)item_data->ID);
 
                         // Position item
                         ImVec2 pos = ImVec2(start_pos.x + (item_idx % column_count) * LayoutItemStep.x, start_pos.y + line_idx * LayoutItemStep.y);
-                        ImGui::SetCursorScreenPos(pos);
+                        HvkGui::SetCursorScreenPos(pos);
 
-                        ImGui::SetNextItemSelectionUserData(item_idx);
+                        HvkGui::SetNextItemSelectionUserData(item_idx);
                         bool item_is_selected = Selection.Contains((ImGuiID)item_data->ID);
-                        bool item_is_visible = ImGui::IsRectVisible(LayoutItemSize);
-                        ImGui::Selectable("", item_is_selected, ImGuiSelectableFlags_None, LayoutItemSize);
+                        bool item_is_visible = HvkGui::IsRectVisible(LayoutItemSize);
+                        HvkGui::Selectable("", item_is_selected, ImGuiSelectableFlags_None, LayoutItemSize);
 
                         // Update our selection state immediately (without waiting for EndMultiSelect() requests)
                         // because we use this to alter the color of our text/icon.
-                        if (ImGui::IsItemToggledSelection())
+                        if (HvkGui::IsItemToggledSelection())
                             item_is_selected = !item_is_selected;
 
                         // Focus (for after deletion)
                         if (item_curr_idx_to_focus == item_idx)
-                            ImGui::SetKeyboardFocusHere(-1);
+                            HvkGui::SetKeyboardFocusHere(-1);
 
                         // Drag and drop
-                        if (ImGui::BeginDragDropSource())
+                        if (HvkGui::BeginDragDropSource())
                         {
                             // Create payload with full selection OR single unselected item.
                             // (the later is only possible when using ImGuiMultiSelectFlags_SelectOnClickRelease)
-                            if (ImGui::GetDragDropPayload() == NULL)
+                            if (HvkGui::GetDragDropPayload() == NULL)
                             {
                                 ImVector<ImGuiID> payload_items;
                                 void* it = NULL;
@@ -10791,16 +10791,16 @@ struct ExampleAssetsBrowser
                                 else
                                     while (Selection.GetNextSelectedItem(&it, &id))
                                         payload_items.push_back(id);
-                                ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEMS", payload_items.Data, (size_t)payload_items.size_in_bytes());
+                                HvkGui::SetDragDropPayload("ASSETS_BROWSER_ITEMS", payload_items.Data, (size_t)payload_items.size_in_bytes());
                             }
 
                             // Display payload content in tooltip, by extracting it from the payload data
                             // (we could read from selection, but it is more correct and reusable to read from payload)
-                            const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+                            const ImGuiPayload* payload = HvkGui::GetDragDropPayload();
                             const int payload_count = (int)payload->DataSize / (int)sizeof(ImGuiID);
-                            ImGui::Text("%d assets", payload_count);
+                            HvkGui::Text("%d assets", payload_count);
 
-                            ImGui::EndDragDropSource();
+                            HvkGui::EndDragDropSource();
                         }
 
                         // Render icon (a real app would likely display an image/thumbnail here)
@@ -10817,39 +10817,39 @@ struct ExampleAssetsBrowser
                             }
                             if (display_label)
                             {
-                                ImU32 label_col = ImGui::GetColorU32(item_is_selected ? ImGuiCol_Text : ImGuiCol_TextDisabled);
+                                ImU32 label_col = HvkGui::GetColorU32(item_is_selected ? ImGuiCol_Text : ImGuiCol_TextDisabled);
                                 char label[32];
                                 sprintf(label, "%d", item_data->ID);
-                                draw_list->AddText(ImVec2(box_min.x, box_max.y - ImGui::GetFontSize()), label_col, label);
+                                draw_list->AddText(ImVec2(box_min.x, box_max.y - HvkGui::GetFontSize()), label_col, label);
                             }
                         }
 
-                        ImGui::PopID();
+                        HvkGui::PopID();
                     }
                 }
             }
             clipper.End();
-            ImGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
+            HvkGui::PopStyleVar(); // ImGuiStyleVar_ItemSpacing
 
             // Context menu
-            if (ImGui::BeginPopupContextWindow())
+            if (HvkGui::BeginPopupContextWindow())
             {
-                ImGui::Text("Selection: %d items", Selection.Size);
-                ImGui::Separator();
-                if (ImGui::MenuItem("Delete", "Del", false, Selection.Size > 0))
+                HvkGui::Text("Selection: %d items", Selection.Size);
+                HvkGui::Separator();
+                if (HvkGui::MenuItem("Delete", "Del", false, Selection.Size > 0))
                     RequestDelete = true;
-                ImGui::EndPopup();
+                HvkGui::EndPopup();
             }
 
-            ms_io = ImGui::EndMultiSelect();
+            ms_io = HvkGui::EndMultiSelect();
             Selection.ApplyRequests(ms_io);
             if (want_delete)
                 Selection.ApplyDeletionPostLoop(ms_io, Items, item_curr_idx_to_focus);
 
             // Zooming with Ctrl+Wheel
-            if (ImGui::IsWindowAppearing())
+            if (HvkGui::IsWindowAppearing())
                 ZoomWheelAccum = 0.0f;
-            if (ImGui::IsWindowHovered() && io.MouseWheel != 0.0f && ImGui::IsKeyDown(ImGuiMod_Ctrl) && ImGui::IsAnyItemActive() == false)
+            if (HvkGui::IsWindowHovered() && io.MouseWheel != 0.0f && HvkGui::IsKeyDown(ImGuiMod_Ctrl) && HvkGui::IsAnyItemActive() == false)
             {
                 ZoomWheelAccum += io.MouseWheel;
                 if (fabsf(ZoomWheelAccum) >= 1.0f)
@@ -10859,7 +10859,7 @@ struct ExampleAssetsBrowser
                     const float hovered_item_nx = (io.MousePos.x - start_pos.x + LayoutItemSpacing * 0.5f) / LayoutItemStep.x;
                     const float hovered_item_ny = (io.MousePos.y - start_pos.y + LayoutItemSpacing * 0.5f) / LayoutItemStep.y;
                     const int hovered_item_idx = ((int)hovered_item_ny * LayoutColumnCount) + (int)hovered_item_nx;
-                    //ImGui::SetTooltip("%f,%f -> item %d", hovered_item_nx, hovered_item_ny, hovered_item_idx); // Move those 4 lines in block above for easy debugging
+                    //HvkGui::SetTooltip("%f,%f -> item %d", hovered_item_nx, hovered_item_ny, hovered_item_idx); // Move those 4 lines in block above for easy debugging
 
                     // Zoom
                     IconSize *= powf(1.1f, (float)(int)ZoomWheelAccum);
@@ -10869,18 +10869,18 @@ struct ExampleAssetsBrowser
 
                     // Manipulate scroll to that we will land at the same Y location of currently hovered item.
                     // - Calculate next frame position of item under mouse
-                    // - Set new scroll position to be used in next ImGui::BeginChild() call.
+                    // - Set new scroll position to be used in next HvkGui::BeginChild() call.
                     float hovered_item_rel_pos_y = ((float)(hovered_item_idx / LayoutColumnCount) + fmodf(hovered_item_ny, 1.0f)) * LayoutItemStep.y;
-                    hovered_item_rel_pos_y += ImGui::GetStyle().WindowPadding.y;
-                    float mouse_local_y = io.MousePos.y - ImGui::GetWindowPos().y;
-                    ImGui::SetScrollY(hovered_item_rel_pos_y - mouse_local_y);
+                    hovered_item_rel_pos_y += HvkGui::GetStyle().WindowPadding.y;
+                    float mouse_local_y = io.MousePos.y - HvkGui::GetWindowPos().y;
+                    HvkGui::SetScrollY(hovered_item_rel_pos_y - mouse_local_y);
                 }
             }
         }
-        ImGui::EndChild();
+        HvkGui::EndChild();
 
-        ImGui::Text("Selected: %d/%d items", Selection.Size, Items.Size);
-        ImGui::End();
+        HvkGui::Text("Selected: %d/%d items", Selection.Size, Items.Size);
+        HvkGui::End();
     }
 };
 
@@ -10894,11 +10894,11 @@ void ShowExampleAppAssetsBrowser(bool* p_open)
 // End of Demo code
 #else
 
-void ImGui::ShowAboutWindow(bool*) {}
-void ImGui::ShowDemoWindow(bool*) {}
-void ImGui::ShowUserGuide() {}
-void ImGui::ShowStyleEditor(ImGuiStyle*) {}
-bool ImGui::ShowStyleSelector(const char*) { return false; }
+void HvkGui::ShowAboutWindow(bool*) {}
+void HvkGui::ShowDemoWindow(bool*) {}
+void HvkGui::ShowUserGuide() {}
+void HvkGui::ShowStyleEditor(ImGuiStyle*) {}
+bool HvkGui::ShowStyleSelector(const char*) { return false; }
 
 #endif // #ifndef IMGUI_DISABLE_DEMO_WINDOWS
 

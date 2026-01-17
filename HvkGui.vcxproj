@@ -150,7 +150,7 @@
     <ClCompile Include="imgui\\hvkgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\\hvkgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\\hvkgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>

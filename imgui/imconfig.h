@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // DEAR IMGUI COMPILE-TIME OPTIONS
 // Runtime options (clipboard callbacks, enabling various features, etc.) can generally be set via the ImGuiIO structure.
-// You can use ImGui::SetAllocatorFunctions() before calling ImGui::CreateContext() to rewire memory allocation functions.
+// You can use HvkGui::SetAllocatorFunctions() before calling HvkGui::CreateContext() to rewire memory allocation functions.
 //-----------------------------------------------------------------------------
 // A) You may edit imconfig.h (and not overwrite it when updating Dear ImGui, or maintain a patch/rebased branch with your modifications to it)
 // B) or '#define IMGUI_USER_CONFIG "my_imgui_config.h"' in your project and then add directives in your own file without touching this template.
@@ -48,7 +48,7 @@
 //#define IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS              // Don't implement ImFabs/ImSqrt/ImPow/ImFmod/ImCos/ImSin/ImAcos/ImAtan2 so you can implement them yourself.
 //#define IMGUI_DISABLE_FILE_FUNCTIONS                      // Don't implement ImFileOpen/ImFileClose/ImFileRead/ImFileWrite and ImFileHandle at all (replace them with dummies)
 //#define IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS              // Don't implement ImFileOpen/ImFileClose/ImFileRead/ImFileWrite and ImFileHandle so you can implement them yourself if you don't want to link with fopen/fclose/fread/fwrite. This will also disable the LogToTTY() function.
-//#define IMGUI_DISABLE_DEFAULT_ALLOCATORS                  // Don't implement default allocators calling malloc()/free() to avoid linking with them. You will need to call ImGui::SetAllocatorFunctions().
+//#define IMGUI_DISABLE_DEFAULT_ALLOCATORS                  // Don't implement default allocators calling malloc()/free() to avoid linking with them. You will need to call HvkGui::SetAllocatorFunctions().
 //#define IMGUI_DISABLE_DEFAULT_FONT                        // Disable default embedded font (ProggyClean.ttf), remove ~9.5 KB from output binary. AddFontDefault() will assert.
 //#define IMGUI_DISABLE_SSE                                 // Disable use of SSE intrinsics even if available
 
@@ -138,7 +138,7 @@
 //---- Debug Tools: Enable slower asserts
 //#define IMGUI_DEBUG_PARANOID
 
-//---- Tip: You can add extra functions within the ImGui:: namespace from anywhere (e.g. your own sources/header files)
+//---- Tip: You can add extra functions within the HvkGui:: namespace from anywhere (e.g. your own sources/header files)
 /*
 namespace ImGui
 {

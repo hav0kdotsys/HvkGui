@@ -1219,7 +1219,7 @@ namespace ImStb { struct STB_TexteditState; }
 typedef ImStb::STB_TexteditState ImStbTexteditState;
 
 // Internal state of the currently focused/edited text input box
-// For a given item ID, access with ImGui::GetInputTextState()
+// For a given item ID, access with HvkGui::GetInputTextState()
 struct IMGUI_API ImGuiInputTextState
 {
     ImGuiContext*           Ctx;                    // parent UI context (needs to be set explicitly by parent).
@@ -1266,7 +1266,7 @@ struct IMGUI_API ImGuiInputTextState
     // Reload user buf (WIP #2890)
     // If you modify underlying user-passed const char* while active you need to call this (InputText V2 may lift this)
     //   strcpy(my_buf, "hello");
-    //   if (ImGuiInputTextState* state = ImGui::GetInputTextState(id)) // id may be ImGui::GetItemID() is last item
+    //   if (ImGuiInputTextState* state = HvkGui::GetInputTextState(id)) // id may be HvkGui::GetItemID() is last item
     //       state->ReloadUserBufAndSelectAll();
     void        ReloadUserBufAndSelectAll();
     void        ReloadUserBufAndKeepSelection();
@@ -1598,7 +1598,7 @@ struct ImGuiKeyOwnerData
 
 // Extend ImGuiInputFlags_
 // Flags for extended versions of IsKeyPressed(), IsMouseClicked(), Shortcut(), SetKeyOwner(), SetItemKeyOwner()
-// Don't mistake with ImGuiInputTextFlags! (which is for ImGui::InputText() function)
+// Don't mistake with ImGuiInputTextFlags! (which is for HvkGui::InputText() function)
 enum ImGuiInputFlagsPrivate_
 {
     // Flags for IsKeyPressed(), IsKeyChordPressed(), IsMouseClicked(), Shortcut()
@@ -2050,7 +2050,7 @@ struct ImGuiLocEntry
 // - See 'Demo->Configuration->Error Handling' and ImGuiIO definitions for details on error handling.
 // - Read https://github.com/ocornut/imgui/wiki/Error-Handling for details on error handling.
 #ifndef IM_ASSERT_USER_ERROR
-#define IM_ASSERT_USER_ERROR(_EXPR,_MSG)    do { if (!(_EXPR) && ImGui::ErrorLog(_MSG)) { IM_ASSERT((_EXPR) && _MSG); } } while (0)    // Recoverable User Error
+#define IM_ASSERT_USER_ERROR(_EXPR,_MSG)    do { if (!(_EXPR) && HvkGui::ErrorLog(_MSG)) { IM_ASSERT((_EXPR) && _MSG); } } while (0)    // Recoverable User Error
 #endif
 
 // The error callback is currently not public, as it is expected that only advanced users will rely on it.
@@ -3136,8 +3136,8 @@ namespace ImGui
     // Windows
     // We should always have a CurrentWindow in the stack (there is an implicit "Debug" window)
     // If this ever crashes because g.CurrentWindow is NULL, it means that either:
-    // - ImGui::NewFrame() has never been called, which is illegal.
-    // - You are calling ImGui functions after ImGui::EndFrame()/ImGui::Render() and before the next ImGui::NewFrame(), which is also illegal.
+    // - HvkGui::NewFrame() has never been called, which is illegal.
+    // - You are calling ImGui functions after HvkGui::EndFrame()/HvkGui::Render() and before the next HvkGui::NewFrame(), which is also illegal.
     IMGUI_API ImGuiIO&         GetIO(ImGuiContext* ctx);
     IMGUI_API ImGuiPlatformIO& GetPlatformIO(ImGuiContext* ctx);
     inline    ImGuiWindow*  GetCurrentWindowRead()      { ImGuiContext& g = *GImGui; return g.CurrentWindow; }

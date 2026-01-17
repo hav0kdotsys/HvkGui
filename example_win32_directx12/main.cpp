@@ -1,15 +1,15 @@
-// Dear ImGui: standalone example application for Windows API + DirectX 12
+// Dear HvkGui: standalone example application for Windows API + DirectX 12
 
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
+// Learn about Dear HvkGui:
+// - FAQ                  https://dearHvkGui.com/faq
+// - Getting Started      https://dearHvkGui.com/getting-started
+// - Documentation        https://dearHvkGui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of HvkGui.cpp
 
 #include "hvkgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx12.h"
-#include "imgui_impl_dx11.h"
+#include "HvkGui_impl_win32.h"
+#include "HvkGui_impl_dx12.h"
+#include "HvkGui_impl_dx11.h"
 #include <d3d12.h>
 #include <dxgi1_5.h>
 #include <tchar.h>
@@ -48,7 +48,7 @@ struct ExampleDescriptorHeapAllocator
 	D3D12_CPU_DESCRIPTOR_HANDLE HeapStartCpu;
 	D3D12_GPU_DESCRIPTOR_HANDLE HeapStartGpu;
 	UINT                        HeapHandleIncrement;
-	ImVector<int>               FreeIndices;
+	HvkVector<int>               FreeIndices;
 
 	void Create(ID3D12Device* device, ID3D12DescriptorHeap* heap)
 	{
@@ -129,13 +129,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int main(int, char**)
 {
 	// Make process DPI aware and obtain main monitor scale
-	ImGui_ImplWin32_EnableDpiAwareness();
-	float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
+	HvkGui_ImplWin32_EnableDpiAwareness();
+	float main_scale = HvkGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
 	// Create application window
-	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
+	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"HvkGui Example", nullptr };
 	::RegisterClassExW(&wc);
-	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX12 Example", WS_OVERLAPPEDWINDOW, 100, 100, (int)(1280 * main_scale), (int)(800 * main_scale), nullptr, nullptr, wc.hInstance, nullptr);
+	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear HvkGui DirectX12 Example", WS_OVERLAPPEDWINDOW, 100, 100, (int)(1280 * main_scale), (int)(800 * main_scale), nullptr, nullptr, wc.hInstance, nullptr);
 
 	// Initialize Direct3D
 	bool rendererOk = false;
@@ -173,26 +173,26 @@ int main(int, char**)
 	::ShowWindow(hwnd, SW_SHOWDEFAULT);
 	::UpdateWindow(hwnd);
 
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
+	// Setup Dear HvkGui context
+	HvkGui_CHECKVERSION();
 	HvkGui::CreateContext();
-	ImGuiIO& io = HvkGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	HvkGuiIO& io = HvkGui::GetIO(); (void)io;
+	io.ConfigFlags |= HvkGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= HvkGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	// Setup Dear ImGui style
+	// Setup Dear HvkGui style
 	HvkGui::StyleColorsDark();
 	//HvkGui::StyleColorsLight();
 
 	// Setup scaling
-	ImGuiStyle& style = HvkGui::GetStyle();
+	HvkGuiStyle& style = HvkGui::GetStyle();
 	style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
 	style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(hwnd);
+	HvkGui_ImplWin32_Init(hwnd);
 
-	ImGui_ImplDX12_InitInfo init_info = {};
+	HvkGui_ImplDX12_InitInfo init_info = {};
 	init_info.Device = g_pd3dDevice;
 	init_info.CommandQueue = g_pd3dCommandQueue;
 	init_info.NumFramesInFlight = APP_NUM_FRAMES_IN_FLIGHT;
@@ -201,18 +201,18 @@ int main(int, char**)
 	// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
 	// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
 	init_info.SrvDescriptorHeap = g_pd3dSrvDescHeap;
-	init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
-	init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return g_pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
-	ImGui_ImplDX12_Init(&init_info);
+	init_info.SrvDescriptorAllocFn = [](HvkGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
+	init_info.SrvDescriptorFreeFn = [](HvkGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return g_pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
+	HvkGui_ImplDX12_Init(&init_info);
 
 	// Before 1.91.6: our signature was using a single descriptor. From 1.92, specifying SrvDescriptorAllocFn/SrvDescriptorFreeFn will be required to benefit from new features.
-	//ImGui_ImplDX12_Init(g_pd3dDevice, APP_NUM_FRAMES_IN_FLIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap, g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
+	//HvkGui_ImplDX12_Init(g_pd3dDevice, APP_NUM_FRAMES_IN_FLIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap, g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
 
 	// Load Fonts
-	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use HvkGui::PushFont()/PopFont() to select them.
-	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
+	// - If no fonts are loaded, dear HvkGui will use the default font. You can also load multiple fonts and use HvkGui::PushFont()/PopFont() to select them.
+	// - AddFontFromFileTTF() will return the HvkFont* so you can store it if you need to select the font among multiple.
 	// - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-	// - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
+	// - Use '#define HvkGui_ENABLE_FREETYPE' in your Hvkconfig file to use Freetype for higher quality font rendering.
 	// - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
 	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
 	//style.FontSizeBase = 20.0f;
@@ -221,13 +221,13 @@ int main(int, char**)
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
-	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
+	//HvkFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
 	//IM_ASSERT(font != nullptr);
 
 	// Our state
 	bool show_demo_window = true;
 	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	HvkVec4 clear_color = HvkVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
 	bool done = false;
@@ -254,13 +254,13 @@ int main(int, char**)
 		}
 		g_SwapChainOccluded = false;
 
-		// Start the Dear ImGui frame
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
+		// Start the Dear HvkGui frame
+		HvkGui_ImplDX12_NewFrame();
+		HvkGui_ImplWin32_NewFrame();
 		HvkGui::NewFrame();
 
-		HvkGui::SetWindowPos(ImVec2(0, 10), ImGuiCond_Once);
-		HvkGui::SetWindowSize(ImVec2(1920, 1070), ImGuiCond_Once);
+		HvkGui::SetWindowPos(HvkVec2(0, 10), HvkGuiCond_Once);
+		HvkGui::SetWindowSize(HvkVec2(1920, 1070), HvkGuiCond_Once);
 		HvkGui::Begin("Main Window");
 
 		HvkGui::Text(g_render_backend == RenderBackend::DX12 ? "Render Backend: DX12" : "Render Backend: DX11");
@@ -284,12 +284,12 @@ int main(int, char**)
 		g_pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
 		g_pd3dCommandList->ResourceBarrier(1, &barrier);
 
-		// Render Dear ImGui graphics
+		// Render Dear HvkGui graphics
 		const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
 		g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
 		g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
 		g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
-		ImGui_ImplDX12_RenderDrawData(HvkGui::GetDrawData(), g_pd3dCommandList);
+		HvkGui_ImplDX12_RenderDrawData(HvkGui::GetDrawData(), g_pd3dCommandList);
 		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 		g_pd3dCommandList->ResourceBarrier(1, &barrier);
@@ -311,11 +311,11 @@ int main(int, char**)
 
 	// Cleanup
 	if (g_render_backend == RenderBackend::DX12)
-		ImGui_ImplDX12_Shutdown();
+		HvkGui_ImplDX12_Shutdown();
 	else
-		ImGui_ImplDX11_Shutdown();
+		HvkGui_ImplDX11_Shutdown();
 
-	ImGui_ImplWin32_Shutdown();
+	HvkGui_ImplWin32_Shutdown();
 	HvkGui::DestroyContext();
 
 	if (g_render_backend == RenderBackend::DX12)
@@ -607,17 +607,17 @@ FrameContext* WaitForNextFrameContext()
 	return frame_context;
 }
 
-// Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+// Forward declare message handler from HvkGui_impl_win32.cpp
+extern HvkGui_IMPL_API LRESULT HvkGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Win32 message handler
-// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear HvkGui wants to use your inputs.
 // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
 // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+// Generally you may always pass all inputs to dear HvkGui, and hide them from your application based on those two flags.
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	if (HvkGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 		return true;
 
 	switch (msg)

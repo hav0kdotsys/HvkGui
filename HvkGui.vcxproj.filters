@@ -21,7 +21,7 @@
     <ClCompile Include="imgui\\hvkgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
+    <ClCompile Include="imgui\\hvkgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui\\hvkgui_draw.cpp">

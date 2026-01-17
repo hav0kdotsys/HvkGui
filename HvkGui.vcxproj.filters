@@ -18,7 +18,7 @@
     <ClCompile Include="example_win32_directx12\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
+    <ClCompile Include="imgui\\hvkgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_demo.cpp">

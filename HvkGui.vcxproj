@@ -160,7 +160,7 @@
     <ClInclude Include="imgui\hvkconfig.h" />
     <ClInclude Include="imgui\hvkgui.h" />
     <ClInclude Include="imgui\hvkgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\\hvkstb_rectpack.h" />
     <ClInclude Include="imgui\\hvkstb_textedit.h" />
     <ClInclude Include="imgui\\hvkstb_truetype.h" />
     <ClInclude Include="util\util.h" />

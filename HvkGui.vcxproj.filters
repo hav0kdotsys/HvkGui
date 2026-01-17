@@ -53,7 +53,7 @@
     <ClInclude Include="imgui\hvkgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
+    <ClInclude Include="imgui\\hvkstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="imgui\\hvkstb_textedit.h">

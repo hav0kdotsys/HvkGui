@@ -1,6 +1,6 @@
-// [DEAR IMGUI]
+// [DEAR HvkGui]
 // This is a slightly modified version of stb_rect_pack.h 1.01.
-// Grep for [DEAR IMGUI] to find the changes.
+// Grep for [DEAR HvkGui] to find the changes.
 // 
 // stb_rect_pack.h - v1.01 - public domain - rectangle packing
 // Sean Barrett 2014
@@ -12,7 +12,7 @@
 //
 //    #define STB_RECT_PACK_IMPLEMENTATION
 //
-// in the file that you want to have the implementation.
+// in the file that you want to have the Hvkplementation.
 //
 // Not necessarily the awesomest packing method, but better than
 // the totally naive one in stb_truetype (which is primarily what
@@ -28,7 +28,7 @@
 // This library currently uses the Skyline Bottom-Left algorithm.
 //
 // Please note: better rectangle packers are welcome! Please
-// implement them to the same API, but with a different init
+// Hvkplement them to the same API, but with a different init
 // function.
 //
 // Credits
@@ -99,7 +99,7 @@ STBRP_DEF int stbrp_pack_rects (stbrp_context *context, stbrp_rect *rects, int n
 // Rectangles which are successfully packed have the 'was_packed' flag
 // set to a non-zero value and 'x' and 'y' store the minimum location
 // on each axis (i.e. bottom-left in cartesian coordinates, top-left
-// if you imagine y increasing downwards). Rectangles which do not fit
+// if you Hvkagine y increasing downwards). Rectangles which do not fit
 // have the 'was_packed' flag set to 0.
 //
 // You should not try to access the 'rects' array from another thread
@@ -203,7 +203,7 @@ struct stbrp_context
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//     IMPLEMENTATION SECTION
+//     HvkPLEMENTATION SECTION
 //
 
 #ifdef STB_RECT_PACK_IMPLEMENTATION
@@ -355,7 +355,7 @@ static stbrp__findresult stbrp__skyline_find_best_pos(stbrp_context *c, int widt
    width -= width % c->align;
    STBRP_ASSERT(width % c->align == 0);
 
-   // if it can't possibly fit, bail immediately
+   // if it can't possibly fit, bail Hvkmediately
    if (width > c->width || height > c->height) {
       fr.prev_link = NULL;
       fr.x = fr.y = 0;
@@ -429,7 +429,7 @@ static stbrp__findresult stbrp__skyline_find_best_pos(stbrp_context *c, int widt
             if (y <= best_y) {
                if (y < best_y || waste < best_waste || (waste==best_waste && xpos < best_x)) {
                   best_x = xpos;
-                  //STBRP_ASSERT(y <= best_y); [DEAR IMGUI]
+                  //STBRP_ASSERT(y <= best_y); [DEAR HvkGui]
                   best_y = y;
                   best_waste = waste;
                   best = prev;
@@ -599,7 +599,7 @@ so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+HvkPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -618,7 +618,7 @@ the detriment of our heirs and successors. We intend this dedication to be an
 overt act of relinquishment in perpetuity of all present and future rights to
 this software under copyright law.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+HvkPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION

@@ -1,7 +1,7 @@
-// [DEAR IMGUI]
+// [DEAR HvkGui]
 // This is a slightly modified version of stb_truetype.h 1.26.
 // Mostly fixing for compiler and static analyzer warnings.
-// Grep for [DEAR IMGUI] to find the changes.
+// Grep for [DEAR HvkGui] to find the changes.
 
 // stb_truetype.h - v1.26 - public domain
 // authored from 2009-2021 by Sean Barrett / RAD Game Tools
@@ -42,7 +42,7 @@
 //       Ryan Gordon
 //       Simon Glass
 //       github:IntellectualKitty
-//       Imanol Celaya
+//       Hvkanol Celaya
 //       Daniel Ribeiro Maciel
 //
 //   Bug/warning reports/fixes:
@@ -100,19 +100,19 @@
 //   file, write:
 //      #define STB_TRUETYPE_IMPLEMENTATION
 //   before the #include of this file. This expands out the actual
-//   implementation into that C/C++ file.
+//   Hvkplementation into that C/C++ file.
 //
-//   To make the implementation private to the file that generates the implementation,
+//   To make the Hvkplementation private to the file that generates the Hvkplementation,
 //      #define STBTT_STATIC
 //
 //   Simple 3D API (don't ship this, but it's fine for tools and quick start)
 //           stbtt_BakeFontBitmap()               -- bake a font to a bitmap for use as texture
 //           stbtt_GetBakedQuad()                 -- compute quad to draw for a given char
 //
-//   Improved 3D API (more shippable):
+//   Hvkproved 3D API (more shippable):
 //           #include "stb_rect_pack.h"           -- optional, but you really want it
 //           stbtt_PackBegin()
-//           stbtt_PackSetOversampling()          -- for improved quality on small fonts
+//           stbtt_PackSetOversampling()          -- for Hvkproved quality on small fonts
 //           stbtt_PackFontRanges()               -- pack and renders
 //           stbtt_PackEnd()
 //           stbtt_GetPackedQuad()
@@ -144,12 +144,12 @@
 //
 // ADDITIONAL DOCUMENTATION
 //
-//   Immediately after this block comment are a series of sample programs.
+//   Hvkmediately after this block comment are a series of sample programs.
 //
 //   After the sample programs is the "header file" section. This section
 //   includes documentation for each API function.
 //
-//   Some important concepts to understand to use this library:
+//   Some Hvkportant concepts to understand to use this library:
 //
 //      Codepoint
 //         Characters are defined by unicode codepoints, e.g. 65 is
@@ -235,7 +235,7 @@
 //
 //    - Use the functions with Subpixel at the end to allow your characters
 //      to have subpixel positioning. Since the font is anti-aliased, not
-//      hinted, this is very import for quality. (This is not possible with
+//      hinted, this is very Hvkport for quality. (This is not possible with
 //      baked fonts.)
 //
 //    - Kerning is now supported, and if you're supporting subpixel rendering
@@ -280,7 +280,7 @@
 //  Incomplete text-in-3d-api example, which draws quads properly aligned to be lossless.
 //  See "tests/truetype_demo_win32.c" for a complete version.
 #if 0
-#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
+#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate Hvkplementation
 #include "stb_truetype.h"
 
 unsigned char ttf_buffer[1<<20];
@@ -331,7 +331,7 @@ void my_stbtt_print(float x, float y, char *text)
 //
 #if 0
 #include <stdio.h>
-#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
+#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate Hvkplementation
 #include "stb_truetype.h"
 
 char ttf_buffer[1<<25];
@@ -1104,7 +1104,7 @@ enum { // languageID for STBTT_PLATFORM_ID_MAC
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ////
-////   IMPLEMENTATION
+////   HvkPLEMENTATION
 ////
 ////
 
@@ -2008,7 +2008,7 @@ static stbtt__buf stbtt__cid_get_glyph_subrs(const stbtt_fontinfo *info, int gly
          start = end;
       }
    }
-   if (fdselector == -1) return stbtt__new_buf(NULL, 0); // [DEAR IMGUI] fixed, see #6007 and nothings/stb#1422
+   if (fdselector == -1) return stbtt__new_buf(NULL, 0); // [DEAR HvkGui] fixed, see #6007 and nothings/stb#1422
    return stbtt__get_subrs(info->cff, stbtt__cff_index_get(info->fontdicts, fdselector));
 }
 
@@ -2029,11 +2029,11 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
       clear_stack = 1;
       b0 = stbtt__buf_get8(&b);
       switch (b0) {
-      // @TODO implement hinting
+      // @TODO Hvkplement hinting
       case 0x13: // hintmask
       case 0x14: // cntrmask
          if (in_header)
-            maskbits += (sp / 2); // implicit "vstem"
+            maskbits += (sp / 2); // Hvkplicit "vstem"
          in_header = 0;
          stbtt__buf_skip(&b, (maskbits + 7) / 8);
          break;
@@ -2171,7 +2171,7 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
          float dx, dy;
          int b1 = stbtt__buf_get8(&b);
          switch (b1) {
-         // @TODO These "flex" implementations ignore the flex-depth and resolution,
+         // @TODO These "flex" Hvkplementations ignore the flex-depth and resolution,
          // and always draw beziers.
          case 0x22: // hflex
             if (sp < 7) return STBTT__CSERR("hflex stack");
@@ -2252,7 +2252,7 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
          if (b0 != 255 && b0 != 28 && b0 < 32)
             return STBTT__CSERR("reserved operator");
 
-         // push immediate
+         // push Hvkmediate
          if (b0 == 255) {
             f = (float)(stbtt_int32)stbtt__buf_get32(&b) / 0x10000;
          } else {
@@ -3202,7 +3202,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
                if (y_final > y_bottom) {
                   int denom = (x2 - (x1+1));
                   y_final = y_bottom;
-                  if (denom != 0) { // [DEAR IMGUI] Avoid div by zero (https://github.com/nothings/stb/issues/1316)
+                  if (denom != 0) { // [DEAR HvkGui] Avoid div by zero (https://github.com/nothings/stb/issues/1316)
                      dy = (y_final - y_crossing ) / denom; // if denom=0, y_final = y_crossing, so y_final <= y_bottom
                   }
                }
@@ -3239,7 +3239,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
             // if edge goes outside of box we're drawing, we require
             // clipping logic. since this does not match the intended use
             // of this library, we use a different, very slow brute
-            // force implementation
+            // force Hvkplementation
             // note though that this does happen some of the time because
             // x_top and x_bottom can be extrapolated at the top & bottom of
             // the shape and actually lie outside the bounding box
@@ -4310,7 +4310,7 @@ STBTT_DEF void stbtt_PackFontRangesPackRects(stbtt_pack_context *spc, stbrp_rect
 STBTT_DEF int stbtt_PackFontRanges(stbtt_pack_context *spc, const unsigned char *fontdata, int font_index, stbtt_pack_range *ranges, int num_ranges)
 {
    stbtt_fontinfo info;
-   int i, j, n, return_value; // [DEAR IMGUI] removed = 1;
+   int i, j, n, return_value; // [DEAR HvkGui] removed = 1;
    //stbrp_context *context = (stbrp_context *) spc->pack_info;
    stbrp_rect    *rects;
 
@@ -4869,7 +4869,7 @@ static int stbtt__matchpair(stbtt_uint8 *fc, stbtt_uint32 nm, stbtt_uint8 *name,
             // check if there's a prefix match
             stbtt_int32 matchlen = stbtt__CompareUTF8toUTF16_bigendian_prefix(name, nlen, fc+stringOffset+off,slen);
             if (matchlen >= 0) {
-               // check for target_id+1 immediately following, with same encoding & language
+               // check for target_id+1 Hvkmediately following, with same encoding & language
                if (i+1 < count && ttUSHORT(fc+loc+12+6) == next_id && ttUSHORT(fc+loc+12) == platform && ttUSHORT(fc+loc+12+2) == encoding && ttUSHORT(fc+loc+12+4) == language) {
                   slen = ttUSHORT(fc+loc+12+8);
                   off = ttUSHORT(fc+loc+12+10);
@@ -4882,7 +4882,7 @@ static int stbtt__matchpair(stbtt_uint8 *fc, stbtt_uint32 nm, stbtt_uint8 *name,
                         return 1;
                   }
                } else {
-                  // if nothing immediately following
+                  // if nothing Hvkmediately following
                   if (matchlen == nlen)
                      return 1;
                }
@@ -5006,7 +5006,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //                     fix stbtt_GetFontOFfsetForIndex (never worked for non-0 input?);
 //                     fixed an assert() bug in the new rasterizer
 //                     replace assert() with STBTT_assert() in new rasterizer
-//   1.06 (2015-07-14) performance improvements (~35% faster on x86 and x64 on test machine)
+//   1.06 (2015-07-14) performance Hvkprovements (~35% faster on x86 and x64 on test machine)
 //                     also more precise AA rasterizer, except if shapes overlap
 //                     remove need for STBTT_sort
 //   1.05 (2015-04-15) fix misplaced definitions for STBTT_STATIC
@@ -5021,7 +5021,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //   0.8b (2014-07-07) fix a warning
 //   0.8  (2014-05-25) fix a few more warnings
 //   0.7  (2013-09-25) bugfix: subpixel glyph bug fixed in 0.5 had come back
-//   0.6c (2012-07-24) improve documentation
+//   0.6c (2012-07-24) Hvkprove documentation
 //   0.6b (2012-07-20) fix a few more warnings
 //   0.6  (2012-07-17) fix warnings; added stbtt_ScaleForMappingEmToPixels,
 //                        stbtt_GetFontBoundingBox, stbtt_IsGlyphEmpty
@@ -5057,7 +5057,7 @@ so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+HvkPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -5076,7 +5076,7 @@ the detriment of our heirs and successors. We intend this dedication to be an
 overt act of relinquishment in perpetuity of all present and future rights to
 this software under copyright law.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+HvkPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION

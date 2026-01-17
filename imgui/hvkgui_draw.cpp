@@ -5,7 +5,7 @@
 
 Index of this file:
 
-// [SECTION] STB libraries Hvkplementation
+// [SECTION] STB libraries implementation
 // [SECTION] Style functions
 // [SECTION] HvkDrawList
 // [SECTION] HvkTriangulator, HvkDrawList concave polygon fill
@@ -84,7 +84,7 @@ Index of this file:
 #endif
 
 //-------------------------------------------------------------------------
-// [SECTION] STB libraries Hvkplementation (for stb_truetype and stb_rect_pack)
+// [SECTION] STB libraries implementation (for stb_truetype and stb_rect_pack)
 //-------------------------------------------------------------------------
 
 // Compile time options:
@@ -120,10 +120,10 @@ namespace HvkGui_STB_NAMESPACE
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"     // warning: this statement may fall through
 #endif
 
-#ifndef STB_RECT_PACK_IMPLEMENTATION                        // in case the user already have an Hvkplementation in the _same_ compilation unit (e.g. unity builds)
-#ifndef HvkGui_DISABLE_STB_RECT_PACK_IMPLEMENTATION          // in case the user already have an Hvkplementation in another compilation unit
+#ifndef STB_RECT_PACK_IMPLEMENTATION                        // in case the user already have an implementation in the _same_ compilation unit (e.g. unity builds)
+#ifndef HvkGui_DISABLE_STB_RECT_PACK_IMPLEMENTATION          // in case the user already have an implementation in another compilation unit
 #define STBRP_STATIC
-#define STBRP_ASSERT(x)     do { IM_ASSERT(x); } while (0)
+#define STBRP_ASSERT(x)     do { Hvk_ASSERT(x); } while (0)
 #define STBRP_SORT          HvkQsort
 #define STB_RECT_PACK_IMPLEMENTATION
 #endif
@@ -135,11 +135,11 @@ namespace HvkGui_STB_NAMESPACE
 #endif
 
 #ifdef  HvkGui_ENABLE_STB_TRUETYPE
-#ifndef STB_TRUETYPE_IMPLEMENTATION                         // in case the user already have an Hvkplementation in the _same_ compilation unit (e.g. unity builds)
-#ifndef HvkGui_DISABLE_STB_TRUETYPE_IMPLEMENTATION           // in case the user already have an Hvkplementation in another compilation unit
-#define STBTT_malloc(x,u)   ((void)(u), IM_ALLOC(x))
-#define STBTT_free(x,u)     ((void)(u), IM_FREE(x))
-#define STBTT_assert(x)     do { IM_ASSERT(x); } while(0)
+#ifndef STB_TRUETYPE_IMPLEMENTATION                         // in case the user already have an implementation in the _same_ compilation unit (e.g. unity builds)
+#ifndef HvkGui_DISABLE_STB_TRUETYPE_IMPLEMENTATION           // in case the user already have an implementation in another compilation unit
+#define STBTT_malloc(x,u)   ((void)(u), Hvk_ALLOC(x))
+#define STBTT_free(x,u)     ((void)(u), Hvk_FREE(x))
+#define STBTT_assert(x)     do { Hvk_ASSERT(x); } while(0)
 #define STBTT_fmod(x,y)     HvkFmod(x,y)
 #define STBTT_sqrt(x)       HvkSqrt(x)
 #define STBTT_pow(x,y)      HvkPow(x,y)
@@ -391,17 +391,17 @@ HvkDrawListSharedData::HvkDrawListSharedData()
 {
     memset(this, 0, sizeof(*this));
     InitialFringeScale = 1.0f;
-    for (int i = 0; i < IM_ARRAYSIZE(ArcFastVtx); i++)
+    for (int i = 0; i < Hvk_ARRAYSIZE(ArcFastVtx); i++)
     {
-        const float a = ((float)i * 2 * IM_PI) / (float)IM_ARRAYSIZE(ArcFastVtx);
+        const float a = ((float)i * 2 * Hvk_PI) / (float)Hvk_ARRAYSIZE(ArcFastVtx);
         ArcFastVtx[i] = HvkVec2(HvkCos(a), HvkSin(a));
     }
-    ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX, CircleSegmentMaxError);
+    ArcFastRadiusCutoff = Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, CircleSegmentMaxError);
 }
 
 HvkDrawListSharedData::~HvkDrawListSharedData()
 {
-    IM_ASSERT(DrawLists.Size == 0);
+    Hvk_ASSERT(DrawLists.Size == 0);
 }
 
 void HvkDrawListSharedData::SetCircleTessellationMaxError(float max_error)
@@ -409,14 +409,14 @@ void HvkDrawListSharedData::SetCircleTessellationMaxError(float max_error)
     if (CircleSegmentMaxError == max_error)
         return;
 
-    IM_ASSERT(max_error > 0.0f);
+    Hvk_ASSERT(max_error > 0.0f);
     CircleSegmentMaxError = max_error;
-    for (int i = 0; i < IM_ARRAYSIZE(CircleSegmentCounts); i++)
+    for (int i = 0; i < Hvk_ARRAYSIZE(CircleSegmentCounts); i++)
     {
         const float radius = (float)i;
-        CircleSegmentCounts[i] = (HvkU8)((i > 0) ? IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, CircleSegmentMaxError) : IM_DRAWLIST_ARCFAST_SAMPLE_MAX);
+        CircleSegmentCounts[i] = (HvkU8)((i > 0) ? Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, CircleSegmentMaxError) : Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX);
     }
-    ArcFastRadiusCutoff = IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(IM_DRAWLIST_ARCFAST_SAMPLE_MAX, CircleSegmentMaxError);
+    ArcFastRadiusCutoff = Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, CircleSegmentMaxError);
 }
 
 HvkDrawList::HvkDrawList(HvkDrawListSharedData* shared_data)
@@ -445,12 +445,12 @@ void HvkDrawList::_SetDrawListSharedData(HvkDrawListSharedData* data)
 void HvkDrawList::_ResetForNewFrame()
 {
     // Verify that the HvkDrawCmd fields we want to memcmp() are contiguous in memory to match HvkDrawCmdHeader.
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == 0);
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == sizeof(HvkVec4));
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == sizeof(HvkVec4) + sizeof(HvkTextureRef));
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == offsetof(HvkDrawCmdHeader, ClipRect));
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == offsetof(HvkDrawCmdHeader, TexRef));
-    IM_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == offsetof(HvkDrawCmdHeader, VtxOffset));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == 0);
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == sizeof(HvkVec4));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == sizeof(HvkVec4) + sizeof(HvkTextureRef));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == offsetof(HvkDrawCmdHeader, ClipRect));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == offsetof(HvkDrawCmdHeader, TexRef));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == offsetof(HvkDrawCmdHeader, VtxOffset));
     if (_Splitter._Count > 1)
         _Splitter.Merge(this);
 
@@ -490,7 +490,7 @@ void HvkDrawList::_ClearFreeMemory()
 // Note: For multi-threaded rendering, consider using `HvkGui_threaded_rendering` from https://github.com/ocornut/HvkGui_club
 HvkDrawList* HvkDrawList::CloneOutput() const
 {
-    HvkDrawList* dst = IM_NEW(HvkDrawList(NULL));
+    HvkDrawList* dst = Hvk_NEW(HvkDrawList(NULL));
     dst->CmdBuffer = CmdBuffer;
     dst->IdxBuffer = IdxBuffer;
     dst->VtxBuffer = VtxBuffer;
@@ -506,7 +506,7 @@ void HvkDrawList::AddDrawCmd()
     draw_cmd.VtxOffset = _CmdHeader.VtxOffset;
     draw_cmd.IdxOffset = IdxBuffer.Size;
 
-    IM_ASSERT(draw_cmd.ClipRect.x <= draw_cmd.ClipRect.z && draw_cmd.ClipRect.y <= draw_cmd.ClipRect.w);
+    Hvk_ASSERT(draw_cmd.ClipRect.x <= draw_cmd.ClipRect.z && draw_cmd.ClipRect.y <= draw_cmd.ClipRect.w);
     CmdBuffer.push_back(draw_cmd);
 }
 
@@ -525,10 +525,10 @@ void HvkDrawList::_PopUnusedDrawCmd()
 
 void HvkDrawList::AddCallback(HvkDrawCallback callback, void* userdata, size_t userdata_size)
 {
-    IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
     HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
-    IM_ASSERT(callback != NULL);
-    IM_ASSERT(curr_cmd->UserCallback == NULL);
+    Hvk_ASSERT(callback != NULL);
+    Hvk_ASSERT(curr_cmd->UserCallback == NULL);
     if (curr_cmd->ElemCount != 0)
     {
         AddDrawCmd();
@@ -546,8 +546,8 @@ void HvkDrawList::AddCallback(HvkDrawCallback callback, void* userdata, size_t u
     else
     {
         // Copy and store user data in a buffer
-        IM_ASSERT(userdata != NULL);
-        IM_ASSERT(userdata_size < (1u << 31));
+        Hvk_ASSERT(userdata != NULL);
+        Hvk_ASSERT(userdata_size < (1u << 31));
         curr_cmd->UserCallbackData = NULL; // Will be resolved during Render()
         curr_cmd->UserCallbackDataSize = (int)userdata_size;
         curr_cmd->UserCallbackDataOffset = _CallbacksDataBuf.Size;
@@ -567,7 +567,7 @@ void HvkDrawList::AddCallback(HvkDrawCallback callback, void* userdata, size_t u
 // Try to merge two last draw commands
 void HvkDrawList::_TryMergeDrawCmds()
 {
-    IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
     HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
     HvkDrawCmd* prev_cmd = curr_cmd - 1;
     if (HvkDrawCmd_HeaderCompare(curr_cmd, prev_cmd) == 0 && HvkDrawCmd_AreSequentialIdxOffset(prev_cmd, curr_cmd) && curr_cmd->UserCallback == NULL && prev_cmd->UserCallback == NULL)
@@ -582,14 +582,14 @@ void HvkDrawList::_TryMergeDrawCmds()
 void HvkDrawList::_OnChangedClipRect()
 {
     // If current command is used with different settings we need to add a new command
-    IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
     HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
     if (curr_cmd->ElemCount != 0 && memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(HvkVec4)) != 0)
     {
         AddDrawCmd();
         return;
     }
-    IM_ASSERT(curr_cmd->UserCallback == NULL);
+    Hvk_ASSERT(curr_cmd->UserCallback == NULL);
 
     // Try to merge with previous command if it matches, else use current command
     HvkDrawCmd* prev_cmd = curr_cmd - 1;
@@ -604,7 +604,7 @@ void HvkDrawList::_OnChangedClipRect()
 void HvkDrawList::_OnChangedTexture()
 {
     // If current command is used with different settings we need to add a new command
-    IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
     HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
     if (curr_cmd->ElemCount != 0 && curr_cmd->TexRef != _CmdHeader.TexRef)
     {
@@ -630,15 +630,15 @@ void HvkDrawList::_OnChangedVtxOffset()
 {
     // We don't need to compare curr_cmd->VtxOffset != _CmdHeader.VtxOffset because we know it'll be different at the time we call this.
     _VtxCurrentIdx = 0;
-    IM_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
     HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
-    //IM_ASSERT(curr_cmd->VtxOffset != _CmdHeader.VtxOffset); // See #3349
+    //Hvk_ASSERT(curr_cmd->VtxOffset != _CmdHeader.VtxOffset); // See #3349
     if (curr_cmd->ElemCount != 0)
     {
         AddDrawCmd();
         return;
     }
-    IM_ASSERT(curr_cmd->UserCallback == NULL);
+    Hvk_ASSERT(curr_cmd->UserCallback == NULL);
     curr_cmd->VtxOffset = _CmdHeader.VtxOffset;
 }
 
@@ -646,10 +646,10 @@ int HvkDrawList::_CalcCircleAutoSegmentCount(float radius) const
 {
     // Automatic segment count
     const int radius_idx = (int)(radius + 0.999999f); // ceil to never reduce accuracy
-    if (radius_idx >= 0 && radius_idx < IM_ARRAYSIZE(_Data->CircleSegmentCounts))
+    if (radius_idx >= 0 && radius_idx < Hvk_ARRAYSIZE(_Data->CircleSegmentCounts))
         return _Data->CircleSegmentCounts[radius_idx]; // Use cached value
     else
-        return IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, _Data->CircleSegmentMaxError);
+        return Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(radius, _Data->CircleSegmentMaxError);
 }
 
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level HvkGui::PushClipRect() to affect logic (hit-testing and widget culling)
@@ -664,8 +664,8 @@ void HvkDrawList::PushClipRect(const HvkVec2& cr_min, const HvkVec2& cr_max, boo
         if (cr.z > current.z) cr.z = current.z;
         if (cr.w > current.w) cr.w = current.w;
     }
-    cr.z = HvkMax(cr.x, cr.z);
-    cr.w = HvkMax(cr.y, cr.w);
+    cr.z = Immax(cr.x, cr.z);
+    cr.w = Immax(cr.y, cr.w);
 
     _ClipRectStack.push_back(cr);
     _CmdHeader.ClipRect = cr;
@@ -689,7 +689,7 @@ void HvkDrawList::PushTexture(HvkTextureRef tex_ref)
     _TextureStack.push_back(tex_ref);
     _CmdHeader.TexRef = tex_ref;
     if (tex_ref._TexData != NULL)
-        IM_ASSERT(tex_ref._TexData->WantDestroyNextFrame == false);
+        Hvk_ASSERT(tex_ref._TexData->WantDestroyNextFrame == false);
     _OnChangedTexture();
 }
 
@@ -716,7 +716,7 @@ void HvkDrawList::_SetTexture(HvkTextureRef tex_ref)
 void HvkDrawList::PrimReserve(int idx_count, int vtx_count)
 {
     // Large mesh support (when enabled)
-    IM_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
+    Hvk_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
     if (sizeof(HvkDrawIdx) == 2 && (_VtxCurrentIdx + vtx_count >= (1 << 16)) && (Flags & HvkDrawListFlags_AllowVtxOffset))
     {
         // FIXME: In theory we should be testing that vtx_count <64k here.
@@ -741,7 +741,7 @@ void HvkDrawList::PrimReserve(int idx_count, int vtx_count)
 // Release the number of reserved vertices/indices from the end of the last reservation made with PrimReserve().
 void HvkDrawList::PrimUnreserve(int idx_count, int vtx_count)
 {
-    IM_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
+    Hvk_ASSERT_PARANOID(idx_count >= 0 && vtx_count >= 0);
 
     HvkDrawCmd* draw_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
     draw_cmd->ElemCount -= idx_count;
@@ -797,15 +797,15 @@ void HvkDrawList::PrimQuadUV(const HvkVec2& a, const HvkVec2& b, const HvkVec2& 
 // On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using HvkVec2 and superfluous function calls to optimize debug/non-inlined builds.
 // - Those macros expects l-values and need to be used as their own statement.
 // - Those macros are intentionally not surrounded by the 'do {} while (0)' idiom because even that translates to runtime with debug compilers.
-#define IM_NORMALIZE2F_OVER_ZERO(VX,VY)     { float d2 = VX*VX + VY*VY; if (d2 > 0.0f) { float inv_len = HvkRsqrt(d2); VX *= inv_len; VY *= inv_len; } } (void)0
-#define IM_FIXNORMAL2F_MAX_INVLEN2          100.0f // 500.0f (see #4053, #3366)
-#define IM_FIXNORMAL2F(VX,VY)               { float d2 = VX*VX + VY*VY; if (d2 > 0.000001f) { float inv_len2 = 1.0f / d2; if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; VX *= inv_len2; VY *= inv_len2; } } (void)0
+#define Hvk_NORMALIZE2F_OVER_ZERO(VX,VY)     { float d2 = VX*VX + VY*VY; if (d2 > 0.0f) { float inv_len = HvkRsqrt(d2); VX *= inv_len; VY *= inv_len; } } (void)0
+#define Hvk_FIXNORMAL2F_MAX_INVLEN2          100.0f // 500.0f (see #4053, #3366)
+#define Hvk_FIXNORMAL2F(VX,VY)               { float d2 = VX*VX + VY*VY; if (d2 > 0.000001f) { float inv_len2 = 1.0f / d2; if (inv_len2 > Hvk_FIXNORMAL2F_MAX_INVLEN2) inv_len2 = Hvk_FIXNORMAL2F_MAX_INVLEN2; VX *= inv_len2; VY *= inv_len2; } } (void)0
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
 // We avoid using the HvkVec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
 void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, HvkU32 col, HvkDrawFlags flags, float thickness)
 {
-    if (points_count < 2 || (col & IM_COL32_A_MASK) == 0)
+    if (points_count < 2 || (col & Hvk_COL32_A_MASK) == 0)
         return;
 
     const bool closed = (flags & HvkDrawFlags_Closed) != 0;
@@ -817,20 +817,20 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
     {
         // Anti-aliased stroke
         const float AA_SIZE = _FringeScale;
-        const HvkU32 col_trans = col & ~IM_COL32_A_MASK;
+        const HvkU32 col_trans = col & ~Hvk_COL32_A_MASK;
 
         // Thicknesses <1.0 should behave like thickness 1.0
-        thickness = HvkMax(thickness, 1.0f);
+        thickness = Immax(thickness, 1.0f);
         const int integer_thickness = (int)thickness;
         const float fractional_thickness = thickness - integer_thickness;
 
         // Do we want to draw this line using a texture?
         // - For now, only draw integer-width lines using textures to avoid issues with the way scaling occurs, could be Hvkproved.
         // - If AA_SIZE is not 1.0f we cannot use the texture path.
-        const bool use_texture = (Flags & HvkDrawListFlags_AntiAliasedLinesUseTex) && (integer_thickness < IM_DRAWLIST_TEX_LINES_WIDTH_MAX) && (fractional_thickness <= 0.00001f) && (AA_SIZE == 1.0f);
+        const bool use_texture = (Flags & HvkDrawListFlags_AntiAliasedLinesUseTex) && (integer_thickness < Hvk_DRAWLIST_TEX_LINES_WIDTH_MAX) && (fractional_thickness <= 0.00001f) && (AA_SIZE == 1.0f);
 
         // We should never hit this, because NewFrame() doesn't set HvkDrawListFlags_AntiAliasedLinesUseTex unless HvkFontAtlasFlags_NoBakedLines is off
-        IM_ASSERT_PARANOID(!use_texture || !(_Data->Font->OwnerAtlas->Flags & HvkFontAtlasFlags_NoBakedLines));
+        Hvk_ASSERT_PARANOID(!use_texture || !(_Data->Font->OwnerAtlas->Flags & HvkFontAtlasFlags_NoBakedLines));
 
         const int idx_count = use_texture ? (count * 6) : (thick_line ? count * 18 : count * 12);
         const int vtx_count = use_texture ? (points_count * 2) : (thick_line ? points_count * 4 : points_count * 3);
@@ -848,7 +848,7 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
             const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;
             float dx = points[i2].x - points[i1].x;
             float dy = points[i2].y - points[i1].y;
-            IM_NORMALIZE2F_OVER_ZERO(dx, dy);
+            Hvk_NORMALIZE2F_OVER_ZERO(dx, dy);
             temp_normals[i1].x = dy;
             temp_normals[i1].y = -dx;
         }
@@ -889,7 +889,7 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
                 // Average normals
                 float dm_x = (temp_normals[i1].x + temp_normals[i2].x) * 0.5f;
                 float dm_y = (temp_normals[i1].y + temp_normals[i2].y) * 0.5f;
-                IM_FIXNORMAL2F(dm_x, dm_y);
+                Hvk_FIXNORMAL2F(dm_x, dm_y);
                 dm_x *= half_draw_size; // dm_x, dm_y are offset to the outer edge of the AA area
                 dm_y *= half_draw_size;
 
@@ -985,7 +985,7 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
                 // Average normals
                 float dm_x = (temp_normals[i1].x + temp_normals[i2].x) * 0.5f;
                 float dm_y = (temp_normals[i1].y + temp_normals[i2].y) * 0.5f;
-                IM_FIXNORMAL2F(dm_x, dm_y);
+                Hvk_FIXNORMAL2F(dm_x, dm_y);
                 float dm_out_x = dm_x * (half_inner_thickness + AA_SIZE);
                 float dm_out_y = dm_y * (half_inner_thickness + AA_SIZE);
                 float dm_in_x = dm_x * half_inner_thickness;
@@ -1041,7 +1041,7 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
 
             float dx = p2.x - p1.x;
             float dy = p2.y - p1.y;
-            IM_NORMALIZE2F_OVER_ZERO(dx, dy);
+            Hvk_NORMALIZE2F_OVER_ZERO(dx, dy);
             dx *= (thickness * 0.5f);
             dy *= (thickness * 0.5f);
 
@@ -1063,7 +1063,7 @@ void HvkDrawList::AddPolyline(const HvkVec2* points, const int points_count, Hvk
 // - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
 void HvkDrawList::AddConvexPolyFilled(const HvkVec2* points, const int points_count, HvkU32 col)
 {
-    if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
+    if (points_count < 3 || (col & Hvk_COL32_A_MASK) == 0)
         return;
 
     const HvkVec2 uv = _Data->TexUvWhitePixel;
@@ -1072,7 +1072,7 @@ void HvkDrawList::AddConvexPolyFilled(const HvkVec2* points, const int points_co
     {
         // Anti-aliased Fill
         const float AA_SIZE = _FringeScale;
-        const HvkU32 col_trans = col & ~IM_COL32_A_MASK;
+        const HvkU32 col_trans = col & ~Hvk_COL32_A_MASK;
         const int idx_count = (points_count - 2)*3 + points_count * 6;
         const int vtx_count = (points_count * 2);
         PrimReserve(idx_count, vtx_count);
@@ -1095,7 +1095,7 @@ void HvkDrawList::AddConvexPolyFilled(const HvkVec2* points, const int points_co
             const HvkVec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
-            IM_NORMALIZE2F_OVER_ZERO(dx, dy);
+            Hvk_NORMALIZE2F_OVER_ZERO(dx, dy);
             temp_normals[i0].x = dy;
             temp_normals[i0].y = -dx;
         }
@@ -1107,7 +1107,7 @@ void HvkDrawList::AddConvexPolyFilled(const HvkVec2* points, const int points_co
             const HvkVec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
-            IM_FIXNORMAL2F(dm_x, dm_y);
+            Hvk_FIXNORMAL2F(dm_x, dm_y);
             dm_x *= AA_SIZE * 0.5f;
             dm_y *= AA_SIZE * 0.5f;
 
@@ -1153,10 +1153,10 @@ void HvkDrawList::_PathArcToFastEx(const HvkVec2& center, float radius, int a_mi
 
     // Calculate arc auto segment step size
     if (a_step <= 0)
-        a_step = IM_DRAWLIST_ARCFAST_SAMPLE_MAX / _CalcCircleAutoSegmentCount(radius);
+        a_step = Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX / _CalcCircleAutoSegmentCount(radius);
 
     // Make sure we never do steps larger than one quarter of the circle
-    a_step = HvkClamp(a_step, 1, IM_DRAWLIST_ARCFAST_TABLE_SIZE / 4);
+    a_step = HvkClamp(a_step, 1, Hvk_DRAWLIST_ARCFAST_TABLE_SIZE / 4);
 
     const int sample_range = HvkAbs(a_max_sample - a_min_sample);
     const int a_next_step = a_step;
@@ -1184,20 +1184,20 @@ void HvkDrawList::_PathArcToFastEx(const HvkVec2& center, float radius, int a_mi
     HvkVec2* out_ptr = _Path.Data + (_Path.Size - samples);
 
     int sample_index = a_min_sample;
-    if (sample_index < 0 || sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
+    if (sample_index < 0 || sample_index >= Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX)
     {
-        sample_index = sample_index % IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+        sample_index = sample_index % Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
         if (sample_index < 0)
-            sample_index += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+            sample_index += Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
     }
 
     if (a_max_sample >= a_min_sample)
     {
         for (int a = a_min_sample; a <= a_max_sample; a += a_step, sample_index += a_step, a_step = a_next_step)
         {
-            // a_step is clamped to IM_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will not wrap over range twice or more
-            if (sample_index >= IM_DRAWLIST_ARCFAST_SAMPLE_MAX)
-                sample_index -= IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+            // a_step is clamped to Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will not wrap over range twice or more
+            if (sample_index >= Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX)
+                sample_index -= Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
             const HvkVec2 s = _Data->ArcFastVtx[sample_index];
             out_ptr->x = center.x + s.x * radius;
@@ -1209,9 +1209,9 @@ void HvkDrawList::_PathArcToFastEx(const HvkVec2& center, float radius, int a_mi
     {
         for (int a = a_min_sample; a >= a_max_sample; a -= a_step, sample_index -= a_step, a_step = a_next_step)
         {
-            // a_step is clamped to IM_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will not wrap over range twice or more
+            // a_step is clamped to Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will not wrap over range twice or more
             if (sample_index < 0)
-                sample_index += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+                sample_index += Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
             const HvkVec2 s = _Data->ArcFastVtx[sample_index];
             out_ptr->x = center.x + s.x * radius;
@@ -1222,9 +1222,9 @@ void HvkDrawList::_PathArcToFastEx(const HvkVec2& center, float radius, int a_mi
 
     if (extra_max_sample)
     {
-        int normalized_max_sample = a_max_sample % IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+        int normalized_max_sample = a_max_sample % Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
         if (normalized_max_sample < 0)
-            normalized_max_sample += IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+            normalized_max_sample += Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
         const HvkVec2 s = _Data->ArcFastVtx[normalized_max_sample];
         out_ptr->x = center.x + s.x * radius;
@@ -1232,7 +1232,7 @@ void HvkDrawList::_PathArcToFastEx(const HvkVec2& center, float radius, int a_mi
         out_ptr++;
     }
 
-    IM_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
+    Hvk_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
 void HvkDrawList::_PathArcToN(const HvkVec2& center, float radius, float a_min, float a_max, int num_segments)
@@ -1261,7 +1261,7 @@ void HvkDrawList::PathArcToFast(const HvkVec2& center, float radius, int a_min_o
         _Path.push_back(center);
         return;
     }
-    _PathArcToFastEx(center, radius, a_min_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, a_max_of_12 * IM_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, 0);
+    _PathArcToFastEx(center, radius, a_min_of_12 * Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, a_max_of_12 * Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX / 12, 0);
 }
 
 void HvkDrawList::PathArcTo(const HvkVec2& center, float radius, float a_min, float a_max, int num_segments)
@@ -1285,15 +1285,15 @@ void HvkDrawList::PathArcTo(const HvkVec2& center, float radius, float a_min, fl
 
         // We are going to use precomputed values for mid samples.
         // Determine first and last sample in lookup table that belong to the arc.
-        const float a_min_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (IM_PI * 2.0f);
-        const float a_max_sample_f = IM_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (IM_PI * 2.0f);
+        const float a_min_sample_f = Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (Hvk_PI * 2.0f);
+        const float a_max_sample_f = Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (Hvk_PI * 2.0f);
 
         const int a_min_sample = a_is_reverse ? (int)HvkFloor(a_min_sample_f) : (int)HvkCeil(a_min_sample_f);
         const int a_max_sample = a_is_reverse ? (int)HvkCeil(a_max_sample_f) : (int)HvkFloor(a_max_sample_f);
-        const int a_mid_samples = a_is_reverse ? HvkMax(a_min_sample - a_max_sample, 0) : HvkMax(a_max_sample - a_min_sample, 0);
+        const int a_mid_samples = a_is_reverse ? Immax(a_min_sample - a_max_sample, 0) : Immax(a_max_sample - a_min_sample, 0);
 
-        const float a_min_segment_angle = a_min_sample * IM_PI * 2.0f / IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
-        const float a_max_segment_angle = a_max_sample * IM_PI * 2.0f / IM_DRAWLIST_ARCFAST_SAMPLE_MAX;
+        const float a_min_segment_angle = a_min_sample * Hvk_PI * 2.0f / Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
+        const float a_max_segment_angle = a_max_sample * Hvk_PI * 2.0f / Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX;
         const bool a_emit_start = HvkAbs(a_min_segment_angle - a_min) >= 1e-5f;
         const bool a_emit_end = HvkAbs(a_max - a_max_segment_angle) >= 1e-5f;
 
@@ -1309,7 +1309,7 @@ void HvkDrawList::PathArcTo(const HvkVec2& center, float radius, float a_min, fl
     {
         const float arc_length = HvkAbs(a_max - a_min);
         const int circle_segment_count = _CalcCircleAutoSegmentCount(radius);
-        const int arc_segment_count = HvkMax((int)HvkCeil(circle_segment_count * arc_length / (IM_PI * 2.0f)), (int)(2.0f * IM_PI / arc_length));
+        const int arc_segment_count = Immax((int)HvkCeil(circle_segment_count * arc_length / (Hvk_PI * 2.0f)), (int)(2.0f * Hvk_PI / arc_length));
         _PathArcToN(center, radius, a_min, a_max, arc_segment_count);
     }
 }
@@ -1317,7 +1317,7 @@ void HvkDrawList::PathArcTo(const HvkVec2& center, float radius, float a_min, fl
 void HvkDrawList::PathEllipticalArcTo(const HvkVec2& center, const HvkVec2& radius, float rot, float a_min, float a_max, int num_segments)
 {
     if (num_segments <= 0)
-        num_segments = _CalcCircleAutoSegmentCount(HvkMax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
+        num_segments = _CalcCircleAutoSegmentCount(Immax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
 
     _Path.reserve(_Path.Size + (num_segments + 1));
 
@@ -1402,7 +1402,7 @@ void HvkDrawList::PathBezierCubicCurveTo(const HvkVec2& p2, const HvkVec2& p3, c
     HvkVec2 p1 = _Path.back();
     if (num_segments == 0)
     {
-        IM_ASSERT(_Data->CurveTessellationTol > 0.0f);
+        Hvk_ASSERT(_Data->CurveTessellationTol > 0.0f);
         PathBezierCubicCurveToCasteljau(&_Path, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, _Data->CurveTessellationTol, 0); // Auto-tessellated
     }
     else
@@ -1418,7 +1418,7 @@ void HvkDrawList::PathBezierQuadraticCurveTo(const HvkVec2& p2, const HvkVec2& p
     HvkVec2 p1 = _Path.back();
     if (num_segments == 0)
     {
-        IM_ASSERT(_Data->CurveTessellationTol > 0.0f);
+        Hvk_ASSERT(_Data->CurveTessellationTol > 0.0f);
         PathBezierQuadraticCurveToCasteljau(&_Path, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, _Data->CurveTessellationTol, 0);// Auto-tessellated
     }
     else
@@ -1432,7 +1432,7 @@ void HvkDrawList::PathBezierQuadraticCurveTo(const HvkVec2& p2, const HvkVec2& p
 static inline HvkDrawFlags FixRectCornerFlags(HvkDrawFlags flags)
 {
     /*
-    IM_STATIC_ASSERT(HvkDrawFlags_RoundCornersTopLeft == (1 << 4));
+    Hvk_STATIC_ASSERT(HvkDrawFlags_RoundCornersTopLeft == (1 << 4));
 #ifndef HvkGui_DISABLE_OBSOLETE_FUNCTIONS
     // Obsoleted in 1.82 (from February 2021). This code was stripped/simplified and mostly commented in 1.90 (from September 2023)
     // - Legacy Support for hard coded ~0 (used to be a suggested equivalent to HvkDrawCornerFlags_All)
@@ -1445,7 +1445,7 @@ static inline HvkDrawFlags FixRectCornerFlags(HvkDrawFlags flags)
     // If this assert triggers, please update your code replacing hardcoded values with new HvkDrawFlags_RoundCorners* values.
     // Note that HvkDrawFlags_Closed (== 0x01) is an invalid flag for AddRect(), AddRectFilled(), PathRect() etc. anyway.
     // See details in 1.82 Changelog as well as 2021/03/12 and 2023/09/08 entries in "API BREAKING CHANGES" section.
-    IM_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded HvkDrawCornerFlags values!");
+    Hvk_ASSERT((flags & 0x0F) == 0 && "Misuse of legacy hardcoded HvkDrawCornerFlags values!");
 
     if ((flags & HvkDrawFlags_RoundCornersMask_) == 0)
         flags |= HvkDrawFlags_RoundCornersAll;
@@ -1458,8 +1458,8 @@ void HvkDrawList::PathRect(const HvkVec2& a, const HvkVec2& b, float rounding, H
     if (rounding >= 0.5f)
     {
         flags = FixRectCornerFlags(flags);
-        rounding = HvkMin(rounding, HvkFabs(b.x - a.x) * (((flags & HvkDrawFlags_RoundCornersTop) == HvkDrawFlags_RoundCornersTop) || ((flags & HvkDrawFlags_RoundCornersBottom) == HvkDrawFlags_RoundCornersBottom) ? 0.5f : 1.0f) - 1.0f);
-        rounding = HvkMin(rounding, HvkFabs(b.y - a.y) * (((flags & HvkDrawFlags_RoundCornersLeft) == HvkDrawFlags_RoundCornersLeft) || ((flags & HvkDrawFlags_RoundCornersRight) == HvkDrawFlags_RoundCornersRight) ? 0.5f : 1.0f) - 1.0f);
+        rounding = Immin(rounding, HvkFabs(b.x - a.x) * (((flags & HvkDrawFlags_RoundCornersTop) == HvkDrawFlags_RoundCornersTop) || ((flags & HvkDrawFlags_RoundCornersBottom) == HvkDrawFlags_RoundCornersBottom) ? 0.5f : 1.0f) - 1.0f);
+        rounding = Immin(rounding, HvkFabs(b.y - a.y) * (((flags & HvkDrawFlags_RoundCornersLeft) == HvkDrawFlags_RoundCornersLeft) || ((flags & HvkDrawFlags_RoundCornersRight) == HvkDrawFlags_RoundCornersRight) ? 0.5f : 1.0f) - 1.0f);
     }
     if (rounding < 0.5f || (flags & HvkDrawFlags_RoundCornersMask_) == HvkDrawFlags_RoundCornersNone)
     {
@@ -1483,7 +1483,7 @@ void HvkDrawList::PathRect(const HvkVec2& a, const HvkVec2& b, float rounding, H
 
 void HvkDrawList::AddLine(const HvkVec2& p1, const HvkVec2& p2, HvkU32 col, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
     PathLineTo(p1 + HvkVec2(0.5f, 0.5f));
     PathLineTo(p2 + HvkVec2(0.5f, 0.5f));
@@ -1494,7 +1494,7 @@ void HvkDrawList::AddLine(const HvkVec2& p1, const HvkVec2& p2, HvkU32 col, floa
 // Note we don't render 1 pixels sized rectangles properly.
 void HvkDrawList::AddRect(const HvkVec2& p_min, const HvkVec2& p_max, HvkU32 col, float rounding, HvkDrawFlags flags, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
     if (Flags & HvkDrawListFlags_AntiAliasedLines)
         PathRect(p_min + HvkVec2(0.50f, 0.50f), p_max - HvkVec2(0.50f, 0.50f), rounding, flags);
@@ -1505,7 +1505,7 @@ void HvkDrawList::AddRect(const HvkVec2& p_min, const HvkVec2& p_max, HvkU32 col
 
 void HvkDrawList::AddRectFilled(const HvkVec2& p_min, const HvkVec2& p_max, HvkU32 col, float rounding, HvkDrawFlags flags)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
     if (rounding < 0.5f || (flags & HvkDrawFlags_RoundCornersMask_) == HvkDrawFlags_RoundCornersNone)
     {
@@ -1522,7 +1522,7 @@ void HvkDrawList::AddRectFilled(const HvkVec2& p_min, const HvkVec2& p_max, HvkU
 // p_min = upper-left, p_max = lower-right
 void HvkDrawList::AddRectFilledMultiColor(const HvkVec2& p_min, const HvkVec2& p_max, HvkU32 col_upr_left, HvkU32 col_upr_right, HvkU32 col_bot_right, HvkU32 col_bot_left)
 {
-    if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & IM_COL32_A_MASK) == 0)
+    if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & Hvk_COL32_A_MASK) == 0)
         return;
 
     const HvkVec2 uv = _Data->TexUvWhitePixel;
@@ -1537,7 +1537,7 @@ void HvkDrawList::AddRectFilledMultiColor(const HvkVec2& p_min, const HvkVec2& p
 
 void HvkDrawList::AddQuad(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, const HvkVec2& p4, HvkU32 col, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1549,7 +1549,7 @@ void HvkDrawList::AddQuad(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p
 
 void HvkDrawList::AddQuadFilled(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, const HvkVec2& p4, HvkU32 col)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1561,7 +1561,7 @@ void HvkDrawList::AddQuadFilled(const HvkVec2& p1, const HvkVec2& p2, const HvkV
 
 void HvkDrawList::AddTriangle(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, HvkU32 col, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1572,7 +1572,7 @@ void HvkDrawList::AddTriangle(const HvkVec2& p1, const HvkVec2& p2, const HvkVec
 
 void HvkDrawList::AddTriangleFilled(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, HvkU32 col)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1583,22 +1583,22 @@ void HvkDrawList::AddTriangleFilled(const HvkVec2& p1, const HvkVec2& p2, const 
 
 void HvkDrawList::AddCircle(const HvkVec2& center, float radius, HvkU32 col, int num_segments, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
+    if ((col & Hvk_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
 
     if (num_segments <= 0)
     {
         // Use arc with automatic segment count
-        _PathArcToFastEx(center, radius - 0.5f, 0, IM_DRAWLIST_ARCFAST_SAMPLE_MAX, 0);
+        _PathArcToFastEx(center, radius - 0.5f, 0, Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, 0);
         _Path.Size--;
     }
     else
     {
         // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
-        num_segments = HvkClamp(num_segments, 3, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
+        num_segments = HvkClamp(num_segments, 3, Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
 
         // Because we are filling a closed shape we remove 1 from the count of segments/points
-        const float a_max = (IM_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
+        const float a_max = (Hvk_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
         PathArcTo(center, radius - 0.5f, 0.0f, a_max, num_segments - 1);
     }
 
@@ -1607,22 +1607,22 @@ void HvkDrawList::AddCircle(const HvkVec2& center, float radius, HvkU32 col, int
 
 void HvkDrawList::AddCircleFilled(const HvkVec2& center, float radius, HvkU32 col, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
+    if ((col & Hvk_COL32_A_MASK) == 0 || radius < 0.5f)
         return;
 
     if (num_segments <= 0)
     {
         // Use arc with automatic segment count
-        _PathArcToFastEx(center, radius, 0, IM_DRAWLIST_ARCFAST_SAMPLE_MAX, 0);
+        _PathArcToFastEx(center, radius, 0, Hvk_DRAWLIST_ARCFAST_SAMPLE_MAX, 0);
         _Path.Size--;
     }
     else
     {
         // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
-        num_segments = HvkClamp(num_segments, 3, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
+        num_segments = HvkClamp(num_segments, 3, Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
 
         // Because we are filling a closed shape we remove 1 from the count of segments/points
-        const float a_max = (IM_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
+        const float a_max = (Hvk_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
         PathArcTo(center, radius, 0.0f, a_max, num_segments - 1);
     }
 
@@ -1632,11 +1632,11 @@ void HvkDrawList::AddCircleFilled(const HvkVec2& center, float radius, HvkU32 co
 // Guaranteed to honor 'num_segments'
 void HvkDrawList::AddNgon(const HvkVec2& center, float radius, HvkU32 col, int num_segments, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
+    if ((col & Hvk_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
-    const float a_max = (IM_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
+    const float a_max = (Hvk_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
     PathArcTo(center, radius - 0.5f, 0.0f, a_max, num_segments - 1);
     PathStroke(col, HvkDrawFlags_Closed, thickness);
 }
@@ -1644,11 +1644,11 @@ void HvkDrawList::AddNgon(const HvkVec2& center, float radius, HvkU32 col, int n
 // Guaranteed to honor 'num_segments'
 void HvkDrawList::AddNgonFilled(const HvkVec2& center, float radius, HvkU32 col, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
+    if ((col & Hvk_COL32_A_MASK) == 0 || num_segments <= 2)
         return;
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
-    const float a_max = (IM_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
+    const float a_max = (Hvk_PI * 2.0f) * ((float)num_segments - 1.0f) / (float)num_segments;
     PathArcTo(center, radius, 0.0f, a_max, num_segments - 1);
     PathFillConvex(col);
 }
@@ -1656,28 +1656,28 @@ void HvkDrawList::AddNgonFilled(const HvkVec2& center, float radius, HvkU32 col,
 // Ellipse
 void HvkDrawList::AddEllipse(const HvkVec2& center, const HvkVec2& radius, HvkU32 col, float rot, int num_segments, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     if (num_segments <= 0)
-        num_segments = _CalcCircleAutoSegmentCount(HvkMax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
+        num_segments = _CalcCircleAutoSegmentCount(Immax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
-    const float a_max = IM_PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
+    const float a_max = Hvk_PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
     PathEllipticalArcTo(center, radius, rot, 0.0f, a_max, num_segments - 1);
     PathStroke(col, true, thickness);
 }
 
 void HvkDrawList::AddEllipseFilled(const HvkVec2& center, const HvkVec2& radius, HvkU32 col, float rot, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     if (num_segments <= 0)
-        num_segments = _CalcCircleAutoSegmentCount(HvkMax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
+        num_segments = _CalcCircleAutoSegmentCount(Immax(radius.x, radius.y)); // A bit pessimistic, maybe there's a better computation to do here.
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
-    const float a_max = IM_PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
+    const float a_max = Hvk_PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
     PathEllipticalArcTo(center, radius, rot, 0.0f, a_max, num_segments - 1);
     PathFillConvex(col);
 }
@@ -1685,7 +1685,7 @@ void HvkDrawList::AddEllipseFilled(const HvkVec2& center, const HvkVec2& radius,
 // Cubic Bezier takes 4 controls points
 void HvkDrawList::AddBezierCubic(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, const HvkVec2& p4, HvkU32 col, float thickness, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1696,7 +1696,7 @@ void HvkDrawList::AddBezierCubic(const HvkVec2& p1, const HvkVec2& p2, const Hvk
 // Quadratic Bezier takes 3 controls points
 void HvkDrawList::AddBezierQuadratic(const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, HvkU32 col, float thickness, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     PathLineTo(p1);
@@ -1706,7 +1706,7 @@ void HvkDrawList::AddBezierQuadratic(const HvkVec2& p1, const HvkVec2& p2, const
 
 void HvkDrawList::AddText(HvkFont* font, float font_size, const HvkVec2& pos, HvkU32 col, const char* text_begin, const char* text_end, float wrap_width, const HvkVec4* cpu_fine_clip_rect)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     // Accept null ranges
@@ -1723,10 +1723,10 @@ void HvkDrawList::AddText(HvkFont* font, float font_size, const HvkVec2& pos, Hv
     HvkVec4 clip_rect = _CmdHeader.ClipRect;
     if (cpu_fine_clip_rect)
     {
-        clip_rect.x = HvkMax(clip_rect.x, cpu_fine_clip_rect->x);
-        clip_rect.y = HvkMax(clip_rect.y, cpu_fine_clip_rect->y);
-        clip_rect.z = HvkMin(clip_rect.z, cpu_fine_clip_rect->z);
-        clip_rect.w = HvkMin(clip_rect.w, cpu_fine_clip_rect->w);
+        clip_rect.x = Immax(clip_rect.x, cpu_fine_clip_rect->x);
+        clip_rect.y = Immax(clip_rect.y, cpu_fine_clip_rect->y);
+        clip_rect.z = Immin(clip_rect.z, cpu_fine_clip_rect->z);
+        clip_rect.w = Immin(clip_rect.w, cpu_fine_clip_rect->w);
     }
     font->RenderText(this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, (cpu_fine_clip_rect != NULL) ? HvkDrawTextFlags_CpuFineClip : HvkDrawTextFlags_None);
 }
@@ -1738,7 +1738,7 @@ void HvkDrawList::AddText(const HvkVec2& pos, HvkU32 col, const char* text_begin
 
 void HvkDrawList::AddImage(HvkTextureRef tex_ref, const HvkVec2& p_min, const HvkVec2& p_max, const HvkVec2& uv_min, const HvkVec2& uv_max, HvkU32 col)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     const bool push_texture_id = tex_ref != _CmdHeader.TexRef;
@@ -1754,7 +1754,7 @@ void HvkDrawList::AddImage(HvkTextureRef tex_ref, const HvkVec2& p_min, const Hv
 
 void HvkDrawList::AddImageQuad(HvkTextureRef tex_ref, const HvkVec2& p1, const HvkVec2& p2, const HvkVec2& p3, const HvkVec2& p4, const HvkVec2& uv1, const HvkVec2& uv2, const HvkVec2& uv3, const HvkVec2& uv4, HvkU32 col)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     const bool push_texture_id = tex_ref != _CmdHeader.TexRef;
@@ -1770,7 +1770,7 @@ void HvkDrawList::AddImageQuad(HvkTextureRef tex_ref, const HvkVec2& p1, const H
 
 void HvkDrawList::AddImageRounded(HvkTextureRef tex_ref, const HvkVec2& p_min, const HvkVec2& p_max, const HvkVec2& uv_min, const HvkVec2& uv_max, HvkU32 col, float rounding, HvkDrawFlags flags)
 {
-    if ((col & IM_COL32_A_MASK) == 0)
+    if ((col & Hvk_COL32_A_MASK) == 0)
         return;
 
     flags = FixRectCornerFlags(flags);
@@ -1860,7 +1860,7 @@ struct HvkTriangulator
 // (this would require first building reflexes to bail to convex if empty, without even building nodes)
 void HvkTriangulator::Init(const HvkVec2* points, int points_count, void* scratch_buffer)
 {
-    IM_ASSERT(scratch_buffer != NULL && points_count >= 3);
+    Hvk_ASSERT(scratch_buffer != NULL && points_count >= 3);
     _TrianglesLeft = EstimateTriangleCount(points_count);
     _Nodes         = (HvkTriangulatorNode*)scratch_buffer;                          // points_count x Node
     _Ears.Data     = (HvkTriangulatorNode**)(_Nodes + points_count);                // points_count x Node*
@@ -1927,7 +1927,7 @@ void HvkTriangulator::GetNextTriangle(unsigned int out_triangle[3])
         if (_Ears.Size == 0)
         {
             // Return first triangle available, mimicking the behavior of convex fill.
-            IM_ASSERT(_TrianglesLeft > 0); // Geometry is degenerated
+            Hvk_ASSERT(_TrianglesLeft > 0); // Geometry is degenerated
             _Ears.Data[0] = _Nodes;
             _Ears.Size    = 1;
         }
@@ -2017,7 +2017,7 @@ void HvkTriangulator::ReclassifyNode(HvkTriangulatorNode* n1)
 // Caller can build AABB of points, and avoid filling if 'draw_list->_CmdHeader.ClipRect.Overlays(points_bb) == false')
 void HvkDrawList::AddConcavePolyFilled(const HvkVec2* points, const int points_count, HvkU32 col)
 {
-    if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
+    if (points_count < 3 || (col & Hvk_COL32_A_MASK) == 0)
         return;
 
     const HvkVec2 uv = _Data->TexUvWhitePixel;
@@ -2027,7 +2027,7 @@ void HvkDrawList::AddConcavePolyFilled(const HvkVec2* points, const int points_c
     {
         // Anti-aliased Fill
         const float AA_SIZE = _FringeScale;
-        const HvkU32 col_trans = col & ~IM_COL32_A_MASK;
+        const HvkU32 col_trans = col & ~Hvk_COL32_A_MASK;
         const int idx_count = (points_count - 2) * 3 + points_count * 6;
         const int vtx_count = (points_count * 2);
         PrimReserve(idx_count, vtx_count);
@@ -2054,7 +2054,7 @@ void HvkDrawList::AddConcavePolyFilled(const HvkVec2* points, const int points_c
             const HvkVec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
-            IM_NORMALIZE2F_OVER_ZERO(dx, dy);
+            Hvk_NORMALIZE2F_OVER_ZERO(dx, dy);
             temp_normals[i0].x = dy;
             temp_normals[i0].y = -dx;
         }
@@ -2066,7 +2066,7 @@ void HvkDrawList::AddConcavePolyFilled(const HvkVec2* points, const int points_c
             const HvkVec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
-            IM_FIXNORMAL2F(dm_x, dm_y);
+            Hvk_FIXNORMAL2F(dm_x, dm_y);
             dm_x *= AA_SIZE * 0.5f;
             dm_y *= AA_SIZE * 0.5f;
 
@@ -2127,8 +2127,8 @@ void HvkDrawListSplitter::ClearFreeMemory()
 
 void HvkDrawListSplitter::Split(HvkDrawList* draw_list, int channels_count)
 {
-    IM_UNUSED(draw_list);
-    IM_ASSERT(_Current == 0 && _Count <= 1 && "Nested channel splitting is not supported. Please use separate instances of HvkDrawListSplitter.");
+    Hvk_UNUSED(draw_list);
+    Hvk_ASSERT(_Current == 0 && _Count <= 1 && "Nested channel splitting is not supported. Please use separate instances of HvkDrawListSplitter.");
     int old_channels_count = _Channels.Size;
     if (old_channels_count < channels_count)
     {
@@ -2145,7 +2145,7 @@ void HvkDrawListSplitter::Split(HvkDrawList* draw_list, int channels_count)
     {
         if (i >= old_channels_count)
         {
-            IM_PLACEMENT_NEW(&_Channels[i]) HvkDrawChannel();
+            Hvk_PLACEMENT_NEW(&_Channels[i]) HvkDrawChannel();
         }
         else
         {
@@ -2228,7 +2228,7 @@ void HvkDrawListSplitter::Merge(HvkDrawList* draw_list)
 
 void HvkDrawListSplitter::SetCurrentChannel(HvkDrawList* draw_list, int idx)
 {
-    IM_ASSERT(idx >= 0 && idx < _Count);
+    Hvk_ASSERT(idx >= 0 && idx < _Count);
     if (_Current == idx)
         return;
 
@@ -2275,10 +2275,10 @@ void HvkGui::AddDrawListToDrawDataEx(HvkDrawData* draw_data, HvkVector<HvkDrawLi
 
     // Draw list sanity check. Detect mismatch between PrimReserve() calls and incrementing _VtxCurrentIdx, _VtxWritePtr etc.
     // May trigger for you if you are using PrimXXX functions incorrectly.
-    IM_ASSERT(draw_list->VtxBuffer.Size == 0 || draw_list->_VtxWritePtr == draw_list->VtxBuffer.Data + draw_list->VtxBuffer.Size);
-    IM_ASSERT(draw_list->IdxBuffer.Size == 0 || draw_list->_IdxWritePtr == draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size);
+    Hvk_ASSERT(draw_list->VtxBuffer.Size == 0 || draw_list->_VtxWritePtr == draw_list->VtxBuffer.Data + draw_list->VtxBuffer.Size);
+    Hvk_ASSERT(draw_list->IdxBuffer.Size == 0 || draw_list->_IdxWritePtr == draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size);
     if (!(draw_list->Flags & HvkDrawListFlags_AllowVtxOffset))
-        IM_ASSERT((int)draw_list->_VtxCurrentIdx == draw_list->VtxBuffer.Size);
+        Hvk_ASSERT((int)draw_list->_VtxCurrentIdx == draw_list->VtxBuffer.Size);
 
     // Check that draw_list doesn't use more vertices than indexable (default HvkDrawIdx = unsigned short = 2 bytes = 64K vertices per HvkDrawList = per window)
     // If this assert triggers because you are drawing lots of stuff manually:
@@ -2296,7 +2296,7 @@ void HvkGui::AddDrawListToDrawDataEx(HvkDrawData* draw_data, HvkVector<HvkDrawLi
     // - If for some reason neither of those solutions works for you, a workaround is to call BeginChild()/EndChild() before reaching
     //   the 64K limit to split your draw commands in multiple draw lists.
     if (sizeof(HvkDrawIdx) == 2)
-        IM_ASSERT(draw_list->_VtxCurrentIdx < (1 << 16) && "Too many vertices in HvkDrawList using 16-bit indices. Read comment above");
+        Hvk_ASSERT(draw_list->_VtxCurrentIdx < (1 << 16) && "Too many vertices in HvkDrawList using 16-bit indices. Read comment above");
 
     // Resolve callback data pointers
     if (draw_list->_CallbacksDataBuf.Size > 0)
@@ -2313,7 +2313,7 @@ void HvkGui::AddDrawListToDrawDataEx(HvkDrawData* draw_data, HvkVector<HvkDrawLi
 
 void HvkDrawData::AddDrawList(HvkDrawList* draw_list)
 {
-    IM_ASSERT(CmdLists.Size == CmdListsCount);
+    Hvk_ASSERT(CmdLists.Size == CmdListsCount);
     draw_list->_PopUnusedDrawCmd();
     HvkGui::AddDrawListToDrawDataEx(this, &CmdLists, draw_list);
 }
@@ -2357,12 +2357,12 @@ void HvkGui::ShadeVertsLinearColorGradientKeepAlpha(HvkDrawList* draw_list, int 
     float gradient_inv_length2 = 1.0f / HvkLengthSqr(gradient_extent);
     HvkDrawVert* vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
     HvkDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
-    const int col0_r = (int)(col0 >> IM_COL32_R_SHIFT) & 0xFF;
-    const int col0_g = (int)(col0 >> IM_COL32_G_SHIFT) & 0xFF;
-    const int col0_b = (int)(col0 >> IM_COL32_B_SHIFT) & 0xFF;
-    const int col_delta_r = ((int)(col1 >> IM_COL32_R_SHIFT) & 0xFF) - col0_r;
-    const int col_delta_g = ((int)(col1 >> IM_COL32_G_SHIFT) & 0xFF) - col0_g;
-    const int col_delta_b = ((int)(col1 >> IM_COL32_B_SHIFT) & 0xFF) - col0_b;
+    const int col0_r = (int)(col0 >> Hvk_COL32_R_SHIFT) & 0xFF;
+    const int col0_g = (int)(col0 >> Hvk_COL32_G_SHIFT) & 0xFF;
+    const int col0_b = (int)(col0 >> Hvk_COL32_B_SHIFT) & 0xFF;
+    const int col_delta_r = ((int)(col1 >> Hvk_COL32_R_SHIFT) & 0xFF) - col0_r;
+    const int col_delta_g = ((int)(col1 >> Hvk_COL32_G_SHIFT) & 0xFF) - col0_g;
+    const int col_delta_b = ((int)(col1 >> Hvk_COL32_B_SHIFT) & 0xFF) - col0_b;
     for (HvkDrawVert* vert = vert_start; vert < vert_end; vert++)
     {
         float d = HvkDot(vert->pos - gradient_p0, gradient_extent);
@@ -2370,7 +2370,7 @@ void HvkGui::ShadeVertsLinearColorGradientKeepAlpha(HvkDrawList* draw_list, int 
         int r = (int)(col0_r + col_delta_r * t);
         int g = (int)(col0_g + col_delta_g * t);
         int b = (int)(col0_b + col_delta_b * t);
-        vert->col = (r << IM_COL32_R_SHIFT) | (g << IM_COL32_G_SHIFT) | (b << IM_COL32_B_SHIFT) | (vert->col & IM_COL32_A_MASK);
+        vert->col = (r << Hvk_COL32_R_SHIFT) | (g << Hvk_COL32_G_SHIFT) | (b << Hvk_COL32_B_SHIFT) | (vert->col & Hvk_COL32_A_MASK);
     }
 }
 
@@ -2387,15 +2387,15 @@ void HvkGui::ShadeVertsLinearUV(HvkDrawList* draw_list, int vert_start_idx, int 
     HvkDrawVert* vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
     if (clamp)
     {
-        const HvkVec2 min = HvkMin(uv_a, uv_b);
-        const HvkVec2 max = HvkMax(uv_a, uv_b);
+        const HvkVec2 min = Immin(uv_a, uv_b);
+        const HvkVec2 max = Immax(uv_a, uv_b);
         for (HvkDrawVert* vertex = vert_start; vertex < vert_end; ++vertex)
-            vertex->uv = HvkClamp(uv_a + HvkMul(HvkVec2(vertex->pos.x, vertex->pos.y) - a, scale), min, max);
+            vertex->uv = HvkClamp(uv_a + Immul(HvkVec2(vertex->pos.x, vertex->pos.y) - a, scale), min, max);
     }
     else
     {
         for (HvkDrawVert* vertex = vert_start; vertex < vert_end; ++vertex)
-            vertex->uv = uv_a + HvkMul(HvkVec2(vertex->pos.x, vertex->pos.y) - a, scale);
+            vertex->uv = uv_a + Immul(HvkVec2(vertex->pos.x, vertex->pos.y) - a, scale);
     }
 }
 
@@ -2438,7 +2438,7 @@ int HvkTextureDataGetFormatBytesPerPixel(HvkTextureFormat format)
     case HvkTextureFormat_Alpha8: return 1;
     case HvkTextureFormat_RGBA32: return 4;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return 0;
 }
 
@@ -2467,7 +2467,7 @@ const char* HvkTextureDataGetFormatName(HvkTextureFormat format)
 
 void HvkTextureData::Create(HvkTextureFormat format, int w, int h)
 {
-    IM_ASSERT(Status == HvkTextureStatus_Destroyed);
+    Hvk_ASSERT(Status == HvkTextureStatus_Destroyed);
     DestroyPixels();
     Format = format;
     Status = HvkTextureStatus_WantCreate;
@@ -2475,8 +2475,8 @@ void HvkTextureData::Create(HvkTextureFormat format, int w, int h)
     Height = h;
     BytesPerPixel = HvkTextureDataGetFormatBytesPerPixel(format);
     UseColors = false;
-    Pixels = (unsigned char*)IM_ALLOC(Width * Height * BytesPerPixel);
-    IM_ASSERT(Pixels != NULL);
+    Pixels = (unsigned char*)Hvk_ALLOC(Width * Height * BytesPerPixel);
+    Hvk_ASSERT(Pixels != NULL);
     memset(Pixels, 0, Width * Height * BytesPerPixel);
     UsedRect.x = UsedRect.y = UsedRect.w = UsedRect.h = 0;
     UpdateRect.x = UpdateRect.y = (unsigned short)~0;
@@ -2486,7 +2486,7 @@ void HvkTextureData::Create(HvkTextureFormat format, int w, int h)
 void HvkTextureData::DestroyPixels()
 {
     if (Pixels)
-        IM_FREE(Pixels);
+        Hvk_FREE(Pixels);
     Pixels = NULL;
     UseColors = false;
 }
@@ -2630,8 +2630,8 @@ static const HvkVec2 FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[HvkGuiMouseCursor_COUNT]
     { HvkVec2(109,0),HvkVec2(13,15), HvkVec2( 6, 7) }, // HvkGuiMouseCursor_NotAllowed
 };
 
-#define IM_FONTGLYPH_INDEX_UNUSED           ((HvkU16)-1) // 0xFFFF
-#define IM_FONTGLYPH_INDEX_NOT_FOUND        ((HvkU16)-2) // 0xFFFE
+#define Hvk_FONTGLYPH_INDEX_UNUSED           ((HvkU16)-1) // 0xFFFF
+#define Hvk_FONTGLYPH_INDEX_NOT_FOUND        ((HvkU16)-2) // 0xFFFE
 
 HvkFontAtlas::HvkFontAtlas()
 {
@@ -2651,7 +2651,7 @@ HvkFontAtlas::HvkFontAtlas()
 
 HvkFontAtlas::~HvkFontAtlas()
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
     RendererHasTextures = false; // Full Clear() is supported, but ClearTexData() only isn't.
     ClearFonts();
     ClearTexData();
@@ -2681,7 +2681,7 @@ void HvkFontAtlas::SetFontLoader(const HvkFontLoader* font_loader)
 
 void HvkFontAtlas::ClearInputData()
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
 
     for (HvkFont* font : Fonts)
         HvkFontAtlasFontDestroyOutput(this, font);
@@ -2699,8 +2699,8 @@ void HvkFontAtlas::ClearInputData()
 // Clear CPU-side copy of the texture data.
 void HvkFontAtlas::ClearTexData()
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
-    IM_ASSERT(RendererHasTextures == false && "Not supported for dynamic atlases, but you may call Clear().");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(RendererHasTextures == false && "Not supported for dynamic atlases, but you may call Clear().");
     for (HvkTextureData* tex : TexList)
         tex->DestroyPixels();
     //Locked = true; // Hoped to be able to lock this down but some reload patterns may not be happy with it.
@@ -2709,7 +2709,7 @@ void HvkFontAtlas::ClearTexData()
 void HvkFontAtlas::ClearFonts()
 {
     // FIXME-NEWATLAS: Illegal to remove currently bound font.
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
     for (HvkFont* font : Fonts)
         HvkFontAtlasBuildNotifySetFont(this, font, NULL);
     HvkFontAtlasBuildDestroy(this);
@@ -2745,7 +2745,7 @@ static void HvkFontAtlasBuildUpdateRendererHasTexturesFromContext(HvkFontAtlas* 
 // - 'frame_count' may not match those of all HvkGui contexts using this atlas, as contexts may be updated as different frequencies. But generally you can use HvkGui::GetFrameCount() on one of your context.
 void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool renderer_has_textures)
 {
-    IM_ASSERT(atlas->Builder == NULL || atlas->Builder->FrameCount < frame_count); // Protection against being called twice.
+    Hvk_ASSERT(atlas->Builder == NULL || atlas->Builder->FrameCount < frame_count); // Protection against being called twice.
     atlas->RendererHasTextures = renderer_has_textures;
 
     // Check that font atlas was built or backend support texture reload in which case we can build now
@@ -2757,9 +2757,9 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
     }
     // Legacy backend
     if (!atlas->RendererHasTextures)
-        IM_ASSERT_USER_ERROR(atlas->TexIsBuilt, "Backend does not support HvkGuiBackendFlags_RendererHasTextures, and font atlas is not built! Update backend OR make sure you called HvkGui_ImplXXXX_NewFrame() function for renderer backend, which should call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8().");
+        Hvk_ASSERT_USER_ERROR(atlas->TexIsBuilt, "Backend does not support HvkGuiBackendFlags_RendererHasTextures, and font atlas is not built! Update backend OR make sure you called HvkGui_ImplXXXX_NewFrame() function for renderer backend, which should call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8().");
     if (atlas->TexIsBuilt && atlas->Builder->PreloadedAllGlyphsRanges)
-        IM_ASSERT_USER_ERROR(atlas->RendererHasTextures == false, "Called HvkFontAtlas::Build() before HvkGuiBackendFlags_RendererHasTextures got set! With new backends: you don't need to call Build().");
+        Hvk_ASSERT_USER_ERROR(atlas->RendererHasTextures == false, "Called HvkFontAtlas::Build() before HvkGuiBackendFlags_RendererHasTextures got set! With new backends: you don't need to call Build().");
 
     // Clear BakedCurrent cache, this is Hvkportant because it ensure the uncached path gets taken once.
     // We also rely on HvkFontBaked* pointers never crossing frames.
@@ -2783,7 +2783,7 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
             memcpy(p_dst, p_src, sizeof(HvkFontBaked));
             builder->BakedMap.SetVoidPtr(p_dst->BakedId, p_dst);
         }
-        IM_ASSERT(dst_n + builder->BakedDiscardedCount == src_n);
+        Hvk_ASSERT(dst_n + builder->BakedDiscardedCount == src_n);
         builder->BakedPool.Size -= builder->BakedDiscardedCount;
         builder->BakedDiscardedCount = 0;
     }
@@ -2800,14 +2800,14 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
             tex->UpdateRect.w = tex->UpdateRect.h = 0;
         }
         if (tex->Status == HvkTextureStatus_WantCreate && atlas->RendererHasTextures)
-            IM_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == NULL && "Backend set texture's TexID/BackendUserData but did not update Status to OK.");
+            Hvk_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == NULL && "Backend set texture's TexID/BackendUserData but did not update Status to OK.");
 
         // Request destroy
         // - Keep bool to true in order to differentiate a planned destroy vs a destroy decided by the backend.
         // - We don't destroy pixels right away, as backend may have an in-flight copy from RAM.
         if (tex->WantDestroyNextFrame && tex->Status != HvkTextureStatus_Destroyed && tex->Status != HvkTextureStatus_WantDestroy)
         {
-            IM_ASSERT(tex->Status == HvkTextureStatus_OK || tex->Status == HvkTextureStatus_WantCreate || tex->Status == HvkTextureStatus_WantUpdates);
+            Hvk_ASSERT(tex->Status == HvkTextureStatus_OK || tex->Status == HvkTextureStatus_WantCreate || tex->Status == HvkTextureStatus_WantUpdates);
             tex->Status = HvkTextureStatus_WantDestroy;
         }
 
@@ -2820,7 +2820,7 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
         // Process texture being destroyed
         if (tex->Status == HvkTextureStatus_Destroyed)
         {
-            IM_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == NULL && "Backend set texture Status to Destroyed but did not clear TexID/BackendUserData!");
+            Hvk_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == NULL && "Backend set texture Status to Destroyed but did not clear TexID/BackendUserData!");
             if (tex->WantDestroyNextFrame)
                 remove_from_list = true; // Destroy was scheduled by us
             else
@@ -2835,9 +2835,9 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
         // Destroy and remove
         if (remove_from_list)
         {
-            IM_ASSERT(atlas->TexData != tex);
+            Hvk_ASSERT(atlas->TexData != tex);
             tex->DestroyPixels();
-            IM_DELETE(tex);
+            Hvk_DELETE(tex);
             atlas->TexList.erase(atlas->TexList.begin() + tex_n);
             tex_n--;
         }
@@ -2846,7 +2846,7 @@ void HvkFontAtlasUpdateNewFrame(HvkFontAtlas* atlas, int frame_count, bool rende
 
 void HvkFontAtlasTextureBlockConvert(const unsigned char* src_pixels, HvkTextureFormat src_fmt, int src_pitch, unsigned char* dst_pixels, HvkTextureFormat dst_fmt, int dst_pitch, int w, int h)
 {
-    IM_ASSERT(src_pixels != NULL && dst_pixels != NULL);
+    Hvk_ASSERT(src_pixels != NULL && dst_pixels != NULL);
     if (src_fmt == dst_fmt)
     {
         int line_sz = w * HvkTextureDataGetFormatBytesPerPixel(src_fmt);
@@ -2860,7 +2860,7 @@ void HvkFontAtlasTextureBlockConvert(const unsigned char* src_pixels, HvkTexture
             const HvkU8* src_p = (const HvkU8*)src_pixels;
             HvkU32* dst_p = (HvkU32*)(void*)dst_pixels;
             for (int nx = w; nx > 0; nx--)
-                *dst_p++ = IM_COL32(255, 255, 255, (unsigned int)(*src_p++));
+                *dst_p++ = Hvk_COL32(255, 255, 255, (unsigned int)(*src_p++));
         }
     }
     else if (src_fmt == HvkTextureFormat_RGBA32 && dst_fmt == HvkTextureFormat_Alpha8)
@@ -2870,12 +2870,12 @@ void HvkFontAtlasTextureBlockConvert(const unsigned char* src_pixels, HvkTexture
             const HvkU32* src_p = (const HvkU32*)(void*)src_pixels;
             HvkU8* dst_p = (HvkU8*)dst_pixels;
             for (int nx = w; nx > 0; nx--)
-                *dst_p++ = ((*src_p++) >> IM_COL32_A_SHIFT) & 0xFF;
+                *dst_p++ = ((*src_p++) >> Hvk_COL32_A_SHIFT) & 0xFF;
         }
     }
     else
     {
-        IM_ASSERT(0);
+        Hvk_ASSERT(0);
     }
 }
 
@@ -2899,7 +2899,7 @@ void HvkFontAtlasTextureBlockPostProcessMultiply(HvkFontAtlasPostProcessData* da
             HvkU8* p = (HvkU8*)pixels;
             for (int nx = data->Width; nx > 0; nx--, p++)
             {
-                unsigned int v = HvkMin((unsigned int)(*p * multiply_factor), (unsigned int)255);
+                unsigned int v = Immin((unsigned int)(*p * multiply_factor), (unsigned int)255);
                 *p = (unsigned char)v;
             }
         }
@@ -2911,14 +2911,14 @@ void HvkFontAtlasTextureBlockPostProcessMultiply(HvkFontAtlasPostProcessData* da
             HvkU32* p = (HvkU32*)(void*)pixels;
             for (int nx = data->Width; nx > 0; nx--, p++)
             {
-                unsigned int a = HvkMin((unsigned int)(((*p >> IM_COL32_A_SHIFT) & 0xFF) * multiply_factor), (unsigned int)255);
-                *p = IM_COL32((*p >> IM_COL32_R_SHIFT) & 0xFF, (*p >> IM_COL32_G_SHIFT) & 0xFF, (*p >> IM_COL32_B_SHIFT) & 0xFF, a);
+                unsigned int a = Immin((unsigned int)(((*p >> Hvk_COL32_A_SHIFT) & 0xFF) * multiply_factor), (unsigned int)255);
+                *p = Hvk_COL32((*p >> Hvk_COL32_R_SHIFT) & 0xFF, (*p >> Hvk_COL32_G_SHIFT) & 0xFF, (*p >> Hvk_COL32_B_SHIFT) & 0xFF, a);
             }
         }
     }
     else
     {
-        IM_ASSERT(0);
+        Hvk_ASSERT(0);
     }
 }
 
@@ -2927,7 +2927,7 @@ void HvkFontAtlasTextureBlockFill(HvkTextureData* dst_tex, int dst_x, int dst_y,
 {
     if (dst_tex->Format == HvkTextureFormat_Alpha8)
     {
-        HvkU8 col_a = (col >> IM_COL32_A_SHIFT) & 0xFF;
+        HvkU8 col_a = (col >> Hvk_COL32_A_SHIFT) & 0xFF;
         for (int y = 0; y < h; y++)
             memset((HvkU8*)dst_tex->GetPixelsAt(dst_x, dst_y + y), col_a, w);
     }
@@ -2945,12 +2945,12 @@ void HvkFontAtlasTextureBlockFill(HvkTextureData* dst_tex, int dst_x, int dst_y,
 // Copy block from one texture to another
 void HvkFontAtlasTextureBlockCopy(HvkTextureData* src_tex, int src_x, int src_y, HvkTextureData* dst_tex, int dst_x, int dst_y, int w, int h)
 {
-    IM_ASSERT(src_tex->Pixels != NULL && dst_tex->Pixels != NULL);
-    IM_ASSERT(src_tex->Format == dst_tex->Format);
-    IM_ASSERT(src_x >= 0 && src_x + w <= src_tex->Width);
-    IM_ASSERT(src_y >= 0 && src_y + h <= src_tex->Height);
-    IM_ASSERT(dst_x >= 0 && dst_x + w <= dst_tex->Width);
-    IM_ASSERT(dst_y >= 0 && dst_y + h <= dst_tex->Height);
+    Hvk_ASSERT(src_tex->Pixels != NULL && dst_tex->Pixels != NULL);
+    Hvk_ASSERT(src_tex->Format == dst_tex->Format);
+    Hvk_ASSERT(src_x >= 0 && src_x + w <= src_tex->Width);
+    Hvk_ASSERT(src_y >= 0 && src_y + h <= src_tex->Height);
+    Hvk_ASSERT(dst_x >= 0 && dst_x + w <= dst_tex->Width);
+    Hvk_ASSERT(dst_y >= 0 && dst_y + h <= dst_tex->Height);
     for (int y = 0; y < h; y++)
         memcpy(dst_tex->GetPixelsAt(dst_x, dst_y + y), src_tex->GetPixelsAt(src_x, src_y + y), w * dst_tex->BytesPerPixel);
 }
@@ -2958,21 +2958,21 @@ void HvkFontAtlasTextureBlockCopy(HvkTextureData* src_tex, int src_x, int src_y,
 // Queue texture block update for renderer backend
 void HvkFontAtlasTextureBlockQueueUpload(HvkFontAtlas* atlas, HvkTextureData* tex, int x, int y, int w, int h)
 {
-    IM_ASSERT(tex->Status != HvkTextureStatus_WantDestroy && tex->Status != HvkTextureStatus_Destroyed);
-    IM_ASSERT(x >= 0 && x <= 0xFFFF && y >= 0 && y <= 0xFFFF && w >= 0 && x + w <= 0x10000 && h >= 0 && y + h <= 0x10000);
-    IM_UNUSED(atlas);
+    Hvk_ASSERT(tex->Status != HvkTextureStatus_WantDestroy && tex->Status != HvkTextureStatus_Destroyed);
+    Hvk_ASSERT(x >= 0 && x <= 0xFFFF && y >= 0 && y <= 0xFFFF && w >= 0 && x + w <= 0x10000 && h >= 0 && y + h <= 0x10000);
+    Hvk_UNUSED(atlas);
 
     HvkTextureRect req = { (unsigned short)x, (unsigned short)y, (unsigned short)w, (unsigned short)h };
-    int new_x1 = HvkMax(tex->UpdateRect.w == 0 ? 0 : tex->UpdateRect.x + tex->UpdateRect.w, req.x + req.w);
-    int new_y1 = HvkMax(tex->UpdateRect.h == 0 ? 0 : tex->UpdateRect.y + tex->UpdateRect.h, req.y + req.h);
-    tex->UpdateRect.x = HvkMin(tex->UpdateRect.x, req.x);
-    tex->UpdateRect.y = HvkMin(tex->UpdateRect.y, req.y);
+    int new_x1 = Immax(tex->UpdateRect.w == 0 ? 0 : tex->UpdateRect.x + tex->UpdateRect.w, req.x + req.w);
+    int new_y1 = Immax(tex->UpdateRect.h == 0 ? 0 : tex->UpdateRect.y + tex->UpdateRect.h, req.y + req.h);
+    tex->UpdateRect.x = Immin(tex->UpdateRect.x, req.x);
+    tex->UpdateRect.y = Immin(tex->UpdateRect.y, req.y);
     tex->UpdateRect.w = (unsigned short)(new_x1 - tex->UpdateRect.x);
     tex->UpdateRect.h = (unsigned short)(new_y1 - tex->UpdateRect.y);
-    tex->UsedRect.x = HvkMin(tex->UsedRect.x, req.x);
-    tex->UsedRect.y = HvkMin(tex->UsedRect.y, req.y);
-    tex->UsedRect.w = (unsigned short)(HvkMax(tex->UsedRect.x + tex->UsedRect.w, req.x + req.w) - tex->UsedRect.x);
-    tex->UsedRect.h = (unsigned short)(HvkMax(tex->UsedRect.y + tex->UsedRect.h, req.y + req.h) - tex->UsedRect.y);
+    tex->UsedRect.x = Immin(tex->UsedRect.x, req.x);
+    tex->UsedRect.y = Immin(tex->UsedRect.y, req.y);
+    tex->UsedRect.w = (unsigned short)(Immax(tex->UsedRect.x + tex->UsedRect.w, req.x + req.w) - tex->UsedRect.x);
+    tex->UsedRect.h = (unsigned short)(Immax(tex->UsedRect.y + tex->UsedRect.h, req.y + req.h) - tex->UsedRect.y);
     atlas->TexIsBuilt = false;
 
     // No need to queue if status is == HvkTextureStatus_WantCreate
@@ -3019,12 +3019,12 @@ bool HvkFontAtlas::Build()
 HvkFont* HvkFontAtlas::AddFont(const HvkFontConfig* font_cfg_in)
 {
     // Sanity Checks
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
-    IM_ASSERT((font_cfg_in->FontData != NULL && font_cfg_in->FontDataSize > 0) || (font_cfg_in->FontLoader != NULL));
-    //IM_ASSERT(font_cfg_in->SizePixels > 0.0f && "Is HvkFontConfig struct correctly initialized?");
-    IM_ASSERT(font_cfg_in->RasterizerDensity > 0.0f && "Is HvkFontConfig struct correctly initialized?");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT((font_cfg_in->FontData != NULL && font_cfg_in->FontDataSize > 0) || (font_cfg_in->FontLoader != NULL));
+    //Hvk_ASSERT(font_cfg_in->SizePixels > 0.0f && "Is HvkFontConfig struct correctly initialized?");
+    Hvk_ASSERT(font_cfg_in->RasterizerDensity > 0.0f && "Is HvkFontConfig struct correctly initialized?");
     if (font_cfg_in->GlyphOffset.x != 0.0f || font_cfg_in->GlyphOffset.y != 0.0f || font_cfg_in->GlyphMinAdvanceX != 0.0f || font_cfg_in->GlyphMaxAdvanceX != FLT_MAX)
-        IM_ASSERT(font_cfg_in->SizePixels != 0.0f && "Specifying glyph offset/advances requires a reference size to base it on.");
+        Hvk_ASSERT(font_cfg_in->SizePixels != 0.0f && "Specifying glyph offset/advances requires a reference size to base it on.");
 
     // Lazily create builder on the first call to AddFont
     if (Builder == NULL)
@@ -3034,7 +3034,7 @@ HvkFont* HvkFontAtlas::AddFont(const HvkFontConfig* font_cfg_in)
     HvkFont* font;
     if (!font_cfg_in->MergeMode)
     {
-        font = IM_NEW(HvkFont)();
+        font = Hvk_NEW(HvkFont)();
         font->FontId = FontNextUniqueID++;
         font->Flags = font_cfg_in->Flags;
         font->LegacySize = font_cfg_in->SizePixels;
@@ -3043,7 +3043,7 @@ HvkFont* HvkFontAtlas::AddFont(const HvkFontConfig* font_cfg_in)
     }
     else
     {
-        IM_ASSERT(Fonts.Size > 0 && "Cannot use MergeMode for the first font"); // When using MergeMode make sure that a font has already been added before. You can use HvkGui::GetIO().Fonts->AddFontDefault() to add the default HvkGui font.
+        Hvk_ASSERT(Fonts.Size > 0 && "Cannot use MergeMode for the first font"); // When using MergeMode make sure that a font has already been added before. You can use HvkGui::GetIO().Fonts->AddFontDefault() to add the default HvkGui font.
         font = font_cfg_in->DstFont ? font_cfg_in->DstFont : Fonts.back();
     }
 
@@ -3061,16 +3061,16 @@ HvkFont* HvkFontAtlas::AddFont(const HvkFontConfig* font_cfg_in)
     {
         int size = 0;
         for (const HvkWchar* p = font_cfg->GlyphExcludeRanges; p[0] != 0; p++, size++) {}
-        IM_ASSERT((size & 1) == 0 && "GlyphExcludeRanges[] size must be multiple of two!");
-        IM_ASSERT((size <= 64) && "GlyphExcludeRanges[] size must be small!");
-        font_cfg->GlyphExcludeRanges = (HvkWchar*)HvkMemdup(font_cfg->GlyphExcludeRanges, sizeof(font_cfg->GlyphExcludeRanges[0]) * (size + 1));
+        Hvk_ASSERT((size & 1) == 0 && "GlyphExcludeRanges[] size must be multiple of two!");
+        Hvk_ASSERT((size <= 64) && "GlyphExcludeRanges[] size must be small!");
+        font_cfg->GlyphExcludeRanges = (HvkWchar*)Immemdup(font_cfg->GlyphExcludeRanges, sizeof(font_cfg->GlyphExcludeRanges[0]) * (size + 1));
     }
     if (font_cfg->FontLoader != NULL)
     {
-        IM_ASSERT(font_cfg->FontLoader->FontBakedLoadGlyph != NULL);
-        IM_ASSERT(font_cfg->FontLoader->LoaderInit == NULL && font_cfg->FontLoader->LoaderShutdown == NULL); // FIXME-NEWATLAS: Unsupported yet.
+        Hvk_ASSERT(font_cfg->FontLoader->FontBakedLoadGlyph != NULL);
+        Hvk_ASSERT(font_cfg->FontLoader->LoaderInit == NULL && font_cfg->FontLoader->LoaderShutdown == NULL); // FIXME-NEWATLAS: Unsupported yet.
     }
-    IM_ASSERT(font_cfg->FontLoaderData == NULL);
+    Hvk_ASSERT(font_cfg->FontLoaderData == NULL);
 
     if (!HvkFontAtlasFontSourceInit(this, font_cfg))
     {
@@ -3080,7 +3080,7 @@ HvkFont* HvkFontAtlas::AddFont(const HvkFontConfig* font_cfg_in)
         font->Sources.pop_back();
         if (!font_cfg->MergeMode)
         {
-            IM_DELETE(font);
+            Hvk_DELETE(font);
             Fonts.pop_back();
         }
         return NULL;
@@ -3122,23 +3122,23 @@ HvkFont* HvkFontAtlas::AddFontDefault(const HvkFontConfig* font_cfg_template)
     if (font_cfg.SizePixels <= 0.0f)
         font_cfg.SizePixels = 13.0f * 1.0f;
     if (font_cfg.Name[0] == '\0')
-        HvkFormatString(font_cfg.Name, IM_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf");
+        HvkFormatString(font_cfg.Name, Hvk_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf");
     font_cfg.EllipsisChar = (HvkWchar)0x0085;
-    font_cfg.GlyphOffset.y += 1.0f * IM_TRUNC(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
+    font_cfg.GlyphOffset.y += 1.0f * Hvk_TRUNC(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
 
     int ttf_compressed_size = 0;
     const char* ttf_compressed = GetDefaultCompressedFontDataTTF(&ttf_compressed_size);
     return AddFontFromMemoryCompressedTTF(ttf_compressed, ttf_compressed_size, font_cfg.SizePixels, &font_cfg);
 #else
-    IM_ASSERT(0 && "AddFontDefault() disabled in this build.");
-    IM_UNUSED(font_cfg_template);
+    Hvk_ASSERT(0 && "AddFontDefault() disabled in this build.");
+    Hvk_UNUSED(font_cfg_template);
     return NULL;
 #endif // #ifndef HvkGui_DISABLE_DEFAULT_FONT
 }
 
 HvkFont* HvkFontAtlas::AddFontFromFileTTF(const char* filename, float size_pixels, const HvkFontConfig* font_cfg_template, const HvkWchar* glyph_ranges)
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
     size_t data_size = 0;
     void* data = HvkFileLoadToMemory(filename, "rb", &data_size, 0);
     if (!data)
@@ -3146,7 +3146,7 @@ HvkFont* HvkFontAtlas::AddFontFromFileTTF(const char* filename, float size_pixel
         if (font_cfg_template == NULL || (font_cfg_template->Flags & HvkFontFlags_NoLoadError) == 0)
         {
             HvkGui_DEBUG_LOG("While loading '%s'\n", filename);
-            IM_ASSERT_USER_ERROR(0, "Could not load font file!");
+            Hvk_ASSERT_USER_ERROR(0, "Could not load font file!");
         }
         return NULL;
     }
@@ -3156,7 +3156,7 @@ HvkFont* HvkFontAtlas::AddFontFromFileTTF(const char* filename, float size_pixel
         // Store a short copy of filename into into the font name for convenience
         const char* p;
         for (p = filename + HvkStrlen(filename); p > filename && p[-1] != '/' && p[-1] != '\\'; p--) {}
-        HvkFormatString(font_cfg.Name, IM_ARRAYSIZE(font_cfg.Name), "%s", p);
+        HvkFormatString(font_cfg.Name, Hvk_ARRAYSIZE(font_cfg.Name), "%s", p);
     }
     return AddFontFromMemoryTTF(data, (int)data_size, size_pixels, &font_cfg, glyph_ranges);
 }
@@ -3164,10 +3164,10 @@ HvkFont* HvkFontAtlas::AddFontFromFileTTF(const char* filename, float size_pixel
 // NB: Transfer ownership of 'ttf_data' to HvkFontAtlas, unless font_cfg_template->FontDataOwnedByAtlas == false. Owned TTF buffer will be deleted after Build().
 HvkFont* HvkFontAtlas::AddFontFromMemoryTTF(void* font_data, int font_data_size, float size_pixels, const HvkFontConfig* font_cfg_template, const HvkWchar* glyph_ranges)
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
     HvkFontConfig font_cfg = font_cfg_template ? *font_cfg_template : HvkFontConfig();
-    IM_ASSERT(font_cfg.FontData == NULL);
-    IM_ASSERT(font_data_size > 100 && "Incorrect value for font_data_size!"); // Heuristic to prevent accidentally passing a wrong value to font_data_size.
+    Hvk_ASSERT(font_cfg.FontData == NULL);
+    Hvk_ASSERT(font_data_size > 100 && "Incorrect value for font_data_size!"); // Heuristic to prevent accidentally passing a wrong value to font_data_size.
     font_cfg.FontData = font_data;
     font_cfg.FontDataSize = font_data_size;
     font_cfg.SizePixels = size_pixels > 0.0f ? size_pixels : font_cfg.SizePixels;
@@ -3179,11 +3179,11 @@ HvkFont* HvkFontAtlas::AddFontFromMemoryTTF(void* font_data, int font_data_size,
 HvkFont* HvkFontAtlas::AddFontFromMemoryCompressedTTF(const void* compressed_ttf_data, int compressed_ttf_size, float size_pixels, const HvkFontConfig* font_cfg_template, const HvkWchar* glyph_ranges)
 {
     const unsigned int buf_decompressed_size = stb_decompress_length((const unsigned char*)compressed_ttf_data);
-    unsigned char* buf_decompressed_data = (unsigned char*)IM_ALLOC(buf_decompressed_size);
+    unsigned char* buf_decompressed_data = (unsigned char*)Hvk_ALLOC(buf_decompressed_size);
     stb_decompress(buf_decompressed_data, (const unsigned char*)compressed_ttf_data, (unsigned int)compressed_ttf_size);
 
     HvkFontConfig font_cfg = font_cfg_template ? *font_cfg_template : HvkFontConfig();
-    IM_ASSERT(font_cfg.FontData == NULL);
+    Hvk_ASSERT(font_cfg.FontData == NULL);
     font_cfg.FontDataOwnedByAtlas = true;
     return AddFontFromMemoryTTF(buf_decompressed_data, (int)buf_decompressed_size, size_pixels, &font_cfg, glyph_ranges);
 }
@@ -3191,10 +3191,10 @@ HvkFont* HvkFontAtlas::AddFontFromMemoryCompressedTTF(const void* compressed_ttf
 HvkFont* HvkFontAtlas::AddFontFromMemoryCompressedBase85TTF(const char* compressed_ttf_data_base85, float size_pixels, const HvkFontConfig* font_cfg, const HvkWchar* glyph_ranges)
 {
     int compressed_ttf_size = (((int)HvkStrlen(compressed_ttf_data_base85) + 4) / 5) * 4;
-    void* compressed_ttf = IM_ALLOC((size_t)compressed_ttf_size);
+    void* compressed_ttf = Hvk_ALLOC((size_t)compressed_ttf_size);
     Decode85((const unsigned char*)compressed_ttf_data_base85, (unsigned char*)compressed_ttf);
     HvkFont* font = AddFontFromMemoryCompressedTTF(compressed_ttf, compressed_ttf_size, size_pixels, font_cfg, glyph_ranges);
-    IM_FREE(compressed_ttf);
+    Hvk_FREE(compressed_ttf);
     return font;
 }
 
@@ -3229,7 +3229,7 @@ void HvkFontAtlasBuildNotifySetFont(HvkFontAtlas* atlas, HvkFont* old_font, HvkF
 
 void HvkFontAtlas::RemoveFont(HvkFont* font)
 {
-    IM_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!Locked && "Cannot modify a locked HvkFontAtlas!");
 
     HvkFontAtlasFontDestroyOutput(this, font);
     for (HvkFontConfig* src : font->Sources)
@@ -3239,13 +3239,13 @@ void HvkFontAtlas::RemoveFont(HvkFont* font)
             Sources.erase(&Sources[src_n--]);
 
     bool removed = Fonts.find_erase(font);
-    IM_ASSERT(removed);
-    IM_UNUSED(removed);
+    Hvk_ASSERT(removed);
+    Hvk_UNUSED(removed);
 
     HvkFontAtlasBuildUpdatePointers(this);
 
     font->OwnerAtlas = NULL;
-    IM_DELETE(font);
+    Hvk_DELETE(font);
 
     // Notify external systems
     HvkFont* new_current_font = Fonts.empty() ? NULL : Fonts[0];
@@ -3255,8 +3255,8 @@ void HvkFontAtlas::RemoveFont(HvkFont* font)
 // At it is common to do an AddCustomRect() followed by a GetCustomRect(), we provide an optional 'HvkFontAtlasRect* out_r = NULL' argument to retrieve the info straight away.
 HvkFontAtlasRectId HvkFontAtlas::AddCustomRect(int width, int height, HvkFontAtlasRect* out_r)
 {
-    IM_ASSERT(width > 0 && width <= 0xFFFF);
-    IM_ASSERT(height > 0 && height <= 0xFFFF);
+    Hvk_ASSERT(width > 0 && width <= 0xFFFF);
+    Hvk_ASSERT(height > 0 && height <= 0xFFFF);
 
     if (Builder == NULL)
         HvkFontAtlasBuildInit(this);
@@ -3299,11 +3299,11 @@ HvkFontAtlasRectId HvkFontAtlas::AddCustomRectFontGlyph(HvkFont* font, HvkWchar 
 HvkFontAtlasRectId HvkFontAtlas::AddCustomRectFontGlyphForSize(HvkFont* font, float font_size, HvkWchar codepoint, int width, int height, float advance_x, const HvkVec2& offset)
 {
 #ifdef HvkGui_USE_WCHAR32
-    IM_ASSERT(codepoint <= IM_UNICODE_CODEPOINT_MAX);
+    Hvk_ASSERT(codepoint <= Hvk_UNICODE_CODEPOINT_MAX);
 #endif
-    IM_ASSERT(font != NULL);
-    IM_ASSERT(width > 0 && width <= 0xFFFF);
-    IM_ASSERT(height > 0 && height <= 0xFFFF);
+    Hvk_ASSERT(font != NULL);
+    Hvk_ASSERT(width > 0 && width <= 0xFFFF);
+    Hvk_ASSERT(height > 0 && height <= 0xFFFF);
 
     HvkFontBaked* baked = font->GetFontBaked(font_size);
 
@@ -3337,7 +3337,7 @@ bool HvkFontAtlas::GetCustomRect(HvkFontAtlasRectId id, HvkFontAtlasRect* out_r)
     HvkTextureRect* r = HvkFontAtlasPackGetRectSafe((HvkFontAtlas*)this, id);
     if (r == NULL)
         return false;
-    IM_ASSERT(TexData->Width > 0 && TexData->Height > 0);   // Font atlas needs to be built before we can calculate UV coordinates
+    Hvk_ASSERT(TexData->Width > 0 && TexData->Height > 0);   // Font atlas needs to be built before we can calculate UV coordinates
     if (out_r == NULL)
         return true;
     out_r->x = r->x;
@@ -3372,7 +3372,7 @@ bool HvkFontAtlasGetMouseCursorTexData(HvkFontAtlas* atlas, HvkGuiMouseCursor cu
 // When atlas->RendererHasTextures = true, this is only called if no font were loaded.
 void HvkFontAtlasBuildMain(HvkFontAtlas* atlas)
 {
-    IM_ASSERT(!atlas->Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!atlas->Locked && "Cannot modify a locked HvkFontAtlas!");
     if (atlas->TexData && atlas->TexData->Format != atlas->TexDesiredFormat)
         HvkFontAtlasBuildClear(atlas);
 
@@ -3404,7 +3404,7 @@ void HvkFontAtlasBuildSetupFontLoader(HvkFontAtlas* atlas, const HvkFontLoader* 
 {
     if (atlas->FontLoader == font_loader)
         return;
-    IM_ASSERT(!atlas->Locked && "Cannot modify a locked HvkFontAtlas!");
+    Hvk_ASSERT(!atlas->Locked && "Cannot modify a locked HvkFontAtlas!");
 
     for (HvkFont* font : atlas->Fonts)
         HvkFontAtlasFontDestroyOutput(atlas, font);
@@ -3413,7 +3413,7 @@ void HvkFontAtlasBuildSetupFontLoader(HvkFontAtlas* atlas, const HvkFontLoader* 
 
     atlas->FontLoader = font_loader;
     atlas->FontLoaderName = font_loader ? font_loader->Name : "NULL";
-    IM_ASSERT(atlas->FontLoaderData == NULL);
+    Hvk_ASSERT(atlas->FontLoaderData == NULL);
 
     if (atlas->Builder && atlas->FontLoader && atlas->FontLoader->LoaderInit)
         atlas->FontLoader->LoaderInit(atlas);
@@ -3440,7 +3440,7 @@ void HvkFontAtlasBuildLegacyPreloadAllGlyphRanges(HvkFontAtlas* atlas)
         {
             const HvkWchar* ranges = src->GlyphRanges ? src->GlyphRanges : atlas->GetGlyphRangesDefault();
             for (; ranges[0]; ranges += 2)
-                for (unsigned int c = ranges[0]; c <= ranges[1] && c <= IM_UNICODE_CODEPOINT_MAX; c++) //-V560
+                for (unsigned int c = ranges[0]; c <= ranges[1] && c <= Hvk_UNICODE_CODEPOINT_MAX; c++) //-V560
                     baked->FindGlyph((HvkWchar)c);
         }
     }
@@ -3459,8 +3459,8 @@ void HvkFontAtlasBuildUpdatePointers(HvkFontAtlas* atlas)
 void HvkFontAtlasBuildRenderBitmapFromString(HvkFontAtlas* atlas, int x, int y, int w, int h, const char* in_str, char in_marker_char)
 {
     HvkTextureData* tex = atlas->TexData;
-    IM_ASSERT(x >= 0 && x + w <= tex->Width);
-    IM_ASSERT(y >= 0 && y + h <= tex->Height);
+    Hvk_ASSERT(x >= 0 && x + w <= tex->Width);
+    Hvk_ASSERT(y >= 0 && y + h <= tex->Height);
 
     switch (tex->Format)
     {
@@ -3477,7 +3477,7 @@ void HvkFontAtlasBuildRenderBitmapFromString(HvkFontAtlas* atlas, int x, int y, 
         HvkU32* out_p = (HvkU32*)tex->GetPixelsAt(x, y);
         for (int off_y = 0; off_y < h; off_y++, out_p += tex->Width, in_str += w)
             for (int off_x = 0; off_x < w; off_x++)
-                out_p[off_x] = (in_str[off_x] == in_marker_char) ? IM_COL32_WHITE : IM_COL32_BLACK_TRANS;
+                out_p[off_x] = (in_str[off_x] == in_marker_char) ? Hvk_COL32_WHITE : Hvk_COL32_BLACK_TRANS;
         break;
     }
     }
@@ -3495,7 +3495,7 @@ static void HvkFontAtlasBuildUpdateBasicTexData(HvkFontAtlas* atlas)
     if (add_and_draw)
     {
         builder->PackIdMouseCursors = atlas->AddCustomRect(pack_size.x, pack_size.y, &r);
-        IM_ASSERT(builder->PackIdMouseCursors != HvkFontAtlasRectId_Invalid);
+        Hvk_ASSERT(builder->PackIdMouseCursors != HvkFontAtlasRectId_Invalid);
 
         // Draw to texture
         if (atlas->Flags & HvkFontAtlasFlags_NoMouseCursors)
@@ -3530,22 +3530,22 @@ static void HvkFontAtlasBuildUpdateLinesTexData(HvkFontAtlas* atlas)
     bool add_and_draw = atlas->GetCustomRect(builder->PackIdLinesTexData, &r) == false;
     if (add_and_draw)
     {
-        HvkVec2i pack_size = HvkVec2i(IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 2, IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
+        HvkVec2i pack_size = HvkVec2i(Hvk_DRAWLIST_TEX_LINES_WIDTH_MAX + 2, Hvk_DRAWLIST_TEX_LINES_WIDTH_MAX + 1);
         builder->PackIdLinesTexData = atlas->AddCustomRect(pack_size.x, pack_size.y, &r);
-        IM_ASSERT(builder->PackIdLinesTexData != HvkFontAtlasRectId_Invalid);
+        Hvk_ASSERT(builder->PackIdLinesTexData != HvkFontAtlasRectId_Invalid);
     }
 
     // Register texture region for thick lines
     // The +2 here is to give space for the end caps, whilst height +1 is to accommodate the fact we have a zero-width row
     // This generates a triangular shape in the texture, with the various line widths stacked on top of each other to allow interpolation between them
-    for (int n = 0; n < IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++) // +1 because of the zero-width row
+    for (int n = 0; n < Hvk_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++) // +1 because of the zero-width row
     {
         // Each line consists of at least two empty pixels at the ends, with a line of solid pixels in the middle
         const int y = n;
         const int line_width = n;
         const int pad_left = (r.w - line_width) / 2;
         const int pad_right = r.w - (pad_left + line_width);
-        IM_ASSERT(pad_left + line_width + pad_right == r.w && y < r.h); // Make sure we're inside the texture bounds before we start writing pixels
+        Hvk_ASSERT(pad_left + line_width + pad_right == r.w && y < r.h); // Make sure we're inside the texture bounds before we start writing pixels
 
         // Write each slice
         if (add_and_draw && tex->Format == HvkTextureFormat_Alpha8)
@@ -3564,13 +3564,13 @@ static void HvkFontAtlasBuildUpdateLinesTexData(HvkFontAtlas* atlas)
         {
             HvkU32* write_ptr = (HvkU32*)(void*)tex->GetPixelsAt(r.x, r.y + y);
             for (int i = 0; i < pad_left; i++)
-                *(write_ptr + i) = IM_COL32(255, 255, 255, 0);
+                *(write_ptr + i) = Hvk_COL32(255, 255, 255, 0);
 
             for (int i = 0; i < line_width; i++)
-                *(write_ptr + pad_left + i) = IM_COL32_WHITE;
+                *(write_ptr + pad_left + i) = Hvk_COL32_WHITE;
 
             for (int i = 0; i < pad_right; i++)
-                *(write_ptr + pad_left + line_width + i) = IM_COL32(255, 255, 255, 0);
+                *(write_ptr + pad_left + line_width + i) = Hvk_COL32(255, 255, 255, 0);
         }
 
         // Refresh UV coordinates
@@ -3590,7 +3590,7 @@ bool HvkFontAtlasFontInitOutput(HvkFontAtlas* atlas, HvkFont* font)
     for (HvkFontConfig* src : font->Sources)
         if (!HvkFontAtlasFontSourceInit(atlas, src))
             ret = false;
-    IM_ASSERT(ret); // Unclear how to react to this meaningfully. Assume that result will be same as initial AddFont() call.
+    Hvk_ASSERT(ret); // Unclear how to react to this meaningfully. Assume that result will be same as initial AddFont() call.
     return ret;
 }
 
@@ -3623,7 +3623,7 @@ void HvkFontAtlasFontSourceAddToFont(HvkFontAtlas* atlas, HvkFont* font, HvkFont
         font->ClearOutputData();
         //font->FontSize = src->SizePixels;
         font->OwnerAtlas = atlas;
-        IM_ASSERT(font->Sources[0] == src);
+        Hvk_ASSERT(font->Sources[0] == src);
     }
     atlas->TexIsBuilt = false; // For legacy backends
     HvkFontAtlasBuildSetupFontSpecialGlyphs(atlas, font, src);
@@ -3631,17 +3631,17 @@ void HvkFontAtlasFontSourceAddToFont(HvkFontAtlas* atlas, HvkFont* font, HvkFont
 
 void HvkFontAtlasFontDestroySourceData(HvkFontAtlas* atlas, HvkFontConfig* src)
 {
-    IM_UNUSED(atlas);
-    // IF YOU GET A CRASH IN THE IM_FREE() CALL HERE AND USED AddFontFromMemoryTTF():
+    Hvk_UNUSED(atlas);
+    // IF YOU GET A CRASH IN THE Hvk_FREE() CALL HERE AND USED AddFontFromMemoryTTF():
     // - DUE TO LEGACY REASON AddFontFromMemoryTTF() TRANSFERS MEMORY OWNERSHIP BY DEFAULT.
     // - IT WILL THEREFORE CRASH WHEN PASSED DATA WHICH MAY NOT BE FREEED BY HvkGui.
     // - USE `HvkFontConfig font_cfg; font_cfg.FontDataOwnedByAtlas = false; io.Fonts->AddFontFromMemoryTTF(....., &cfg);` to disable passing ownership/
     // WE WILL ADDRESS THIS IN A FUTURE REWORK OF THE API.
     if (src->FontDataOwnedByAtlas)
-        IM_FREE(src->FontData);
+        Hvk_FREE(src->FontData);
     src->FontData = NULL;
     if (src->GlyphExcludeRanges)
-        IM_FREE((void*)src->GlyphExcludeRanges);
+        Hvk_FREE((void*)src->GlyphExcludeRanges);
     src->GlyphExcludeRanges = NULL;
 }
 
@@ -3651,7 +3651,7 @@ void HvkFontAtlasFontDestroySourceData(HvkFontAtlas* atlas, HvkFontConfig* src)
 static HvkFontGlyph* HvkFontAtlasBuildSetupFontBakedEllipsis(HvkFontAtlas* atlas, HvkFontBaked* baked)
 {
     HvkFont* font = baked->OwnerFont;
-    IM_ASSERT(font->EllipsisChar != 0);
+    Hvk_ASSERT(font->EllipsisChar != 0);
 
     const HvkFontGlyph* dot_glyph = baked->FindGlyphNoFallback((HvkWchar)'.');
     if (dot_glyph == NULL)
@@ -3669,7 +3669,7 @@ static HvkFontGlyph* HvkFontAtlasBuildSetupFontBakedEllipsis(HvkFontAtlas* atlas
     HvkFontGlyph glyph_in = {};
     HvkFontGlyph* glyph = &glyph_in;
     glyph->Codepoint = font->EllipsisChar;
-    glyph->AdvanceX = HvkMax(dot_glyph->AdvanceX, dot_glyph->X0 + dot_step * 3.0f - dot_spacing); // FIXME: Slightly odd for normally mono-space fonts but since this is used for trailing contents.
+    glyph->AdvanceX = Immax(dot_glyph->AdvanceX, dot_glyph->X0 + dot_step * 3.0f - dot_spacing); // FIXME: Slightly odd for normally mono-space fonts but since this is used for trailing contents.
     glyph->X0 = dot_glyph->X0;
     glyph->Y0 = dot_glyph->Y0;
     glyph->X1 = dot_glyph->X0 + dot_step * 3 - dot_spacing;
@@ -3694,8 +3694,8 @@ static HvkFontGlyph* HvkFontAtlasBuildSetupFontBakedEllipsis(HvkFontAtlas* atlas
 // (this is called from in hot-path so we avoid extraneous parameters to minimize Hvkpact on code size)
 static void HvkFontAtlasBuildSetupFontBakedFallback(HvkFontBaked* baked)
 {
-    IM_ASSERT(baked->FallbackGlyphIndex == -1);
-    IM_ASSERT(baked->FallbackAdvanceX == 0.0f);
+    Hvk_ASSERT(baked->FallbackGlyphIndex == -1);
+    Hvk_ASSERT(baked->FallbackAdvanceX == 0.0f);
     HvkFont* font = baked->OwnerFont;
     HvkFontGlyph* fallback_glyph = NULL;
     if (font->FallbackChar != 0)
@@ -3705,7 +3705,7 @@ static void HvkFontAtlasBuildSetupFontBakedFallback(HvkFontBaked* baked)
         HvkFontGlyph* space_glyph = baked->FindGlyphNoFallback((HvkWchar)' ');
         HvkFontGlyph glyph;
         glyph.Codepoint = 0;
-        glyph.AdvanceX = space_glyph ? space_glyph->AdvanceX : IM_ROUND(baked->Size * 0.40f);
+        glyph.AdvanceX = space_glyph ? space_glyph->AdvanceX : Hvk_ROUND(baked->Size * 0.40f);
         fallback_glyph = HvkFontAtlasBakedAddFontGlyph(font->OwnerAtlas, baked, NULL, &glyph);
     }
     baked->FallbackGlyphIndex = baked->Glyphs.index_from_ptr(fallback_glyph); // Storing index avoid need to update pointer on growth and simplify inner loop code
@@ -3725,7 +3725,7 @@ static void HvkFontAtlasBuildSetupFontBakedBlanks(HvkFontAtlas* atlas, HvkFontBa
     {
         HvkFontGlyph tab_glyph;
         tab_glyph.Codepoint = '\t';
-        tab_glyph.AdvanceX = space_glyph->AdvanceX * IM_TABSIZE;
+        tab_glyph.AdvanceX = space_glyph->AdvanceX * Hvk_TABSIZE;
         HvkFontAtlasBakedAddFontGlyph(atlas, baked, NULL, &tab_glyph);
     }
 }
@@ -3734,11 +3734,11 @@ static void HvkFontAtlasBuildSetupFontBakedBlanks(HvkFontAtlas* atlas, HvkFontBa
 // (note that this is called again for fonts with MergeMode)
 void HvkFontAtlasBuildSetupFontSpecialGlyphs(HvkFontAtlas* atlas, HvkFont* font, HvkFontConfig* src)
 {
-    IM_UNUSED(atlas);
-    IM_ASSERT(font->Sources.contains(src));
+    Hvk_UNUSED(atlas);
+    Hvk_ASSERT(font->Sources.contains(src));
 
     // Find Fallback character. Actual glyph loaded in GetFontBaked().
-    const HvkWchar fallback_chars[] = { font->FallbackChar, (HvkWchar)IM_UNICODE_CODEPOINT_INVALID, (HvkWchar)'?', (HvkWchar)' ' };
+    const HvkWchar fallback_chars[] = { font->FallbackChar, (HvkWchar)Hvk_UNICODE_CODEPOINT_INVALID, (HvkWchar)'?', (HvkWchar)' ' };
     if (font->FallbackChar == 0)
         for (HvkWchar candidate_char : fallback_chars)
             if (candidate_char != 0 && font->IsGlyphInFont(candidate_char))
@@ -3773,10 +3773,10 @@ void HvkFontAtlasBakedDiscardFontGlyph(HvkFontAtlas* atlas, HvkFont* font, HvkFo
         glyph->PackId = HvkFontAtlasRectId_Invalid;
     }
     HvkWchar c = (HvkWchar)glyph->Codepoint;
-    IM_ASSERT(font->FallbackChar != c && font->EllipsisChar != c); // Unsupported for simplicity
-    IM_ASSERT(glyph >= baked->Glyphs.Data && glyph < baked->Glyphs.Data + baked->Glyphs.Size);
-    IM_UNUSED(font);
-    baked->IndexLookup[c] = IM_FONTGLYPH_INDEX_UNUSED;
+    Hvk_ASSERT(font->FallbackChar != c && font->EllipsisChar != c); // Unsupported for simplicity
+    Hvk_ASSERT(glyph >= baked->Glyphs.Data && glyph < baked->Glyphs.Data + baked->Glyphs.Size);
+    Hvk_UNUSED(font);
+    baked->IndexLookup[c] = Hvk_FONTGLYPH_INDEX_UNUSED;
     baked->IndexAdvanceX[c] = baked->FallbackAdvanceX;
 }
 
@@ -3797,7 +3797,7 @@ HvkFontBaked* HvkFontAtlasBakedAdd(HvkFontAtlas* atlas, HvkFont* font, float fon
         const HvkFontLoader* loader = src->FontLoader ? src->FontLoader : atlas->FontLoader;
         loader_data_size += loader->FontBakedSrcLoaderDataSize;
     }
-    baked->FontLoaderDatas = (loader_data_size > 0) ? IM_ALLOC(loader_data_size) : NULL;
+    baked->FontLoaderDatas = (loader_data_size > 0) ? Hvk_ALLOC(loader_data_size) : NULL;
     char* loader_data_p = (char*)baked->FontLoaderDatas;
     for (HvkFontConfig* src : font->Sources)
     {
@@ -3859,7 +3859,7 @@ void HvkFontAtlasBakedDiscard(HvkFontAtlas* atlas, HvkFont* font, HvkFontBaked* 
     }
     if (baked->FontLoaderDatas)
     {
-        IM_FREE(baked->FontLoaderDatas);
+        Hvk_FREE(baked->FontLoaderDatas);
         baked->FontLoaderDatas = NULL;
     }
     builder->BakedMap.SetVoidPtr(baked->BakedId, NULL);
@@ -3902,13 +3902,13 @@ void HvkFontAtlasBuildDiscardBakes(HvkFontAtlas* atlas, int unused_frames)
 // Those functions are designed to facilitate changing the underlying structures for HvkFontAtlas to store an array of HvkDrawListSharedData*
 void HvkFontAtlasAddDrawListSharedData(HvkFontAtlas* atlas, HvkDrawListSharedData* data)
 {
-    IM_ASSERT(!atlas->DrawListSharedDatas.contains(data));
+    Hvk_ASSERT(!atlas->DrawListSharedDatas.contains(data));
     atlas->DrawListSharedDatas.push_back(data);
 }
 
 void HvkFontAtlasRemoveDrawListSharedData(HvkFontAtlas* atlas, HvkDrawListSharedData* data)
 {
-    IM_ASSERT(atlas->DrawListSharedDatas.contains(data));
+    Hvk_ASSERT(atlas->DrawListSharedDatas.contains(data));
     atlas->DrawListSharedDatas.find_erase(data);
 }
 
@@ -3970,7 +3970,7 @@ HvkTextureData* HvkFontAtlasTextureAdd(HvkFontAtlas* atlas, int w, int h)
     /*if (old_tex != NULL && old_tex->Status == HvkTextureStatus_WantCreate)
     {
         // Reuse texture not yet used by backend.
-        IM_ASSERT(old_tex->TexID == HvkTextureID_Invalid && old_tex->BackendUserData == NULL);
+        Hvk_ASSERT(old_tex->TexID == HvkTextureID_Invalid && old_tex->BackendUserData == NULL);
         old_tex->DestroyPixels();
         old_tex->Updates.clear();
         new_tex = old_tex;
@@ -3979,7 +3979,7 @@ HvkTextureData* HvkFontAtlasTextureAdd(HvkFontAtlas* atlas, int w, int h)
     else*/
     {
         // Add new
-        new_tex = IM_NEW(HvkTextureData)();
+        new_tex = Hvk_NEW(HvkTextureData)();
         new_tex->UniqueID = atlas->TexNextUniqueID++;
         atlas->TexList.push_back(new_tex);
     }
@@ -3987,7 +3987,7 @@ HvkTextureData* HvkFontAtlasTextureAdd(HvkFontAtlas* atlas, int w, int h)
     {
         // Queue old as to destroy next frame
         old_tex->WantDestroyNextFrame = true;
-        IM_ASSERT(old_tex->Status == HvkTextureStatus_OK || old_tex->Status == HvkTextureStatus_WantCreate || old_tex->Status == HvkTextureStatus_WantUpdates);
+        Hvk_ASSERT(old_tex->Status == HvkTextureStatus_OK || old_tex->Status == HvkTextureStatus_WantCreate || old_tex->Status == HvkTextureStatus_WantUpdates);
     }
 
     new_tex->Create(atlas->TexDesiredFormat, w, h);
@@ -4005,7 +4005,7 @@ static void HvkFontAtlasDebugWriteTexToDisk(HvkTextureData* tex, const char* des
 {
     HvkGuiContext& g = *GHvkGui;
     char buf[128];
-    HvkFormatString(buf, IM_ARRAYSIZE(buf), "[%05d] Texture #%03d - %s.png", g.FrameCount, tex->UniqueID, description);
+    HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "[%05d] Texture #%03d - %s.png", g.FrameCount, tex->UniqueID, description);
     stbi_write_png(buf, tex->Width, tex->Height, tex->BytesPerPixel, tex->Pixels, tex->GetPitch()); // tex->BytesPerPixel is technically not component, but ok for the formats we support.
 }
 #endif
@@ -4053,11 +4053,11 @@ void HvkFontAtlasTextureRepack(HvkFontAtlas* atlas, int w, int h)
             HvkFontAtlasTextureGrow(atlas, w, h); // Recurse
             return;
         }
-        IM_ASSERT(HvkFontAtlasRectId_GetIndex(new_r_id) == builder->RectsIndex.index_from_ptr(&index_entry));
+        Hvk_ASSERT(HvkFontAtlasRectId_GetIndex(new_r_id) == builder->RectsIndex.index_from_ptr(&index_entry));
         HvkTextureRect* new_r = HvkFontAtlasPackGetRect(atlas, new_r_id);
         HvkFontAtlasTextureBlockCopy(old_tex, old_r.x, old_r.y, new_tex, new_r->x, new_r->y, new_r->w, new_r->h);
     }
-    IM_ASSERT(old_rects.Size == builder->Rects.Size + builder->RectsDiscardedCount);
+    Hvk_ASSERT(old_rects.Size == builder->Rects.Size + builder->RectsDiscardedCount);
     builder->RectsDiscardedCount = 0;
     builder->RectsDiscardedSurface = 0;
 
@@ -4093,8 +4093,8 @@ void HvkFontAtlasTextureGrow(HvkFontAtlas* atlas, int old_tex_w, int old_tex_h)
 
     // FIXME-NEWATLAS-V2: What to do when reaching limits exposed by backend?
     // FIXME-NEWATLAS-V2: Does HvkFontAtlasFlags_NoPowerOfTwoHeight makes sense now? Allow 'lock' and 'compact' operations?
-    IM_ASSERT(HvkIsPowerOfTwo(old_tex_w) && HvkIsPowerOfTwo(old_tex_h));
-    IM_ASSERT(HvkIsPowerOfTwo(atlas->TexMinWidth) && HvkIsPowerOfTwo(atlas->TexMaxWidth) && HvkIsPowerOfTwo(atlas->TexMinHeight) && HvkIsPowerOfTwo(atlas->TexMaxHeight));
+    Hvk_ASSERT(HvkIsPowerOfTwo(old_tex_w) && HvkIsPowerOfTwo(old_tex_h));
+    Hvk_ASSERT(HvkIsPowerOfTwo(atlas->TexMinWidth) && HvkIsPowerOfTwo(atlas->TexMaxWidth) && HvkIsPowerOfTwo(atlas->TexMinHeight) && HvkIsPowerOfTwo(atlas->TexMaxHeight));
 
     // Grow texture so it follows roughly a square.
     // - Grow height before width, as width Hvkply more packing nodes.
@@ -4104,8 +4104,8 @@ void HvkFontAtlasTextureGrow(HvkFontAtlas* atlas, int old_tex_w, int old_tex_h)
 
     // Handle minimum size first (for pathologically large packed rects)
     const int pack_padding = atlas->TexGlyphPadding;
-    new_tex_w = HvkMax(new_tex_w, HvkUpperPowerOfTwo(builder->MaxRectSize.x + pack_padding));
-    new_tex_h = HvkMax(new_tex_h, HvkUpperPowerOfTwo(builder->MaxRectSize.y + pack_padding));
+    new_tex_w = Immax(new_tex_w, HvkUpperPowerOfTwo(builder->MaxRectSize.x + pack_padding));
+    new_tex_h = Immax(new_tex_h, HvkUpperPowerOfTwo(builder->MaxRectSize.y + pack_padding));
     new_tex_w = HvkClamp(new_tex_w, atlas->TexMinWidth, atlas->TexMaxWidth);
     new_tex_h = HvkClamp(new_tex_h, atlas->TexMinHeight, atlas->TexMaxHeight);
     if (new_tex_w == old_tex_w && new_tex_h == old_tex_h)
@@ -4136,8 +4136,8 @@ HvkVec2i HvkFontAtlasTextureGetSizeEstimate(HvkFontAtlas* atlas)
         return HvkVec2i(min_w, min_h);
 
     HvkFontAtlasBuilder* builder = atlas->Builder;
-    min_w = HvkMax(HvkUpperPowerOfTwo(builder->MaxRectSize.x), min_w);
-    min_h = HvkMax(HvkUpperPowerOfTwo(builder->MaxRectSize.y), min_h);
+    min_w = Immax(HvkUpperPowerOfTwo(builder->MaxRectSize.x), min_w);
+    min_h = Immax(HvkUpperPowerOfTwo(builder->MaxRectSize.y), min_h);
     const int surface_approx = builder->RectsPackedSurface - builder->RectsDiscardedSurface; // Expected surface after repack
     const int surface_sqrt = (int)sqrtf((float)surface_approx);
 
@@ -4145,20 +4145,20 @@ HvkVec2i HvkFontAtlasTextureGetSizeEstimate(HvkFontAtlas* atlas)
     int new_tex_h;
     if (min_w >= min_h)
     {
-        new_tex_w = HvkMax(min_w, HvkUpperPowerOfTwo(surface_sqrt));
-        new_tex_h = HvkMax(min_h, (int)((surface_approx + new_tex_w - 1) / new_tex_w));
+        new_tex_w = Immax(min_w, HvkUpperPowerOfTwo(surface_sqrt));
+        new_tex_h = Immax(min_h, (int)((surface_approx + new_tex_w - 1) / new_tex_w));
         if ((atlas->Flags & HvkFontAtlasFlags_NoPowerOfTwoHeight) == 0)
             new_tex_h = HvkUpperPowerOfTwo(new_tex_h);
     }
     else
     {
-        new_tex_h = HvkMax(min_h, HvkUpperPowerOfTwo(surface_sqrt));
+        new_tex_h = Immax(min_h, HvkUpperPowerOfTwo(surface_sqrt));
         if ((atlas->Flags & HvkFontAtlasFlags_NoPowerOfTwoHeight) == 0)
             new_tex_h = HvkUpperPowerOfTwo(new_tex_h);
-        new_tex_w = HvkMax(min_w, (int)((surface_approx + new_tex_h - 1) / new_tex_h));
+        new_tex_w = Immax(min_w, (int)((surface_approx + new_tex_h - 1) / new_tex_h));
     }
 
-    IM_ASSERT(HvkIsPowerOfTwo(new_tex_w) && HvkIsPowerOfTwo(new_tex_h));
+    Hvk_ASSERT(HvkIsPowerOfTwo(new_tex_w) && HvkIsPowerOfTwo(new_tex_h));
     return HvkVec2i(new_tex_w, new_tex_h);
 }
 
@@ -4207,7 +4207,7 @@ void HvkFontAtlasBuildInit(HvkFontAtlas* atlas)
 #elif defined(HvkGui_ENABLE_STB_TRUETYPE)
         atlas->SetFontLoader(HvkFontAtlasGetFontLoaderForStbTruetype());
 #else
-        IM_ASSERT(0); // Invalid Build function
+        Hvk_ASSERT(0); // Invalid Build function
 #endif
     }
 
@@ -4215,7 +4215,7 @@ void HvkFontAtlasBuildInit(HvkFontAtlas* atlas)
     if (atlas->TexData == NULL || atlas->TexData->Pixels == NULL)
         HvkFontAtlasTextureAdd(atlas, HvkUpperPowerOfTwo(atlas->TexMinWidth), HvkUpperPowerOfTwo(atlas->TexMinHeight));
 
-    atlas->Builder = IM_NEW(HvkFontAtlasBuilder)();
+    atlas->Builder = Hvk_NEW(HvkFontAtlasBuilder)();
     if (atlas->FontLoader->LoaderInit)
         atlas->FontLoader->LoaderInit(atlas);
 
@@ -4244,9 +4244,9 @@ void HvkFontAtlasBuildDestroy(HvkFontAtlas* atlas)
     if (atlas->Builder && atlas->FontLoader && atlas->FontLoader->LoaderShutdown)
     {
         atlas->FontLoader->LoaderShutdown(atlas);
-        IM_ASSERT(atlas->FontLoaderData == NULL);
+        Hvk_ASSERT(atlas->FontLoaderData == NULL);
     }
-    IM_DELETE(atlas->Builder);
+    Hvk_DELETE(atlas->Builder);
     atlas->Builder = NULL;
 }
 
@@ -4258,7 +4258,7 @@ void HvkFontAtlasPackInit(HvkFontAtlas * atlas)
     // In theory we could decide to reduce the number of nodes, e.g. halve them, and waste a little texture space, but it doesn't seem worth it.
     const int pack_node_count = tex->Width / 2;
     builder->PackNodes.resize(pack_node_count);
-    IM_STATIC_ASSERT(sizeof(stbrp_context) <= sizeof(stbrp_context_opaque));
+    Hvk_STATIC_ASSERT(sizeof(stbrp_context) <= sizeof(stbrp_context_opaque));
     stbrp_init_target((stbrp_context*)(void*)&builder->PackContext, tex->Width, tex->Height, builder->PackNodes.Data, builder->PackNodes.Size);
     builder->RectsPackedSurface = builder->RectsPackedCount = 0;
     builder->MaxRectSize = HvkVec2i(0, 0);
@@ -4282,7 +4282,7 @@ static HvkFontAtlasRectId HvkFontAtlasPackAllocRectEntry(HvkFontAtlas* atlas, in
     {
         index_idx = builder->RectsIndexFreeListStart;
         index_entry = &builder->RectsIndex[index_idx];
-        IM_ASSERT(index_entry->IsUsed == false && index_entry->Generation > 0); // Generation is incremented during DiscardRect
+        Hvk_ASSERT(index_entry->IsUsed == false && index_entry->Generation > 0); // Generation is incremented during DiscardRect
         builder->RectsIndexFreeListStart = index_entry->TargetIndex;
     }
     index_entry->TargetIndex = rect_idx;
@@ -4293,7 +4293,7 @@ static HvkFontAtlasRectId HvkFontAtlasPackAllocRectEntry(HvkFontAtlas* atlas, in
 // Overwrite existing entry
 static HvkFontAtlasRectId HvkFontAtlasPackReuseRectEntry(HvkFontAtlas* atlas, HvkFontAtlasRectEntry* index_entry)
 {
-    IM_ASSERT(index_entry->IsUsed);
+    Hvk_ASSERT(index_entry->IsUsed);
     index_entry->TargetIndex = atlas->Builder->Rects.Size - 1;
     int index_idx = atlas->Builder->RectsIndex.index_from_ptr(index_entry);
     return HvkFontAtlasRectId_Make(index_idx, index_entry->Generation);
@@ -4302,7 +4302,7 @@ static HvkFontAtlasRectId HvkFontAtlasPackReuseRectEntry(HvkFontAtlas* atlas, Hv
 // This is expected to be called in batches and followed by a repack
 void HvkFontAtlasPackDiscardRect(HvkFontAtlas* atlas, HvkFontAtlasRectId id)
 {
-    IM_ASSERT(id != HvkFontAtlasRectId_Invalid);
+    Hvk_ASSERT(id != HvkFontAtlasRectId_Invalid);
 
     HvkTextureRect* rect = HvkFontAtlasPackGetRect(atlas, id);
     if (rect == NULL)
@@ -4311,7 +4311,7 @@ void HvkFontAtlasPackDiscardRect(HvkFontAtlas* atlas, HvkFontAtlasRectId id)
     HvkFontAtlasBuilder* builder = atlas->Builder;
     int index_idx = HvkFontAtlasRectId_GetIndex(id);
     HvkFontAtlasRectEntry* index_entry = &builder->RectsIndex[index_idx];
-    IM_ASSERT(index_entry->IsUsed && index_entry->TargetIndex >= 0);
+    Hvk_ASSERT(index_entry->IsUsed && index_entry->TargetIndex >= 0);
     index_entry->IsUsed = false;
     index_entry->TargetIndex = builder->RectsIndexFreeListStart;
     index_entry->Generation++;
@@ -4329,13 +4329,13 @@ void HvkFontAtlasPackDiscardRect(HvkFontAtlas* atlas, HvkFontAtlasRectId id)
 // FIXME-NEWFONTS: Expose other glyph padding settings for custom alteration (e.g. drop shadows). See #7962
 HvkFontAtlasRectId HvkFontAtlasPackAddRect(HvkFontAtlas* atlas, int w, int h, HvkFontAtlasRectEntry* overwrite_entry)
 {
-    IM_ASSERT(w > 0 && w <= 0xFFFF);
-    IM_ASSERT(h > 0 && h <= 0xFFFF);
+    Hvk_ASSERT(w > 0 && w <= 0xFFFF);
+    Hvk_ASSERT(h > 0 && h <= 0xFFFF);
 
     HvkFontAtlasBuilder* builder = (HvkFontAtlasBuilder*)atlas->Builder;
     const int pack_padding = atlas->TexGlyphPadding;
-    builder->MaxRectSize.x = HvkMax(builder->MaxRectSize.x, w);
-    builder->MaxRectSize.y = HvkMax(builder->MaxRectSize.y, h);
+    builder->MaxRectSize.x = Immax(builder->MaxRectSize.x, w);
+    builder->MaxRectSize.y = Immax(builder->MaxRectSize.y, h);
 
     // Pack
     HvkTextureRect r = { 0, 0, (unsigned short)w, (unsigned short)h };
@@ -4362,8 +4362,8 @@ HvkFontAtlasRectId HvkFontAtlasPackAddRect(HvkFontAtlas* atlas, int w, int h, Hv
         HvkFontAtlasTextureMakeSpace(atlas);
     }
 
-    builder->MaxRectBounds.x = HvkMax(builder->MaxRectBounds.x, r.x + r.w + pack_padding);
-    builder->MaxRectBounds.y = HvkMax(builder->MaxRectBounds.y, r.y + r.h + pack_padding);
+    builder->MaxRectBounds.x = Immax(builder->MaxRectBounds.x, r.x + r.w + pack_padding);
+    builder->MaxRectBounds.y = Immax(builder->MaxRectBounds.y, r.y + r.h + pack_padding);
     builder->RectsPackedCount++;
     builder->RectsPackedSurface += (w + pack_padding) * (h + pack_padding);
 
@@ -4377,12 +4377,12 @@ HvkFontAtlasRectId HvkFontAtlasPackAddRect(HvkFontAtlas* atlas, int w, int h, Hv
 // Generally for non-user facing functions: assert on invalid ID.
 HvkTextureRect* HvkFontAtlasPackGetRect(HvkFontAtlas* atlas, HvkFontAtlasRectId id)
 {
-    IM_ASSERT(id != HvkFontAtlasRectId_Invalid);
+    Hvk_ASSERT(id != HvkFontAtlasRectId_Invalid);
     int index_idx = HvkFontAtlasRectId_GetIndex(id);
     HvkFontAtlasBuilder* builder = (HvkFontAtlasBuilder*)atlas->Builder;
     HvkFontAtlasRectEntry* index_entry = &builder->RectsIndex[index_idx];
-    IM_ASSERT(index_entry->Generation == HvkFontAtlasRectId_GetGeneration(id));
-    IM_ASSERT(index_entry->IsUsed);
+    Hvk_ASSERT(index_entry->Generation == HvkFontAtlasRectId_GetGeneration(id));
+    Hvk_ASSERT(index_entry->IsUsed);
     return &builder->Rects[index_entry->TargetIndex];
 }
 
@@ -4396,7 +4396,7 @@ HvkTextureRect* HvkFontAtlasPackGetRectSafe(HvkFontAtlas* atlas, HvkFontAtlasRec
     if (atlas->Builder == NULL)
         HvkFontAtlasBuildInit(atlas);
     HvkFontAtlasBuilder* builder = (HvkFontAtlasBuilder*)atlas->Builder;
-    IM_MSVC_WARNING_SUPPRESS(28182); // Static Analysis false positive "warning C28182: Dereferencing NULL pointer 'builder'"
+    Hvk_MSVC_WARNING_SUPPRESS(28182); // Static Analysis false positive "warning C28182: Dereferencing NULL pointer 'builder'"
     if (index_idx >= builder->RectsIndex.Size)
         return NULL;
     HvkFontAtlasRectEntry* index_entry = &builder->RectsIndex[index_idx];
@@ -4418,16 +4418,16 @@ static bool HvkFontAtlasBuildAcceptCodepointForSource(HvkFontConfig* src, HvkWch
 
 static void HvkFontBaked_BuildGrowIndex(HvkFontBaked* baked, int new_size)
 {
-    IM_ASSERT(baked->IndexAdvanceX.Size == baked->IndexLookup.Size);
+    Hvk_ASSERT(baked->IndexAdvanceX.Size == baked->IndexLookup.Size);
     if (new_size <= baked->IndexLookup.Size)
         return;
     baked->IndexAdvanceX.resize(new_size, -1.0f);
-    baked->IndexLookup.resize(new_size, IM_FONTGLYPH_INDEX_UNUSED);
+    baked->IndexLookup.resize(new_size, Hvk_FONTGLYPH_INDEX_UNUSED);
 }
 
 static void HvkFontAtlas_FontHookRemapCodepoint(HvkFontAtlas* atlas, HvkFont* font, HvkWchar* c)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
     if (font->RemapPairs.Data.Size != 0)
         *c = (HvkWchar)font->RemapPairs.GetInt((HvkGuiID)*c, (int)*c);
 }
@@ -4499,7 +4499,7 @@ static HvkFontGlyph* HvkFontBaked_BuildLoadGlyph(HvkFontBaked* baked, HvkWchar c
     // Mark index as not found, so we don't attempt the search twice
     HvkFontBaked_BuildGrowIndex(baked, codepoint + 1);
     baked->IndexAdvanceX[codepoint] = baked->FallbackAdvanceX;
-    baked->IndexLookup[codepoint] = IM_FONTGLYPH_INDEX_NOT_FOUND;
+    baked->IndexLookup[codepoint] = Hvk_FONTGLYPH_INDEX_NOT_FOUND;
     return NULL;
 }
 
@@ -4520,36 +4520,36 @@ static float HvkFontBaked_BuildLoadGlyphAdvanceX(HvkFontBaked* baked, HvkWchar c
 }
 
 // The point of this indirection is to not be inlined in debug mode in order to not bloat inner loop.b
-IM_MSVC_RUNTIME_CHECKS_OFF
+Hvk_MSVC_RUNTIME_CHECKS_OFF
 static float BuildLoadGlyphGetAdvanceOrFallback(HvkFontBaked* baked, unsigned int codepoint)
 {
     return HvkFontBaked_BuildLoadGlyphAdvanceX(baked, (HvkWchar)codepoint);
 }
-IM_MSVC_RUNTIME_CHECKS_RESTORE
+Hvk_MSVC_RUNTIME_CHECKS_RESTORE
 
 #ifndef HvkGui_DISABLE_DEBUG_TOOLS
 void HvkFontAtlasDebugLogTextureRequests(HvkFontAtlas* atlas)
 {
     // [DEBUG] Log texture update requests
     HvkGuiContext& g = *GHvkGui;
-    IM_UNUSED(g);
+    Hvk_UNUSED(g);
     for (HvkTextureData* tex : atlas->TexList)
     {
         if ((g.IO.BackendFlags & HvkGuiBackendFlags_RendererHasTextures) == 0)
-            IM_ASSERT(tex->Updates.Size == 0);
+            Hvk_ASSERT(tex->Updates.Size == 0);
         if (tex->Status == HvkTextureStatus_WantCreate)
             HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: create %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
         else if (tex->Status == HvkTextureStatus_WantDestroy)
-            HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: destroy %dx%d, texid=0x%" IM_PRIX64 ", backend_data=%p\n", tex->UniqueID, tex->Width, tex->Height, HvkGui::DebugTextureIDToU64(tex->TexID), tex->BackendUserData);
+            HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: destroy %dx%d, texid=0x%" Hvk_PRIX64 ", backend_data=%p\n", tex->UniqueID, tex->Width, tex->Height, HvkGui::DebugTextureIDToU64(tex->TexID), tex->BackendUserData);
         else if (tex->Status == HvkTextureStatus_WantUpdates)
         {
-            HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: update %d regions, texid=0x%" IM_PRIX64 ", backend_data=0x%" IM_PRIX64 "\n", tex->UniqueID, tex->Updates.Size, HvkGui::DebugTextureIDToU64(tex->TexID), (HvkU64)(intptr_t)tex->BackendUserData);
+            HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: update %d regions, texid=0x%" Hvk_PRIX64 ", backend_data=0x%" Hvk_PRIX64 "\n", tex->UniqueID, tex->Updates.Size, HvkGui::DebugTextureIDToU64(tex->TexID), (HvkU64)(intptr_t)tex->BackendUserData);
             for (const HvkTextureRect& r : tex->Updates)
             {
-                IM_UNUSED(r);
-                IM_ASSERT(r.x >= 0 && r.y >= 0);
-                IM_ASSERT(r.x + r.w <= tex->Width && r.y + r.h <= tex->Height); // In theory should subtract PackPadding but it's currently part of atlas and mid-frame change would wreck assert.
-                //HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: update (% 4d..%-4d)->(% 4d..%-4d), texid=0x%" IM_PRIX64 ", backend_data=0x%" IM_PRIX64 "\n", tex->UniqueID, r.x, r.y, r.x + r.w, r.y + r.h, HvkGui::DebugTextureIDToU64(tex->TexID), (HvkU64)(intptr_t)tex->BackendUserData);
+                Hvk_UNUSED(r);
+                Hvk_ASSERT(r.x >= 0 && r.y >= 0);
+                Hvk_ASSERT(r.x + r.w <= tex->Width && r.y + r.h <= tex->Height); // In theory should subtract PackPadding but it's currently part of atlas and mid-frame change would wreck assert.
+                //HvkGui_DEBUG_LOG_FONT("[font] Texture #%03d: update (% 4d..%-4d)->(% 4d..%-4d), texid=0x%" Hvk_PRIX64 ", backend_data=0x%" Hvk_PRIX64 "\n", tex->UniqueID, r.x, r.y, r.x + r.w, r.y + r.h, HvkGui::DebugTextureIDToU64(tex->TexID), (HvkU64)(intptr_t)tex->BackendUserData);
             }
         }
     }
@@ -4573,23 +4573,23 @@ struct HvkGui_ImplStbTrueType_FontSrcData
 
 static bool HvkGui_ImplStbTrueType_FontSrcInit(HvkFontAtlas* atlas, HvkFontConfig* src)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
 
-    HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = IM_NEW(HvkGui_ImplStbTrueType_FontSrcData);
-    IM_ASSERT(src->FontLoaderData == NULL);
+    HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = Hvk_NEW(HvkGui_ImplStbTrueType_FontSrcData);
+    Hvk_ASSERT(src->FontLoaderData == NULL);
 
     // Initialize helper structure for font loading and verify that the TTF/OTF data is correct
     const int font_offset = stbtt_GetFontOffsetForIndex((const unsigned char*)src->FontData, src->FontNo);
     if (font_offset < 0)
     {
-        IM_DELETE(bd_font_data);
-        IM_ASSERT_USER_ERROR(0, "stbtt_GetFontOffsetForIndex(): FontData is incorrect, or FontNo cannot be found.");
+        Hvk_DELETE(bd_font_data);
+        Hvk_ASSERT_USER_ERROR(0, "stbtt_GetFontOffsetForIndex(): FontData is incorrect, or FontNo cannot be found.");
         return false;
     }
     if (!stbtt_InitFont(&bd_font_data->FontInfo, (const unsigned char*)src->FontData, font_offset))
     {
-        IM_DELETE(bd_font_data);
-        IM_ASSERT_USER_ERROR(0, "stbtt_InitFont(): failed to parse FontData. It is correct and complete? Check FontDataSize.");
+        Hvk_DELETE(bd_font_data);
+        Hvk_ASSERT_USER_ERROR(0, "stbtt_InitFont(): failed to parse FontData. It is correct and complete? Check FontDataSize.");
         return false;
     }
     src->FontLoaderData = bd_font_data;
@@ -4607,18 +4607,18 @@ static bool HvkGui_ImplStbTrueType_FontSrcInit(HvkFontAtlas* atlas, HvkFontConfi
 
 static void HvkGui_ImplStbTrueType_FontSrcDestroy(HvkFontAtlas* atlas, HvkFontConfig* src)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
     HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = (HvkGui_ImplStbTrueType_FontSrcData*)src->FontLoaderData;
-    IM_DELETE(bd_font_data);
+    Hvk_DELETE(bd_font_data);
     src->FontLoaderData = NULL;
 }
 
 static bool HvkGui_ImplStbTrueType_FontSrcContainsGlyph(HvkFontAtlas* atlas, HvkFontConfig* src, HvkWchar codepoint)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
 
     HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = (HvkGui_ImplStbTrueType_FontSrcData*)src->FontLoaderData;
-    IM_ASSERT(bd_font_data != NULL);
+    Hvk_ASSERT(bd_font_data != NULL);
 
     int glyph_index = stbtt_FindGlyphIndex(&bd_font_data->FontInfo, (int)codepoint);
     return glyph_index != 0;
@@ -4626,7 +4626,7 @@ static bool HvkGui_ImplStbTrueType_FontSrcContainsGlyph(HvkFontAtlas* atlas, Hvk
 
 static bool HvkGui_ImplStbTrueType_FontBakedInit(HvkFontAtlas* atlas, HvkFontConfig* src, HvkFontBaked* baked, void*)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
 
     HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = (HvkGui_ImplStbTrueType_FontSrcData*)src->FontLoaderData;
     if (src->MergeMode == false)
@@ -4646,7 +4646,7 @@ static bool HvkGui_ImplStbTrueType_FontBakedLoadGlyph(HvkFontAtlas* atlas, HvkFo
 {
     // Search for first font which has the glyph
     HvkGui_ImplStbTrueType_FontSrcData* bd_font_data = (HvkGui_ImplStbTrueType_FontSrcData*)src->FontLoaderData;
-    IM_ASSERT(bd_font_data);
+    Hvk_ASSERT(bd_font_data);
     int glyph_index = stbtt_FindGlyphIndex(&bd_font_data->FontInfo, (int)codepoint);
     if (glyph_index == 0)
         return false;
@@ -4668,7 +4668,7 @@ static bool HvkGui_ImplStbTrueType_FontBakedLoadGlyph(HvkFontAtlas* atlas, HvkFo
     // Load metrics only mode
     if (out_advance_x != NULL)
     {
-        IM_ASSERT(out_glyph == NULL);
+        Hvk_ASSERT(out_glyph == NULL);
         *out_advance_x = advance * scale_for_layout;
         return true;
     }
@@ -4688,7 +4688,7 @@ static bool HvkGui_ImplStbTrueType_FontBakedLoadGlyph(HvkFontAtlas* atlas, HvkFo
         if (pack_id == HvkFontAtlasRectId_Invalid)
         {
             // Pathological out of memory case (TexMaxWidth/TexMaxHeight set too small?)
-            IM_ASSERT(pack_id != HvkFontAtlasRectId_Invalid && "Out of texture memory.");
+            Hvk_ASSERT(pack_id != HvkFontAtlasRectId_Invalid && "Out of texture memory.");
             return false;
         }
         HvkTextureRect* r = HvkFontAtlasPackGetRect(atlas, pack_id);
@@ -4711,11 +4711,11 @@ static bool HvkGui_ImplStbTrueType_FontBakedLoadGlyph(HvkFontAtlas* atlas, HvkFo
         float font_off_x = (src->GlyphOffset.x * offsets_scale);
         float font_off_y = (src->GlyphOffset.y * offsets_scale);
         if (src->PixelSnapH) // Snap scaled offset. This is to mitigate backward compatibility issues for GlyphOffset, but a better design would be welcome.
-            font_off_x = IM_ROUND(font_off_x);
+            font_off_x = Hvk_ROUND(font_off_x);
         if (src->PixelSnapV)
-            font_off_y = IM_ROUND(font_off_y);
+            font_off_y = Hvk_ROUND(font_off_y);
         font_off_x += sub_x;
-        font_off_y += sub_y + IM_ROUND(baked->Ascent);
+        font_off_y += sub_y + Hvk_ROUND(baked->Ascent);
         float recip_h = 1.0f / (oversample_h * rasterizer_density);
         float recip_v = 1.0f / (oversample_v * rasterizer_density);
 
@@ -4885,11 +4885,11 @@ const HvkWchar*  HvkFontAtlas::GetGlyphRangesChineseSimplifiedCommon()
         0xFF00, 0xFFEF, // Half-width characters
         0xFFFD, 0xFFFD  // Invalid
     };
-    static HvkWchar full_ranges[IM_ARRAYSIZE(base_ranges) + IM_ARRAYSIZE(accumulative_offsets_from_0x4E00) * 2 + 1] = { 0 };
+    static HvkWchar full_ranges[Hvk_ARRAYSIZE(base_ranges) + Hvk_ARRAYSIZE(accumulative_offsets_from_0x4E00) * 2 + 1] = { 0 };
     if (!full_ranges[0])
     {
         memcpy(full_ranges, base_ranges, sizeof(base_ranges));
-        UnpackAccumulativeOffsetsIntoRanges(0x4E00, accumulative_offsets_from_0x4E00, IM_ARRAYSIZE(accumulative_offsets_from_0x4E00), full_ranges + IM_ARRAYSIZE(base_ranges));
+        UnpackAccumulativeOffsetsIntoRanges(0x4E00, accumulative_offsets_from_0x4E00, Hvk_ARRAYSIZE(accumulative_offsets_from_0x4E00), full_ranges + Hvk_ARRAYSIZE(base_ranges));
     }
     return &full_ranges[0];
 }
@@ -4975,11 +4975,11 @@ const HvkWchar*  HvkFontAtlas::GetGlyphRangesJapanese()
         0xFF00, 0xFFEF, // Half-width characters
         0xFFFD, 0xFFFD  // Invalid
     };
-    static HvkWchar full_ranges[IM_ARRAYSIZE(base_ranges) + IM_ARRAYSIZE(accumulative_offsets_from_0x4E00)*2 + 1] = { 0 };
+    static HvkWchar full_ranges[Hvk_ARRAYSIZE(base_ranges) + Hvk_ARRAYSIZE(accumulative_offsets_from_0x4E00)*2 + 1] = { 0 };
     if (!full_ranges[0])
     {
         memcpy(full_ranges, base_ranges, sizeof(base_ranges));
-        UnpackAccumulativeOffsetsIntoRanges(0x4E00, accumulative_offsets_from_0x4E00, IM_ARRAYSIZE(accumulative_offsets_from_0x4E00), full_ranges + IM_ARRAYSIZE(base_ranges));
+        UnpackAccumulativeOffsetsIntoRanges(0x4E00, accumulative_offsets_from_0x4E00, Hvk_ARRAYSIZE(accumulative_offsets_from_0x4E00), full_ranges + Hvk_ARRAYSIZE(base_ranges));
     }
     return &full_ranges[0];
 }
@@ -5049,13 +5049,13 @@ void HvkFontGlyphRangesBuilder::AddText(const char* text, const char* text_end)
 void HvkFontGlyphRangesBuilder::AddRanges(const HvkWchar* ranges)
 {
     for (; ranges[0]; ranges += 2)
-        for (unsigned int c = ranges[0]; c <= ranges[1] && c <= IM_UNICODE_CODEPOINT_MAX; c++) //-V560
+        for (unsigned int c = ranges[0]; c <= ranges[1] && c <= Hvk_UNICODE_CODEPOINT_MAX; c++) //-V560
             AddChar((HvkWchar)c);
 }
 
 void HvkFontGlyphRangesBuilder::BuildRanges(HvkVector<HvkWchar>* out_ranges)
 {
-    const int max_codepoint = IM_UNICODE_CODEPOINT_MAX;
+    const int max_codepoint = Hvk_UNICODE_CODEPOINT_MAX;
     for (int n = 0; n <= max_codepoint; n++)
         if (GetBit(n))
         {
@@ -5131,13 +5131,13 @@ HvkFontGlyph* HvkFontAtlasBakedAddFontGlyph(HvkFontAtlas* atlas, HvkFontBaked* b
     int glyph_idx = baked->Glyphs.Size;
     baked->Glyphs.push_back(*in_glyph);
     HvkFontGlyph* glyph = &baked->Glyphs[glyph_idx];
-    IM_ASSERT(baked->Glyphs.Size < 0xFFFE); // IndexLookup[] hold 16-bit values and -1/-2 are reserved.
+    Hvk_ASSERT(baked->Glyphs.Size < 0xFFFE); // IndexLookup[] hold 16-bit values and -1/-2 are reserved.
 
     // Set UV from packed rectangle
     if (glyph->PackId != HvkFontAtlasRectId_Invalid)
     {
         HvkTextureRect* r = HvkFontAtlasPackGetRect(atlas, glyph->PackId);
-        IM_ASSERT(glyph->U0 == 0.0f && glyph->V0 == 0.0f && glyph->U1 == 0.0f && glyph->V1 == 0.0f);
+        Hvk_ASSERT(glyph->U0 == 0.0f && glyph->V0 == 0.0f && glyph->U1 == 0.0f && glyph->V1 == 0.0f);
         glyph->U0 = (r->x) * atlas->TexUvScale.x;
         glyph->V0 = (r->y) * atlas->TexUvScale.y;
         glyph->U1 = (r->x + r->w) * atlas->TexUvScale.x;
@@ -5160,7 +5160,7 @@ HvkFontGlyph* HvkFontAtlasBakedAddFontGlyph(HvkFontAtlas* atlas, HvkFontBaked* b
 
         // Snap to pixel
         if (src->PixelSnapH)
-            advance_x = IM_ROUND(advance_x);
+            advance_x = Hvk_ROUND(advance_x);
 
         // Bake spacing
         glyph->AdvanceX = advance_x + src->GlyphExtraAdvanceX;
@@ -5182,7 +5182,7 @@ HvkFontGlyph* HvkFontAtlasBakedAddFontGlyph(HvkFontAtlas* atlas, HvkFontBaked* b
 // FIXME: Code is duplicated with code above.
 void HvkFontAtlasBakedAddFontGlyphAdvancedX(HvkFontAtlas* atlas, HvkFontBaked* baked, HvkFontConfig* src, HvkWchar codepoint, float advance_x)
 {
-    IM_UNUSED(atlas);
+    Hvk_UNUSED(atlas);
     if (src != NULL)
     {
         // Clamp & recenter if needed
@@ -5192,7 +5192,7 @@ void HvkFontAtlasBakedAddFontGlyphAdvancedX(HvkFontAtlas* atlas, HvkFontBaked* b
 
         // Snap to pixel
         if (src->PixelSnapH)
-            advance_x = IM_ROUND(advance_x);
+            advance_x = Hvk_ROUND(advance_x);
 
         // Bake spacing
         advance_x += src->GlyphExtraAdvanceX;
@@ -5206,7 +5206,7 @@ void HvkFontAtlasBakedAddFontGlyphAdvancedX(HvkFontAtlas* atlas, HvkFontBaked* b
 void HvkFontAtlasBakedSetFontGlyphBitmap(HvkFontAtlas* atlas, HvkFontBaked* baked, HvkFontConfig* src, HvkFontGlyph* glyph, HvkTextureRect* r, const unsigned char* src_pixels, HvkTextureFormat src_fmt, int src_pitch)
 {
     HvkTextureData* tex = atlas->TexData;
-    IM_ASSERT(r->x + r->w <= tex->Width && r->y + r->h <= tex->Height);
+    Hvk_ASSERT(r->x + r->w <= tex->Width && r->y + r->h <= tex->Height);
     HvkFontAtlasTextureBlockConvert(src_pixels, src_fmt, src_pitch, (unsigned char*)tex->GetPixelsAt(r->x, r->y), tex->Format, tex->GetPitch(), r->w, r->h);
     HvkFontAtlasPostProcessData pp_data = { atlas, baked->OwnerFont, src, baked, glyph, tex->GetPixelsAt(r->x, r->y), tex->Format, tex->GetPitch(), r->w, r->h };
     HvkFontAtlasTextureBlockPostProcess(&pp_data);
@@ -5221,12 +5221,12 @@ void HvkFont::AddRemapChar(HvkWchar from_codepoint, HvkWchar to_codepoint)
 // Find glyph, load if necessary, return fallback if missing
 HvkFontGlyph* HvkFontBaked::FindGlyph(HvkWchar c)
 {
-    if (c < (size_t)IndexLookup.Size) IM_LIKELY
+    if (c < (size_t)IndexLookup.Size) Hvk_LIKELY
     {
         const int i = (int)IndexLookup.Data[c];
-        if (i == IM_FONTGLYPH_INDEX_NOT_FOUND)
+        if (i == Hvk_FONTGLYPH_INDEX_NOT_FOUND)
             return &Glyphs.Data[FallbackGlyphIndex];
-        if (i != IM_FONTGLYPH_INDEX_UNUSED)
+        if (i != Hvk_FONTGLYPH_INDEX_UNUSED)
             return &Glyphs.Data[i];
     }
     HvkFontGlyph* glyph = HvkFontBaked_BuildLoadGlyph(this, c, NULL);
@@ -5236,12 +5236,12 @@ HvkFontGlyph* HvkFontBaked::FindGlyph(HvkWchar c)
 // Attempt to load but when missing, return NULL instead of FallbackGlyph
 HvkFontGlyph* HvkFontBaked::FindGlyphNoFallback(HvkWchar c)
 {
-    if (c < (size_t)IndexLookup.Size) IM_LIKELY
+    if (c < (size_t)IndexLookup.Size) Hvk_LIKELY
     {
         const int i = (int)IndexLookup.Data[c];
-        if (i == IM_FONTGLYPH_INDEX_NOT_FOUND)
+        if (i == Hvk_FONTGLYPH_INDEX_NOT_FOUND)
             return NULL;
-        if (i != IM_FONTGLYPH_INDEX_UNUSED)
+        if (i != Hvk_FONTGLYPH_INDEX_UNUSED)
             return &Glyphs.Data[i];
     }
     LoadNoFallback = true; // This is actually a rare call, not done in hot-loop, so we prioritize not adding extra cruft to HvkFontBaked_BuildLoadGlyph() call sites.
@@ -5252,12 +5252,12 @@ HvkFontGlyph* HvkFontBaked::FindGlyphNoFallback(HvkWchar c)
 
 bool HvkFontBaked::IsGlyphLoaded(HvkWchar c)
 {
-    if (c < (size_t)IndexLookup.Size) IM_LIKELY
+    if (c < (size_t)IndexLookup.Size) Hvk_LIKELY
     {
         const int i = (int)IndexLookup.Data[c];
-        if (i == IM_FONTGLYPH_INDEX_NOT_FOUND)
+        if (i == Hvk_FONTGLYPH_INDEX_NOT_FOUND)
             return false;
-        if (i != IM_FONTGLYPH_INDEX_UNUSED)
+        if (i != Hvk_FONTGLYPH_INDEX_UNUSED)
             return true;
     }
     return false;
@@ -5278,7 +5278,7 @@ bool HvkFont::IsGlyphInFont(HvkWchar c)
 }
 
 // This is manually inlined in CalcTextSizeA() and CalcWordWrapPosition(), with a non-inline call to BuildLoadGlyphGetAdvanceOrFallback().
-IM_MSVC_RUNTIME_CHECKS_OFF
+Hvk_MSVC_RUNTIME_CHECKS_OFF
 float HvkFontBaked::GetCharAdvance(HvkWchar c)
 {
     if ((int)c < IndexAdvanceX.Size)
@@ -5290,7 +5290,7 @@ float HvkFontBaked::GetCharAdvance(HvkWchar c)
     }
     return HvkFontBaked_BuildLoadGlyphAdvanceX(this, c);
 }
-IM_MSVC_RUNTIME_CHECKS_RESTORE
+Hvk_MSVC_RUNTIME_CHECKS_RESTORE
 
 HvkGuiID HvkFontAtlasBakedGetId(HvkGuiID font_id, float baked_size, float rasterizer_density)
 {
@@ -5329,14 +5329,14 @@ HvkFontBaked* HvkFontAtlasBakedGetOrAdd(HvkFontAtlas* atlas, HvkFont* font, floa
 {
     // FIXME-NEWATLAS: Design for picking a nearest size based on some criteria?
     // FIXME-NEWATLAS: Altering font density won't work right away.
-    IM_ASSERT(font_size > 0.0f && font_rasterizer_density > 0.0f);
+    Hvk_ASSERT(font_size > 0.0f && font_rasterizer_density > 0.0f);
     HvkGuiID baked_id = HvkFontAtlasBakedGetId(font->FontId, font_size, font_rasterizer_density);
     HvkFontAtlasBuilder* builder = atlas->Builder;
     HvkFontBaked** p_baked_in_map = (HvkFontBaked**)builder->BakedMap.GetVoidPtrRef(baked_id);
     HvkFontBaked* baked = *p_baked_in_map;
     if (baked != NULL)
     {
-        IM_ASSERT(baked->Size == font_size && baked->OwnerFont == font && baked->BakedId == baked_id);
+        Hvk_ASSERT(baked->Size == font_size && baked->OwnerFont == font && baked->BakedId == baked_id);
         return baked;
     }
 
@@ -5349,7 +5349,7 @@ HvkFontBaked* HvkFontAtlasBakedGetOrAdd(HvkFontAtlas* atlas, HvkFont* font, floa
             return baked;
         if (atlas->Locked)
         {
-            IM_ASSERT(!atlas->Locked && "Cannot use dynamic font size with a locked HvkFontAtlas!"); // Locked because rendering backend does not support HvkGuiBackendFlags_RendererHasTextures!
+            Hvk_ASSERT(!atlas->Locked && "Cannot use dynamic font size with a locked HvkFontAtlas!"); // Locked because rendering backend does not support HvkGuiBackendFlags_RendererHasTextures!
             return NULL;
         }
     }
@@ -5401,7 +5401,7 @@ const char* HvkFontCalcWordWrapPositionEx(HvkFont* font, float size, const char*
     bool inside_word = true;
 
     const char* s = text;
-    IM_ASSERT(text_end != NULL);
+    Hvk_ASSERT(text_end != NULL);
     while (s < text_end)
     {
         unsigned int c = (unsigned int)*s;
@@ -5533,7 +5533,7 @@ HvkVec2 HvkFontCalcTextSizeEx(HvkFont* font, float size, float max_width, float 
 
         if (c == '\n')
         {
-            text_size.x = HvkMax(text_size.x, line_width);
+            text_size.x = Immax(text_size.x, line_width);
             text_size.y += line_height;
             line_width = 0.0f;
             if (flags & HvkDrawTextFlags_StopOnNewLine)
@@ -5586,10 +5586,10 @@ void HvkFont::RenderChar(HvkDrawList* draw_list, float size, const HvkVec2& pos,
     if (!glyph || !glyph->Visible)
         return;
     if (glyph->Colored)
-        col |= ~IM_COL32_A_MASK;
+        col |= ~Hvk_COL32_A_MASK;
     float scale = (size >= 0.0f) ? (size / baked->Size) : 1.0f;
-    float x = IM_TRUNC(pos.x);
-    float y = IM_TRUNC(pos.y);
+    float x = Hvk_TRUNC(pos.x);
+    float y = Hvk_TRUNC(pos.y);
 
     float x1 = x + glyph->X0 * scale;
     float x2 = x + glyph->X1 * scale;
@@ -5623,8 +5623,8 @@ void HvkFont::RenderText(HvkDrawList* draw_list, float size, const HvkVec2& pos,
 {
     // Align to be pixel perfect
 begin:
-    float x = IM_TRUNC(pos.x);
-    float y = IM_TRUNC(pos.y);
+    float x = Hvk_TRUNC(pos.x);
+    float y = Hvk_TRUNC(pos.y);
     if (y > clip_rect.w)
         return;
 
@@ -5643,7 +5643,7 @@ begin:
     if (y + line_height < clip_rect.y)
         while (y + line_height < clip_rect.y && s < text_end)
         {
-            const char* line_end = (const char*)HvkMemchr(s, '\n', text_end - s);
+            const char* line_end = (const char*)Immemchr(s, '\n', text_end - s);
             if (word_wrap_enabled)
             {
                 // FIXME-OPT: This is not optimal as do first do a search for \n before calling CalcWordWrapPosition().
@@ -5667,7 +5667,7 @@ begin:
         float y_end = y;
         while (y_end < clip_rect.w && s_end < text_end)
         {
-            s_end = (const char*)HvkMemchr(s_end, '\n', text_end - s_end);
+            s_end = (const char*)Immemchr(s_end, '\n', text_end - s_end);
             s_end = s_end ? s_end + 1 : text_end;
             y_end += line_height;
         }
@@ -5687,7 +5687,7 @@ begin:
     const int cmd_count = draw_list->CmdBuffer.Size;
     const bool cpu_fine_clip = (flags & HvkDrawTextFlags_CpuFineClip) != 0;
 
-    const HvkU32 col_untinted = col | ~IM_COL32_A_MASK;
+    const HvkU32 col_untinted = col | ~Hvk_COL32_A_MASK;
     const char* word_wrap_eol = NULL;
 
     while (s < text_end)
@@ -5804,12 +5804,12 @@ begin:
     // Edge case: calling RenderText() with unloaded glyphs triggering texture change. It doesn't happen via HvkGui:: calls because CalcTextSize() is always used.
     if (cmd_count != draw_list->CmdBuffer.Size) //-V547
     {
-        IM_ASSERT(draw_list->CmdBuffer[draw_list->CmdBuffer.Size - 1].ElemCount == 0);
+        Hvk_ASSERT(draw_list->CmdBuffer[draw_list->CmdBuffer.Size - 1].ElemCount == 0);
         draw_list->CmdBuffer.pop_back();
         draw_list->PrimUnreserve(idx_count_max, vtx_count_max);
         draw_list->AddDrawCmd();
         //HvkGui_DEBUG_LOG("RenderText: cancel and retry to missing glyphs.\n"); // [DEBUG]
-        //draw_list->AddRectFilled(pos, pos + HvkVec2(10, 10), IM_COL32(255, 0, 0, 255)); // [DEBUG]
+        //draw_list->AddRectFilled(pos, pos + HvkVec2(10, 10), Hvk_COL32(255, 0, 0, 255)); // [DEBUG]
         goto begin;
         //RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip); // FIXME-OPT: Would a 'goto begin' be better for code-gen?
         //return;
@@ -5865,7 +5865,7 @@ void HvkGui::RenderArrow(HvkDrawList* draw_list, HvkVec2 pos, HvkU32 col, HvkGui
         break;
     case HvkGuiDir_None:
     case HvkGuiDir_COUNT:
-        IM_ASSERT(0);
+        Hvk_ASSERT(0);
         break;
     }
     draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
@@ -5880,7 +5880,7 @@ void HvkGui::RenderBullet(HvkDrawList* draw_list, HvkVec2 pos, HvkU32 col)
 
 void HvkGui::RenderCheckMark(HvkDrawList* draw_list, HvkVec2 pos, HvkU32 col, float sz)
 {
-    float thickness = HvkMax(sz / 5.0f, 1.0f);
+    float thickness = Immax(sz / 5.0f, 1.0f);
     sz -= thickness * 0.5f;
     pos += HvkVec2(thickness * 0.25f, thickness * 0.25f);
 
@@ -5908,7 +5908,7 @@ void HvkGui::RenderArrowPointingAt(HvkDrawList* draw_list, HvkVec2 pos, HvkVec2 
 
 static inline float HvkAcos01(float x)
 {
-    if (x <= 0.0f) return IM_PI * 0.5f;
+    if (x <= 0.0f) return Hvk_PI * 0.5f;
     if (x >= 1.0f) return 0.0f;
     return HvkAcos(x);
     //return (-0.69813170079773212f * x * x - 0.87266462599716477f) * x + 1.5707963267948966f; // Cheap approximation, may be enough for what we do.
@@ -5930,12 +5930,12 @@ void HvkGui::RenderRectFilledInRangeH(HvkDrawList* draw_list, const HvkRect& rec
         return;
     }
 
-    rounding = HvkClamp(HvkMin((rect.Max.x - rect.Min.x) * 0.5f, (rect.Max.y - rect.Min.y) * 0.5f) - 1.0f, 0.0f, rounding);
+    rounding = HvkClamp(Immin((rect.Max.x - rect.Min.x) * 0.5f, (rect.Max.y - rect.Min.y) * 0.5f) - 1.0f, 0.0f, rounding);
     const float inv_rounding = 1.0f / rounding;
     const float arc0_b = HvkAcos01(1.0f - (p0.x - rect.Min.x) * inv_rounding);
     const float arc0_e = HvkAcos01(1.0f - (p1.x - rect.Min.x) * inv_rounding);
-    const float half_pi = IM_PI * 0.5f; // We will == compare to this because we know this is the exact value HvkAcos01 can return.
-    const float x0 = HvkMax(p0.x, rect.Min.x + rounding);
+    const float half_pi = Hvk_PI * 0.5f; // We will == compare to this because we know this is the exact value HvkAcos01 can return.
+    const float x0 = Immax(p0.x, rect.Min.x + rounding);
     if (arc0_b == arc0_e)
     {
         draw_list->PathLineTo(HvkVec2(x0, p1.y));
@@ -5948,14 +5948,14 @@ void HvkGui::RenderRectFilledInRangeH(HvkDrawList* draw_list, const HvkRect& rec
     }
     else
     {
-        draw_list->PathArcTo(HvkVec2(x0, p1.y - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b); // BL
-        draw_list->PathArcTo(HvkVec2(x0, p0.y + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e); // TR
+        draw_list->PathArcTo(HvkVec2(x0, p1.y - rounding), rounding, Hvk_PI - arc0_e, Hvk_PI - arc0_b); // BL
+        draw_list->PathArcTo(HvkVec2(x0, p0.y + rounding), rounding, Hvk_PI + arc0_b, Hvk_PI + arc0_e); // TR
     }
     if (p1.x > rect.Min.x + rounding)
     {
         const float arc1_b = HvkAcos01(1.0f - (rect.Max.x - p1.x) * inv_rounding);
         const float arc1_e = HvkAcos01(1.0f - (rect.Max.x - p0.x) * inv_rounding);
-        const float x1 = HvkMin(p1.x, rect.Max.x - rounding);
+        const float x1 = Immin(p1.x, rect.Max.x - rounding);
         if (arc1_b == arc1_e)
         {
             draw_list->PathLineTo(HvkVec2(x1, p0.y));
@@ -5999,21 +5999,21 @@ void HvkGui::RenderColorRectWithAlphaCheckerboard(HvkDrawList* draw_list, HvkVec
 {
     if ((flags & HvkDrawFlags_RoundCornersMask_) == 0)
         flags = HvkDrawFlags_RoundCornersDefault_;
-    if (((col & IM_COL32_A_MASK) >> IM_COL32_A_SHIFT) < 0xFF)
+    if (((col & Hvk_COL32_A_MASK) >> Hvk_COL32_A_SHIFT) < 0xFF)
     {
-        HvkU32 col_bg1 = GetColorU32(HvkAlphaBlendColors(IM_COL32(204, 204, 204, 255), col));
-        HvkU32 col_bg2 = GetColorU32(HvkAlphaBlendColors(IM_COL32(128, 128, 128, 255), col));
+        HvkU32 col_bg1 = GetColorU32(HvkAlphaBlendColors(Hvk_COL32(204, 204, 204, 255), col));
+        HvkU32 col_bg2 = GetColorU32(HvkAlphaBlendColors(Hvk_COL32(128, 128, 128, 255), col));
         draw_list->AddRectFilled(p_min, p_max, col_bg1, rounding, flags);
 
         int yi = 0;
         for (float y = p_min.y + grid_off.y; y < p_max.y; y += grid_step, yi++)
         {
-            float y1 = HvkClamp(y, p_min.y, p_max.y), y2 = HvkMin(y + grid_step, p_max.y);
+            float y1 = HvkClamp(y, p_min.y, p_max.y), y2 = Immin(y + grid_step, p_max.y);
             if (y2 <= y1)
                 continue;
             for (float x = p_min.x + grid_off.x + (yi & 1) * grid_step; x < p_max.x; x += grid_step * 2.0f)
             {
-                float x1 = HvkClamp(x, p_min.x, p_max.x), x2 = HvkMin(x + grid_step, p_max.x);
+                float x1 = HvkClamp(x, p_min.x, p_max.x), x2 = Immin(x + grid_step, p_max.x);
                 if (x2 <= x1)
                     continue;
                 HvkDrawFlags cell_flags = HvkDrawFlags_RoundCornersNone;
@@ -6052,7 +6052,7 @@ static unsigned char *stb__dout;
 static void stb__match(const unsigned char *data, unsigned int length)
 {
     // INVERSE of memmove... write each byte before copying the next...
-    IM_ASSERT(stb__dout + length <= stb__barrier_out_e);
+    Hvk_ASSERT(stb__dout + length <= stb__barrier_out_e);
     if (stb__dout + length > stb__barrier_out_e) { stb__dout += length; return; }
     if (data < stb__barrier_out_b) { stb__dout = stb__barrier_out_e+1; return; }
     while (length--) *stb__dout++ = *data++;
@@ -6060,7 +6060,7 @@ static void stb__match(const unsigned char *data, unsigned int length)
 
 static void stb__lit(const unsigned char *data, unsigned int length)
 {
-    IM_ASSERT(stb__dout + length <= stb__barrier_out_e);
+    Hvk_ASSERT(stb__dout + length <= stb__barrier_out_e);
     if (stb__dout + length > stb__barrier_out_e) { stb__dout += length; return; }
     if (data < stb__barrier_in_b) { stb__dout = stb__barrier_out_e+1; return; }
     memcpy(stb__dout, data, length);
@@ -6135,17 +6135,17 @@ static unsigned int stb_decompress(unsigned char *output, const unsigned char *i
         i = stb_decompress_token(i);
         if (i == old_i) {
             if (*i == 0x05 && i[1] == 0xfa) {
-                IM_ASSERT(stb__dout == output + olen);
+                Hvk_ASSERT(stb__dout == output + olen);
                 if (stb__dout != output + olen) return 0;
                 if (stb_adler32(1, output, olen) != (unsigned int) stb__in4(2))
                     return 0;
                 return olen;
             } else {
-                IM_ASSERT(0); /* NOTREACHED */
+                Hvk_ASSERT(0); /* NOTREACHED */
                 return 0;
             }
         }
-        IM_ASSERT(stb__dout <= output + olen);
+        Hvk_ASSERT(stb__dout <= output + olen);
         if (stb__dout > output + olen)
             return 0;
     }

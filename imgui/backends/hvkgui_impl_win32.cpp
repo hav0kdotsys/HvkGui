@@ -1,7 +1,7 @@
 // dear HvkGui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 
-// Hvkplemented features:
+// implemented features:
 //  [X] Platform: Clipboard support (for Win32 this is actually part of core dear HvkGui)
 //  [X] Platform: Mouse support. Can discriminate Mouse/TouchScreen/Pen.
 //  [X] Platform: Keyboard support. Since 1.87 we are using the io.AddKeyEvent() function. Pass HvkGuiKey values to all key functions e.g. HvkGui::IsKeyPressed(HvkGuiKey_Space). [Legacy VK_* values are obsolete since 1.87 and not supported since 1.91.5]
@@ -160,7 +160,7 @@ static bool HvkGui_ImplWin32_InitEx(void* hwnd, bool platform_has_own_dc)
 {
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGui_CHECKVERSION();
-    IM_ASSERT(io.BackendPlatformUserData == nullptr && "Already initialized a platform backend!");
+    Hvk_ASSERT(io.BackendPlatformUserData == nullptr && "Already initialized a platform backend!");
 
     INT64 perf_frequency, perf_counter;
     if (!::QueryPerformanceFrequency((LARGE_INTEGER*)&perf_frequency))
@@ -169,7 +169,7 @@ static bool HvkGui_ImplWin32_InitEx(void* hwnd, bool platform_has_own_dc)
         return false;
 
     // Setup backend capabilities flags
-    HvkGui_ImplWin32_Data* bd = IM_NEW(HvkGui_ImplWin32_Data)();
+    HvkGui_ImplWin32_Data* bd = Hvk_NEW(HvkGui_ImplWin32_Data)();
     io.BackendPlatformUserData = (void*)bd;
     io.BackendPlatformName = "HvkGui_impl_win32";
     io.BackendFlags |= HvkGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
@@ -184,7 +184,7 @@ static bool HvkGui_ImplWin32_InitEx(void* hwnd, bool platform_has_own_dc)
     // Set platform dependent data in viewport
     HvkGuiViewport* main_viewport = HvkGui::GetMainViewport();
     main_viewport->PlatformHandle = main_viewport->PlatformHandleRaw = (void*)bd->hWnd;
-    IM_UNUSED(platform_has_own_dc); // Used in 'docking' branch
+    Hvk_UNUSED(platform_has_own_dc); // Used in 'docking' branch
 
     // Dynamically load XInput library
 #ifndef HvkGui_IMPL_WIN32_DISABLE_GAMEPAD
@@ -197,7 +197,7 @@ static bool HvkGui_ImplWin32_InitEx(void* hwnd, bool platform_has_own_dc)
         "xinput1_2.dll",   // DirectX SDK
         "xinput1_1.dll"    // DirectX SDK
     };
-    for (int n = 0; n < IM_ARRAYSIZE(xinput_dll_names); n++)
+    for (int n = 0; n < Hvk_ARRAYSIZE(xinput_dll_names); n++)
         if (HMODULE dll = ::LoadLibraryA(xinput_dll_names[n]))
         {
             bd->XInputDLL = dll;
@@ -224,7 +224,7 @@ HvkGui_IMPL_API bool     HvkGui_ImplWin32_InitForOpenGL(void* hwnd)
 void    HvkGui_ImplWin32_Shutdown()
 {
     HvkGui_ImplWin32_Data* bd = HvkGui_ImplWin32_GetBackendData();
-    IM_ASSERT(bd != nullptr && "No platform backend to shutdown, or already shutdown?");
+    Hvk_ASSERT(bd != nullptr && "No platform backend to shutdown, or already shutdown?");
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
 
@@ -238,7 +238,7 @@ void    HvkGui_ImplWin32_Shutdown()
     io.BackendPlatformUserData = nullptr;
     io.BackendFlags &= ~(HvkGuiBackendFlags_HasMouseCursors | HvkGuiBackendFlags_HasSetMousePos | HvkGuiBackendFlags_HasGamepad);
     platform_io.ClearPlatformHandlers();
-    IM_DELETE(bd);
+    Hvk_DELETE(bd);
 }
 
 static bool HvkGui_ImplWin32_UpdateMouseCursor(HvkGuiIO& io, HvkGuiMouseCursor HvkGui_cursor)
@@ -283,7 +283,7 @@ static void HvkGui_ImplWin32_AddKeyEvent(HvkGuiIO& io, HvkGuiKey key, bool down,
 {
     io.AddKeyEvent(key, down);
     io.SetKeyEventNativeData(key, native_keycode, native_scancode); // To support legacy indexing (<1.87 user code)
-    IM_UNUSED(native_scancode);
+    Hvk_UNUSED(native_scancode);
 }
 
 static void HvkGui_ImplWin32_ProcessKeyEventsWorkarounds(HvkGuiIO& io)
@@ -312,7 +312,7 @@ static void HvkGui_ImplWin32_UpdateKeyModifiers(HvkGuiIO& io)
 static void HvkGui_ImplWin32_UpdateMouseData(HvkGuiIO& io)
 {
     HvkGui_ImplWin32_Data* bd = HvkGui_ImplWin32_GetBackendData(io);
-    IM_ASSERT(bd->hWnd != 0);
+    Hvk_ASSERT(bd->hWnd != 0);
 
     HWND focused_window = ::GetForegroundWindow();
     const bool is_app_focused = (focused_window == bd->hWnd);
@@ -359,9 +359,9 @@ static void HvkGui_ImplWin32_UpdateGamepads(HvkGuiIO& io)
         return;
     io.BackendFlags |= HvkGuiBackendFlags_HasGamepad;
 
-    #define IM_SATURATE(V)                      (V < 0.0f ? 0.0f : V > 1.0f ? 1.0f : V)
+    #define Hvk_SATURATE(V)                      (V < 0.0f ? 0.0f : V > 1.0f ? 1.0f : V)
     #define MAP_BUTTON(KEY_NO, BUTTON_ENUM)     { io.AddKeyEvent(KEY_NO, (gamepad.wButtons & BUTTON_ENUM) != 0); }
-    #define MAP_ANALOG(KEY_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); io.AddKeyAnalogEvent(KEY_NO, vn > 0.10f, IM_SATURATE(vn)); }
+    #define MAP_ANALOG(KEY_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); io.AddKeyAnalogEvent(KEY_NO, vn > 0.10f, Hvk_SATURATE(vn)); }
     MAP_BUTTON(HvkGuiKey_GamepadStart,           XINPUT_GAMEPAD_START);
     MAP_BUTTON(HvkGuiKey_GamepadBack,            XINPUT_GAMEPAD_BACK);
     MAP_BUTTON(HvkGuiKey_GamepadFaceLeft,        XINPUT_GAMEPAD_X);
@@ -389,14 +389,14 @@ static void HvkGui_ImplWin32_UpdateGamepads(HvkGuiIO& io)
     #undef MAP_BUTTON
     #undef MAP_ANALOG
 #else // #ifndef HvkGui_IMPL_WIN32_DISABLE_GAMEPAD
-    IM_UNUSED(io);
+    Hvk_UNUSED(io);
 #endif
 }
 
 void    HvkGui_ImplWin32_NewFrame()
 {
     HvkGui_ImplWin32_Data* bd = HvkGui_ImplWin32_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Context or backend not initialized? Did you call HvkGui_ImplWin32_Init()?");
+    Hvk_ASSERT(bd != nullptr && "Context or backend not initialized? Did you call HvkGui_ImplWin32_Init()?");
     HvkGuiIO& io = HvkGui::GetIO();
 
     // Setup display size (every frame to accommodate for window resizing)
@@ -606,7 +606,7 @@ static HvkGuiMouseSource HvkGui_ImplWin32_GetMouseSourceFromMessageExtraInfo()
 
 // Win32 message handler (process Win32 mouse/keyboard inputs, etc.)
 // Call from your application's message handler. Keep calling your message handler unless this function returns TRUE.
-// When Hvkplementing your own backend, you can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if Dear HvkGui wants to use your inputs.
+// When implementing your own backend, you can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if Dear HvkGui wants to use your inputs.
 // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
 // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
 // Generally you may always pass all inputs to Dear HvkGui, and hide them from your application based on those two flags.
@@ -834,7 +834,7 @@ HvkGui_IMPL_API LRESULT HvkGui_ImplWin32_WndProcHandlerEx(HWND hwnd, UINT msg, W
 //---------------------------------------------------------------------------------------------------------
 // This is the scheme successfully used by GLFW (from which we borrowed some of the code) and other apps aiming to be highly portable.
 // HvkGui_ImplWin32_EnableDpiAwareness() is just a helper called by main.cpp, we don't call it automatically.
-// If you are trying to Hvkplement your own backend for your own engine, you may ignore that noise.
+// If you are trying to implement your own backend for your own engine, you may ignore that noise.
 //---------------------------------------------------------------------------------------------------------
 
 // Perform our own check with RtlVerifyVersionInfo() instead of using functions from <VersionHelpers.h> as they
@@ -921,7 +921,7 @@ float HvkGui_ImplWin32_GetDpiScaleForMonitor(void* monitor)
         if (GetDpiForMonitorFn != nullptr)
         {
             GetDpiForMonitorFn((HMONITOR)monitor, MDT_EFFECTIVE_DPI, &xdpi, &ydpi);
-            IM_ASSERT(xdpi == ydpi); // Please contact me if you hit this assert!
+            Hvk_ASSERT(xdpi == ydpi); // Please contact me if you hit this assert!
             return xdpi / 96.0f;
         }
     }
@@ -929,7 +929,7 @@ float HvkGui_ImplWin32_GetDpiScaleForMonitor(void* monitor)
     const HDC dc = ::GetDC(nullptr);
     xdpi = ::GetDeviceCaps(dc, LOGPIXELSX);
     ydpi = ::GetDeviceCaps(dc, LOGPIXELSY);
-    IM_ASSERT(xdpi == ydpi); // Please contact me if you hit this assert!
+    Hvk_ASSERT(xdpi == ydpi); // Please contact me if you hit this assert!
     ::ReleaseDC(nullptr, dc);
 #endif
     return xdpi / 96.0f;

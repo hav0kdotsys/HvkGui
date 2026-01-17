@@ -12,7 +12,7 @@
 //
 //    #define STB_RECT_PACK_IMPLEMENTATION
 //
-// in the file that you want to have the Hvkplementation.
+// in the file that you want to have the implementation.
 //
 // Not necessarily the awesomest packing method, but better than
 // the totally naive one in stb_truetype (which is primarily what
@@ -28,7 +28,7 @@
 // This library currently uses the Skyline Bottom-Left algorithm.
 //
 // Please note: better rectangle packers are welcome! Please
-// Hvkplement them to the same API, but with a different init
+// implement them to the same API, but with a different init
 // function.
 //
 // Credits
@@ -203,7 +203,7 @@ struct stbrp_context
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//     HvkPLEMENTATION SECTION
+//     implementation SECTION
 //
 
 #ifdef STB_RECT_PACK_IMPLEMENTATION
@@ -355,7 +355,7 @@ static stbrp__findresult stbrp__skyline_find_best_pos(stbrp_context *c, int widt
    width -= width % c->align;
    STBRP_ASSERT(width % c->align == 0);
 
-   // if it can't possibly fit, bail Hvkmediately
+   // if it can't possibly fit, bail immediately
    if (width > c->width || height > c->height) {
       fr.prev_link = NULL;
       fr.x = fr.y = 0;

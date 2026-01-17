@@ -322,20 +322,20 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
         return false;
 
     // Sanity checks
-    IM_ASSERT(columns_count > 0 && columns_count < HvkGui_TABLE_MAX_COLUMNS);
+    Hvk_ASSERT(columns_count > 0 && columns_count < HvkGui_TABLE_MAX_COLUMNS);
     if (flags & HvkGuiTableFlags_ScrollX)
-        IM_ASSERT(inner_width >= 0.0f);
+        Hvk_ASSERT(inner_width >= 0.0f);
 
     // If an outer size is specified ahead we will be able to early out when not visible. Exact clipping criteria may evolve.
     // FIXME: coarse clipping because access to table data causes two issues:
     // - instance numbers varying/unstable. may not be a direct problem for users, but could make outside access broken or confusing, e.g. TestEngine.
-    // - can't Hvkplement support for HvkGuiChildFlags_ResizeY as we need to somehow pull the height data from somewhere. this also needs stable instance numbers.
+    // - can't implement support for HvkGuiChildFlags_ResizeY as we need to somehow pull the height data from somewhere. this also needs stable instance numbers.
     // The side-effects of accessing table data on coarse clip would be:
     // - always reserving the pooled HvkGuiTable data ahead for a fully clipped table (minor HvkHO). Also the 'outer_window_is_measuring_size' criteria may already be defeating this in some situations.
     // - always performing the GetOrAddByKey() O(log N) query in g.Tables.Map[].
     const bool use_child_window = (flags & (HvkGuiTableFlags_ScrollX | HvkGuiTableFlags_ScrollY)) != 0;
     const HvkVec2 avail_size = GetContentRegionAvail();
-    const HvkVec2 actual_outer_size = HvkTrunc(CalcItemSize(outer_size, HvkMax(avail_size.x, HvkGui_WINDOW_HARD_MIN_SIZE), use_child_window ? HvkMax(avail_size.y, HvkGui_WINDOW_HARD_MIN_SIZE) : 0.0f));
+    const HvkVec2 actual_outer_size = HvkTrunc(CalcItemSize(outer_size, Immax(avail_size.x, HvkGui_WINDOW_HARD_MIN_SIZE), use_child_window ? Immax(avail_size.y, HvkGui_WINDOW_HARD_MIN_SIZE) : 0.0f));
     const HvkRect outer_rect(outer_window->DC.CursorPos, outer_window->DC.CursorPos + actual_outer_size);
     const bool outer_window_is_measuring_size = (outer_window->AutoFitFramesX > 0) || (outer_window->AutoFitFramesY > 0); // Doesn't apply to AlwaysAutoResize windows!
     if (use_child_window && IsClippedEx(outer_rect, 0) && !outer_window_is_measuring_size)
@@ -348,7 +348,7 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
 
     // [DEBUG] Debug break requested by user
     if (g.DebugBreakInTable == id)
-        IM_DEBUG_BREAK();
+        Hvk_DEBUG_BREAK();
 
     // Acquire storage for the table
     HvkGuiTable* table = g.Tables.GetOrAddByKey(id);
@@ -385,7 +385,7 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
     table->InstanceCurrent = (HvkS16)instance_no;
     if (instance_no > 0)
     {
-        IM_ASSERT(table->ColumnsCount == columns_count && "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
+        Hvk_ASSERT(table->ColumnsCount == columns_count && "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
         if (table->InstanceDataExtra.Size < instance_no)
             table->InstanceDataExtra.push_back(HvkGuiTableInstanceData());
         instance_id = GetIDWithSeed(instance_no, GetIDWithSeed("##Instances", NULL, id)); // Push "##Instances" followed by (int)instance_no in ID stack.
@@ -431,7 +431,7 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
         table->WorkRect = table->InnerWindow->WorkRect;
         table->OuterRect = table->InnerWindow->Rect();
         table->InnerRect = table->InnerWindow->InnerRect;
-        IM_ASSERT(table->InnerWindow->WindowPadding.x == 0.0f && table->InnerWindow->WindowPadding.y == 0.0f && table->InnerWindow->WindowBorderSize == 0.0f);
+        Hvk_ASSERT(table->InnerWindow->WindowPadding.x == 0.0f && table->InnerWindow->WindowPadding.y == 0.0f && table->InnerWindow->WindowBorderSize == 0.0f);
 
         // Allow submitting when host is measuring
         if (table->InnerWindow->SkipItems && outer_window_is_measuring_size)
@@ -486,15 +486,15 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
         // different x/y values to BeginChild().
         if (flags & HvkGuiTableFlags_BordersOuterV)
         {
-            table->HostClipRect.Min.x = HvkMin(table->HostClipRect.Min.x + TABLE_BORDER_SIZE, table->HostClipRect.Max.x);
+            table->HostClipRect.Min.x = Immin(table->HostClipRect.Min.x + TABLE_BORDER_SIZE, table->HostClipRect.Max.x);
             if (inner_window->DecoOuterSizeX2 == 0.0f)
-                table->HostClipRect.Max.x = HvkMax(table->HostClipRect.Max.x - TABLE_BORDER_SIZE, table->HostClipRect.Min.x);
+                table->HostClipRect.Max.x = Immax(table->HostClipRect.Max.x - TABLE_BORDER_SIZE, table->HostClipRect.Min.x);
         }
         if (flags & HvkGuiTableFlags_BordersOuterH)
         {
-            table->HostClipRect.Min.y = HvkMin(table->HostClipRect.Min.y + TABLE_BORDER_SIZE, table->HostClipRect.Max.y);
+            table->HostClipRect.Min.y = Immin(table->HostClipRect.Min.y + TABLE_BORDER_SIZE, table->HostClipRect.Max.y);
             if (inner_window->DecoOuterSizeY2 == 0.0f)
-                table->HostClipRect.Max.y = HvkMax(table->HostClipRect.Max.y - TABLE_BORDER_SIZE, table->HostClipRect.Min.y);
+                table->HostClipRect.Max.y = Immax(table->HostClipRect.Max.y - TABLE_BORDER_SIZE, table->HostClipRect.Min.y);
         }
     }
 
@@ -523,7 +523,7 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
     table->InnerClipRect = (inner_window == outer_window) ? table->WorkRect : inner_window->ClipRect;
     table->InnerClipRect.ClipWith(table->WorkRect);     // We need this to honor inner_width
     table->InnerClipRect.ClipWithFull(table->HostClipRect);
-    table->InnerClipRect.Max.y = (flags & HvkGuiTableFlags_NoHostExtendY) ? HvkMin(table->InnerClipRect.Max.y, inner_window->WorkRect.Max.y) : table->HostClipRect.Max.y;
+    table->InnerClipRect.Max.y = (flags & HvkGuiTableFlags_NoHostExtendY) ? Immin(table->InnerClipRect.Max.y, inner_window->WorkRect.Max.y) : table->HostClipRect.Max.y;
 
     table->RowPosY1 = table->RowPosY2 = table->WorkRect.Min.y; // This is needed somehow
     table->RowTextBaseline = 0.0f; // This will be cleared again by TableBeginRow()
@@ -607,7 +607,7 @@ bool    HvkGui::BeginTableEx(const char* name, HvkGuiID id, int columns_count, H
         }
     }
     if (old_columns_raw_data)
-        IM_FREE(old_columns_raw_data);
+        Hvk_FREE(old_columns_raw_data);
 
     // Load settings
     if (table->IsSettingsRequestLoad)
@@ -663,7 +663,7 @@ void HvkGui::TableBeginInitMemory(HvkGuiTable* table, int columns_count)
     span_allocator.Reserve(2, columns_count * sizeof(HvkGuiTableCellData), 4);
     for (int n = 3; n < 6; n++)
         span_allocator.Reserve(n, columns_bit_array_size);
-    table->RawData = IM_ALLOC(span_allocator.GetArenaSizeInBytes());
+    table->RawData = Hvk_ALLOC(span_allocator.GetArenaSizeInBytes());
     memset(table->RawData, 0, span_allocator.GetArenaSizeInBytes());
     span_allocator.SetArenaBasePtr(table->RawData);
     span_allocator.GetSpan(0, &table->Columns);
@@ -711,17 +711,17 @@ void HvkGui::TableBeginApplyRequests(HvkGuiTable* table)
             //    ... C [D] E  --->  ... [D] E  C   (Column name/index)
             //    ... 2  3  4        ...  2  3  4   (Display order)
             const int reorder_dir = table->ReorderColumnDir;
-            IM_ASSERT(reorder_dir == -1 || reorder_dir == +1);
-            IM_ASSERT(table->Flags & HvkGuiTableFlags_Reorderable);
+            Hvk_ASSERT(reorder_dir == -1 || reorder_dir == +1);
+            Hvk_ASSERT(table->Flags & HvkGuiTableFlags_Reorderable);
             HvkGuiTableColumn* src_column = &table->Columns[table->ReorderColumn];
             HvkGuiTableColumn* dst_column = &table->Columns[(reorder_dir == -1) ? src_column->PrevEnabledColumn : src_column->NextEnabledColumn];
-            IM_UNUSED(dst_column);
+            Hvk_UNUSED(dst_column);
             const int src_order = src_column->DisplayOrder;
             const int dst_order = dst_column->DisplayOrder;
             src_column->DisplayOrder = (HvkGuiTableColumnIdx)dst_order;
             for (int order_n = src_order + reorder_dir; order_n != dst_order + reorder_dir; order_n += reorder_dir)
                 table->Columns[table->DisplayOrderToIndex[order_n]].DisplayOrder -= (HvkGuiTableColumnIdx)reorder_dir;
-            IM_ASSERT(dst_column->DisplayOrder == dst_order - reorder_dir);
+            Hvk_ASSERT(dst_column->DisplayOrder == dst_order - reorder_dir);
 
             // Display order is stored in both columns->IndexDisplayOrder and table->DisplayOrder[]. Rebuild later from the former.
             for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
@@ -757,7 +757,7 @@ static void TableSetupColumnFlags(HvkGuiTable* table, HvkGuiTableColumn* column,
     }
     else
     {
-        IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiTableColumnFlags_WidthMask_)); // Check that only 1 of each set is used.
+        Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiTableColumnFlags_WidthMask_)); // Check that only 1 of each set is used.
     }
 
     // Resize
@@ -775,7 +775,7 @@ static void TableSetupColumnFlags(HvkGuiTable* table, HvkGuiTableColumn* column,
     // Alignment
     //if ((flags & HvkGuiTableColumnFlags_AlignMask_) == 0)
     //    flags |= HvkGuiTableColumnFlags_AlignCenter;
-    //IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiTableColumnFlags_AlignMask_)); // Check that only 1 of each set is used.
+    //Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiTableColumnFlags_AlignMask_)); // Check that only 1 of each set is used.
 
     // Preserve status flags
     column->Flags = flags | (column->Flags & HvkGuiTableColumnFlags_StatusMask_);
@@ -804,7 +804,7 @@ static void TableSetupColumnFlags(HvkGuiTable* table, HvkGuiTableColumn* column,
 void HvkGui::TableUpdateLayout(HvkGuiTable* table)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(table->IsLayoutLocked == false);
+    Hvk_ASSERT(table->IsLayoutLocked == false);
 
     const HvkGuiTableFlags table_sizing_policy = (table->Flags & HvkGuiTableFlags_SizingMask_);
     table->IsDefaultDisplayOrder = true;
@@ -812,7 +812,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     HvkBitArrayClearAllBits(table->EnabledMaskByIndex, table->ColumnsCount);
     HvkBitArrayClearAllBits(table->EnabledMaskByDisplayOrder, table->ColumnsCount);
     table->LeftMostEnabledColumn = -1;
-    table->MinColumnWidth = HvkMax(1.0f, g.Style.FramePadding.x * 1.0f); // g.Style.ColumnsMinSpacing; // FIXME-TABLE
+    table->MinColumnWidth = Immax(1.0f, g.Style.FramePadding.x * 1.0f); // g.Style.ColumnsMinSpacing; // FIXME-TABLE
 
     // [Part 1] Apply/lock Enabled and Order states. Calculate auto/ideal width for columns. Count fixed/stretch columns.
     // Process columns in their visible orders as we are building the Prev/Next indices.
@@ -878,7 +878,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         HvkBitArraySetBit(table->EnabledMaskByIndex, column_n);
         HvkBitArraySetBit(table->EnabledMaskByDisplayOrder, column->DisplayOrder);
         prev_visible_column_idx = column_n;
-        IM_ASSERT(column->IndexWithinEnabledSet <= column->DisplayOrder);
+        Hvk_ASSERT(column->IndexWithinEnabledSet <= column->DisplayOrder);
 
         // Calculate ideal/auto column width (that's the width required for all contents to be visible without clipping)
         // Combine width from regular rows + width from headers unless requested not to.
@@ -901,14 +901,14 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         }
         else
         {
-            fixed_max_width_auto = HvkMax(fixed_max_width_auto, column->WidthAuto);
+            fixed_max_width_auto = Immax(fixed_max_width_auto, column->WidthAuto);
             count_fixed++;
         }
     }
     if ((table->Flags & HvkGuiTableFlags_Sortable) && table->SortSpecsCount == 0 && !(table->Flags & HvkGuiTableFlags_SortTristate))
         table->IsSortSpecsDirty = true;
     table->RightMostEnabledColumn = (HvkGuiTableColumnIdx)prev_visible_column_idx;
-    IM_ASSERT(table->LeftMostEnabledColumn >= 0 && table->RightMostEnabledColumn >= 0);
+    Hvk_ASSERT(table->LeftMostEnabledColumn >= 0 && table->RightMostEnabledColumn >= 0);
 
     // [Part 2] Disable child window clipping while fitting columns. This is not strictly necessary but makes it possible to avoid
     // the column fitting having to wait until the first visible frame of the child container (may or not be a good thing). Also see #6510.
@@ -924,7 +924,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     table->LeftMostStretchedColumn = table->RightMostStretchedColumn = -1;
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
             continue;
         HvkGuiTableColumn* column = &table->Columns[column_n];
 
@@ -950,7 +950,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
             // FIXME: Move this to ->WidthGiven to avoid temporary lossyness?
             // FIXME: This break IsPreserveWidthAuto from not flickering if the stored WidthAuto was smaller.
             if (column->AutoFitQueue > 0x01 && table->IsInitializing && !column->IsPreserveWidthAuto)
-                column->WidthRequest = HvkMax(column->WidthRequest, table->MinColumnWidth * 4.0f); // FIXME-TABLE: Another constant/scale?
+                column->WidthRequest = Immax(column->WidthRequest, table->MinColumnWidth * 4.0f); // FIXME-TABLE: Another constant/scale?
             sum_width_requests += column->WidthRequest;
         }
         else
@@ -982,13 +982,13 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     const HvkRect work_rect = table->WorkRect;
     const float width_spacings = (table->OuterPaddingX * 2.0f) + (table->CellSpacingX1 + table->CellSpacingX2) * (table->ColumnsEnabledCount - 1);
     const float width_removed = (table->HasScrollbarYPrev && !table->InnerWindow->ScrollbarY) ? g.Style.ScrollbarSize : 0.0f; // To synchronize decoration width of synced tables with mismatching scrollbar state (#5920)
-    const float width_avail = HvkMax(1.0f, (((table->Flags & HvkGuiTableFlags_ScrollX) && table->InnerWidth == 0.0f) ? table->InnerClipRect.GetWidth() : work_rect.GetWidth()) - width_removed);
+    const float width_avail = Immax(1.0f, (((table->Flags & HvkGuiTableFlags_ScrollX) && table->InnerWidth == 0.0f) ? table->InnerClipRect.GetWidth() : work_rect.GetWidth()) - width_removed);
     const float width_avail_for_stretched_columns = width_avail - width_spacings - sum_width_requests;
     float width_remaining_for_stretched_columns = width_avail_for_stretched_columns;
     table->ColumnsGivenWidth = width_spacings + (table->CellPaddingX * 2.0f) * table->ColumnsEnabledCount;
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
             continue;
         HvkGuiTableColumn* column = &table->Columns[column_n];
 
@@ -996,7 +996,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         if (column->Flags & HvkGuiTableColumnFlags_WidthStretch)
         {
             float weight_ratio = column->StretchWeight / stretch_sum_weights;
-            column->WidthRequest = IM_TRUNC(HvkMax(width_avail_for_stretched_columns * weight_ratio, table->MinColumnWidth) + 0.01f);
+            column->WidthRequest = Hvk_TRUNC(Immax(width_avail_for_stretched_columns * weight_ratio, table->MinColumnWidth) + 0.01f);
             width_remaining_for_stretched_columns -= column->WidthRequest;
         }
 
@@ -1006,7 +1006,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
             column->Flags |= HvkGuiTableColumnFlags_NoDirectResize_;
 
         // Assign final width, record width in case we will need to shrink
-        column->WidthGiven = HvkTrunc(HvkMax(column->WidthRequest, table->MinColumnWidth));
+        column->WidthGiven = HvkTrunc(Immax(column->WidthRequest, table->MinColumnWidth));
         table->ColumnsGivenWidth += column->WidthGiven;
     }
 
@@ -1015,7 +1015,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     if (width_remaining_for_stretched_columns >= 1.0f && !(table->Flags & HvkGuiTableFlags_PreciseWidths))
         for (int order_n = table->ColumnsCount - 1; stretch_sum_weights > 0.0f && width_remaining_for_stretched_columns >= 1.0f && order_n >= 0; order_n--)
         {
-            if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
+            if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
                 continue;
             HvkGuiTableColumn* column = &table->Columns[table->DisplayOrderToIndex[order_n]];
             if (!(column->Flags & HvkGuiTableColumnFlags_WidthStretch))
@@ -1034,7 +1034,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     table_instance->HoveredRowLast = table_instance->HoveredRowNext;
     table_instance->HoveredRowNext = -1;
     table->HoveredColumnBody = table->HoveredColumnBorder = -1;
-    const HvkRect mouse_hit_rect(table->OuterRect.Min.x, table->OuterRect.Min.y, table->OuterRect.Max.x, HvkMax(table->OuterRect.Max.y, table->OuterRect.Min.y + table_instance->LastOuterHeight));
+    const HvkRect mouse_hit_rect(table->OuterRect.Min.x, table->OuterRect.Min.y, table->OuterRect.Max.x, Immax(table->OuterRect.Max.y, table->OuterRect.Min.y + table_instance->LastOuterHeight));
     const HvkGuiID backup_active_id = g.ActiveId;
     g.ActiveId = 0;
     const bool is_hovering_table = ItemHoverable(mouse_hit_rect, 0, HvkGuiItemFlags_None);
@@ -1072,7 +1072,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         // Clear status flags
         column->Flags &= ~HvkGuiTableColumnFlags_StatusMask_;
 
-        if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
         {
             // Hidden column: clear a few fields and we are done with it for the remainder of the function.
             // We set a zero-width clip rect but set Min.y/Max.y properly to not interfere with the clipper.
@@ -1092,8 +1092,8 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
 
         // Lock width based on start position and minimum/maximum width for this position
         column->WidthMax = TableCalcMaxColumnWidth(table, column_n);
-        column->WidthGiven = HvkMin(column->WidthGiven, column->WidthMax);
-        column->WidthGiven = HvkMax(column->WidthGiven, HvkMin(column->WidthRequest, table->MinColumnWidth));
+        column->WidthGiven = Immin(column->WidthGiven, column->WidthMax);
+        column->WidthGiven = Immax(column->WidthGiven, Immin(column->WidthRequest, table->MinColumnWidth));
         column->MaxX = offset_x + column->WidthGiven + table->CellSpacingX1 + table->CellSpacingX2 + table->CellPaddingX * 2.0f;
 
         // Lock other positions
@@ -1131,7 +1131,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         // (table->HostSkipItems is a copy of inner_window->SkipItems before we cleared it above in Part 2)
         column->IsSkipItems = !column->IsEnabled || table->HostSkipItems;
         if (column->IsSkipItems)
-            IM_ASSERT(!is_visible);
+            Hvk_ASSERT(!is_visible);
         if (column->IsRequestOutput && !column->IsSkipItems)
             has_at_least_one_column_requesting_output = true;
 
@@ -1154,9 +1154,9 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
         // many cases (to be able to honor this we might be able to store a log of cells width, per row, for
         // visible rows, but nav/programmatic scroll would have visible artifacts.)
         //if (column->Flags & HvkGuiTableColumnFlags_AlignRight)
-        //    column->WorkMinX = HvkMax(column->WorkMinX, column->MaxX - column->ContentWidthRowsUnfrozen);
+        //    column->WorkMinX = Immax(column->WorkMinX, column->MaxX - column->ContentWidthRowsUnfrozen);
         //else if (column->Flags & HvkGuiTableColumnFlags_AlignCenter)
-        //    column->WorkMinX = HvkLerp(column->WorkMinX, HvkMax(column->StartX, column->MaxX - column->ContentWidthRowsUnfrozen), 0.5f);
+        //    column->WorkMinX = HvkLerp(column->WorkMinX, Immax(column->StartX, column->MaxX - column->ContentWidthRowsUnfrozen), 0.5f);
 
         // Reset content width variables
         if (table->InstanceCurrent == 0)
@@ -1201,7 +1201,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     // [Part 7] Detect/store when we are hovering the unused space after the right-most column (so e.g. context menus can react on it)
     // Clear Resizable flag if none of our column are actually resizable (either via an explicit _NoResize flag, either
     // because of using _WidthAuto/_WidthStretch). This will hide the resizing option from the context menu.
-    const float unused_x1 = HvkMax(table->WorkRect.Min.x, table->Columns[table->RightMostEnabledColumn].ClipRect.Max.x);
+    const float unused_x1 = Immax(table->WorkRect.Min.x, table->Columns[table->RightMostEnabledColumn].ClipRect.Max.x);
     if (is_hovering_table && table->HoveredColumnBody == -1)
         if (mouse_skewed_x >= unused_x1)
             table->HoveredColumnBody = (HvkGuiTableColumnIdx)table->ColumnsCount;
@@ -1218,7 +1218,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     if (table->Flags & HvkGuiTableFlags_NoHostExtendX)
     {
         table->OuterRect.Max.x = table->WorkRect.Max.x = unused_x1;
-        table->InnerClipRect.Max.x = HvkMin(table->InnerClipRect.Max.x, unused_x1);
+        table->InnerClipRect.Max.x = Immin(table->InnerClipRect.Max.x, unused_x1);
     }
     table->InnerWindow->ParentWorkRect = table->WorkRect;
     table->BorderX1 = table->InnerClipRect.Min.x;
@@ -1229,7 +1229,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
     if (table->Flags & HvkGuiTableFlags_NoHostExtendY)
         window_content_max_y = table->OuterRect.Max.y;
     else
-        window_content_max_y = HvkMax(table->InnerWindow->ContentRegionRect.Max.y, (table->Flags & HvkGuiTableFlags_ScrollY) ? 0.0f : table->OuterRect.Max.y);
+        window_content_max_y = Immax(table->InnerWindow->ContentRegionRect.Max.y, (table->Flags & HvkGuiTableFlags_ScrollY) ? 0.0f : table->OuterRect.Max.y);
     table->InnerWindow->WorkRect.Max.y = HvkClamp(window_content_max_y - g.Style.CellPadding.y, table->InnerWindow->WorkRect.Min.y, table->InnerWindow->WorkRect.Max.y);
 
     // [Part 9] Allocate draw channels and setup background cliprect
@@ -1286,7 +1286,7 @@ void HvkGui::TableUpdateLayout(HvkGuiTable* table)
 void HvkGui::TableUpdateBorders(HvkGuiTable* table)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(table->Flags & HvkGuiTableFlags_Resizable);
+    Hvk_ASSERT(table->Flags & HvkGuiTableFlags_Resizable);
 
     // At this point OuterRect height may be zero or under actual final height, so we rely on temporal coherency and
     // use the final height from last frame. Because this is only affecting _interaction_ with columns, it is not
@@ -1295,12 +1295,12 @@ void HvkGui::TableUpdateBorders(HvkGuiTable* table)
     HvkGuiTableInstanceData* table_instance = TableGetInstanceData(table, table->InstanceCurrent);
     const float hit_half_width = HvkTrunc(TABLE_RESIZE_SEPARATOR_HALF_THICKNESS * g.CurrentDpiScale);
     const float hit_y1 = (table->FreezeRowsCount >= 1 ? table->OuterRect.Min.y : table->WorkRect.Min.y) + table->AngledHeadersHeight;
-    const float hit_y2_body = HvkMax(table->OuterRect.Max.y, hit_y1 + table_instance->LastOuterHeight - table->AngledHeadersHeight);
+    const float hit_y2_body = Immax(table->OuterRect.Max.y, hit_y1 + table_instance->LastOuterHeight - table->AngledHeadersHeight);
     const float hit_y2_head = hit_y1 + table_instance->LastTopHeadersRowHeight;
 
     for (int order_n = 0; order_n < table->ColumnsCount; order_n++)
     {
-        if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
             continue;
 
         const int column_n = table->DisplayOrderToIndex[order_n];
@@ -1319,7 +1319,7 @@ void HvkGui::TableUpdateBorders(HvkGuiTable* table)
         HvkGuiID column_id = TableGetColumnResizeID(table, column_n, table->InstanceCurrent);
         HvkRect hit_rect(column->MaxX - hit_half_width, hit_y1, column->MaxX + hit_half_width, border_y2_hit);
         ItemAdd(hit_rect, column_id, NULL, HvkGuiItemFlags_NoNav);
-        //GetForegroundDrawList()->AddRect(hit_rect.Min, hit_rect.Max, IM_COL32(255, 0, 0, 100));
+        //GetForegroundDrawList()->AddRect(hit_rect.Min, hit_rect.Max, Hvk_COL32(255, 0, 0, 100));
 
         bool hovered = false, held = false;
         bool pressed = ButtonBehavior(hit_rect, column_id, &hovered, &held, HvkGuiButtonFlags_FlattenChildren | HvkGuiButtonFlags_PressedOnClick | HvkGuiButtonFlags_PressedOnDoubleClick | HvkGuiButtonFlags_NoNavFocus);
@@ -1350,13 +1350,13 @@ void    HvkGui::EndTable()
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "EndTable() call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "EndTable() call should only be done while in BeginTable() scope!");
         return;
     }
 
     // This assert would be very useful to catch a common error... unfortunately it would probably trigger in some
     // cases, and for consistency user may sometimes output empty tables (and still benefit from e.g. outer border)
-    //IM_ASSERT(table->IsLayoutLocked && "Table unused: never called TableNextRow(), is that the intent?");
+    //Hvk_ASSERT(table->IsLayoutLocked && "Table unused: never called TableNextRow(), is that the intent?");
 
     // If the user never got to call TableNextRow() or TableNextColumn(), we call layout ourselves to ensure all our
     // code paths are consistent (instead of just hoping that TableBegin/TableEnd will work), get borders drawn, etc.
@@ -1367,8 +1367,8 @@ void    HvkGui::EndTable()
     HvkGuiWindow* inner_window = table->InnerWindow;
     HvkGuiWindow* outer_window = table->OuterWindow;
     HvkGuiTableTempData* temp_data = table->TempData;
-    IM_ASSERT(inner_window == g.CurrentWindow && inner_window->ID == temp_data->WindowID);
-    IM_ASSERT(outer_window == inner_window || outer_window == inner_window->ParentWindow);
+    Hvk_ASSERT(inner_window == g.CurrentWindow && inner_window->ID == temp_data->WindowID);
+    Hvk_ASSERT(outer_window == inner_window || outer_window == inner_window->ParentWindow);
 
     if (table->IsInsideRow)
         TableEndRow(table);
@@ -1384,12 +1384,12 @@ void    HvkGui::EndTable()
     inner_window->DC.CurrLineSize = temp_data->HostBackupCurrLineSize;
     inner_window->DC.CursorMaxPos = temp_data->HostBackupCursorMaxPos;
     const float inner_content_max_y = HvkCeil(table->RowPosY2); // Rounding final position is Hvkportant as we currently don't round row height ('Demo->Tables->Outer Size' demo uses non-integer heights)
-    IM_ASSERT(table->RowPosY2 == inner_window->DC.CursorPos.y);
+    Hvk_ASSERT(table->RowPosY2 == inner_window->DC.CursorPos.y);
     if (inner_window != outer_window)
         inner_window->DC.CursorMaxPos.y = inner_content_max_y;
     else if (!(flags & HvkGuiTableFlags_NoHostExtendY))
-        table->OuterRect.Max.y = table->InnerRect.Max.y = HvkMax(table->OuterRect.Max.y, inner_content_max_y); // Patch OuterRect/InnerRect height
-    table->WorkRect.Max.y = HvkMax(table->WorkRect.Max.y, table->OuterRect.Max.y);
+        table->OuterRect.Max.y = table->InnerRect.Max.y = Immax(table->OuterRect.Max.y, inner_content_max_y); // Patch OuterRect/InnerRect height
+    table->WorkRect.Max.y = Immax(table->WorkRect.Max.y, table->OuterRect.Max.y);
     table_instance->LastOuterHeight = table->OuterRect.GetHeight();
 
     // Setup inner scrolling range
@@ -1400,9 +1400,9 @@ void    HvkGui::EndTable()
         const float outer_padding_for_border = (table->Flags & HvkGuiTableFlags_BordersOuterV) ? TABLE_BORDER_SIZE : 0.0f;
         float max_pos_x = table->InnerWindow->DC.CursorMaxPos.x;
         if (table->RightMostEnabledColumn != -1)
-            max_pos_x = HvkMax(max_pos_x, table->Columns[table->RightMostEnabledColumn].WorkMaxX + table->CellPaddingX + table->OuterPaddingX - outer_padding_for_border);
+            max_pos_x = Immax(max_pos_x, table->Columns[table->RightMostEnabledColumn].WorkMaxX + table->CellPaddingX + table->OuterPaddingX - outer_padding_for_border);
         if (table->ResizedColumn != -1)
-            max_pos_x = HvkMax(max_pos_x, table->ResizeLockMinContentsX2);
+            max_pos_x = Immax(max_pos_x, table->ResizeLockMinContentsX2);
         table->InnerWindow->DC.CursorMaxPos.x = max_pos_x + table->TempData->AngledHeadersExtraWidth;
     }
 
@@ -1440,7 +1440,7 @@ void    HvkGui::EndTable()
     float auto_fit_width_for_stretched = 0.0f;
     float auto_fit_width_for_stretched_min = 0.0f;
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
-        if (IM_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
+        if (Hvk_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
         {
             HvkGuiTableColumn* column = &table->Columns[column_n];
             float column_width_request = ((column->Flags & HvkGuiTableColumnFlags_WidthFixed) && !(column->Flags & HvkGuiTableColumnFlags_NoResize)) ? column->WidthRequest : TableGetColumnWidthAuto(table, column);
@@ -1449,10 +1449,10 @@ void    HvkGui::EndTable()
             else
                 auto_fit_width_for_stretched += column_width_request;
             if ((column->Flags & HvkGuiTableColumnFlags_WidthStretch) && (column->Flags & HvkGuiTableColumnFlags_NoResize) != 0)
-                auto_fit_width_for_stretched_min = HvkMax(auto_fit_width_for_stretched_min, column_width_request / (column->StretchWeight / table->ColumnsStretchSumWeights));
+                auto_fit_width_for_stretched_min = Immax(auto_fit_width_for_stretched_min, column_width_request / (column->StretchWeight / table->ColumnsStretchSumWeights));
         }
     const float width_spacings = (table->OuterPaddingX * 2.0f) + (table->CellSpacingX1 + table->CellSpacingX2) * (table->ColumnsEnabledCount - 1);
-    table->ColumnsAutoFitWidth = width_spacings + (table->CellPaddingX * 2.0f) * table->ColumnsEnabledCount + auto_fit_width_for_fixed + HvkMax(auto_fit_width_for_stretched, auto_fit_width_for_stretched_min);
+    table->ColumnsAutoFitWidth = width_spacings + (table->CellPaddingX * 2.0f) * table->ColumnsEnabledCount + auto_fit_width_for_fixed + Immax(auto_fit_width_for_stretched, auto_fit_width_for_stretched_min);
 
     // Update scroll
     if ((table->Flags & HvkGuiTableFlags_ScrollX) == 0 && inner_window != outer_window)
@@ -1482,8 +1482,8 @@ void    HvkGui::EndTable()
     table->IsActiveIdInTable = (g.ActiveIdIsAlive != 0 && table->IsActiveIdAliveBeforeTable == false);
 
     // Pop from id stack
-    IM_ASSERT_USER_ERROR(inner_window->IDStack.back() == table_instance->TableInstanceID, "Mismatching PushID/PopID!");
-    IM_ASSERT_USER_ERROR(outer_window->DC.ItemWidthStack.Size >= temp_data->HostBackupItemWidthStackSize, "Too many PopItemWidth!");
+    Hvk_ASSERT_USER_ERROR(inner_window->IDStack.back() == table_instance->TableInstanceID, "Mismatching PushID/PopID!");
+    Hvk_ASSERT_USER_ERROR(outer_window->DC.ItemWidthStack.Size >= temp_data->HostBackupItemWidthStackSize, "Too many PopItemWidth!");
     if (table->InstanceCurrent > 0)
         PopID();
     PopID();
@@ -1522,8 +1522,8 @@ void    HvkGui::EndTable()
     {
         // FIXME-TABLE: Could we remove this section?
         // ColumnsAutoFitWidth may be one frame ahead here since for Fixed+NoResize is calculated from latest contents
-        IM_ASSERT((table->Flags & HvkGuiTableFlags_ScrollX) == 0);
-        outer_window->DC.CursorMaxPos.x = HvkMax(backup_outer_max_pos.x, table->OuterRect.Min.x + table->ColumnsAutoFitWidth);
+        Hvk_ASSERT((table->Flags & HvkGuiTableFlags_ScrollX) == 0);
+        outer_window->DC.CursorMaxPos.x = Immax(backup_outer_max_pos.x, table->OuterRect.Min.x + table->ColumnsAutoFitWidth);
     }
     else if (temp_data->UserOuterSize.x <= 0.0f)
     {
@@ -1532,23 +1532,23 @@ void    HvkGui::EndTable()
         // - FIXME-TABLE: Would make sense to pre-compute expected scrollbar visibility/sizes to generally save a frame of feedback.
         const float inner_content_max_x = table->OuterRect.Min.x + table->ColumnsAutoFitWidth; // Slightly misleading name but used for code symmetry with inner_content_max_y
         const float decoration_size = table->TempData->AngledHeadersExtraWidth + ((table->Flags & HvkGuiTableFlags_ScrollY) ? inner_window->ScrollbarSizes.x : 0.0f);
-        outer_window->DC.IdealMaxPos.x = HvkMax(outer_window->DC.IdealMaxPos.x, inner_content_max_x + decoration_size - temp_data->UserOuterSize.x);
-        outer_window->DC.CursorMaxPos.x = HvkMax(backup_outer_max_pos.x, HvkMin(table->OuterRect.Max.x, inner_content_max_x + decoration_size));
+        outer_window->DC.IdealMaxPos.x = Immax(outer_window->DC.IdealMaxPos.x, inner_content_max_x + decoration_size - temp_data->UserOuterSize.x);
+        outer_window->DC.CursorMaxPos.x = Immax(backup_outer_max_pos.x, Immin(table->OuterRect.Max.x, inner_content_max_x + decoration_size));
     }
     else
     {
-        outer_window->DC.CursorMaxPos.x = HvkMax(backup_outer_max_pos.x, table->OuterRect.Max.x);
+        outer_window->DC.CursorMaxPos.x = Immax(backup_outer_max_pos.x, table->OuterRect.Max.x);
     }
     if (temp_data->UserOuterSize.y <= 0.0f)
     {
         const float decoration_size = (table->Flags & HvkGuiTableFlags_ScrollX) ? inner_window->ScrollbarSizes.y : 0.0f;
-        outer_window->DC.IdealMaxPos.y = HvkMax(outer_window->DC.IdealMaxPos.y, inner_content_max_y + decoration_size - temp_data->UserOuterSize.y);
-        outer_window->DC.CursorMaxPos.y = HvkMax(backup_outer_max_pos.y, HvkMin(table->OuterRect.Max.y, inner_content_max_y + decoration_size));
+        outer_window->DC.IdealMaxPos.y = Immax(outer_window->DC.IdealMaxPos.y, inner_content_max_y + decoration_size - temp_data->UserOuterSize.y);
+        outer_window->DC.CursorMaxPos.y = Immax(backup_outer_max_pos.y, Immin(table->OuterRect.Max.y, inner_content_max_y + decoration_size));
     }
     else
     {
         // OuterRect.Max.y may already have been pushed downward from the initial value (unless HvkGuiTableFlags_NoHostExtendY is set)
-        outer_window->DC.CursorMaxPos.y = HvkMax(backup_outer_max_pos.y, table->OuterRect.Max.y);
+        outer_window->DC.CursorMaxPos.y = Immax(backup_outer_max_pos.y, table->OuterRect.Max.y);
     }
 
     // Save settings
@@ -1557,8 +1557,8 @@ void    HvkGui::EndTable()
     table->IsInitializing = false;
 
     // Clear or restore current table, if any
-    IM_ASSERT(g.CurrentWindow == outer_window && g.CurrentTable == table);
-    IM_ASSERT(g.TablesTempDataStacked > 0);
+    Hvk_ASSERT(g.CurrentWindow == outer_window && g.CurrentTable == table);
+    Hvk_ASSERT(g.TablesTempDataStacked > 0);
     temp_data = (--g.TablesTempDataStacked > 0) ? &g.TablesTempData[g.TablesTempDataStacked - 1] : NULL;
     g.CurrentTable = temp_data && (temp_data->WindowID == outer_window->ID) ? g.Tables.GetByIndex(temp_data->TableIndex) : NULL;
     if (g.CurrentTable)
@@ -1603,14 +1603,14 @@ void HvkGui::TableSetupColumn(const char* label, HvkGuiTableColumnFlags flags, f
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
-    IM_ASSERT(table->IsLayoutLocked == false && "Need to call TableSetupColumn() before first row!");
-    IM_ASSERT((flags & HvkGuiTableColumnFlags_StatusMask_) == 0 && "Illegal to pass StatusMask values to TableSetupColumn()");
+    Hvk_ASSERT(table->IsLayoutLocked == false && "Need to call TableSetupColumn() before first row!");
+    Hvk_ASSERT((flags & HvkGuiTableColumnFlags_StatusMask_) == 0 && "Illegal to pass StatusMask values to TableSetupColumn()");
     if (table->DeclColumnsCount >= table->ColumnsCount)
     {
-        IM_ASSERT_USER_ERROR(table->DeclColumnsCount < table->ColumnsCount, "Called TableSetupColumn() too many times!");
+        Hvk_ASSERT_USER_ERROR(table->DeclColumnsCount < table->ColumnsCount, "Called TableSetupColumn() too many times!");
         return;
     }
 
@@ -1620,7 +1620,7 @@ void HvkGui::TableSetupColumn(const char* label, HvkGuiTableColumnFlags flags, f
     // Assert when passing a width or weight if policy is entirely left to default, to avoid storing width into weight and vice-versa.
     // Give a grace to users of HvkGuiTableFlags_ScrollX.
     if (table->IsDefaultSizingPolicy && (flags & HvkGuiTableColumnFlags_WidthMask_) == 0 && (flags & HvkGuiTableFlags_ScrollX) == 0)
-        IM_ASSERT(init_width_or_weight <= 0.0f && "Can only specify width/weight if sizing policy is set explicitly in either Table or Column.");
+        Hvk_ASSERT(init_width_or_weight <= 0.0f && "Can only specify width/weight if sizing policy is set explicitly in either Table or Column.");
 
     // When passing a width automatically enforce WidthFixed policy
     // (whereas TableSetupColumnFlags would default to WidthAuto if table is not resizable)
@@ -1664,14 +1664,14 @@ void HvkGui::TableSetupScrollFreeze(int columns, int rows)
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
-    IM_ASSERT(table->IsLayoutLocked == false && "Need to call TableSetupColumn() before first row!");
-    IM_ASSERT(columns >= 0 && columns < HvkGui_TABLE_MAX_COLUMNS);
-    IM_ASSERT(rows >= 0 && rows < 128); // Arbitrary limit
+    Hvk_ASSERT(table->IsLayoutLocked == false && "Need to call TableSetupColumn() before first row!");
+    Hvk_ASSERT(columns >= 0 && columns < HvkGui_TABLE_MAX_COLUMNS);
+    Hvk_ASSERT(rows >= 0 && rows < 128); // Arbitrary limit
 
-    table->FreezeColumnsRequest = (table->Flags & HvkGuiTableFlags_ScrollX) ? (HvkGuiTableColumnIdx)HvkMin(columns, table->ColumnsCount) : 0;
+    table->FreezeColumnsRequest = (table->Flags & HvkGuiTableFlags_ScrollX) ? (HvkGuiTableColumnIdx)Immin(columns, table->ColumnsCount) : 0;
     table->FreezeColumnsCount = (table->InnerWindow->Scroll.x != 0.0f) ? table->FreezeColumnsRequest : 0;
     table->FreezeRowsRequest = (table->Flags & HvkGuiTableFlags_ScrollY) ? (HvkGuiTableColumnIdx)rows : 0;
     table->FreezeRowsCount = (table->InnerWindow->Scroll.y != 0.0f) ? table->FreezeRowsRequest : 0;
@@ -1745,13 +1745,13 @@ void HvkGui::TableSetColumnEnabled(int column_n, bool enabled)
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
-    IM_ASSERT(table->Flags & HvkGuiTableFlags_Hideable); // See comments above
+    Hvk_ASSERT(table->Flags & HvkGuiTableFlags_Hideable); // See comments above
     if (column_n < 0)
         column_n = table->CurrentColumn;
-    IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
+    Hvk_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
     HvkGuiTableColumn* column = &table->Columns[column_n];
     column->IsUserEnabledNextFrame = enabled;
 }
@@ -1785,15 +1785,15 @@ HvkRect HvkGui::TableGetCellBgRect(const HvkGuiTable* table, int column_n)
     //    x1 -= table->OuterPaddingX;
     //if (column->NextEnabledColumn == -1)
     //    x2 += table->OuterPaddingX;
-    x1 = HvkMax(x1, table->WorkRect.Min.x);
-    x2 = HvkMin(x2, table->WorkRect.Max.x);
+    x1 = Immax(x1, table->WorkRect.Min.x);
+    x2 = Immin(x2, table->WorkRect.Max.x);
     return HvkRect(x1, table->RowPosY1, x2, table->RowPosY2);
 }
 
 // Return the resizing ID for the right-side of the given column.
 HvkGuiID HvkGui::TableGetColumnResizeID(HvkGuiTable* table, int column_n, int instance_no)
 {
-    IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
+    Hvk_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
     HvkGuiID instance_id = TableGetInstanceID(table, instance_no);
     return instance_id + 1 + column_n; // FIXME: #6140: still not ideal
 }
@@ -1825,17 +1825,17 @@ void HvkGui::TableSetBgColor(HvkGuiTableBgTarget target, HvkU32 color, int colum
 {
     HvkGuiContext& g = *GHvkGui;
     HvkGuiTable* table = g.CurrentTable;
-    IM_ASSERT(target != HvkGuiTableBgTarget_None);
+    Hvk_ASSERT(target != HvkGuiTableBgTarget_None);
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
 
-    if (color == IM_COL32_DISABLE)
+    if (color == Hvk_COL32_DISABLE)
         color = 0;
 
-    // We cannot draw neither the cell or row background Hvkmediately as we don't know the row height at this point in time.
+    // We cannot draw neither the cell or row background immediately as we don't know the row height at this point in time.
     switch (target)
     {
     case HvkGuiTableBgTarget_CellBg:
@@ -1844,7 +1844,7 @@ void HvkGui::TableSetBgColor(HvkGuiTableBgTarget target, HvkU32 color, int colum
             return;
         if (column_n == -1)
             column_n = table->CurrentColumn;
-        if (!IM_BITARRAY_TESTBIT(table->VisibleMaskByIndex, column_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->VisibleMaskByIndex, column_n))
             return;
         if (table->RowCellDataCurrent < 0 || table->RowCellData[table->RowCellDataCurrent].Column != column_n)
             table->RowCellDataCurrent++;
@@ -1858,13 +1858,13 @@ void HvkGui::TableSetBgColor(HvkGuiTableBgTarget target, HvkU32 color, int colum
     {
         if (table->RowPosY1 > table->InnerClipRect.Max.y) // Discard
             return;
-        IM_ASSERT(column_n == -1);
+        Hvk_ASSERT(column_n == -1);
         int bg_idx = (target == HvkGuiTableBgTarget_RowBg1) ? 1 : 0;
         table->RowBgColor[bg_idx] = color;
         break;
     }
     default:
-        IM_ASSERT(0);
+        Hvk_ASSERT(0);
     }
 }
 
@@ -1907,7 +1907,7 @@ void HvkGui::TableNextRow(HvkGuiTableRowFlags row_flags, float row_min_height)
     // We honor min_row_height requested by user, but cannot guarantee per-row maximum height,
     // because that would essentially require a unique clipping rectangle per-cell.
     table->RowPosY2 += table->RowCellPaddingY * 2.0f;
-    table->RowPosY2 = HvkMax(table->RowPosY2, table->RowPosY1 + row_min_height);
+    table->RowPosY2 = Immax(table->RowPosY2, table->RowPosY1 + row_min_height);
 
     // Disable output until user calls TableNextColumn()
     table->InnerWindow->SkipItems = true;
@@ -1917,12 +1917,12 @@ void HvkGui::TableNextRow(HvkGuiTableRowFlags row_flags, float row_min_height)
 void HvkGui::TableBeginRow(HvkGuiTable* table)
 {
     HvkGuiWindow* window = table->InnerWindow;
-    IM_ASSERT(!table->IsInsideRow);
+    Hvk_ASSERT(!table->IsInsideRow);
 
     // New row
     table->CurrentRow++;
     table->CurrentColumn = -1;
-    table->RowBgColor[0] = table->RowBgColor[1] = IM_COL32_DISABLE;
+    table->RowBgColor[0] = table->RowBgColor[1] = Hvk_COL32_DISABLE;
     table->RowCellDataCurrent = -1;
     table->IsInsideRow = true;
 
@@ -1955,8 +1955,8 @@ void HvkGui::TableEndRow(HvkGuiTable* table)
 {
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
-    IM_ASSERT(window == table->InnerWindow);
-    IM_ASSERT(table->IsInsideRow);
+    Hvk_ASSERT(window == table->InnerWindow);
+    Hvk_ASSERT(table->IsInsideRow);
 
     if (table->CurrentColumn != -1)
     {
@@ -1991,11 +1991,11 @@ void HvkGui::TableEndRow(HvkGuiTable* table)
         // Decide of background color for the row
         HvkU32 bg_col0 = 0;
         HvkU32 bg_col1 = 0;
-        if (table->RowBgColor[0] != IM_COL32_DISABLE)
+        if (table->RowBgColor[0] != Hvk_COL32_DISABLE)
             bg_col0 = table->RowBgColor[0];
         else if (table->Flags & HvkGuiTableFlags_RowBg)
             bg_col0 = GetColorU32((table->RowBgColorCounter & 1) ? HvkGuiCol_TableRowBgAlt : HvkGuiCol_TableRowBg);
-        if (table->RowBgColor[1] != IM_COL32_DISABLE)
+        if (table->RowBgColor[1] != Hvk_COL32_DISABLE)
             bg_col1 = table->RowBgColor[1];
 
         // Decide of top border color
@@ -2038,8 +2038,8 @@ void HvkGui::TableEndRow(HvkGuiTable* table)
                 const HvkGuiTableColumn* column = &table->Columns[cell_data->Column];
                 HvkRect cell_bg_rect = TableGetCellBgRect(table, cell_data->Column);
                 cell_bg_rect.ClipWith(table->BgClipRect);
-                cell_bg_rect.Min.x = HvkMax(cell_bg_rect.Min.x, column->ClipRect.Min.x);     // So that first column after frozen one gets clipped when scrolling
-                cell_bg_rect.Max.x = HvkMin(cell_bg_rect.Max.x, column->MaxX);
+                cell_bg_rect.Min.x = Immax(cell_bg_rect.Min.x, column->ClipRect.Min.x);     // So that first column after frozen one gets clipped when scrolling
+                cell_bg_rect.Max.x = Immin(cell_bg_rect.Max.x, column->MaxX);
                 if (cell_bg_rect.Min.y < cell_bg_rect.Max.y)
                     window->DrawList->AddRectFilled(cell_bg_rect.Min, cell_bg_rect.Max, cell_data->BgColor);
             }
@@ -2059,22 +2059,22 @@ void HvkGui::TableEndRow(HvkGuiTable* table)
     //   end of row and get the new cursor position.
     if (unfreeze_rows_request)
     {
-        IM_ASSERT(table->FreezeRowsRequest > 0);
+        Hvk_ASSERT(table->FreezeRowsRequest > 0);
         for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
             table->Columns[column_n].NavLayerCurrent = table->NavLayer;
-        const float y0 = HvkMax(table->RowPosY2 + 1, table->InnerClipRect.Min.y);
+        const float y0 = Immax(table->RowPosY2 + 1, table->InnerClipRect.Min.y);
         table_instance->LastFrozenHeight = y0 - table->OuterRect.Min.y;
 
         if (unfreeze_rows_actual)
         {
-            IM_ASSERT(table->IsUnfrozenRows == false);
+            Hvk_ASSERT(table->IsUnfrozenRows == false);
             table->IsUnfrozenRows = true;
 
             // BgClipRect starts as table->InnerClipRect, reduce it now and make BgClipRectForDrawCmd == BgClipRect
-            table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = HvkMin(y0, table->InnerClipRect.Max.y);
+            table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = Immin(y0, table->InnerClipRect.Max.y);
             table->BgClipRect.Max.y = table->Bg2ClipRectForDrawCmd.Max.y = table->InnerClipRect.Max.y;
             table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
-            IM_ASSERT(table->Bg2ClipRectForDrawCmd.Min.y <= table->Bg2ClipRectForDrawCmd.Max.y);
+            Hvk_ASSERT(table->Bg2ClipRectForDrawCmd.Min.y <= table->Bg2ClipRectForDrawCmd.Max.y);
 
             float row_height = table->RowPosY2 - table->RowPosY1;
             table->RowPosY2 = window->DC.CursorPos.y = table->WorkRect.Min.y + table->RowPosY2 - table->OuterRect.Min.y;
@@ -2130,7 +2130,7 @@ bool HvkGui::TableSetColumnIndex(int column_n)
             TableEndCell(table);
         if ((column_n >= 0 && column_n < table->ColumnsCount) == false)
         {
-            IM_ASSERT_USER_ERROR(column_n >= 0 && column_n < table->ColumnsCount, "TableSetColumnIndex() invalid column index!");
+            Hvk_ASSERT_USER_ERROR(column_n >= 0 && column_n < table->ColumnsCount, "TableSetColumnIndex() invalid column index!");
             return false;
         }
         TableBeginCell(table, column_n);
@@ -2208,7 +2208,7 @@ void HvkGui::TableBeginCell(HvkGuiTable* table, int column_n)
     {
         // FIXME: if we end up drawing all borders/bg in EndTable, could remove this and just assert that channel hasn't changed.
         table->DrawSplitter->SetCurrentChannel(window->DrawList, TABLE_DRAW_CHANNEL_NOCLIP);
-        //IM_ASSERT(table->DrawSplitter._Current == TABLE_DRAW_CHANNEL_NOCLIP);
+        //Hvk_ASSERT(table->DrawSplitter._Current == TABLE_DRAW_CHANNEL_NOCLIP);
     }
     else
     {
@@ -2240,14 +2240,14 @@ void HvkGui::TableEndCell(HvkGuiTable* table)
         p_max_pos_x = &column->ContentMaxXHeadersUsed;  // Useful in case user submit contents in header row that is not a TableHeader() call
     else
         p_max_pos_x = table->IsUnfrozenRows ? &column->ContentMaxXUnfrozen : &column->ContentMaxXFrozen;
-    *p_max_pos_x = HvkMax(*p_max_pos_x, window->DC.CursorMaxPos.x);
+    *p_max_pos_x = Immax(*p_max_pos_x, window->DC.CursorMaxPos.x);
     if (column->IsEnabled)
-        table->RowPosY2 = HvkMax(table->RowPosY2, window->DC.CursorMaxPos.y + table->RowCellPaddingY);
+        table->RowPosY2 = Immax(table->RowPosY2, window->DC.CursorMaxPos.y + table->RowCellPaddingY);
     column->ItemWidth = window->DC.ItemWidth;
 
     // Propagate text baseline for the entire row
     // FIXME-TABLE: Here we propagate text baseline from the last line of the cell.. instead of the first one.
-    table->RowTextBaseline = HvkMax(table->RowTextBaseline, window->DC.PrevLineTextBaseOffset);
+    table->RowTextBaseline = Immax(table->RowTextBaseline, window->DC.PrevLineTextBaseOffset);
 }
 
 //-------------------------------------------------------------------------
@@ -2298,18 +2298,18 @@ float HvkGui::TableCalcMaxColumnWidth(const HvkGuiTable* table, int column_n)
 // Note this is meant to be stored in column->WidthAuto, please generally use the WidthAuto field
 float HvkGui::TableGetColumnWidthAuto(HvkGuiTable* table, HvkGuiTableColumn* column)
 {
-    const float content_width_body = HvkMax(column->ContentMaxXFrozen, column->ContentMaxXUnfrozen) - column->WorkMinX;
+    const float content_width_body = Immax(column->ContentMaxXFrozen, column->ContentMaxXUnfrozen) - column->WorkMinX;
     const float content_width_headers = column->ContentMaxXHeadersIdeal - column->WorkMinX;
     float width_auto = content_width_body;
     if (!(column->Flags & HvkGuiTableColumnFlags_NoHeaderWidth))
-        width_auto = HvkMax(width_auto, content_width_headers);
+        width_auto = Immax(width_auto, content_width_headers);
 
     // Non-resizable fixed columns preserve their requested width
     if ((column->Flags & HvkGuiTableColumnFlags_WidthFixed) && column->InitStretchWeightOrWidth > 0.0f)
         if (!(table->Flags & HvkGuiTableFlags_Resizable) || (column->Flags & HvkGuiTableColumnFlags_NoResize))
             width_auto = column->InitStretchWeightOrWidth;
 
-    return HvkMax(width_auto, table->MinColumnWidth);
+    return Immax(width_auto, table->MinColumnWidth);
 }
 
 // 'width' = inner column width, without padding
@@ -2317,16 +2317,16 @@ void HvkGui::TableSetColumnWidth(int column_n, float width)
 {
     HvkGuiContext& g = *GHvkGui;
     HvkGuiTable* table = g.CurrentTable;
-    IM_ASSERT(table != NULL && table->IsLayoutLocked == false);
-    IM_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
+    Hvk_ASSERT(table != NULL && table->IsLayoutLocked == false);
+    Hvk_ASSERT(column_n >= 0 && column_n < table->ColumnsCount);
     HvkGuiTableColumn* column_0 = &table->Columns[column_n];
     float column_0_width = width;
 
     // Apply constraints early
     // Compare both requested and actual given width to avoid overwriting requested width when column is stuck (minimum size, bounded)
-    IM_ASSERT(table->MinColumnWidth > 0.0f);
+    Hvk_ASSERT(table->MinColumnWidth > 0.0f);
     const float min_width = table->MinColumnWidth;
-    const float max_width = HvkMax(min_width, column_0->WidthMax); // Don't use TableCalcMaxColumnWidth() here as it would rely on MinX from last instance (#7933)
+    const float max_width = Immax(min_width, column_0->WidthMax); // Don't use TableCalcMaxColumnWidth() here as it would rely on MinX from last instance (#7933)
     column_0_width = HvkClamp(column_0_width, min_width, max_width);
     if (column_0->WidthGiven == column_0_width || column_0->WidthRequest == column_0_width)
         return;
@@ -2364,7 +2364,7 @@ void HvkGui::TableSetColumnWidth(int column_n, float width)
     // - W1 W2 W3  resize W1|               --> to not be stuck, both W2 and W3 would stretch down. Seems possible to fix. Would be most beneficial to simplify resize of all-weighted columns.
     // - W3 F1 F2  resize W3|               --> to not be stuck past F1|, both F1 and F2 would need to stretch down, which would be lossy or ambiguous. Seems hard to fix.
 
-    // [Resize Rule 1] Can't resize from right of right-most visible column if there is any Stretch column. Hvkplemented in TableUpdateLayout().
+    // [Resize Rule 1] Can't resize from right of right-most visible column if there is any Stretch column. implemented in TableUpdateLayout().
 
     // If we have all Fixed columns OR resizing a Fixed column that doesn't come after a Stretch one, we can do an offsetting resize.
     // This is the preferred resize path
@@ -2384,9 +2384,9 @@ void HvkGui::TableSetColumnWidth(int column_n, float width)
 
     // Resizing from right-side of a Stretch column before a Fixed column forward sizing to left-side of fixed column.
     // (old_a + old_b == new_a + new_b) --> (new_a == old_a + old_b - new_b)
-    float column_1_width = HvkMax(column_1->WidthRequest - (column_0_width - column_0->WidthRequest), min_width);
+    float column_1_width = Immax(column_1->WidthRequest - (column_0_width - column_0->WidthRequest), min_width);
     column_0_width = column_0->WidthRequest + column_1->WidthRequest - column_1_width;
-    IM_ASSERT(column_0_width > 0.0f && column_1_width > 0.0f);
+    Hvk_ASSERT(column_0_width > 0.0f && column_1_width > 0.0f);
     column_0->WidthRequest = column_0_width;
     column_1->WidthRequest = column_1_width;
     if ((column_0->Flags | column_1->Flags) & HvkGuiTableColumnFlags_WidthStretch)
@@ -2420,7 +2420,7 @@ void HvkGui::TableSetColumnWidthAutoAll(HvkGuiTable* table)
 
 void HvkGui::TableUpdateColumnsWeightFromWidth(HvkGuiTable* table)
 {
-    IM_ASSERT(table->LeftMostStretchedColumn != -1 && table->RightMostStretchedColumn != -1);
+    Hvk_ASSERT(table->LeftMostStretchedColumn != -1 && table->RightMostStretchedColumn != -1);
 
     // Measure existing quantities
     float visible_weight = 0.0f;
@@ -2430,11 +2430,11 @@ void HvkGui::TableUpdateColumnsWeightFromWidth(HvkGuiTable* table)
         HvkGuiTableColumn* column = &table->Columns[column_n];
         if (!column->IsEnabled || !(column->Flags & HvkGuiTableColumnFlags_WidthStretch))
             continue;
-        IM_ASSERT(column->StretchWeight > 0.0f);
+        Hvk_ASSERT(column->StretchWeight > 0.0f);
         visible_weight += column->StretchWeight;
         visible_width += column->WidthRequest;
     }
-    IM_ASSERT(visible_weight > 0.0f && visible_width > 0.0f);
+    Hvk_ASSERT(visible_weight > 0.0f && visible_width > 0.0f);
 
     // Apply new weights
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
@@ -2443,7 +2443,7 @@ void HvkGui::TableUpdateColumnsWeightFromWidth(HvkGuiTable* table)
         if (!column->IsEnabled || !(column->Flags & HvkGuiTableColumnFlags_WidthStretch))
             continue;
         column->StretchWeight = (column->WidthRequest / visible_width) * visible_weight;
-        IM_ASSERT(column->StretchWeight > 0.0f);
+        Hvk_ASSERT(column->StretchWeight > 0.0f);
     }
 }
 
@@ -2569,7 +2569,7 @@ void HvkGui::TableSetupDrawChannels(HvkGuiTable* table)
     table->BgClipRect = table->InnerClipRect;
     table->Bg0ClipRectForDrawCmd = table->OuterWindow->ClipRect;
     table->Bg2ClipRectForDrawCmd = table->HostClipRect;
-    IM_ASSERT(table->BgClipRect.Min.y <= table->BgClipRect.Max.y);
+    Hvk_ASSERT(table->BgClipRect.Min.y <= table->BgClipRect.Max.y);
 }
 
 // This function reorder draw channels based on matching clip rectangle, to facilitate merging them. Called by EndTable().
@@ -2607,7 +2607,7 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
     HvkDrawListSplitter* splitter = table->DrawSplitter;
     const bool has_freeze_v = (table->FreezeRowsCount > 0);
     const bool has_freeze_h = (table->FreezeColumnsCount > 0);
-    IM_ASSERT(splitter->_Current == 0);
+    Hvk_ASSERT(splitter->_Current == 0);
 
     // Track which groups we are going to attempt to merge, and which channels goes into each group.
     struct MergeGroup
@@ -2624,14 +2624,14 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
     const int size_for_masks_bitarrays_one = (int)HvkBitArrayGetStorageSizeInBytes(max_draw_channels);
     g.TempBuffer.reserve(size_for_masks_bitarrays_one * 5);
     memset(g.TempBuffer.Data, 0, size_for_masks_bitarrays_one * 5);
-    for (int n = 0; n < IM_ARRAYSIZE(merge_groups); n++)
+    for (int n = 0; n < Hvk_ARRAYSIZE(merge_groups); n++)
         merge_groups[n].ChannelsMask = (HvkBitArrayPtr)(void*)(g.TempBuffer.Data + (size_for_masks_bitarrays_one * n));
     HvkBitArrayPtr remaining_mask = (HvkBitArrayPtr)(void*)(g.TempBuffer.Data + (size_for_masks_bitarrays_one * 4));
 
     // 1. Scan channels and take note of those which can be merged
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        if (!IM_BITARRAY_TESTBIT(table->VisibleMaskByIndex, column_n))
+        if (!Hvk_BITARRAY_TESTBIT(table->VisibleMaskByIndex, column_n))
             continue;
         HvkGuiTableColumn* column = &table->Columns[column_n];
 
@@ -2653,9 +2653,9 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
             {
                 float content_max_x;
                 if (!has_freeze_v)
-                    content_max_x = HvkMax(column->ContentMaxXUnfrozen, column->ContentMaxXHeadersUsed); // No row freeze
+                    content_max_x = Immax(column->ContentMaxXUnfrozen, column->ContentMaxXHeadersUsed); // No row freeze
                 else if (merge_group_sub_n == 0)
-                    content_max_x = HvkMax(column->ContentMaxXFrozen, column->ContentMaxXHeadersUsed);   // Row freeze: use width before freeze
+                    content_max_x = Immax(column->ContentMaxXFrozen, column->ContentMaxXHeadersUsed);   // Row freeze: use width before freeze
                 else
                     content_max_x = column->ContentMaxXUnfrozen;                                        // Row freeze: use width after freeze
                 if (content_max_x > column->ClipRect.Max.x)
@@ -2663,7 +2663,7 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
             }
 
             const int merge_group_n = (has_freeze_h && column_n < table->FreezeColumnsCount ? 0 : 1) + (has_freeze_v && merge_group_sub_n == 0 ? 0 : 2);
-            IM_ASSERT(channel_no < max_draw_channels);
+            Hvk_ASSERT(channel_no < max_draw_channels);
             MergeGroup* merge_group = &merge_groups[merge_group_n];
             if (merge_group->ChannelsCount == 0)
                 merge_group->ClipRect = HvkRect(+FLT_MAX, +FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -2681,7 +2681,7 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
     // [DEBUG] Display merge groups
 #if 0
     if (g.IO.KeyShift)
-        for (int merge_group_n = 0; merge_group_n < IM_ARRAYSIZE(merge_groups); merge_group_n++)
+        for (int merge_group_n = 0; merge_group_n < Hvk_ARRAYSIZE(merge_groups); merge_group_n++)
         {
             MergeGroup* merge_group = &merge_groups[merge_group_n];
             if (merge_group->ChannelsCount == 0)
@@ -2690,9 +2690,9 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
             HvkFormatString(buf, 32, "MG%d:%d", merge_group_n, merge_group->ChannelsCount);
             HvkVec2 text_pos = merge_group->ClipRect.Min + HvkVec2(4, 4);
             HvkVec2 text_size = CalcTextSize(buf, NULL);
-            GetForegroundDrawList()->AddRectFilled(text_pos, text_pos + text_size, IM_COL32(0, 0, 0, 255));
-            GetForegroundDrawList()->AddText(text_pos, IM_COL32(255, 255, 0, 255), buf, NULL);
-            GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, IM_COL32(255, 255, 0, 255));
+            GetForegroundDrawList()->AddRectFilled(text_pos, text_pos + text_size, Hvk_COL32(0, 0, 0, 255));
+            GetForegroundDrawList()->AddText(text_pos, Hvk_COL32(255, 255, 0, 255), buf, NULL);
+            GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, Hvk_COL32(255, 255, 0, 255));
         }
 #endif
 
@@ -2705,11 +2705,11 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
         HvkDrawChannel* dst_tmp = g.DrawChannelsTempMergeBuffer.Data;
         HvkBitArraySetBitRange(remaining_mask, LEADING_DRAW_CHANNELS, splitter->_Count);
         HvkBitArrayClearBit(remaining_mask, table->Bg2DrawChannelUnfrozen);
-        IM_ASSERT(has_freeze_v == false || table->Bg2DrawChannelUnfrozen != TABLE_DRAW_CHANNEL_BG2_FROZEN);
+        Hvk_ASSERT(has_freeze_v == false || table->Bg2DrawChannelUnfrozen != TABLE_DRAW_CHANNEL_BG2_FROZEN);
         int remaining_count = splitter->_Count - (has_freeze_v ? LEADING_DRAW_CHANNELS + 1 : LEADING_DRAW_CHANNELS);
         //HvkRect host_rect = (table->InnerWindow == table->OuterWindow) ? table->InnerClipRect : table->HostClipRect;
         HvkRect host_rect = table->HostClipRect;
-        for (int merge_group_n = 0; merge_group_n < IM_ARRAYSIZE(merge_groups); merge_group_n++)
+        for (int merge_group_n = 0; merge_group_n < Hvk_ARRAYSIZE(merge_groups); merge_group_n++)
         {
             if (int merge_channels_count = merge_groups[merge_group_n].ChannelsCount)
             {
@@ -2724,29 +2724,29 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
                 // FIXME-TABLE FIXME-WORKRECT: We are wasting a merge opportunity on tables without scrolling if column doesn't fit
                 // within host clip rect, solely because of the half-padding difference between window->WorkRect and window->InnerClipRect.
                 if ((merge_group_n & 1) == 0 || !has_freeze_h)
-                    merge_clip_rect.Min.x = HvkMin(merge_clip_rect.Min.x, host_rect.Min.x);
+                    merge_clip_rect.Min.x = Immin(merge_clip_rect.Min.x, host_rect.Min.x);
                 if ((merge_group_n & 2) == 0 || !has_freeze_v)
-                    merge_clip_rect.Min.y = HvkMin(merge_clip_rect.Min.y, host_rect.Min.y);
+                    merge_clip_rect.Min.y = Immin(merge_clip_rect.Min.y, host_rect.Min.y);
                 if ((merge_group_n & 1) != 0)
-                    merge_clip_rect.Max.x = HvkMax(merge_clip_rect.Max.x, host_rect.Max.x);
+                    merge_clip_rect.Max.x = Immax(merge_clip_rect.Max.x, host_rect.Max.x);
                 if ((merge_group_n & 2) != 0 && (table->Flags & HvkGuiTableFlags_NoHostExtendY) == 0)
-                    merge_clip_rect.Max.y = HvkMax(merge_clip_rect.Max.y, host_rect.Max.y);
-                //GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, IM_COL32(255, 0, 0, 200), 0.0f, 0, 1.0f); // [DEBUG]
-                //GetForegroundDrawList()->AddLine(merge_group->ClipRect.Min, merge_clip_rect.Min, IM_COL32(255, 100, 0, 200));
-                //GetForegroundDrawList()->AddLine(merge_group->ClipRect.Max, merge_clip_rect.Max, IM_COL32(255, 100, 0, 200));
+                    merge_clip_rect.Max.y = Immax(merge_clip_rect.Max.y, host_rect.Max.y);
+                //GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, Hvk_COL32(255, 0, 0, 200), 0.0f, 0, 1.0f); // [DEBUG]
+                //GetForegroundDrawList()->AddLine(merge_group->ClipRect.Min, merge_clip_rect.Min, Hvk_COL32(255, 100, 0, 200));
+                //GetForegroundDrawList()->AddLine(merge_group->ClipRect.Max, merge_clip_rect.Max, Hvk_COL32(255, 100, 0, 200));
                 remaining_count -= merge_group->ChannelsCount;
                 for (int n = 0; n < (size_for_masks_bitarrays_one >> 2); n++)
                     remaining_mask[n] &= ~merge_group->ChannelsMask[n];
                 for (int n = 0; n < splitter->_Count && merge_channels_count != 0; n++)
                 {
                     // Copy + overwrite new clip rect
-                    if (!IM_BITARRAY_TESTBIT(merge_group->ChannelsMask, n))
+                    if (!Hvk_BITARRAY_TESTBIT(merge_group->ChannelsMask, n))
                         continue;
-                    IM_BITARRAY_CLEARBIT(merge_group->ChannelsMask, n);
+                    Hvk_BITARRAY_CLEARBIT(merge_group->ChannelsMask, n);
                     merge_channels_count--;
 
                     HvkDrawChannel* channel = &splitter->_Channels[n];
-                    IM_ASSERT(channel->_CmdBuffer.Size == 1 && merge_clip_rect.Contains(HvkRect(channel->_CmdBuffer[0].ClipRect)));
+                    Hvk_ASSERT(channel->_CmdBuffer.Size == 1 && merge_clip_rect.Contains(HvkRect(channel->_CmdBuffer[0].ClipRect)));
                     channel->_CmdBuffer[0].ClipRect = merge_clip_rect.ToVec4();
                     memcpy(dst_tmp++, channel, sizeof(HvkDrawChannel));
                 }
@@ -2760,13 +2760,13 @@ void HvkGui::TableMergeDrawChannels(HvkGuiTable* table)
         // Append unmergeable channels that we didn't reorder at the end of the list
         for (int n = 0; n < splitter->_Count && remaining_count != 0; n++)
         {
-            if (!IM_BITARRAY_TESTBIT(remaining_mask, n))
+            if (!Hvk_BITARRAY_TESTBIT(remaining_mask, n))
                 continue;
             HvkDrawChannel* channel = &splitter->_Channels[n];
             memcpy(dst_tmp++, channel, sizeof(HvkDrawChannel));
             remaining_count--;
         }
-        IM_ASSERT(dst_tmp == g.DrawChannelsTempMergeBuffer.Data + g.DrawChannelsTempMergeBuffer.Size);
+        Hvk_ASSERT(dst_tmp == g.DrawChannelsTempMergeBuffer.Data + g.DrawChannelsTempMergeBuffer.Size);
         memcpy(splitter->_Channels.Data + LEADING_DRAW_CHANNELS, g.DrawChannelsTempMergeBuffer.Data, (splitter->_Count - LEADING_DRAW_CHANNELS) * sizeof(HvkDrawChannel));
     }
 }
@@ -2797,14 +2797,14 @@ void HvkGui::TableDrawBorders(HvkGuiTable* table)
     // Draw inner border and resizing feedback
     HvkGuiTableInstanceData* table_instance = TableGetInstanceData(table, table->InstanceCurrent);
     const float border_size = TABLE_BORDER_SIZE;
-    const float draw_y1 = HvkMax(table->InnerRect.Min.y, (table->FreezeRowsCount >= 1 ? table->InnerRect.Min.y : table->WorkRect.Min.y) + table->AngledHeadersHeight) + ((table->Flags & HvkGuiTableFlags_BordersOuterH) ? 1.0f : 0.0f);
+    const float draw_y1 = Immax(table->InnerRect.Min.y, (table->FreezeRowsCount >= 1 ? table->InnerRect.Min.y : table->WorkRect.Min.y) + table->AngledHeadersHeight) + ((table->Flags & HvkGuiTableFlags_BordersOuterH) ? 1.0f : 0.0f);
     const float draw_y2_body = table->InnerRect.Max.y;
-    const float draw_y2_head = table->IsUsingHeaders ? HvkMin(table->InnerRect.Max.y, (table->FreezeRowsCount >= 1 ? table->InnerRect.Min.y : table->WorkRect.Min.y) + table_instance->LastTopHeadersRowHeight) : draw_y1;
+    const float draw_y2_head = table->IsUsingHeaders ? Immin(table->InnerRect.Max.y, (table->FreezeRowsCount >= 1 ? table->InnerRect.Min.y : table->WorkRect.Min.y) + table_instance->LastTopHeadersRowHeight) : draw_y1;
     if (table->Flags & HvkGuiTableFlags_BordersInnerV)
     {
         for (int order_n = 0; order_n < table->ColumnsCount; order_n++)
         {
-            if (!IM_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
+            if (!Hvk_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
                 continue;
 
             const int column_n = table->DisplayOrderToIndex[order_n];
@@ -2906,7 +2906,7 @@ HvkGuiTableSortSpecs* HvkGui::TableGetSortSpecs()
 
 static inline HvkGuiSortDirection TableGetColumnAvailSortDirection(HvkGuiTableColumn* column, int n)
 {
-    IM_ASSERT(n < column->SortDirectionsAvailCount);
+    Hvk_ASSERT(n < column->SortDirectionsAvailCount);
     return (HvkGuiSortDirection)((column->SortDirectionsAvailList >> (n << 1)) & 0x03);
 }
 
@@ -2922,16 +2922,16 @@ void HvkGui::TableFixColumnSortDirection(HvkGuiTable* table, HvkGuiTableColumn* 
 // Calculate next sort direction that would be set after clicking the column
 // - If the PreferSortDescending flag is set, we will default to a Descending direction on the first click.
 // - Note that the PreferSortAscending flag is never checked, it is essentially the default and therefore a no-op.
-IM_STATIC_ASSERT(HvkGuiSortDirection_None == 0 && HvkGuiSortDirection_Ascending == 1 && HvkGuiSortDirection_Descending == 2);
+Hvk_STATIC_ASSERT(HvkGuiSortDirection_None == 0 && HvkGuiSortDirection_Ascending == 1 && HvkGuiSortDirection_Descending == 2);
 HvkGuiSortDirection HvkGui::TableGetColumnNextSortDirection(HvkGuiTableColumn* column)
 {
-    IM_ASSERT(column->SortDirectionsAvailCount > 0);
+    Hvk_ASSERT(column->SortDirectionsAvailCount > 0);
     if (column->SortOrder == -1)
         return TableGetColumnAvailSortDirection(column, 0);
     for (int n = 0; n < 3; n++)
         if (column->SortDirection == TableGetColumnAvailSortDirection(column, n))
             return TableGetColumnAvailSortDirection(column, (n + 1) % column->SortDirectionsAvailCount);
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return HvkGuiSortDirection_None;
 }
 
@@ -2945,12 +2945,12 @@ void HvkGui::TableSetColumnSortDirection(int column_n, HvkGuiSortDirection sort_
     if (!(table->Flags & HvkGuiTableFlags_SortMulti))
         append_to_sort_specs = false;
     if (!(table->Flags & HvkGuiTableFlags_SortTristate))
-        IM_ASSERT(sort_direction != HvkGuiSortDirection_None);
+        Hvk_ASSERT(sort_direction != HvkGuiSortDirection_None);
 
     HvkGuiTableColumnIdx sort_order_max = 0;
     if (append_to_sort_specs)
         for (int other_column_n = 0; other_column_n < table->ColumnsCount; other_column_n++)
-            sort_order_max = HvkMax(sort_order_max, table->Columns[other_column_n].SortOrder);
+            sort_order_max = Immax(sort_order_max, table->Columns[other_column_n].SortOrder);
 
     HvkGuiTableColumn* column = &table->Columns[column_n];
     column->SortDirection = (HvkU8)sort_direction;
@@ -2972,7 +2972,7 @@ void HvkGui::TableSetColumnSortDirection(int column_n, HvkGuiSortDirection sort_
 
 void HvkGui::TableSortSpecsSanitize(HvkGuiTable* table)
 {
-    IM_ASSERT(table->Flags & HvkGuiTableFlags_Sortable);
+    Hvk_ASSERT(table->Flags & HvkGuiTableFlags_Sortable);
 
     // Clear SortOrder from hidden column and verify that there's no gap or duplicate.
     int sort_order_count = 0;
@@ -2986,7 +2986,7 @@ void HvkGui::TableSortSpecsSanitize(HvkGuiTable* table)
             continue;
         sort_order_count++;
         sort_order_mask |= ((HvkU64)1 << column->SortOrder);
-        IM_ASSERT(sort_order_count < (int)sizeof(sort_order_mask) * 8);
+        Hvk_ASSERT(sort_order_count < (int)sizeof(sort_order_mask) * 8);
     }
 
     const bool need_fix_linearize = ((HvkU64)1 << sort_order_count) != (sort_order_mask + 1);
@@ -3003,7 +3003,7 @@ void HvkGui::TableSortSpecsSanitize(HvkGuiTable* table)
                 if ((fixed_mask & ((HvkU64)1 << (HvkU64)column_n)) == 0 && table->Columns[column_n].SortOrder != -1)
                     if (column_with_smallest_sort_order == -1 || table->Columns[column_n].SortOrder < table->Columns[column_with_smallest_sort_order].SortOrder)
                         column_with_smallest_sort_order = column_n;
-            IM_ASSERT(column_with_smallest_sort_order != -1);
+            Hvk_ASSERT(column_with_smallest_sort_order != -1);
             fixed_mask |= ((HvkU64)1 << column_with_smallest_sort_order);
             table->Columns[column_with_smallest_sort_order].SortOrder = (HvkGuiTableColumnIdx)sort_n;
 
@@ -3056,7 +3056,7 @@ void HvkGui::TableSortSpecsBuild(HvkGuiTable* table)
             HvkGuiTableColumn* column = &table->Columns[column_n];
             if (column->SortOrder == -1)
                 continue;
-            IM_ASSERT(column->SortOrder < table->SortSpecsCount);
+            Hvk_ASSERT(column->SortOrder < table->SortSpecsCount);
             HvkGuiTableColumnSortSpecs* sort_spec = &sort_specs[column->SortOrder];
             sort_spec->ColumnUserID = column->UserID;
             sort_spec->ColumnIndex = (HvkGuiTableColumnIdx)column_n;
@@ -3089,9 +3089,9 @@ float HvkGui::TableGetHeaderRowHeight()
     HvkGuiTable* table = g.CurrentTable;
     float row_height = g.FontSize;
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
-        if (IM_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
+        if (Hvk_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
             if ((table->Columns[column_n].Flags & HvkGuiTableColumnFlags_NoHeaderLabel) == 0)
-                row_height = HvkMax(row_height, CalcTextSize(TableGetColumnName(table, column_n)).y);
+                row_height = Immax(row_height, CalcTextSize(TableGetColumnName(table, column_n)).y);
     return row_height + g.Style.CellPadding.y * 2.0f;
 }
 
@@ -3101,16 +3101,16 @@ float HvkGui::TableGetHeaderAngledMaxLabelWidth()
     HvkGuiTable* table = g.CurrentTable;
     float width = 0.0f;
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
-        if (IM_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
+        if (Hvk_BITARRAY_TESTBIT(table->EnabledMaskByIndex, column_n))
             if (table->Columns[column_n].Flags & HvkGuiTableColumnFlags_AngledHeader)
-                width = HvkMax(width, CalcTextSize(TableGetColumnName(table, column_n), NULL, true).x);
+                width = Immax(width, CalcTextSize(TableGetColumnName(table, column_n), NULL, true).x);
     return width + g.Style.CellPadding.y * 2.0f; // Swap padding
 }
 
 // [Public] This is a helper to output TableHeader() calls based on the column names declared in TableSetupColumn().
 // The intent is that advanced users willing to create customized headers would not need to use this helper
 // and can create their own! For example: TableHeader() may be preceded by Checkbox() or other custom widgets.
-// See 'Demo->Tables->Custom headers' for a demonstration of Hvkplementing a custom version of this.
+// See 'Demo->Tables->Custom headers' for a demonstration of implementing a custom version of this.
 // This code is intentionally written to not make much use of internal functions, to give you better direction
 // if you need to write your own.
 // FIXME-TABLE: TableOpenContextMenu() and TableGetHeaderRowHeight() are not public.
@@ -3120,7 +3120,7 @@ void HvkGui::TableHeadersRow()
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
 
@@ -3169,11 +3169,11 @@ void HvkGui::TableHeader(const char* label)
     HvkGuiTable* table = g.CurrentTable;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
 
-    IM_ASSERT(table->CurrentColumn != -1);
+    Hvk_ASSERT(table->CurrentColumn != -1);
     const int column_n = table->CurrentColumn;
     HvkGuiTableColumn* column = &table->Columns[column_n];
 
@@ -3187,7 +3187,7 @@ void HvkGui::TableHeader(const char* label)
     // If we already got a row height, there's use that.
     // FIXME-TABLE: Padding problem if the correct outer-padding CellBgRect strays off our ClipRect?
     HvkRect cell_r = TableGetCellBgRect(table, column_n);
-    float label_height = HvkMax(label_size.y, table->RowMinHeight - table->RowCellPaddingY * 2.0f);
+    float label_height = Immax(label_size.y, table->RowMinHeight - table->RowCellPaddingY * 2.0f);
 
     // Calculate ideal size for sort order arrow
     float w_arrow = 0.0f;
@@ -3202,25 +3202,25 @@ void HvkGui::TableHeader(const char* label)
             sort_arrow = true;
         if (column->SortOrder > 0)
         {
-            HvkFormatString(sort_order_suf, IM_ARRAYSIZE(sort_order_suf), "%d", column->SortOrder + 1);
+            HvkFormatString(sort_order_suf, Hvk_ARRAYSIZE(sort_order_suf), "%d", column->SortOrder + 1);
             w_sort_text = g.Style.ItemInnerSpacing.x + CalcTextSize(sort_order_suf).x;
         }
     }
 
     // We feed our unclipped width to the column without writing on CursorMaxPos, so that column is still considered for merging.
     float max_pos_x = label_pos.x + label_size.x + w_sort_text + w_arrow;
-    column->ContentMaxXHeadersUsed = HvkMax(column->ContentMaxXHeadersUsed, sort_arrow ? cell_r.Max.x : HvkMin(max_pos_x, cell_r.Max.x));
-    column->ContentMaxXHeadersIdeal = HvkMax(column->ContentMaxXHeadersIdeal, max_pos_x);
+    column->ContentMaxXHeadersUsed = Immax(column->ContentMaxXHeadersUsed, sort_arrow ? cell_r.Max.x : Immin(max_pos_x, cell_r.Max.x));
+    column->ContentMaxXHeadersIdeal = Immax(column->ContentMaxXHeadersIdeal, max_pos_x);
 
     // Keep header highlighted when context menu is open.
     HvkGuiID id = window->GetID(label);
-    HvkRect bb(cell_r.Min.x, cell_r.Min.y, cell_r.Max.x, HvkMax(cell_r.Max.y, cell_r.Min.y + label_height + g.Style.CellPadding.y * 2.0f));
+    HvkRect bb(cell_r.Min.x, cell_r.Min.y, cell_r.Max.x, Immax(cell_r.Max.y, cell_r.Min.y + label_height + g.Style.CellPadding.y * 2.0f));
     ItemSize(HvkVec2(0.0f, label_height)); // Don't declare unclipped width, it'll be fed ContentMaxPosHeadersIdeal
     if (!ItemAdd(bb, id))
         return;
 
-    //GetForegroundDrawList()->AddRect(cell_r.Min, cell_r.Max, IM_COL32(255, 0, 0, 255)); // [DEBUG]
-    //GetForegroundDrawList()->AddRect(bb.Min, bb.Max, IM_COL32(255, 0, 0, 255)); // [DEBUG]
+    //GetForegroundDrawList()->AddRect(cell_r.Min, cell_r.Max, Hvk_COL32(255, 0, 0, 255)); // [DEBUG]
+    //GetForegroundDrawList()->AddRect(bb.Min, bb.Max, Hvk_COL32(255, 0, 0, 255)); // [DEBUG]
 
     // Using AllowOverlap mode because we cover the whole cell, and we want user to be able to submit subsequent items.
     const bool highlight = (table->HighlightColumnHeader == column_n);
@@ -3265,12 +3265,12 @@ void HvkGui::TableHeader(const char* label)
     }
 
     // Sort order arrow
-    const float ellipsis_max = HvkMax(cell_r.Max.x - w_arrow - w_sort_text, label_pos.x);
+    const float ellipsis_max = Immax(cell_r.Max.x - w_arrow - w_sort_text, label_pos.x);
     if ((table->Flags & HvkGuiTableFlags_Sortable) && !(column->Flags & HvkGuiTableColumnFlags_NoSort))
     {
         if (column->SortOrder != -1)
         {
-            float x = HvkMax(cell_r.Min.x, cell_r.Max.x - w_arrow - w_sort_text);
+            float x = Immax(cell_r.Min.x, cell_r.Max.x - w_arrow - w_sort_text);
             float y = label_pos.y;
             if (column->SortOrder > 0)
             {
@@ -3292,7 +3292,7 @@ void HvkGui::TableHeader(const char* label)
 
     // Render clipped label. Clipping here ensure that in the majority of situations, all our header cells will
     // be merged into a single draw call.
-    //window->DrawList->AddCircleFilled(HvkVec2(ellipsis_max, label_pos.y), 40, IM_COL32_WHITE);
+    //window->DrawList->AddCircleFilled(HvkVec2(ellipsis_max, label_pos.y), 40, Hvk_COL32_WHITE);
     RenderTextEllipsis(window->DrawList, label_pos, HvkVec2(ellipsis_max, bb.Max.y), ellipsis_max, label, label_end, &label_size);
 
     const bool text_clipped = label_size.x > (ellipsis_max - label_pos.x);
@@ -3326,7 +3326,7 @@ void HvkGui::TableAngledHeadersRow()
     HvkU32 col_header_bg = GetColorU32(HvkGuiCol_TableHeaderBg);
     HvkU32 col_text = GetColorU32(HvkGuiCol_Text);
     for (int order_n = 0; order_n < table->ColumnsCount; order_n++)
-        if (IM_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
+        if (Hvk_BITARRAY_TESTBIT(table->EnabledMaskByDisplayOrder, order_n))
         {
             const int column_n = table->DisplayOrderToIndex[order_n];
             HvkGuiTableColumn* column = &table->Columns[column_n];
@@ -3349,21 +3349,21 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
     HvkDrawList* draw_list = window->DrawList;
     if (table == NULL)
     {
-        IM_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
+        Hvk_ASSERT_USER_ERROR(table != NULL, "Call should only be done while in BeginTable() scope!");
         return;
     }
-    IM_ASSERT(table->CurrentRow == -1 && "Must be first row");
+    Hvk_ASSERT(table->CurrentRow == -1 && "Must be first row");
 
     if (max_label_width == 0.0f)
         max_label_width = TableGetHeaderAngledMaxLabelWidth();
 
-    // Angle argument expressed in (-IM_PI/2 .. +IM_PI/2) as it is easier to think about for user.
+    // Angle argument expressed in (-Hvk_PI/2 .. +Hvk_PI/2) as it is easier to think about for user.
     const bool flip_label = (angle < 0.0f);
-    angle -= IM_PI * 0.5f;
+    angle -= Hvk_PI * 0.5f;
     const float cos_a = HvkCos(angle);
     const float sin_a = HvkSin(angle);
-    const float label_cos_a = flip_label ? HvkCos(angle + IM_PI) : cos_a;
-    const float label_sin_a = flip_label ? HvkSin(angle + IM_PI) : sin_a;
+    const float label_cos_a = flip_label ? HvkCos(angle + Hvk_PI) : cos_a;
+    const float label_sin_a = flip_label ? HvkSin(angle + Hvk_PI) : sin_a;
     const HvkVec2 unit_right = HvkVec2(cos_a, sin_a);
 
     // Calculate our base metrics and set angled headers data _before_ the first call to TableNextRow()
@@ -3381,7 +3381,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
     table->DrawSplitter->SetCurrentChannel(draw_list, TABLE_DRAW_CHANNEL_BG0);
     float clip_rect_min_x = table->BgClipRect.Min.x;
     if (table->FreezeColumnsCount > 0)
-        clip_rect_min_x = HvkMax(clip_rect_min_x, table->Columns[table->FreezeColumnsCount - 1].MaxX);
+        clip_rect_min_x = Immax(clip_rect_min_x, table->Columns[table->FreezeColumnsCount - 1].MaxX);
     TableSetBgColor(HvkGuiTableBgTarget_RowBg0, 0); // Cancel
     PushClipRect(table->BgClipRect.Min, table->BgClipRect.Max, false); // Span all columns
     draw_list->AddRectFilled(HvkVec2(table->BgClipRect.Min.x, row_r.Min.y), HvkVec2(table->BgClipRect.Max.x, row_r.Max.y), GetColorU32(HvkGuiCol_TableHeaderBg, 0.25f)); // FIXME-STYLE: Change row background with an arbitrary color.
@@ -3391,7 +3391,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
     KeepAliveID(row_id);
 
     const float ascent_scaled = g.FontBaked->Ascent * g.FontBakedScale; // FIXME: Standardize those scaling factors better
-    const float line_off_for_ascent_x = (HvkMax((g.FontSize - ascent_scaled) * 0.5f, 0.0f) / -sin_a) * (flip_label ? -1.0f : 1.0f);
+    const float line_off_for_ascent_x = (Immax((g.FontSize - ascent_scaled) * 0.5f, 0.0f) / -sin_a) * (flip_label ? -1.0f : 1.0f);
     const HvkVec2 padding = g.Style.CellPadding; // We will always use swapped component
     const HvkVec2 align = g.Style.TableAngledHeadersTextAlign;
 
@@ -3414,7 +3414,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
                 // Draw shape
                 draw_list->AddQuadFilled(bg_shape[0], bg_shape[1], bg_shape[2], bg_shape[3], request->BgColor0);
                 draw_list->AddQuadFilled(bg_shape[0], bg_shape[1], bg_shape[2], bg_shape[3], request->BgColor1); // Optional highlight
-                max_x = HvkMax(max_x, bg_shape[3].x);
+                max_x = Immax(max_x, bg_shape[3].x);
 
                 // Draw label
                 // - First draw at an offset where RenderTextXXX() function won't meddle with applying current ClipRect, then transform to final offset.
@@ -3426,7 +3426,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
 
                 // Left<>Right alignment
                 float line_off_curr_x = flip_label ? (label_lines - 1) * line_off_step_x : 0.0f;
-                float line_off_for_align_x = HvkFloor(HvkMax((((column->MaxX - column->MinX) - padding.x * 2.0f) - (label_lines * line_off_step_x)), 0.0f) * align.x);
+                float line_off_for_align_x = HvkFloor(Immax((((column->MaxX - column->MinX) - padding.x * 2.0f) - (label_lines * line_off_step_x)), 0.0f) * align.x);
                 line_off_curr_x += line_off_for_align_x - line_off_for_ascent_x;
 
                 // Register header width
@@ -3441,7 +3441,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
                     // FIXME: Individual line clipping for right-most column is broken for negative angles.
                     HvkVec2 label_size = CalcTextSize(label_name, label_name_eol);
                     float clip_width = max_label_width - padding.y; // Using padding.y*2.0f would be symmetrical but hide more text.
-                    float clip_height = HvkMin(label_size.y, column->ClipRect.Max.x - column->WorkMinX - line_off_curr_x);
+                    float clip_height = Immin(label_size.y, column->ClipRect.Max.x - column->WorkMinX - line_off_curr_x);
                     HvkRect clip_r(window->ClipRect.Min, window->ClipRect.Min + HvkVec2(clip_width, clip_height));
                     int vtx_idx_begin = draw_list->_VtxCurrentIdx;
                     PushStyleColor(HvkGuiCol_Text, request->TextColor);
@@ -3450,7 +3450,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
                     int vtx_idx_end = draw_list->_VtxCurrentIdx;
 
                     // Up<>Down alignment
-                    const float available_space = HvkMax(clip_width - label_size.x + HvkAbs(padding.x * cos_a) * 2.0f - HvkAbs(padding.y * sin_a) * 2.0f, 0.0f);
+                    const float available_space = Immax(clip_width - label_size.x + HvkAbs(padding.x * cos_a) * 2.0f - HvkAbs(padding.y * sin_a) * 2.0f, 0.0f);
                     const float vertical_offset = available_space * align.y * (flip_label ? -1.0f : 1.0f);
 
                     // Rotate and offset label
@@ -3459,10 +3459,10 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
                     line_off_curr_x += flip_label ? -line_off_step_x : line_off_step_x;
                     pivot_out += unit_right * padding.y;
                     if (flip_label)
-                        pivot_out += unit_right * (clip_width - HvkMax(0.0f, clip_width - label_size.x));
+                        pivot_out += unit_right * (clip_width - Immax(0.0f, clip_width - label_size.x));
                     pivot_out.x += flip_label ? line_off_curr_x + line_off_step_x : line_off_curr_x;
                     ShadeVertsTransformPos(draw_list, vtx_idx_begin, vtx_idx_end, pivot_in, label_cos_a, label_sin_a, pivot_out); // Rotate and offset
-                    //if (g.IO.KeyShift) { HvkDrawList* fg_dl = GetForegroundDrawList(); vtx_idx_begin = fg_dl->_VtxCurrentIdx; fg_dl->AddRect(clip_r.Min, clip_r.Max, IM_COL32(0, 255, 0, 255), 0.0f, 0, 1.0f); ShadeVertsTransformPos(fg_dl, vtx_idx_begin, fg_dl->_VtxCurrentIdx, pivot_in, label_cos_a, label_sin_a, pivot_out); }
+                    //if (g.IO.KeyShift) { HvkDrawList* fg_dl = GetForegroundDrawList(); vtx_idx_begin = fg_dl->_VtxCurrentIdx; fg_dl->AddRect(clip_r.Min, clip_r.Max, Hvk_COL32(0, 255, 0, 255), 0.0f, 0, 1.0f); ShadeVertsTransformPos(fg_dl, vtx_idx_begin, fg_dl->_VtxCurrentIdx, pivot_in, label_cos_a, label_sin_a, pivot_out); }
 
                     label_name = label_name_eol + 1;
                 }
@@ -3475,7 +3475,7 @@ void HvkGui::TableAngledHeadersRowEx(HvkGuiID row_id, float angle, float max_lab
         }
     PopClipRect();
     PopClipRect();
-    table->TempData->AngledHeadersExtraWidth = HvkMax(0.0f, max_x - table->Columns[table->RightMostEnabledColumn].MaxX);
+    table->TempData->AngledHeadersExtraWidth = Immax(0.0f, max_x - table->Columns[table->RightMostEnabledColumn].MaxX);
 }
 
 //-------------------------------------------------------------------------
@@ -3495,7 +3495,7 @@ void HvkGui::TableOpenContextMenu(int column_n)
         column_n = table->CurrentColumn;
     if (column_n == table->ColumnsCount)                // To facilitate using with TableGetHoveredColumn()
         column_n = -1;
-    IM_ASSERT(column_n >= -1 && column_n < table->ColumnsCount);
+    Hvk_ASSERT(column_n >= -1 && column_n < table->ColumnsCount);
     if (table->Flags & (HvkGuiTableFlags_Resizable | HvkGuiTableFlags_Reorderable | HvkGuiTableFlags_Hideable))
     {
         table->IsContextPopupOpen = true;
@@ -3643,10 +3643,10 @@ void HvkGui::TableDrawDefaultContextMenu(HvkGuiTable* table, HvkGuiTableFlags fl
 // Clear and initialize empty settings instance
 static void TableSettingsInit(HvkGuiTableSettings* settings, HvkGuiID id, int columns_count, int columns_count_max)
 {
-    IM_PLACEMENT_NEW(settings) HvkGuiTableSettings();
+    Hvk_PLACEMENT_NEW(settings) HvkGuiTableSettings();
     HvkGuiTableColumnSettings* settings_column = settings->GetColumnSettings();
     for (int n = 0; n < columns_count_max; n++, settings_column++)
-        IM_PLACEMENT_NEW(settings_column) HvkGuiTableColumnSettings();
+        Hvk_PLACEMENT_NEW(settings_column) HvkGuiTableColumnSettings();
     settings->ID = id;
     settings->ColumnsCount = (HvkGuiTableColumnIdx)columns_count;
     settings->ColumnsCountMax = (HvkGuiTableColumnIdx)columns_count_max;
@@ -3684,7 +3684,7 @@ HvkGuiTableSettings* HvkGui::TableGetBoundSettings(HvkGuiTable* table)
     {
         HvkGuiContext& g = *GHvkGui;
         HvkGuiTableSettings* settings = g.SettingsTables.ptr_from_offset(table->SettingsOffset);
-        IM_ASSERT(settings->ID == table->ID);
+        Hvk_ASSERT(settings->ID == table->ID);
         if (settings->ColumnsCountMax >= table->ColumnsCount)
             return settings; // OK
         settings->ID = 0; // Invalidate storage, we won't fit because of a count change
@@ -3718,8 +3718,8 @@ void HvkGui::TableSaveSettings(HvkGuiTable* table)
     settings->ColumnsCount = (HvkGuiTableColumnIdx)table->ColumnsCount;
 
     // Serialize HvkGuiTable/HvkGuiTableColumn into HvkGuiTableSettings/HvkGuiTableColumnSettings
-    IM_ASSERT(settings->ID == table->ID);
-    IM_ASSERT(settings->ColumnsCount == table->ColumnsCount && settings->ColumnsCountMax >= settings->ColumnsCount);
+    Hvk_ASSERT(settings->ID == table->ID);
+    Hvk_ASSERT(settings->ColumnsCount == table->ColumnsCount && settings->ColumnsCountMax >= settings->ColumnsCount);
     HvkGuiTableColumn* column = table->Columns.Data;
     HvkGuiTableColumnSettings* column_settings = settings->GetColumnSettings();
 
@@ -3997,7 +3997,7 @@ void HvkGui::TableGcCompactTransientBuffers(HvkGuiTable* table)
 {
     //HvkGui_DEBUG_PRINT("TableGcCompactTransientBuffers() id=0x%08X\n", table->ID);
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(table->MemoryCompacted == false);
+    Hvk_ASSERT(table->MemoryCompacted == false);
     table->SortSpecs.Specs = NULL;
     table->SortSpecsMulti.clear();
     table->IsSortSpecsDirty = true; // FIXME: In theory shouldn't have to leak into user performing a sort on resume.
@@ -4059,9 +4059,9 @@ void HvkGui::DebugNodeTable(HvkGuiTable* table)
     bool open = TreeNode(table, "Table 0x%08X (%d columns, in '%s')%s", table->ID, table->ColumnsCount, table->OuterWindow->Name, is_active ? "" : " *Inactive*");
     if (!is_active) { PopStyleColor(); }
     if (IsItemHovered())
-        GetForegroundDrawList(table->OuterWindow)->AddRect(table->OuterRect.Min, table->OuterRect.Max, IM_COL32(255, 255, 0, 255));
+        GetForegroundDrawList(table->OuterWindow)->AddRect(table->OuterRect.Min, table->OuterRect.Max, Hvk_COL32(255, 255, 0, 255));
     if (IsItemVisible() && table->HoveredColumnBody != -1)
-        GetForegroundDrawList(table->OuterWindow)->AddRect(GetItemRectMin(), GetItemRectMax(), IM_COL32(255, 255, 0, 255));
+        GetForegroundDrawList(table->OuterWindow)->AddRect(GetItemRectMin(), GetItemRectMax(), Hvk_COL32(255, 255, 0, 255));
     if (!open)
         return;
     if (table->InstanceCurrent > 0)
@@ -4094,7 +4094,7 @@ void HvkGui::DebugNodeTable(HvkGuiTable* table)
         HvkGuiTableColumn* column = &table->Columns[n];
         const char* name = TableGetColumnName(table, n);
         char buf[512];
-        HvkFormatString(buf, IM_ARRAYSIZE(buf),
+        HvkFormatString(buf, Hvk_ARRAYSIZE(buf),
             "Column %d order %d '%s': offset %+.2f to %+.2f%s\n"
             "Enabled: %d, VisibleX/Y: %d/%d, RequestOutput: %d, SkipItems: %d, DrawChannels: %d,%d\n"
             "WidthGiven: %.1f, Request/Auto: %.1f/%.1f, StretchWeight: %.3f (%.1f%%)\n"
@@ -4115,7 +4115,7 @@ void HvkGui::DebugNodeTable(HvkGuiTable* table)
         if (IsItemHovered())
         {
             HvkRect r(column->MinX, table->OuterRect.Min.y, column->MaxX, table->OuterRect.Max.y);
-            GetForegroundDrawList(table->OuterWindow)->AddRect(r.Min, r.Max, IM_COL32(255, 255, 0, 255));
+            GetForegroundDrawList(table->OuterWindow)->AddRect(r.Min, r.Max, Hvk_COL32(255, 255, 0, 255));
         }
     }
     if (HvkGuiTableSettings* settings = TableGetBoundSettings(table))
@@ -4217,13 +4217,13 @@ static float GetDraggedColumnOffset(HvkGuiOldColumns* columns, int column_index)
     // window creates a feedback loop because we store normalized positions. So while dragging we enforce absolute positioning.
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
-    IM_ASSERT(column_index > 0); // We are not supposed to drag column 0.
-    IM_ASSERT(g.ActiveId == columns->ID + HvkGuiID(column_index));
+    Hvk_ASSERT(column_index > 0); // We are not supposed to drag column 0.
+    Hvk_ASSERT(g.ActiveId == columns->ID + HvkGuiID(column_index));
 
     float x = g.IO.MousePos.x - g.ActiveIdClickOffset.x + HvkTrunc(COLUMNS_HIT_RECT_HALF_THICKNESS * g.CurrentDpiScale) - window->Pos.x;
-    x = HvkMax(x, HvkGui::GetColumnOffset(column_index - 1) + g.Style.ColumnsMinSpacing);
+    x = Immax(x, HvkGui::GetColumnOffset(column_index - 1) + g.Style.ColumnsMinSpacing);
     if ((columns->Flags & HvkGuiOldColumnFlags_NoPreserveWidths))
-        x = HvkMin(x, HvkGui::GetColumnOffset(column_index + 1) - g.Style.ColumnsMinSpacing);
+        x = Immin(x, HvkGui::GetColumnOffset(column_index + 1) - g.Style.ColumnsMinSpacing);
 
     return x;
 }
@@ -4237,7 +4237,7 @@ float HvkGui::GetColumnOffset(int column_index)
 
     if (column_index < 0)
         column_index = columns->Current;
-    IM_ASSERT(column_index < columns->Columns.Size);
+    Hvk_ASSERT(column_index < columns->Columns.Size);
 
     const float t = columns->Columns[column_index].OffsetNorm;
     const float x_offset = HvkLerp(columns->OffMinX, columns->OffMaxX, t);
@@ -4275,28 +4275,28 @@ void HvkGui::SetColumnOffset(int column_index, float offset)
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
     HvkGuiOldColumns* columns = window->DC.CurrentColumns;
-    IM_ASSERT(columns != NULL);
+    Hvk_ASSERT(columns != NULL);
 
     if (column_index < 0)
         column_index = columns->Current;
-    IM_ASSERT(column_index < columns->Columns.Size);
+    Hvk_ASSERT(column_index < columns->Columns.Size);
 
     const bool preserve_width = !(columns->Flags & HvkGuiOldColumnFlags_NoPreserveWidths) && (column_index < columns->Count - 1);
     const float width = preserve_width ? GetColumnWidthEx(columns, column_index, columns->IsBeingResized) : 0.0f;
 
     if (!(columns->Flags & HvkGuiOldColumnFlags_NoForceWithinWindow))
-        offset = HvkMin(offset, columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->Count - column_index));
+        offset = Immin(offset, columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->Count - column_index));
     columns->Columns[column_index].OffsetNorm = GetColumnNormFromOffset(columns, offset - columns->OffMinX);
 
     if (preserve_width)
-        SetColumnOffset(column_index + 1, offset + HvkMax(g.Style.ColumnsMinSpacing, width));
+        SetColumnOffset(column_index + 1, offset + Immax(g.Style.ColumnsMinSpacing, width));
 }
 
 void HvkGui::SetColumnWidth(int column_index, float width)
 {
     HvkGuiWindow* window = GetCurrentWindowRead();
     HvkGuiOldColumns* columns = window->DC.CurrentColumns;
-    IM_ASSERT(columns != NULL);
+    Hvk_ASSERT(columns != NULL);
 
     if (column_index < 0)
         column_index = columns->Current;
@@ -4371,13 +4371,13 @@ void HvkGui::BeginColumns(const char* str_id, int columns_count, HvkGuiOldColumn
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = GetCurrentWindow();
 
-    IM_ASSERT(columns_count >= 1);
-    IM_ASSERT(window->DC.CurrentColumns == NULL);   // Nested columns are currently not supported
+    Hvk_ASSERT(columns_count >= 1);
+    Hvk_ASSERT(window->DC.CurrentColumns == NULL);   // Nested columns are currently not supported
 
     // Acquire storage for the columns set
     HvkGuiID id = GetColumnsID(str_id, columns_count);
     HvkGuiOldColumns* columns = FindOrCreateColumns(window, id);
-    IM_ASSERT(columns->ID == id);
+    Hvk_ASSERT(columns->ID == id);
     columns->Current = 0;
     columns->Count = columns_count;
     columns->Flags = flags;
@@ -4393,11 +4393,11 @@ void HvkGui::BeginColumns(const char* str_id, int columns_count, HvkGuiOldColumn
     // Set state for first column
     // We aim so that the right-most column will have the same clipping width as other after being clipped by parent ClipRect
     const float column_padding = g.Style.ItemSpacing.x;
-    const float half_clip_extend_x = HvkTrunc(HvkMax(window->WindowPadding.x * 0.5f, window->WindowBorderSize));
-    const float max_1 = window->WorkRect.Max.x + column_padding - HvkMax(column_padding - window->WindowPadding.x, 0.0f);
+    const float half_clip_extend_x = HvkTrunc(Immax(window->WindowPadding.x * 0.5f, window->WindowBorderSize));
+    const float max_1 = window->WorkRect.Max.x + column_padding - Immax(column_padding - window->WindowPadding.x, 0.0f);
     const float max_2 = window->WorkRect.Max.x + half_clip_extend_x;
-    columns->OffMinX = window->DC.Indent.x - column_padding + HvkMax(column_padding - window->WindowPadding.x, 0.0f);
-    columns->OffMaxX = HvkMax(HvkMin(max_1, max_2) - window->Pos.x, columns->OffMinX + 1.0f);
+    columns->OffMinX = window->DC.Indent.x - column_padding + Immax(column_padding - window->WindowPadding.x, 0.0f);
+    columns->OffMaxX = Immax(Immin(max_1, max_2) - window->Pos.x, columns->OffMinX + 1.0f);
     columns->LineMinY = columns->LineMaxY = window->DC.CursorPos.y;
 
     // Clear data if columns count changed
@@ -4421,8 +4421,8 @@ void HvkGui::BeginColumns(const char* str_id, int columns_count, HvkGuiOldColumn
     {
         // Compute clipping rectangle
         HvkGuiOldColumnData* column = &columns->Columns[n];
-        float clip_x1 = IM_ROUND(window->Pos.x + GetColumnOffset(n));
-        float clip_x2 = IM_ROUND(window->Pos.x + GetColumnOffset(n + 1) - 1.0f);
+        float clip_x1 = Hvk_ROUND(window->Pos.x + GetColumnOffset(n));
+        float clip_x2 = Hvk_ROUND(window->Pos.x + GetColumnOffset(n + 1) - 1.0f);
         column->ClipRect = HvkRect(clip_x1, -FLT_MAX, clip_x2, +FLT_MAX);
         column->ClipRect.ClipWithFull(window->ClipRect);
     }
@@ -4439,8 +4439,8 @@ void HvkGui::BeginColumns(const char* str_id, int columns_count, HvkGuiOldColumn
     float offset_1 = GetColumnOffset(columns->Current + 1);
     float width = offset_1 - offset_0;
     PushItemWidth(width * 0.65f);
-    window->DC.ColumnsOffset.x = HvkMax(column_padding - window->WindowPadding.x, 0.0f);
-    window->DC.CursorPos.x = IM_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    window->DC.ColumnsOffset.x = Immax(column_padding - window->WindowPadding.x, 0.0f);
+    window->DC.CursorPos.x = Hvk_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
     window->WorkRect.Max.x = window->Pos.x + offset_1 - column_padding;
     window->WorkRect.Max.y = window->ContentRegionRect.Max.y;
 }
@@ -4456,8 +4456,8 @@ void HvkGui::NextColumn()
 
     if (columns->Count == 1)
     {
-        window->DC.CursorPos.x = IM_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
-        IM_ASSERT(columns->Current == 0);
+        window->DC.CursorPos.x = Hvk_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
+        Hvk_ASSERT(columns->Current == 0);
         return;
     }
 
@@ -4474,7 +4474,7 @@ void HvkGui::NextColumn()
     columns->Splitter.SetCurrentChannel(window->DrawList, columns->Current + 1);
 
     const float column_padding = g.Style.ItemSpacing.x;
-    columns->LineMaxY = HvkMax(columns->LineMaxY, window->DC.CursorPos.y);
+    columns->LineMaxY = Immax(columns->LineMaxY, window->DC.CursorPos.y);
     if (columns->Current > 0)
     {
         // Columns 1+ ignore IndentX (by canceling it out)
@@ -4484,11 +4484,11 @@ void HvkGui::NextColumn()
     else
     {
         // New row/line: column 0 honor IndentX.
-        window->DC.ColumnsOffset.x = HvkMax(column_padding - window->WindowPadding.x, 0.0f);
+        window->DC.ColumnsOffset.x = Immax(column_padding - window->WindowPadding.x, 0.0f);
         window->DC.IsSameLine = false;
         columns->LineMinY = columns->LineMaxY;
     }
-    window->DC.CursorPos.x = IM_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    window->DC.CursorPos.x = Hvk_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
     window->DC.CursorPos.y = columns->LineMinY;
     window->DC.CurrLineSize = HvkVec2(0.0f, 0.0f);
     window->DC.CurrLineTextBaseOffset = 0.0f;
@@ -4506,7 +4506,7 @@ void HvkGui::EndColumns()
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = GetCurrentWindow();
     HvkGuiOldColumns* columns = window->DC.CurrentColumns;
-    IM_ASSERT(columns != NULL);
+    Hvk_ASSERT(columns != NULL);
 
     PopItemWidth();
     if (columns->Count > 1)
@@ -4516,7 +4516,7 @@ void HvkGui::EndColumns()
     }
 
     const HvkGuiOldColumnFlags flags = columns->Flags;
-    columns->LineMaxY = HvkMax(columns->LineMaxY, window->DC.CursorPos.y);
+    columns->LineMaxY = Immax(columns->LineMaxY, window->DC.CursorPos.y);
     window->DC.CursorPos.y = columns->LineMaxY;
     if (!(flags & HvkGuiOldColumnFlags_GrowParentContentsSize))
         window->DC.CursorMaxPos.x = columns->HostCursorMaxPosX;  // Restore cursor max pos, as columns don't grow parent
@@ -4527,8 +4527,8 @@ void HvkGui::EndColumns()
     if (!(flags & HvkGuiOldColumnFlags_NoBorder) && !window->SkipItems)
     {
         // We clip Y boundaries CPU side because very long triangles are mishandled by some GPU drivers.
-        const float y1 = HvkMax(columns->HostCursorPosY, window->ClipRect.Min.y);
-        const float y2 = HvkMin(window->DC.CursorPos.y, window->ClipRect.Max.y);
+        const float y1 = Immax(columns->HostCursorPosY, window->ClipRect.Min.y);
+        const float y2 = Immin(window->DC.CursorPos.y, window->ClipRect.Max.y);
         int dragging_column = -1;
         for (int n = 1; n < columns->Count; n++)
         {
@@ -4552,7 +4552,7 @@ void HvkGui::EndColumns()
 
             // Draw column
             const HvkU32 col = GetColorU32(held ? HvkGuiCol_SeparatorActive : hovered ? HvkGuiCol_SeparatorHovered : HvkGuiCol_Separator);
-            const float xi = IM_TRUNC(x);
+            const float xi = Hvk_TRUNC(x);
             window->DrawList->AddLine(HvkVec2(xi, y1 + 1.0f), HvkVec2(xi, y2), col);
         }
 
@@ -4573,14 +4573,14 @@ void HvkGui::EndColumns()
     window->ParentWorkRect = columns->HostBackupParentWorkRect;
     window->DC.CurrentColumns = NULL;
     window->DC.ColumnsOffset.x = 0.0f;
-    window->DC.CursorPos.x = IM_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    window->DC.CursorPos.x = Hvk_TRUNC(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
     NavUpdateCurrentWindowIsScrollPushableX();
 }
 
 void HvkGui::Columns(int columns_count, const char* id, bool borders)
 {
     HvkGuiWindow* window = GetCurrentWindow();
-    IM_ASSERT(columns_count >= 1);
+    Hvk_ASSERT(columns_count >= 1);
 
     HvkGuiOldColumnFlags flags = (borders ? 0 : HvkGuiOldColumnFlags_NoBorder);
     //flags |= HvkGuiOldColumnFlags_NoPreserveWidths; // NB: Legacy behavior

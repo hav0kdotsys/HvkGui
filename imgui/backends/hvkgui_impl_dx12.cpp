@@ -1,7 +1,7 @@
 // dear HvkGui: Renderer Backend for DirectX12
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
-// Hvkplemented features:
+// implemented features:
 //  [X] Renderer: User texture binding. Use 'D3D12_GPU_DESCRIPTOR_HANDLE' as texture identifier. Read the FAQ about HvkTextureID/HvkTextureRef!
 //  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (HvkGuiBackendFlags_RendererHasVtxOffset).
 //  [X] Renderer: Texture updates support for dynamic font atlas (HvkGuiBackendFlags_RendererHasTextures).
@@ -286,10 +286,10 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
 
     // During Unmap() we specify the written range (as per DX12 API, this is informational and for tooling only)
     range.End = (SIZE_T)((intptr_t)vtx_dst - (intptr_t)vtx_resource);
-    IM_ASSERT(range.End == draw_data->TotalVtxCount * sizeof(HvkDrawVert));
+    Hvk_ASSERT(range.End == draw_data->TotalVtxCount * sizeof(HvkDrawVert));
     fr->VertexBuffer->Unmap(0, &range);
     range.End = (SIZE_T)((intptr_t)idx_dst - (intptr_t)idx_resource);
-    IM_ASSERT(range.End == draw_data->TotalIdxCount * sizeof(HvkDrawIdx));
+    Hvk_ASSERT(range.End == draw_data->TotalIdxCount * sizeof(HvkDrawIdx));
     fr->IndexBuffer->Unmap(0, &range);
 
     // Setup desired DX state
@@ -351,13 +351,13 @@ static void HvkGui_ImplDX12_DestroyTexture(HvkTextureData* tex)
 {
     if (HvkGui_ImplDX12_Texture* backend_tex = (HvkGui_ImplDX12_Texture*)tex->BackendUserData)
     {
-        IM_ASSERT(backend_tex->hFontSrvGpuDescHandle.ptr == (UINT64)tex->TexID);
+        Hvk_ASSERT(backend_tex->hFontSrvGpuDescHandle.ptr == (UINT64)tex->TexID);
         HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
         bd->InitInfo.SrvDescriptorFreeFn(&bd->InitInfo, backend_tex->hFontSrvCpuDescHandle, backend_tex->hFontSrvGpuDescHandle);
         SafeRelease(backend_tex->pTextureResource);
         backend_tex->hFontSrvCpuDescHandle.ptr = 0;
         backend_tex->hFontSrvGpuDescHandle.ptr = 0;
-        IM_DELETE(backend_tex);
+        Hvk_DELETE(backend_tex);
 
         // Clear identifiers and mark as destroyed (in order to allow e.g. calling InvalidateDeviceObjects while running)
         tex->SetTexID(HvkTextureID_Invalid);
@@ -375,9 +375,9 @@ void HvkGui_ImplDX12_UpdateTexture(HvkTextureData* tex)
     {
         // Create and upload new texture to graphics system
         //HvkGui_DEBUG_LOG("UpdateTexture #%03d: WantCreate %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
-        IM_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == nullptr);
-        IM_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
-        HvkGui_ImplDX12_Texture* backend_tex = IM_NEW(HvkGui_ImplDX12_Texture)();
+        Hvk_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == nullptr);
+        Hvk_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
+        HvkGui_ImplDX12_Texture* backend_tex = Hvk_NEW(HvkGui_ImplDX12_Texture)();
         bd->InitInfo.SrvDescriptorAllocFn(&bd->InitInfo, &backend_tex->hFontSrvCpuDescHandle, &backend_tex->hFontSrvGpuDescHandle); // Allocate a desctriptor handle
 
         D3D12_HEAP_PROPERTIES props = {};
@@ -425,7 +425,7 @@ void HvkGui_ImplDX12_UpdateTexture(HvkTextureData* tex)
     if (tex->Status == HvkTextureStatus_WantCreate || tex->Status == HvkTextureStatus_WantUpdates)
     {
         HvkGui_ImplDX12_Texture* backend_tex = (HvkGui_ImplDX12_Texture*)tex->BackendUserData;
-        IM_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
+        Hvk_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
 
         // We could use the smaller rect on _WantCreate but using the full rect allows us to clear the texture.
         // FIXME-OPT: Uploading single box even when using HvkTextureStatus_WantUpdates. Could use tex->Updates[]
@@ -474,11 +474,11 @@ void HvkGui_ImplDX12_UpdateTexture(HvkTextureData* tex)
 
             HRESULT hr = bd->pd3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc,
                 D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bd->pTexUploadBuffer));
-            IM_ASSERT(SUCCEEDED(hr));
+            Hvk_ASSERT(SUCCEEDED(hr));
 
             D3D12_RANGE range = {0, upload_size};
             hr = bd->pTexUploadBuffer->Map(0, &range, &bd->pTexUploadBufferMapped);
-            IM_ASSERT(SUCCEEDED(hr));
+            Hvk_ASSERT(SUCCEEDED(hr));
             bd->pTexUploadBufferSize = upload_size;
         }
 
@@ -530,11 +530,11 @@ void HvkGui_ImplDX12_UpdateTexture(HvkTextureData* tex)
         }
 
         HRESULT hr = cmdList->Close();
-        IM_ASSERT(SUCCEEDED(hr));
+        Hvk_ASSERT(SUCCEEDED(hr));
         ID3D12CommandQueue* cmdQueue = bd->pCommandQueue;
         cmdQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&cmdList);
         hr = cmdQueue->Signal(bd->Fence, ++bd->FenceLastSignaledValue);
-        IM_ASSERT(SUCCEEDED(hr));
+        Hvk_ASSERT(SUCCEEDED(hr));
 
         // FIXME-OPT: Suboptimal?
         // - To remove this may need to create NumFramesInFlight x HvkGui_ImplDX12_FrameContext in backend data (mimick docking version)
@@ -559,7 +559,7 @@ bool    HvkGui_ImplDX12_CreateDeviceObjects()
         HvkGui_ImplDX12_InvalidateDeviceObjects();
 
     HRESULT hr = ::CreateDXGIFactory1(IID_PPV_ARGS(&bd->pdxgiFactory));
-    IM_ASSERT(hr == S_OK);
+    Hvk_ASSERT(hr == S_OK);
 
     BOOL allow_tearing = FALSE;
     bd->pdxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allow_tearing, sizeof(allow_tearing));
@@ -624,7 +624,7 @@ bool    HvkGui_ImplDX12_CreateDeviceObjects()
             // (2) there exists a version of d3d12.dll for Windows 7 (D3D12On7) in one of the following directories.
             // See https://github.com/ocornut/HvkGui/pull/3696 for details.
             const char* localD3d12Paths[] = { ".\\d3d12.dll", ".\\d3d12on7\\d3d12.dll", ".\\12on7\\d3d12.dll" }; // A. current directory, B. used by some games, C. used in Microsoft D3D12On7 sample
-            for (int i = 0; i < IM_ARRAYSIZE(localD3d12Paths); i++)
+            for (int i = 0; i < Hvk_ARRAYSIZE(localD3d12Paths); i++)
                 if ((d3d12_dll = ::LoadLibraryA(localD3d12Paths[i])) != nullptr)
                     break;
 
@@ -788,17 +788,17 @@ bool    HvkGui_ImplDX12_CreateDeviceObjects()
 
     // Create command allocator and command list for HvkGui_ImplDX12_UpdateTexture()
     hr = bd->pd3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&bd->pTexCmdAllocator));
-    IM_ASSERT(SUCCEEDED(hr));
+    Hvk_ASSERT(SUCCEEDED(hr));
     hr = bd->pd3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, bd->pTexCmdAllocator, nullptr, IID_PPV_ARGS(&bd->pTexCmdList));
-    IM_ASSERT(SUCCEEDED(hr));
+    Hvk_ASSERT(SUCCEEDED(hr));
     hr = bd->pTexCmdList->Close();
-    IM_ASSERT(SUCCEEDED(hr));
+    Hvk_ASSERT(SUCCEEDED(hr));
 
     // Create fence.
     hr = bd->pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&bd->Fence));
-    IM_ASSERT(hr == S_OK);
+    Hvk_ASSERT(hr == S_OK);
     bd->FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    IM_ASSERT(bd->FenceEvent != nullptr);
+    Hvk_ASSERT(bd->FenceEvent != nullptr);
 
     return true;
 }
@@ -845,11 +845,11 @@ void    HvkGui_ImplDX12_InvalidateDeviceObjects()
 static void HvkGui_ImplDX12_InitLegacySingleDescriptorMode(HvkGui_ImplDX12_InitInfo* init_info)
 {
     // Wrap legacy behavior of passing space for a single descriptor
-    IM_ASSERT(init_info->LegacySingleSrvCpuDescriptor.ptr != 0 && init_info->LegacySingleSrvGpuDescriptor.ptr != 0);
+    Hvk_ASSERT(init_info->LegacySingleSrvCpuDescriptor.ptr != 0 && init_info->LegacySingleSrvGpuDescriptor.ptr != 0);
     init_info->SrvDescriptorAllocFn = [](HvkGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle)
     {
         HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
-        IM_ASSERT(bd->LegacySingleDescriptorUsed == false && "Only 1 simultaneous texture allowed with legacy HvkGui_ImplDX12_Init() signature!");
+        Hvk_ASSERT(bd->LegacySingleDescriptorUsed == false && "Only 1 simultaneous texture allowed with legacy HvkGui_ImplDX12_Init() signature!");
         *out_cpu_handle = bd->InitInfo.LegacySingleSrvCpuDescriptor;
         *out_gpu_handle = bd->InitInfo.LegacySingleSrvGpuDescriptor;
         bd->LegacySingleDescriptorUsed = true;
@@ -857,7 +857,7 @@ static void HvkGui_ImplDX12_InitLegacySingleDescriptorMode(HvkGui_ImplDX12_InitI
     init_info->SrvDescriptorFreeFn = [](HvkGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE)
     {
         HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
-        IM_ASSERT(bd->LegacySingleDescriptorUsed == true);
+        Hvk_ASSERT(bd->LegacySingleDescriptorUsed == true);
         bd->LegacySingleDescriptorUsed = false;
     };
 }
@@ -867,15 +867,15 @@ bool HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* init_info)
 {
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGui_CHECKVERSION();
-    IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
+    Hvk_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
 
     // Setup backend capabilities flags
-    HvkGui_ImplDX12_Data* bd = IM_NEW(HvkGui_ImplDX12_Data)();
+    HvkGui_ImplDX12_Data* bd = Hvk_NEW(HvkGui_ImplDX12_Data)();
     bd->InitInfo = *init_info; // Deep copy
     init_info = &bd->InitInfo;
 
     bd->pd3dDevice = init_info->Device;
-    IM_ASSERT(init_info->CommandQueue != NULL);
+    Hvk_ASSERT(init_info->CommandQueue != NULL);
     bd->pCommandQueue = init_info->CommandQueue;
     bd->RTVFormat = init_info->RTVFormat;
     bd->DSVFormat = init_info->DSVFormat;
@@ -892,7 +892,7 @@ bool HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* init_info)
     if (init_info->SrvDescriptorAllocFn == nullptr)
         HvkGui_ImplDX12_InitLegacySingleDescriptorMode(init_info);
 #endif
-    IM_ASSERT(init_info->SrvDescriptorAllocFn != nullptr && init_info->SrvDescriptorFreeFn != nullptr);
+    Hvk_ASSERT(init_info->SrvDescriptorAllocFn != nullptr && init_info->SrvDescriptorFreeFn != nullptr);
 
     // Create buffers with a default size (they will later be grown as needed)
     bd->frameIndex = UINT_MAX;
@@ -927,7 +927,7 @@ bool HvkGui_ImplDX12_Init(ID3D12Device* device, int num_frames_in_flight, DXGI_F
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.NodeMask = 1;
     HRESULT hr = device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&init_info.CommandQueue));
-    IM_ASSERT(SUCCEEDED(hr));
+    Hvk_ASSERT(SUCCEEDED(hr));
 
     bool ret = HvkGui_ImplDX12_Init(&init_info);
     HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
@@ -942,7 +942,7 @@ bool HvkGui_ImplDX12_Init(ID3D12Device* device, int num_frames_in_flight, DXGI_F
 void HvkGui_ImplDX12_Shutdown()
 {
     HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
-    IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
+    Hvk_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
 
@@ -953,17 +953,17 @@ void HvkGui_ImplDX12_Shutdown()
     io.BackendRendererUserData = nullptr;
     io.BackendFlags &= ~(HvkGuiBackendFlags_RendererHasVtxOffset | HvkGuiBackendFlags_RendererHasTextures);
     platform_io.ClearRendererHandlers();
-    IM_DELETE(bd);
+    Hvk_DELETE(bd);
 }
 
 void HvkGui_ImplDX12_NewFrame()
 {
     HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call HvkGui_ImplDX12_Init()?");
+    Hvk_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call HvkGui_ImplDX12_Init()?");
 
     if (!bd->pPipelineState)
         if (!HvkGui_ImplDX12_CreateDeviceObjects())
-            IM_ASSERT(0 && "HvkGui_ImplDX12_CreateDeviceObjects() failed!");
+            Hvk_ASSERT(0 && "HvkGui_ImplDX12_CreateDeviceObjects() failed!");
 }
 
 //-----------------------------------------------------------------------------

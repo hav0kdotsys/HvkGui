@@ -62,7 +62,7 @@ Index of this file:
 // Enable SSE intrinsics if available
 #if (defined __SSE__ || defined __x86_64__ || defined _M_X64 || (defined(_M_IX86_FP) && (_M_IX86_FP >= 1))) && !defined(HvkGui_DISABLE_SSE)
 #define HvkGui_ENABLE_SSE
-#include <Hvkmintrin.h>
+#include <immintrin.h>
 #if (defined __AVX__ || defined __SSE4_2__)
 #define HvkGui_ENABLE_SSE4_2
 #include <nmmintrin.h>
@@ -108,7 +108,7 @@ Index of this file:
 #pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"  // warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
 #endif
 
-// In 1.89.4, we moved the Hvkplementation of "courtesy maths operators" from HvkGui_internal.h in HvkGui.h
+// In 1.89.4, we moved the implementation of "courtesy maths operators" from HvkGui_internal.h in HvkGui.h
 // As they are frequently requested, we do not want to encourage to many people using HvkGui_internal.h
 #if defined(HvkGui_DEFINE_MATH_OPERATORS) && !defined(HvkGui_DEFINE_MATH_OPERATORS_IMPLEMENTED)
 #error Please '#define HvkGui_DEFINE_MATH_OPERATORS' _BEFORE_ including HvkGui.h!
@@ -218,7 +218,7 @@ typedef HvkU16 HvkGuiTableDrawChannelIdx;
 
 //-----------------------------------------------------------------------------
 // [SECTION] Context pointer
-// See Hvkplementation of this variable in HvkGui.cpp for comments and details.
+// See implementation of this variable in HvkGui.cpp for comments and details.
 //-----------------------------------------------------------------------------
 
 #ifndef GHvkGui
@@ -384,12 +384,12 @@ inline unsigned int     HvkCountSetBits(unsigned int v)      { unsigned int coun
 
 // Helpers: String
 #define HvkStrlen strlen
-#define HvkMemchr memchr
+#define Immemchr memchr
 HvkGui_API int           HvkStricmp(const char* str1, const char* str2);                      // Case insensitive compare.
 HvkGui_API int           HvkStrnicmp(const char* str1, const char* str2, size_t count);       // Case insensitive compare to a certain count.
 HvkGui_API void          HvkStrncpy(char* dst, const char* src, size_t count);                // Copy to a certain count and always zero terminate (strncpy doesn't).
 HvkGui_API char*         HvkStrdup(const char* str);                                          // Duplicate a string.
-HvkGui_API void*         HvkMemdup(const void* src, size_t size);                             // Duplicate a chunk of memory.
+HvkGui_API void*         Immemdup(const void* src, size_t size);                             // Duplicate a chunk of memory.
 HvkGui_API char*         HvkStrdupcpy(char* dst, size_t* p_dst_size, const char* str);        // Copy in provided buffer, recreate buffer if needed.
 HvkGui_API const char*   HvkStrchrRange(const char* str_begin, const char* str_end, char c);  // Find first occurrence of 'c' in string range.
 HvkGui_API const char*   HvkStreolRange(const char* str, const char* str_end);                // End end-of-line
@@ -492,18 +492,18 @@ inline float  HvkRsqrt(float x)           { return 1.0f / sqrtf(x); }
 #endif
 inline double HvkRsqrt(double x)          { return 1.0 / sqrt(x); }
 #endif
-// - HvkMin/HvkMax/HvkClamp/HvkLerp/HvkSwap are used by widgets which support variety of types: signed/unsigned int/long long float/double
+// - Immin/Immax/HvkClamp/HvkLerp/HvkSwap are used by widgets which support variety of types: signed/unsigned int/long long float/double
 // (Exceptionally using templates here but we could also redefine them for those types)
-template<typename T> T HvkMin(T lhs, T rhs)                              { return lhs < rhs ? lhs : rhs; }
-template<typename T> T HvkMax(T lhs, T rhs)                              { return lhs >= rhs ? lhs : rhs; }
+template<typename T> T Immin(T lhs, T rhs)                              { return lhs < rhs ? lhs : rhs; }
+template<typename T> T Immax(T lhs, T rhs)                              { return lhs >= rhs ? lhs : rhs; }
 template<typename T> T HvkClamp(T v, T mn, T mx)                         { return (v < mn) ? mn : (v > mx) ? mx : v; }
 template<typename T> T HvkLerp(T a, T b, float t)                        { return (T)(a + (b - a) * t); }
 template<typename T> void HvkSwap(T& a, T& b)                            { T tmp = a; a = b; b = tmp; }
 template<typename T> T HvkAddClampOverflow(T a, T b, T mn, T mx)         { if (b < 0 && (a < mn - b)) return mn; if (b > 0 && (a > mx - b)) return mx; return a + b; }
 template<typename T> T HvkSubClampOverflow(T a, T b, T mn, T mx)         { if (b > 0 && (a < mn + b)) return mn; if (b < 0 && (a > mx + b)) return mx; return a - b; }
 // - Misc maths helpers
-inline HvkVec2 HvkMin(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x < rhs.x ? lhs.x : rhs.x, lhs.y < rhs.y ? lhs.y : rhs.y); }
-inline HvkVec2 HvkMax(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x >= rhs.x ? lhs.x : rhs.x, lhs.y >= rhs.y ? lhs.y : rhs.y); }
+inline HvkVec2 Immin(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x < rhs.x ? lhs.x : rhs.x, lhs.y < rhs.y ? lhs.y : rhs.y); }
+inline HvkVec2 Immax(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x >= rhs.x ? lhs.x : rhs.x, lhs.y >= rhs.y ? lhs.y : rhs.y); }
 inline HvkVec2 HvkClamp(const HvkVec2& v, const HvkVec2&mn, const HvkVec2&mx){ return HvkVec2((v.x < mn.x) ? mn.x : (v.x > mx.x) ? mx.x : v.x, (v.y < mn.y) ? mn.y : (v.y > mx.y) ? mx.y : v.y); }
 inline HvkVec2 HvkLerp(const HvkVec2& a, const HvkVec2& b, float t)         { return HvkVec2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t); }
 inline HvkVec2 HvkLerp(const HvkVec2& a, const HvkVec2& b, const HvkVec2& t) { return HvkVec2(a.x + (b.x - a.x) * t.x, a.y + (b.y - a.y) * t.y); }
@@ -518,14 +518,14 @@ inline float  HvkFloor(float f)                                          { retur
 inline HvkVec2 HvkFloor(const HvkVec2& v)                                  { return HvkVec2(HvkFloor(v.x), HvkFloor(v.y)); }
 inline float  HvkTrunc64(float f)                                        { return (float)(HvkS64)(f); }
 inline float  HvkRound64(float f)                                        { return (float)(HvkS64)(f + 0.5f); }
-inline int    HvkModPositive(int a, int b)                               { return (a + b) % b; }
+inline int    ImmodPositive(int a, int b)                               { return (a + b) % b; }
 inline float  HvkDot(const HvkVec2& a, const HvkVec2& b)                   { return a.x * b.x + a.y * b.y; }
 inline HvkVec2 HvkRotate(const HvkVec2& v, float cos_a, float sin_a)       { return HvkVec2(v.x * cos_a - v.y * sin_a, v.x * sin_a + v.y * cos_a); }
-inline float  HvkLinearSweep(float current, float target, float speed)   { if (current < target) return HvkMin(current + speed, target); if (current > target) return HvkMax(current - speed, target); return current; }
+inline float  HvkLinearSweep(float current, float target, float speed)   { if (current < target) return Immin(current + speed, target); if (current > target) return Immax(current - speed, target); return current; }
 inline float  HvkLinearRemapClamp(float s0, float s1, float d0, float d1, float x) { return HvkSaturate((x - s0) / (s1 - s0)) * (d1 - d0) + d0; }
-inline HvkVec2 HvkMul(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x * rhs.x, lhs.y * rhs.y); }
+inline HvkVec2 Immul(const HvkVec2& lhs, const HvkVec2& rhs)               { return HvkVec2(lhs.x * rhs.x, lhs.y * rhs.y); }
 inline bool   HvkIsFloatAboveGuaranteedIntegerPrecision(float f)         { return f <= -16777216 || f >= 16777216; }
-inline float  HvkExponentialMovingAverage(float avg, float sample, int n){ avg -= avg / n; avg += sample / n; return avg; }
+inline float  IMExponentialMovingAverage(float avg, float sample, int n){ avg -= avg / n; avg += sample / n; return avg; }
 Hvk_MSVC_RUNTIME_CHECKS_RESTORE
 
 // Helpers: Geometry
@@ -599,7 +599,7 @@ struct HvkGui_API HvkRect
     void        Translate(const HvkVec2& d)          { Min.x += d.x; Min.y += d.y; Max.x += d.x; Max.y += d.y; }
     void        TranslateX(float dx)                { Min.x += dx; Max.x += dx; }
     void        TranslateY(float dy)                { Min.y += dy; Max.y += dy; }
-    void        ClipWith(const HvkRect& r)           { Min = HvkMax(Min, r.Min); Max = HvkMin(Max, r.Max); }                   // Simple version, may lead to an inverted rectangle, which is fine for Contains/Overlaps test but not for display.
+    void        ClipWith(const HvkRect& r)           { Min = Immax(Min, r.Min); Max = Immin(Max, r.Max); }                   // Simple version, may lead to an inverted rectangle, which is fine for Contains/Overlaps test but not for display.
     void        ClipWithFull(const HvkRect& r)       { Min = HvkClamp(Min, r.Min, r.Max); Max = HvkClamp(Max, r.Min, r.Max); } // Full version, ensure both points are fully clipped.
     void        Floor()                             { Min.x = Hvk_TRUNC(Min.x); Min.y = Hvk_TRUNC(Min.y); Max.x = Hvk_TRUNC(Max.x); Max.y = Hvk_TRUNC(Max.y); }
     bool        IsInverted() const                  { return Min.x > Max.x || Min.y > Max.y; }
@@ -713,7 +713,7 @@ struct HvkSpanAllocator
 // Helper: HvkStableVector<>
 // Allocating chunks of BLOCKSIZE items. Objects pointers are never invalidated when growing, only by clear().
 // Hvkportant: does not destruct anything!
-// Hvkplemented only the minimum set of functions we need for it.
+// implemented only the minimum set of functions we need for it.
 template<typename T, int BLOCKSIZE>
 struct HvkStableVector
 {
@@ -833,11 +833,11 @@ HvkGui_API HvkGuiStoragePair* HvkLowerBound(HvkGuiStoragePair* in_begin, HvkGuiS
 #define Hvk_ROUNDUP_TO_EVEN(_V)                                  ((((_V) + 1) / 2) * 2)
 #define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN                     4
 #define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX                     512
-#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD,_MAXERROR)    HvkClamp(Hvk_ROUNDUP_TO_EVEN((int)HvkCeil(Hvk_PI / HvkAcos(1 - HvkMin((_MAXERROR), (_RAD)) / (_RAD)))), Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN, Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
+#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD,_MAXERROR)    HvkClamp(Hvk_ROUNDUP_TO_EVEN((int)HvkCeil(Hvk_PI / HvkAcos(1 - Immin((_MAXERROR), (_RAD)) / (_RAD)))), Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN, Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
 
 // Raw equation from Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC rewritten for 'r' and 'error'.
-#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(_N,_MAXERROR)    ((_MAXERROR) / (1 - HvkCos(Hvk_PI / HvkMax((float)(_N), Hvk_PI))))
-#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_ERROR(_N,_RAD)     ((1 - HvkCos(Hvk_PI / HvkMax((float)(_N), Hvk_PI))) / (_RAD))
+#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(_N,_MAXERROR)    ((_MAXERROR) / (1 - HvkCos(Hvk_PI / Immax((float)(_N), Hvk_PI))))
+#define Hvk_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_ERROR(_N,_RAD)     ((1 - HvkCos(Hvk_PI / Immax((float)(_N), Hvk_PI))) / (_RAD))
 
 // HvkDrawList: Lookup table size for adaptive arc drawing, cover full circle.
 #ifndef Hvk_DRAWLIST_ARCFAST_TABLE_SIZE
@@ -1235,7 +1235,7 @@ struct HvkGui_API HvkGuiInputTextState
     HvkVec2                  Scroll;                 // horizontal offset (managed manually) + vertical scrolling (pulled from child window's own Scroll.y)
     int                     LineCount;              // last line count (solely for debugging)
     float                   WrapWidth;              // word-wrapping width
-    float                   CursorAnim;             // timer for cursor blink, reset on every user action so the cursor reappears Hvkmediately
+    float                   CursorAnim;             // timer for cursor blink, reset on every user action so the cursor reappears immediately
     bool                    CursorFollow;           // set when we want scrolling to follow the current cursor position (not always!)
     bool                    CursorCenterY;          // set when we want scrolling to be centered over the cursor position (while resizing a word-wrapping field)
     bool                    SelectedAllMouseLock;   // after a double-click to select all, we ignore further mouse drags to update selection
@@ -1249,7 +1249,7 @@ struct HvkGui_API HvkGuiInputTextState
     ~HvkGuiInputTextState();
     void        ClearText()                 { TextLen = 0; TextA[0] = 0; CursorClamp(); }
     void        ClearFreeMemory()           { TextA.clear(); TextToRevertTo.clear(); }
-    void        OnKeyPressed(int key);      // Cannot be inline because we call in code in stb_textedit.h Hvkplementation
+    void        OnKeyPressed(int key);      // Cannot be inline because we call in code in stb_textedit.h implementation
     void        OnCharPressed(unsigned int c);
     float       GetPreferredOffsetX() const;
 
@@ -1381,7 +1381,7 @@ struct HvkGuiLastItemData
 };
 
 // Store data emitted by TreeNode() for usage by TreePop()
-// - To Hvkplement HvkGuiTreeNodeFlags_NavLeftJumpsToParent: store the minimum amount of data
+// - To implement HvkGuiTreeNodeFlags_NavLeftJumpsToParent: store the minimum amount of data
 //   which we can't infer in TreePop(), to perform the equivalent of NavApplyItemToResult().
 //   Only stored when the node is a potential candidate for landing on a Left arrow jump.
 struct HvkGuiTreeNodeStackData
@@ -1785,7 +1785,7 @@ struct HvkGui_API HvkGuiTypingSelectRequest
     int                     SearchBufferLen;
     const char*             SearchBuffer;       // Search buffer contents (use full string. unless SingleCharMode is set, in which case use SingleCharSize).
     bool                    SelectRequest;      // Set when buffer was modified this frame, requesting a selection.
-    bool                    SingleCharMode;     // Notify when buffer contains same character repeated, to Hvkplement special mode. In this situation it preferred to not display any on-screen search indication.
+    bool                    SingleCharMode;     // Notify when buffer contains same character repeated, to implement special mode. In this situation it preferred to not display any on-screen search indication.
     HvkS8                    SingleCharSize;     // Length in bytes of first letter codepoint (1 for ascii, 2-4 for UTF-8). If (SearchBufferLen==RepeatCharSize) only 1 letter has been input.
 };
 
@@ -1797,7 +1797,7 @@ struct HvkGui_API HvkGuiTypingSelectState
     HvkGuiID         FocusScope;
     int             LastRequestFrame = 0;
     float           LastRequestTime = 0.0f;
-    bool            SingleCharModeLock = false; // After a certain single char repeat count we lock into SingleCharMode. Two benefits: 1) buffer never fill, 2) we can provide an Hvkmediate SingleChar mode without timer elapsing.
+    bool            SingleCharModeLock = false; // After a certain single char repeat count we lock into SingleCharMode. Two benefits: 1) buffer never fill, 2) we can provide an immediate SingleChar mode without timer elapsing.
 
     HvkGuiTypingSelectState() { memset(this, 0, sizeof(*this)); }
     void            Clear()  { SearchBuffer[0] = 0; SingleCharModeLock = false; } // We preserve remaining data for easier debugging
@@ -1969,7 +1969,7 @@ struct HvkGuiViewportP : public HvkGuiViewport
 
     // Calculate work rect pos/size given a set of offset (we have 1 pair of offset for rect locked from last frame data, and 1 pair for currently building rect)
     HvkVec2  CalcWorkRectPos(const HvkVec2& inset_min) const                           { return HvkVec2(Pos.x + inset_min.x, Pos.y + inset_min.y); }
-    HvkVec2  CalcWorkRectSize(const HvkVec2& inset_min, const HvkVec2& inset_max) const { return HvkVec2(HvkMax(0.0f, Size.x - inset_min.x - inset_max.x), HvkMax(0.0f, Size.y - inset_min.y - inset_max.y)); }
+    HvkVec2  CalcWorkRectSize(const HvkVec2& inset_min, const HvkVec2& inset_max) const { return HvkVec2(Immax(0.0f, Size.x - inset_min.x - inset_max.x), Immax(0.0f, Size.y - inset_min.y - inset_max.y)); }
     void    UpdateWorkRect()            { WorkPos = CalcWorkRectPos(WorkInsetMin); WorkSize = CalcWorkRectSize(WorkInsetMin, WorkInsetMax); } // Update public fields
 
     // Helpers to retrieve HvkRect (we don't need to store BuildWorkRect as every access tend to change it, hence the code asymmetry)
@@ -2215,7 +2215,7 @@ struct HvkGuiContext
     HvkVector<HvkGuiWindowStackData> CurrentWindowStack;
     HvkGuiStorage            WindowsById;                        // Map window's HvkGuiID to HvkGuiWindow*
     int                     WindowsActiveCount;                 // Number of unique windows submitted by frame
-    float                   WindowsBorderHoverPadding;          // Padding around resizable windows for which hovering on counts as hovering the window == HvkMax(style.TouchExtraPadding, style.WindowBorderHoverPadding). This isn't so multi-dpi friendly.
+    float                   WindowsBorderHoverPadding;          // Padding around resizable windows for which hovering on counts as hovering the window == Immax(style.TouchExtraPadding, style.WindowBorderHoverPadding). This isn't so multi-dpi friendly.
     HvkGuiID                 DebugBreakInWindow;                 // Set to break in Begin() call.
     HvkGuiWindow*            CurrentWindow;                      // Window being drawn into
     HvkGuiWindow*            HoveredWindow;                      // Window the mouse is hovering. Will typically catch mouse inputs.
@@ -2672,7 +2672,7 @@ struct HvkGui_API HvkGuiWindow
     signed char             ResizeBorderHeld;                   // Current border being held for resize (-1: none, otherwise 0-3)
     short                   BeginCount;                         // Number of Begin() during the current frame (generally 0 or 1, 1+ if appending via multiple Begin/End pairs)
     short                   BeginCountPreviousFrame;            // Number of Begin() during the previous frame
-    short                   BeginOrderWithinParent;             // Begin() order within Hvkmediate parent window, if we are a child window. Otherwise 0.
+    short                   BeginOrderWithinParent;             // Begin() order within immediate parent window, if we are a child window. Otherwise 0.
     short                   BeginOrderWithinContext;            // Begin() order within entire HvkGui context. This is mostly used for debugging submission order related issues.
     short                   FocusOrder;                         // Order within WindowsFocusOrder[], altered when windows are focused.
     HvkGuiDir                AutoPosLastDirection;
@@ -3343,7 +3343,7 @@ namespace HvkGui
 
     // Focus/Activation
     // This should be part of a larger set of API: FocusItem(offset = -1), FocusItemByID(id), ActivateItem(offset = -1), ActivateItemByID(id) etc. which are
-    // much harder to design and Hvkplement than expected. I have a couple of private branches on this matter but it's not simple. For now Hvkplementing the easy ones.
+    // much harder to design and implement than expected. I have a couple of private branches on this matter but it's not simple. For now implementing the easy ones.
     HvkGui_API void          FocusItem();                    // Focus last item (no selection/activation).
     HvkGui_API void          ActivateItemByID(HvkGuiID id);   // Activate an item by ID (button, checkbox, tree node etc.). Activation is queued and processed on the next frame when the item is encountered again. Was called 'ActivateItem()' before 1.89.7.
 

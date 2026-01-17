@@ -55,7 +55,7 @@
 // - We never use any of the helpers/facilities used internally by Dear HvkGui, unless available in the public API.
 // - We never use maths operators on HvkVec2/HvkVec4. For our other sources files we use them, and they are provided
 //   by HvkGui.h using the HvkGui_DEFINE_MATH_OPERATORS define. For your own sources file they are optional
-//   and require you either enable those, either provide your own via IM_VEC2_CLASS_EXTRA in Hvkconfig.h.
+//   and require you either enable those, either provide your own via Hvk_VEC2_CLASS_EXTRA in Hvkconfig.h.
 //   Because we can't assume anything about your support of maths operators, we cannot use them in HvkGui_demo.cpp.
 
 // Navigating this file:
@@ -185,9 +185,9 @@ Index of this file:
 
 // Play it nice with Windows users (Update: May 2018, Notepad now supports Unix-style carriage returns!)
 #ifdef _WIN32
-#define IM_NEWLINE  "\r\n"
+#define Hvk_NEWLINE  "\r\n"
 #else
-#define IM_NEWLINE  "\n"
+#define Hvk_NEWLINE  "\n"
 #endif
 
 // Helpers
@@ -210,10 +210,10 @@ Index of this file:
 // Helpers macros
 // We normally try to not use many helpers in HvkGui_demo.cpp in order to make code easier to copy and paste,
 // but making an exception here as those are largely simplifying code...
-// In other HvkGui sources we can use nicer internal functions from HvkGui_internal.h (HvkMin/HvkMax) but not in the demo.
-#define IM_MIN(A, B)            (((A) < (B)) ? (A) : (B))
-#define IM_MAX(A, B)            (((A) >= (B)) ? (A) : (B))
-#define IM_CLAMP(V, MN, MX)     ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
+// In other HvkGui sources we can use nicer internal functions from HvkGui_internal.h (Immin/Immax) but not in the demo.
+#define Hvk_MIN(A, B)            (((A) < (B)) ? (A) : (B))
+#define Hvk_MAX(A, B)            (((A) >= (B)) ? (A) : (B))
+#define Hvk_CLAMP(V, MN, MX)     ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
 
 // Enforce cdecl calling convention for functions called by the standard library,
 // in case compilation settings changed the default to e.g. __vectorcall
@@ -334,7 +334,7 @@ void HvkGui::ShowDemoWindow(bool* p_open)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear HvkGui setup
     // Most functions would normally just assert/crash if the context is missing.
-    IM_ASSERT(HvkGui::GetCurrentContext() != NULL && "Missing Dear HvkGui context. Refer to examples app!");
+    Hvk_ASSERT(HvkGui::GetCurrentContext() != NULL && "Missing Dear HvkGui context. Refer to examples app!");
 
     // Verify ABI compatibility between caller code and compiled version of Dear HvkGui. This helps detects some build issues.
     HvkGui_CHECKVERSION();
@@ -418,7 +418,7 @@ void HvkGui::ShowDemoWindow(bool* p_open)
     // Here we change the frame width based on how much width we want to give to the label.
     const float label_width_base = HvkGui::GetFontSize() * 12;               // Some amount of width for label, based on font size.
     const float label_width_max = HvkGui::GetContentRegionAvail().x * 0.40f; // ...but always leave some room for framed widgets.
-    const float label_width = IM_MIN(label_width_base, label_width_max);
+    const float label_width = Hvk_MIN(label_width_base, label_width_max);
     HvkGui::PushItemWidth(-label_width);                                     // Right-align: framed items will leave 'label_width' available for the label.
     //HvkGui::PushItemWidth(HvkGui::GetContentRegionAvail().x * 0.40f);       // e.g. Use 40% width for framed widgets, leaving 60% width for labels.
     //HvkGui::PushItemWidth(-HvkGui::GetContentRegionAvail().x * 0.40f);      // e.g. Use 40% width for labels, leaving 60% width for framed widgets.
@@ -545,7 +545,7 @@ void HvkGui::ShowDemoWindow(bool* p_open)
             // Also read: https://github.com/ocornut/HvkGui/wiki/Debug-Tools
             HvkGui::SeparatorText("Debug");
             HvkGui::Checkbox("io.ConfigDebugIsDebuggerPresent", &io.ConfigDebugIsDebuggerPresent);
-            HvkGui::SameLine(); HelpMarker("Enable various tools calling IM_DEBUG_BREAK().\n\nRequires a debugger being attached, otherwise IM_DEBUG_BREAK() options will appear to crash your application.");
+            HvkGui::SameLine(); HelpMarker("Enable various tools calling Hvk_DEBUG_BREAK().\n\nRequires a debugger being attached, otherwise Hvk_DEBUG_BREAK() options will appear to crash your application.");
             HvkGui::Checkbox("io.ConfigDebugHighlightIdConflicts", &io.ConfigDebugHighlightIdConflicts);
             HvkGui::SameLine(); HelpMarker("Highlight and show an error message when multiple items have conflicting identifiers.");
             HvkGui::BeginDisabled();
@@ -733,7 +733,7 @@ struct ExampleTreeNode
     int                         UID = 0;
     ExampleTreeNode* Parent = NULL;
     HvkVector<ExampleTreeNode*>  Childs;
-    unsigned short              IndexInParent = 0;  // Maintaining this allows us to Hvkplement linear traversal more easily
+    unsigned short              IndexInParent = 0;  // Maintaining this allows us to implement linear traversal more easily
 
     // Leaf Data
     bool                        HasData = false;    // All leaves have data
@@ -763,8 +763,8 @@ static const ExampleMemberInfo ExampleTreeNodeMemberInfos[]
 
 static ExampleTreeNode* ExampleTree_CreateNode(const char* name, int uid, ExampleTreeNode* parent)
 {
-    ExampleTreeNode* node = IM_NEW(ExampleTreeNode);
-    snprintf(node->Name, IM_ARRAYSIZE(node->Name), "%s", name);
+    ExampleTreeNode* node = Hvk_NEW(ExampleTreeNode);
+    snprintf(node->Name, Hvk_ARRAYSIZE(node->Name), "%s", name);
     node->UID = uid;
     node->Parent = parent;
     node->IndexInParent = parent ? (unsigned short)parent->Childs.Size : 0;
@@ -777,7 +777,7 @@ static void ExampleTree_DestroyNode(ExampleTreeNode* node)
 {
     for (ExampleTreeNode* child_node : node->Childs)
         ExampleTree_DestroyNode(child_node);
-    IM_DELETE(node);
+    Hvk_DELETE(node);
 }
 
 // Create example tree data
@@ -790,19 +790,19 @@ static ExampleTreeNode* ExampleTree_CreateDemoTree()
     int uid = 0;
     ExampleTreeNode* node_L0 = ExampleTree_CreateNode("<ROOT>", ++uid, NULL);
     const int root_items_multiplier = 2;
-    for (int idx_L0 = 0; idx_L0 < IM_ARRAYSIZE(root_names) * root_items_multiplier; idx_L0++)
+    for (int idx_L0 = 0; idx_L0 < Hvk_ARRAYSIZE(root_names) * root_items_multiplier; idx_L0++)
     {
-        snprintf(name_buf, IM_ARRAYSIZE(name_buf), "%s %d", root_names[idx_L0 / root_items_multiplier], idx_L0 % root_items_multiplier);
+        snprintf(name_buf, Hvk_ARRAYSIZE(name_buf), "%s %d", root_names[idx_L0 / root_items_multiplier], idx_L0 % root_items_multiplier);
         ExampleTreeNode* node_L1 = ExampleTree_CreateNode(name_buf, ++uid, node_L0);
         const int number_of_childs = (int)strlen(node_L1->Name);
         for (int idx_L1 = 0; idx_L1 < number_of_childs; idx_L1++)
         {
-            snprintf(name_buf, IM_ARRAYSIZE(name_buf), "Child %d", idx_L1);
+            snprintf(name_buf, Hvk_ARRAYSIZE(name_buf), "Child %d", idx_L1);
             ExampleTreeNode* node_L2 = ExampleTree_CreateNode(name_buf, ++uid, node_L1);
             node_L2->HasData = true;
             if (idx_L1 == 0)
             {
-                snprintf(name_buf, IM_ARRAYSIZE(name_buf), "Sub-child %d", 0);
+                snprintf(name_buf, Hvk_ARRAYSIZE(name_buf), "Sub-child %d", 0);
                 ExampleTreeNode* node_L3 = ExampleTree_CreateNode(name_buf, ++uid, node_L2);
                 node_L3->HasData = true;
             }
@@ -892,7 +892,7 @@ static void DemoWindowWidgetsBasic()
             // - Otherwise, see the 'Dear HvkGui Demo->Widgets->Text Input->Resize Callback' for using HvkGuiInputTextFlags_CallbackResize.
             HvkGui_DEMO_MARKER("Widgets/Basic/InputText");
             static char str0[128] = "Hello, world!";
-            HvkGui::InputText("input text", str0, IM_ARRAYSIZE(str0));
+            HvkGui::InputText("input text", str0, Hvk_ARRAYSIZE(str0));
             HvkGui::SameLine(); HelpMarker(
                 "USER:\n"
                 "Hold Shift or use mouse to select text.\n"
@@ -907,7 +907,7 @@ static void DemoWindowWidgetsBasic()
                 "in HvkGui_demo.cpp).");
 
             static char str1[128] = "";
-            HvkGui::InputTextWithHint("input text (w/ hint)", "enter text here", str1, IM_ARRAYSIZE(str1));
+            HvkGui::InputTextWithHint("input text (w/ hint)", "enter text here", str1, Hvk_ARRAYSIZE(str1));
 
             HvkGui_DEMO_MARKER("Widgets/Basic/InputInt, InputFloat");
             static int i0 = 123;
@@ -998,7 +998,7 @@ static void DemoWindowWidgetsBasic()
             HvkGui_DEMO_MARKER("Widgets/Basic/Combo");
             const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
             static int item_current = 0;
-            HvkGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+            HvkGui::Combo("combo", &item_current, items, Hvk_ARRAYSIZE(items));
             HvkGui::SameLine(); HelpMarker(
                 "Using the simplified one-liner Combo API here.\n"
                 "Refer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
@@ -1010,7 +1010,7 @@ static void DemoWindowWidgetsBasic()
             HvkGui_DEMO_MARKER("Widgets/Basic/ListBox");
             const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
             static int item_current = 1;
-            HvkGui::ListBox("listbox", &item_current, items, IM_ARRAYSIZE(items), 4);
+            HvkGui::ListBox("listbox", &item_current, items, Hvk_ARRAYSIZE(items), 4);
             HvkGui::SameLine(); HelpMarker(
                 "Using the simplified one-liner ListBox API here.\n"
                 "Refer to the \"List boxes\" section below for an explanation of how to use the more flexible and general BeginListBox/EndListBox API.");
@@ -1133,7 +1133,7 @@ static void DemoWindowWidgetsColorAndPickers()
         static HvkVec4 saved_palette[32] = {};
         if (saved_palette_init)
         {
-            for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(saved_palette); n++)
             {
                 HvkGui::ColorConvertHSVtoRGB(n / 31.0f, 0.8f, 0.8f,
                     saved_palette[n].x, saved_palette[n].y, saved_palette[n].z);
@@ -1166,7 +1166,7 @@ static void DemoWindowWidgetsColorAndPickers()
                 color = backup_color;
             HvkGui::Separator();
             HvkGui::Text("Palette");
-            for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(saved_palette); n++)
             {
                 HvkGui::PushID(n);
                 if ((n % 8) != 0)
@@ -1319,7 +1319,7 @@ static void DemoWindowWidgetsComboBoxes()
         const char* combo_preview_value = items[item_selected_idx];
         if (HvkGui::BeginCombo("combo 1", combo_preview_value, flags))
         {
-            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
                 if (HvkGui::Selectable(items[n], is_selected))
@@ -1345,7 +1345,7 @@ static void DemoWindowWidgetsComboBoxes()
             HvkGui::SetNextItemShortcut(HvkGuiMod_Ctrl | HvkGuiKey_F);
             filter.Draw("##Filter", -FLT_MIN);
 
-            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
                 if (filter.PassFilter(items[n]))
@@ -1367,11 +1367,11 @@ static void DemoWindowWidgetsComboBoxes()
         // Simplified one-liner Combo() using an array of const char*
         // This is not very useful (may obsolete): prefer using BeginCombo()/EndCombo() for full control.
         static int item_current_3 = -1; // If the selection isn't within 0..count, Combo won't display a preview
-        HvkGui::Combo("combo 4 (array)", &item_current_3, items, IM_ARRAYSIZE(items));
+        HvkGui::Combo("combo 4 (array)", &item_current_3, items, Hvk_ARRAYSIZE(items));
 
         // Simplified one-liner Combo() using an accessor function
         static int item_current_4 = 0;
-        HvkGui::Combo("combo 5 (function)", &item_current_4, [](void* data, int n) { return ((const char**)data)[n]; }, items, IM_ARRAYSIZE(items));
+        HvkGui::Combo("combo 5 (function)", &item_current_4, [](void* data, int n) { return ((const char**)data)[n]; }, items, Hvk_ARRAYSIZE(items));
 
         HvkGui::TreePop();
     }
@@ -1570,7 +1570,7 @@ static void DemoWindowWidgetsDragAndDrop()
                 "Brianna", "Barry", "Bernard",
                 "Bibi", "Blaine", "Bryn"
             };
-            for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(names); n++)
             {
                 HvkGui::PushID(n);
                 if ((n % 3) != 0)
@@ -1594,7 +1594,7 @@ static void DemoWindowWidgetsDragAndDrop()
                 {
                     if (const HvkGuiPayload* payload = HvkGui::AcceptDragDropPayload("DND_DEMO_CELL"))
                     {
-                        IM_ASSERT(payload->DataSize == sizeof(int));
+                        Hvk_ASSERT(payload->DataSize == sizeof(int));
                         int payload_n = *(const int*)payload->Data;
                         if (mode == Mode_Copy)
                         {
@@ -1632,7 +1632,7 @@ static void DemoWindowWidgetsDragAndDrop()
                 "We don't use the drag and drop api at all here! "
                 "Instead we query when the item is held but not hovered, and order items accordingly.");
             static const char* item_names[] = { "Item One", "Item Two", "Item Three", "Item Four", "Item Five" };
-            for (int n = 0; n < IM_ARRAYSIZE(item_names); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(item_names); n++)
             {
                 const char* item = item_names[n];
                 HvkGui::Selectable(item);
@@ -1640,7 +1640,7 @@ static void DemoWindowWidgetsDragAndDrop()
                 if (HvkGui::IsItemActive() && !HvkGui::IsItemHovered())
                 {
                     int n_next = n + (HvkGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
-                    if (n_next >= 0 && n_next < IM_ARRAYSIZE(item_names))
+                    if (n_next >= 0 && n_next < Hvk_ARRAYSIZE(item_names))
                     {
                         item_names[n] = item_names[n_next];
                         item_names[n_next] = item;
@@ -1665,7 +1665,7 @@ static void DemoWindowWidgetsDragAndDrop()
                     HvkGuiDragDropFlags drop_target_flags = HvkGuiDragDropFlags_AcceptBeforeDelivery | HvkGuiDragDropFlags_AcceptNoPreviewTooltip;
                     if (const HvkGuiPayload* payload = HvkGui::AcceptDragDropPayload(HvkGui_PAYLOAD_TYPE_COLOR_4F, drop_target_flags))
                     {
-                        IM_UNUSED(payload);
+                        Hvk_UNUSED(payload);
                         HvkGui::SetMouseCursor(HvkGuiMouseCursor_NotAllowed);
                         HvkGui::SetTooltip("Cannot drop here!");
                     }
@@ -1803,7 +1803,7 @@ static void DemoWindowWidgetsImages()
             HvkVec2 pos = HvkGui::GetCursorScreenPos();
             HvkVec2 uv_min = HvkVec2(0.0f, 0.0f); // Top-left
             HvkVec2 uv_max = HvkVec2(1.0f, 1.0f); // Lower-right
-            HvkGui::PushStyleVar(HvkGuiStyleVar_ImageBorderSize, IM_MAX(1.0f, HvkGui::GetStyle().HvkageBorderSize));
+            HvkGui::PushStyleVar(HvkGuiStyleVar_ImageBorderSize, Hvk_MAX(1.0f, HvkGui::GetStyle().HvkageBorderSize));
             HvkGui::HvkageWithBg(my_tex_id, HvkVec2(my_tex_w, my_tex_h), uv_min, uv_max, HvkVec4(0.0f, 0.0f, 0.0f, 1.0f));
             if (HvkGui::BeginItemTooltip())
             {
@@ -1880,7 +1880,7 @@ static void DemoWindowWidgetsListBoxes()
 
         if (HvkGui::BeginListBox("listbox 1"))
         {
-            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(items); n++)
             {
                 const bool is_selected = (item_selected_idx == n);
                 if (HvkGui::Selectable(items[n], is_selected))
@@ -1901,7 +1901,7 @@ static void DemoWindowWidgetsListBoxes()
         HvkGui::Text("Full-width:");
         if (HvkGui::BeginListBox("##listbox 2", HvkVec2(-FLT_MIN, 5 * HvkGui::GetTextLineHeightWithSpacing())))
         {
-            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(items); n++)
             {
                 bool is_selected = (item_selected_idx == n);
                 HvkGuiSelectableFlags flags = (item_highlighted_idx == n) ? HvkGuiSelectableFlags_Highlight : 0;
@@ -1987,8 +1987,8 @@ static void DemoWindowWidgetsPlotting()
 
         // Plot as lines and plot as histogram
         static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-        HvkGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
-        HvkGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, HvkVec2(0, 80.0f));
+        HvkGui::PlotLines("Frame Times", arr, Hvk_ARRAYSIZE(arr));
+        HvkGui::PlotHistogram("Histogram", arr, Hvk_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, HvkVec2(0, 80.0f));
         //HvkGui::SameLine(); HelpMarker("Consider using HvkPlot instead!");
 
         // Fill an array of contiguous float values to plot
@@ -2003,7 +2003,7 @@ static void DemoWindowWidgetsPlotting()
         {
             static float phase = 0.0f;
             values[values_offset] = cosf(phase);
-            values_offset = (values_offset + 1) % IM_ARRAYSIZE(values);
+            values_offset = (values_offset + 1) % Hvk_ARRAYSIZE(values);
             phase += 0.10f * values_offset;
             refresh_time += 1.0f / 60.0f;
         }
@@ -2012,12 +2012,12 @@ static void DemoWindowWidgetsPlotting()
         // (in this example, we will display an average value)
         {
             float average = 0.0f;
-            for (int n = 0; n < IM_ARRAYSIZE(values); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(values); n++)
                 average += values[n];
-            average /= (float)IM_ARRAYSIZE(values);
+            average /= (float)Hvk_ARRAYSIZE(values);
             char overlay[32];
             sprintf(overlay, "avg %f", average);
-            HvkGui::PlotLines("Lines", values, IM_ARRAYSIZE(values), values_offset, overlay, -1.0f, 1.0f, HvkVec2(0, 80.0f));
+            HvkGui::PlotLines("Lines", values, Hvk_ARRAYSIZE(values), values_offset, overlay, -1.0f, 1.0f, HvkVec2(0, 80.0f));
         }
 
         // Use functions to generate output
@@ -2057,7 +2057,7 @@ static void DemoWindowWidgetsProgressBars()
         if (progress_accum >= +1.1f) { progress_accum = +1.1f; progress_dir *= -1.0f; }
         if (progress_accum <= -0.1f) { progress_accum = -0.1f; progress_dir *= -1.0f; }
 
-        const float progress = IM_CLAMP(progress_accum, 0.0f, 1.0f);
+        const float progress = Hvk_CLAMP(progress_accum, 0.0f, 1.0f);
 
         // Typically we would use HvkVec2(-1.0f,0.0f) or HvkVec2(-FLT_MIN,0.0f) to use all available width,
         // or HvkVec2(width,0.0f) for a specified width. HvkVec2(0.0f,0.0f) uses ItemWidth.
@@ -2096,7 +2096,7 @@ static void DemoWindowWidgetsQueryingStatuses()
         };
         static int item_type = 4;
         static bool item_disabled = false;
-        HvkGui::Combo("Item Type", &item_type, item_names, IM_ARRAYSIZE(item_names), IM_ARRAYSIZE(item_names));
+        HvkGui::Combo("Item Type", &item_type, item_names, Hvk_ARRAYSIZE(item_names), Hvk_ARRAYSIZE(item_names));
         HvkGui::SameLine();
         HelpMarker("Testing how various types of items are interacting with the IsItemXXX functions. Note that the bool return value of most HvkGui function is generally equivalent to calling HvkGui::IsItemHovered().");
         HvkGui::Checkbox("Item Disabled", &item_disabled);
@@ -2113,8 +2113,8 @@ static void DemoWindowWidgetsQueryingStatuses()
         if (item_type == 2) { HvkGui::PushItemFlag(HvkGuiItemFlags_ButtonRepeat, true); ret = HvkGui::Button("ITEM: Button"); HvkGui::PopItemFlag(); } // Testing button (with repeater)
         if (item_type == 3) { ret = HvkGui::Checkbox("ITEM: Checkbox", &b); }                            // Testing checkbox
         if (item_type == 4) { ret = HvkGui::SliderFloat("ITEM: SliderFloat", &col4f[0], 0.0f, 1.0f); }   // Testing basic item
-        if (item_type == 5) { ret = HvkGui::InputText("ITEM: InputText", &str[0], IM_ARRAYSIZE(str)); }  // Testing input text (which handles tabbing)
-        if (item_type == 6) { ret = HvkGui::InputTextMultiline("ITEM: InputTextMultiline", &str[0], IM_ARRAYSIZE(str)); } // Testing input text (which uses a child window)
+        if (item_type == 5) { ret = HvkGui::InputText("ITEM: InputText", &str[0], Hvk_ARRAYSIZE(str)); }  // Testing input text (which handles tabbing)
+        if (item_type == 6) { ret = HvkGui::InputTextMultiline("ITEM: InputTextMultiline", &str[0], Hvk_ARRAYSIZE(str)); } // Testing input text (which uses a child window)
         if (item_type == 7) { ret = HvkGui::InputFloat("ITEM: InputFloat", col4f, 1.0f); }               // Testing +/- buttons on scalar input
         if (item_type == 8) { ret = HvkGui::InputFloat3("ITEM: InputFloat3", col4f); }                   // Testing multi-component items (IsItemXXX flags are reported merged)
         if (item_type == 9) { ret = HvkGui::ColorEdit4("ITEM: ColorEdit4", col4f); }                     // Testing multi-component items (IsItemXXX flags are reported merged)
@@ -2122,8 +2122,8 @@ static void DemoWindowWidgetsQueryingStatuses()
         if (item_type == 11) { ret = HvkGui::MenuItem("ITEM: MenuItem"); }                                // Testing menu item (they use HvkGuiButtonFlags_PressedOnRelease button policy)
         if (item_type == 12) { ret = HvkGui::TreeNode("ITEM: TreeNode"); if (ret) HvkGui::TreePop(); }     // Testing tree node
         if (item_type == 13) { ret = HvkGui::TreeNodeEx("ITEM: TreeNode w/ HvkGuiTreeNodeFlags_OpenOnDoubleClick", HvkGuiTreeNodeFlags_OpenOnDoubleClick | HvkGuiTreeNodeFlags_NoTreePushOnOpen); } // Testing tree node with HvkGuiButtonFlags_PressedOnDoubleClick button policy.
-        if (item_type == 14) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::Combo("ITEM: Combo", &current, items, IM_ARRAYSIZE(items)); }
-        if (item_type == 15) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::ListBox("ITEM: ListBox", &current, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)); }
+        if (item_type == 14) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::Combo("ITEM: Combo", &current, items, Hvk_ARRAYSIZE(items)); }
+        if (item_type == 15) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = HvkGui::ListBox("ITEM: ListBox", &current, items, Hvk_ARRAYSIZE(items), Hvk_ARRAYSIZE(items)); }
 
         bool hovered_delay_none = HvkGui::IsItemHovered();
         bool hovered_delay_stationary = HvkGui::IsItemHovered(HvkGuiHoveredFlags_Stationary);
@@ -2190,7 +2190,7 @@ static void DemoWindowWidgetsQueryingStatuses()
             HvkGui::EndDisabled();
 
         char buf[1] = "";
-        HvkGui::InputText("unused", buf, IM_ARRAYSIZE(buf), HvkGuiInputTextFlags_ReadOnly);
+        HvkGui::InputText("unused", buf, Hvk_ARRAYSIZE(buf), HvkGuiInputTextFlags_ReadOnly);
         HvkGui::SameLine();
         HelpMarker("This widget is only here to be able to tab-out of the widgets above and see e.g. Deactivated() status.");
 
@@ -2460,7 +2460,7 @@ struct ExampleSelectionWithDeletion : HvkGuiSelectionBasicStorage
                 return idx;
 
         // If focused item is selected: otherwise return last unselected item before focused item.
-        for (int idx = IM_MIN(focused_idx, items_count) - 1; idx >= 0; idx--)
+        for (int idx = Hvk_MIN(focused_idx, items_count) - 1; idx >= 0; idx--)
             if (!Contains(GetStorageIdFromIndex(idx)))
                 return idx;
 
@@ -2494,7 +2494,7 @@ struct ExampleSelectionWithDeletion : HvkGuiSelectionBasicStorage
     }
 };
 
-// Example: Hvkplement dual list box storage and interface
+// Example: implement dual list box storage and interface
 struct ExampleDualListBox
 {
     HvkVector<HvkGuiID>           Items[2];               // ID is index into ExampleName[]
@@ -2503,7 +2503,7 @@ struct ExampleDualListBox
 
     void MoveAll(int src, int dst)
     {
-        IM_ASSERT((src == 0 && dst == 1) || (src == 1 && dst == 0));
+        Hvk_ASSERT((src == 0 && dst == 1) || (src == 1 && dst == 0));
         for (HvkGuiID item_id : Items[src])
             Items[dst].push_back(item_id);
         Items[src].clear();
@@ -2518,7 +2518,7 @@ struct ExampleDualListBox
             HvkGuiID item_id = Items[src][src_n];
             if (!Selections[src].Contains(item_id))
                 continue;
-            Items[src].erase(&Items[src][src_n]); // FIXME-OPT: Could be Hvkplemented more optimally (rebuild src items and swap)
+            Items[src].erase(&Items[src][src_n]); // FIXME-OPT: Could be implemented more optimally (rebuild src items and swap)
             Items[dst].push_back(item_id);
             src_n--;
         }
@@ -2675,7 +2675,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
             HvkGui::TreePop();
         }
 
-        // Demonstrate Hvkplementation a most-basic form of multi-selection manually
+        // Demonstrate implementation a most-basic form of multi-selection manually
         // This doesn't support the Shift modifier which requires BeginMultiSelect()!
         HvkGui_DEMO_MARKER("Widgets/Selection State/Multi-Select (manual/simplified, without BeginMultiSelect)");
         if (HvkGui::TreeNode("Multi-Select (manual/simplified, without BeginMultiSelect)"))
@@ -2726,7 +2726,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                 for (int n = 0; n < ITEMS_COUNT; n++)
                 {
                     char label[64];
-                    sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
+                    sprintf(label, "Object %05d: %s", n, ExampleNames[n % Hvk_ARRAYSIZE(ExampleNames)]);
                     bool item_is_selected = selection.Contains((HvkGuiID)n);
                     HvkGui::SetNextItemSelectionUserData(n);
                     HvkGui::Selectable(label, item_is_selected);
@@ -2766,7 +2766,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                     for (int n = clipper.DisplayStart; n < clipper.DisplayEnd; n++)
                     {
                         char label[64];
-                        sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
+                        sprintf(label, "Object %05d: %s", n, ExampleNames[n % Hvk_ARRAYSIZE(ExampleNames)]);
                         bool item_is_selected = selection.Contains((HvkGuiID)n);
                         HvkGui::SetNextItemSelectionUserData(n);
                         HvkGui::Selectable(label, item_is_selected);
@@ -2809,7 +2809,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                     items.push_back(items_next_id++);
             if (HvkGui::SmallButton("Add 20 items"))     { for (int n = 0; n < 20; n++) { items.push_back(items_next_id++); } }
             HvkGui::SameLine();
-            if (HvkGui::SmallButton("Remove 20 items"))  { for (int n = IM_MIN(20, items.Size); n > 0; n--) { selection.SetItemSelected(items.back(), false); items.pop_back(); } }
+            if (HvkGui::SmallButton("Remove 20 items"))  { for (int n = Hvk_MIN(20, items.Size); n > 0; n--) { selection.SetItemSelected(items.back(), false); items.pop_back(); } }
 
             // (1) Extra to support deletion: Submit scrolling range to avoid glitches on deletion
             const float items_height = HvkGui::GetTextLineHeightWithSpacing();
@@ -2828,7 +2828,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                 {
                     const HvkGuiID item_id = items[n];
                     char label[64];
-                    sprintf(label, "Object %05u: %s", item_id, ExampleNames[item_id % IM_ARRAYSIZE(ExampleNames)]);
+                    sprintf(label, "Object %05u: %s", item_id, ExampleNames[item_id % Hvk_ARRAYSIZE(ExampleNames)]);
 
                     bool item_is_selected = selection.Contains(item_id);
                     HvkGui::SetNextItemSelectionUserData(n);
@@ -2847,14 +2847,14 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
             HvkGui::TreePop();
         }
 
-        // Hvkplement a Dual List Box (#6648)
+        // implement a Dual List Box (#6648)
         HvkGui_DEMO_MARKER("Widgets/Selection State/Multi-Select (dual list box)");
         if (HvkGui::TreeNode("Multi-Select (dual list box)"))
         {
             // Init default state
             static ExampleDualListBox dlb;
             if (dlb.Items[0].Size == 0 && dlb.Items[1].Size == 0)
-                for (int item_id = 0; item_id < IM_ARRAYSIZE(ExampleNames); item_id++)
+                for (int item_id = 0; item_id < Hvk_ARRAYSIZE(ExampleNames); item_id++)
                     dlb.Items[0].push_back((HvkGuiID)item_id);
 
             // Show
@@ -2894,7 +2894,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                         HvkGui::TableNextColumn();
                         HvkGui::PushID(n);
                         char label[64];
-                        sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
+                        sprintf(label, "Object %05d: %s", n, ExampleNames[n % Hvk_ARRAYSIZE(ExampleNames)]);
                         bool item_is_selected = selection.Contains((HvkGuiID)n);
                         HvkGui::SetNextItemSelectionUserData(n);
                         HvkGui::Selectable(label, item_is_selected, HvkGuiSelectableFlags_SpanAllColumns | HvkGuiSelectableFlags_AllowOverlap);
@@ -2928,7 +2928,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
 
             if (HvkGui::BeginChild("##Basket", HvkVec2(-FLT_MIN, HvkGui::GetFontSize() * 20), HvkGuiChildFlags_Borders | HvkGuiChildFlags_ResizeY))
             {
-                HvkGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, -1, IM_ARRAYSIZE(items));
+                HvkGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(flags, -1, Hvk_ARRAYSIZE(items));
                 HvkGuiSelectionExternalStorage storage_wrapper;
                 storage_wrapper.UserData = (void*)items;
                 storage_wrapper.AdapterSetItemSelected = [](HvkGuiSelectionExternalStorage* self, int n, bool selected) { bool* array = (bool*)self->UserData; array[n] = selected; };
@@ -2979,7 +2979,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                 for (int n = 0; n < ITEMS_COUNT; n++)
                 {
                     char label[64];
-                    sprintf(label, "Object %05d: %s", n, ExampleNames[n % IM_ARRAYSIZE(ExampleNames)]);
+                    sprintf(label, "Object %05d: %s", n, ExampleNames[n % Hvk_ARRAYSIZE(ExampleNames)]);
                     bool item_is_selected = selection->Contains((HvkGuiID)n);
                     HvkGui::SetNextItemSelectionUserData(n);
                     HvkGui::Selectable(label, item_is_selected);
@@ -3006,8 +3006,8 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
         //   This showcase how SetNextItemSelectionUserData() never assume indices!
         // - The difficulty here is to "interpolate" from RangeSrcItem to RangeDstItem in the SetAll/SetRange request.
         //   We want this interpolation to match what the user sees: in visible order, skipping closed nodes.
-        //   This is Hvkplemented by our TreeGetNextNodeInVisibleOrder() user-space helper.
-        // - Hvkportant: In a real codebase aiming to Hvkplement full-featured selectable tree with custom filtering, you
+        //   This is implemented by our TreeGetNextNodeInVisibleOrder() user-space helper.
+        // - Hvkportant: In a real codebase aiming to implement full-featured selectable tree with custom filtering, you
         //   are more likely to build an array mapping sequential indices to visible tree nodes, since your
         //   filtering/search + clipping process will benefit from it. Having this will make this interpolation much easier.
         // - Consider this a prototype: we are working toward simplifying some of it.
@@ -3109,7 +3109,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                 // Interpolate in *user-visible order* AND only *over opened nodes*.
                 // If you have a sequential mapping tables (e.g. generated after a filter/search pass) this would be simpler.
                 // Here the tricks are that:
-                // - we store/maintain ExampleTreeNode::IndexInParent which allows Hvkplementing a linear iterator easily, without searches, without recursion.
+                // - we store/maintain ExampleTreeNode::IndexInParent which allows implementing a linear iterator easily, without searches, without recursion.
                 //   this could be replaced by a search in parent, aka 'int index_in_parent = curr_node->Parent->Childs.find_index(curr_node)'
                 //   which would only be called when crossing from child to a parent, aka not too much.
                 // - we call SetNextItemStorageID() before our TreeNode() calls with an ID which doesn't relate to UI stack,
@@ -3183,7 +3183,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                 HvkGui::SameLine();
                 if (HvkGui::RadioButton("Tree nodes", widget_type == WidgetType_TreeNode)) { widget_type = WidgetType_TreeNode; }
                 HvkGui::SameLine();
-                HelpMarker("TreeNode() is technically supported but... using this correctly is more complicated (you need some sort of linear/random access to your tree, which is suited to advanced trees setups already Hvkplementing filters and clipper. We will work toward simplifying and demoing this.\n\nFor now the tree demo is actually a little bit meaningless because it is an empty tree with only root nodes.");
+                HelpMarker("TreeNode() is technically supported but... using this correctly is more complicated (you need some sort of linear/random access to your tree, which is suited to advanced trees setups already implementing filters and clipper. We will work toward simplifying and demoing this.\n\nFor now the tree demo is actually a little bit meaningless because it is an empty tree with only root nodes.");
                 HvkGui::Checkbox("Enable clipper", &use_clipper);
                 HvkGui::Checkbox("Enable deletion", &use_deletion);
                 HvkGui::Checkbox("Enable drag & drop", &use_drag_drop);
@@ -3268,7 +3268,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                             HvkGui::TableNextColumn();
 
                         const int item_id = items[n];
-                        const char* item_category = ExampleNames[item_id % IM_ARRAYSIZE(ExampleNames)];
+                        const char* item_category = ExampleNames[item_id % Hvk_ARRAYSIZE(ExampleNames)];
                         char label[64];
                         sprintf(label, "Object %05d: %s", item_id, item_category);
 
@@ -3282,7 +3282,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                         // of the selection scope doesn't erroneously alter our selection.
                         if (show_color_button)
                         {
-                            HvkU32 dummy_col = (HvkU32)((unsigned int)n * 0xC250B74B) | IM_COL32_A_MASK;
+                            HvkU32 dummy_col = (HvkU32)((unsigned int)n * 0xC250B74B) | Hvk_COL32_A_MASK;
                             HvkGui::ColorButton("##", HvkColor(dummy_col), HvkGuiColorEditFlags_NoTooltip, color_button_sz);
                             HvkGui::SameLine();
                         }
@@ -3330,7 +3330,7 @@ static void DemoWindowWidgetsSelectionAndMultiSelect(HvkGuiDemoWindowData* demo_
                             const int* payload_items = (int*)payload->Data;
                             const int payload_count = (int)payload->DataSize / (int)sizeof(int);
                             if (payload_count == 1)
-                                HvkGui::Text("Object %05d: %s", payload_items[0], ExampleNames[payload_items[0] % IM_ARRAYSIZE(ExampleNames)]);
+                                HvkGui::Text("Object %05d: %s", payload_items[0], ExampleNames[payload_items[0] % Hvk_ARRAYSIZE(ExampleNames)]);
                             else
                                 HvkGui::Text("Dragging %d objects", payload_count);
 
@@ -3456,7 +3456,7 @@ static void DemoWindowWidgetsTabs()
             HvkGui::Text("Opened:");
             const char* names[4] = { "Artichoke", "Beetroot", "Celery", "Daikon" };
             static bool opened[4] = { true, true, true, true }; // Persistent user state
-            for (int n = 0; n < IM_ARRAYSIZE(opened); n++)
+            for (int n = 0; n < Hvk_ARRAYSIZE(opened); n++)
             {
                 HvkGui::SameLine();
                 HvkGui::Checkbox(names[n], &opened[n]);
@@ -3466,7 +3466,7 @@ static void DemoWindowWidgetsTabs()
             // the underlying bool will be set to false when the tab is closed.
             if (HvkGui::BeginTabBar("MyTabBar", tab_bar_flags))
             {
-                for (int n = 0; n < IM_ARRAYSIZE(opened); n++)
+                for (int n = 0; n < Hvk_ARRAYSIZE(opened); n++)
                     if (opened[n] && HvkGui::BeginTabItem(names[n], &opened[n], HvkGuiTabItemFlags_None))
                     {
                         HvkGui::Text("This is the %s tab!", names[n]);
@@ -3525,7 +3525,7 @@ static void DemoWindowWidgetsTabs()
                 {
                     bool open = true;
                     char name[16];
-                    snprintf(name, IM_ARRAYSIZE(name), "%04d", active_tabs[n]);
+                    snprintf(name, Hvk_ARRAYSIZE(name), "%04d", active_tabs[n]);
                     if (HvkGui::BeginTabItem(name, &open, HvkGuiTabItemFlags_None))
                     {
                         HvkGui::Text("This is the %s tab!", name);
@@ -3609,7 +3609,7 @@ static void DemoWindowWidgetsText()
         {
             // Using shortcut. You can use PushTextWrapPos()/PopTextWrapPos() for more flexibility.
             HvkGui::TextWrapped(
-                "This text should automatically wrap on the edge of the window. The current Hvkplementation "
+                "This text should automatically wrap on the edge of the window. The current implementation "
                 "for text wrapping follows simple rules suitable for English and possibly other languages.");
             HvkGui::Spacing();
 
@@ -3630,8 +3630,8 @@ static void DemoWindowWidgetsText()
                     HvkGui::Text("aaaaaaaa bbbbbbbb, c cccccccc,dddddddd. d eeeeeeee   ffffffff. gggggggg!hhhhhhhh");
 
                 // Draw actual text bounding box, following by marker of our expected limit (should not overlap!)
-                draw_list->AddRect(HvkGui::GetItemRectMin(), HvkGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
-                draw_list->AddRectFilled(marker_min, marker_max, IM_COL32(255, 0, 255, 255));
+                draw_list->AddRect(HvkGui::GetItemRectMin(), HvkGui::GetItemRectMax(), Hvk_COL32(255, 255, 0, 255));
+                draw_list->AddRectFilled(marker_min, marker_max, Hvk_COL32(255, 0, 255, 255));
                 HvkGui::PopTextWrapPos();
             }
 
@@ -3659,7 +3659,7 @@ static void DemoWindowWidgetsText()
             HvkGui::Text("Kanjis: \xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e (nihongo)");
             static char buf[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
             //static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
-            HvkGui::InputText("UTF-8 input", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("UTF-8 input", buf, Hvk_ARRAYSIZE(buf));
             HvkGui::TreePop();
         }
         HvkGui::TreePop();
@@ -3676,7 +3676,7 @@ static void DemoWindowWidgetsTextFilter()
     if (HvkGui::TreeNode("Text Filter"))
     {
         // Helper class to easy setup a text filter.
-        // You may want to Hvkplement a more feature-full filtering scheme in your own application.
+        // You may want to implement a more feature-full filtering scheme in your own application.
         HelpMarker("Not a widget per-se, but HvkGuiTextFilter is a helper to perform simple filtering on text strings.");
         static HvkGuiTextFilter filter;
         HvkGui::Text("Filter usage:\n"
@@ -3686,7 +3686,7 @@ static void DemoWindowWidgetsTextFilter()
             "  \"-xxx\"     hide lines containing \"xxx\"");
         filter.Draw();
         const char* lines[] = { "aaa1.c", "bbb1.c", "ccc1.c", "aaa2.cpp", "bbb2.cpp", "ccc2.cpp", "abc.h", "hello, world" };
-        for (int i = 0; i < IM_ARRAYSIZE(lines); i++)
+        for (int i = 0; i < Hvk_ARRAYSIZE(lines); i++)
             if (filter.PassFilter(lines[i]))
                 HvkGui::BulletText("%s", lines[i]);
         HvkGui::TreePop();
@@ -3731,7 +3731,7 @@ static void DemoWindowWidgetsTextInput()
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_AllowTabInput", &flags, HvkGuiInputTextFlags_AllowTabInput);
             HvkGui::SameLine(); HelpMarker("When _AllowTabInput is set, passing through the widget with Tabbing doesn't automatically activate it, in order to also cycling through subsequent widgets.");
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_CtrlEnterForNewLine", &flags, HvkGuiInputTextFlags_CtrlEnterForNewLine);
-            HvkGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), HvkVec2(-FLT_MIN, HvkGui::GetTextLineHeight() * 16), flags);
+            HvkGui::InputTextMultiline("##source", text, Hvk_ARRAYSIZE(text), HvkVec2(-FLT_MIN, HvkGui::GetTextLineHeight() * 16), flags);
             HvkGui::TreePop();
         }
 
@@ -3757,13 +3757,13 @@ static void DemoWindowWidgetsTextInput()
                 }
             };
 
-            static char buf1[32] = ""; HvkGui::InputText("default", buf1, IM_ARRAYSIZE(buf1));
-            static char buf2[32] = ""; HvkGui::InputText("decimal", buf2, IM_ARRAYSIZE(buf2), HvkGuiInputTextFlags_CharsDecimal);
-            static char buf3[32] = ""; HvkGui::InputText("hexadecimal", buf3, IM_ARRAYSIZE(buf3), HvkGuiInputTextFlags_CharsHexadecimal | HvkGuiInputTextFlags_CharsUppercase);
-            static char buf4[32] = ""; HvkGui::InputText("uppercase", buf4, IM_ARRAYSIZE(buf4), HvkGuiInputTextFlags_CharsUppercase);
-            static char buf5[32] = ""; HvkGui::InputText("no blank", buf5, IM_ARRAYSIZE(buf5), HvkGuiInputTextFlags_CharsNoBlank);
-            static char buf6[32] = ""; HvkGui::InputText("casing swap", buf6, IM_ARRAYSIZE(buf6), HvkGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterCasingSwap); // Use CharFilter callback to replace characters.
-            static char buf7[32] = ""; HvkGui::InputText("\"HvkGui\"", buf7, IM_ARRAYSIZE(buf7), HvkGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterHvkGuiLetters); // Use CharFilter callback to disable some characters.
+            static char buf1[32] = ""; HvkGui::InputText("default", buf1, Hvk_ARRAYSIZE(buf1));
+            static char buf2[32] = ""; HvkGui::InputText("decimal", buf2, Hvk_ARRAYSIZE(buf2), HvkGuiInputTextFlags_CharsDecimal);
+            static char buf3[32] = ""; HvkGui::InputText("hexadecimal", buf3, Hvk_ARRAYSIZE(buf3), HvkGuiInputTextFlags_CharsHexadecimal | HvkGuiInputTextFlags_CharsUppercase);
+            static char buf4[32] = ""; HvkGui::InputText("uppercase", buf4, Hvk_ARRAYSIZE(buf4), HvkGuiInputTextFlags_CharsUppercase);
+            static char buf5[32] = ""; HvkGui::InputText("no blank", buf5, Hvk_ARRAYSIZE(buf5), HvkGuiInputTextFlags_CharsNoBlank);
+            static char buf6[32] = ""; HvkGui::InputText("casing swap", buf6, Hvk_ARRAYSIZE(buf6), HvkGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterCasingSwap); // Use CharFilter callback to replace characters.
+            static char buf7[32] = ""; HvkGui::InputText("\"HvkGui\"", buf7, Hvk_ARRAYSIZE(buf7), HvkGuiInputTextFlags_CallbackCharFilter, TextFilters::FilterHvkGuiLetters); // Use CharFilter callback to disable some characters.
             HvkGui::TreePop();
         }
 
@@ -3771,10 +3771,10 @@ static void DemoWindowWidgetsTextInput()
         if (HvkGui::TreeNode("Password Input"))
         {
             static char password[64] = "password123";
-            HvkGui::InputText("password", password, IM_ARRAYSIZE(password), HvkGuiInputTextFlags_Password);
+            HvkGui::InputText("password", password, Hvk_ARRAYSIZE(password), HvkGuiInputTextFlags_Password);
             HvkGui::SameLine(); HelpMarker("Display all characters as '*'.\nDisable clipboard cut and copy.\nDisable logging.\n");
-            HvkGui::InputTextWithHint("password (w/ hint)", "<password>", password, IM_ARRAYSIZE(password), HvkGuiInputTextFlags_Password);
-            HvkGui::InputText("password (clear)", password, IM_ARRAYSIZE(password));
+            HvkGui::InputTextWithHint("password (w/ hint)", "<password>", password, Hvk_ARRAYSIZE(password), HvkGuiInputTextFlags_Password);
+            HvkGui::InputText("password (clear)", password, Hvk_ARRAYSIZE(password));
             HvkGui::TreePop();
         }
 
@@ -3819,20 +3819,20 @@ static void DemoWindowWidgetsTextInput()
                 }
             };
             static char buf1[64];
-            HvkGui::InputText("Completion", buf1, IM_ARRAYSIZE(buf1), HvkGuiInputTextFlags_CallbackCompletion, Funcs::MyCallback);
+            HvkGui::InputText("Completion", buf1, Hvk_ARRAYSIZE(buf1), HvkGuiInputTextFlags_CallbackCompletion, Funcs::MyCallback);
             HvkGui::SameLine(); HelpMarker(
                 "Here we append \"..\" each time Tab is pressed. "
                 "See 'Examples>Console' for a more meaningful demonstration of using this callback.");
 
             static char buf2[64];
-            HvkGui::InputText("History", buf2, IM_ARRAYSIZE(buf2), HvkGuiInputTextFlags_CallbackHistory, Funcs::MyCallback);
+            HvkGui::InputText("History", buf2, Hvk_ARRAYSIZE(buf2), HvkGuiInputTextFlags_CallbackHistory, Funcs::MyCallback);
             HvkGui::SameLine(); HelpMarker(
                 "Here we replace and select text each time Up/Down are pressed. "
                 "See 'Examples>Console' for a more meaningful demonstration of using this callback.");
 
             static char buf3[64];
             static int edit_count = 0;
-            HvkGui::InputText("Edit", buf3, IM_ARRAYSIZE(buf3), HvkGuiInputTextFlags_CallbackEdit, Funcs::MyCallback, (void*)&edit_count);
+            HvkGui::InputText("Edit", buf3, Hvk_ARRAYSIZE(buf3), HvkGuiInputTextFlags_CallbackEdit, Funcs::MyCallback, (void*)&edit_count);
             HvkGui::SameLine(); HelpMarker(
                 "Here we toggle the casing of the first character on every edit + count edits.");
             HvkGui::SameLine(); HvkGui::Text("(%d)", edit_count);
@@ -3845,10 +3845,10 @@ static void DemoWindowWidgetsTextInput()
         {
             // To wire InputText() with std::string or any other custom string type,
             // you can use the HvkGuiInputTextFlags_CallbackResize flag + create a custom HvkGui::InputText() wrapper
-            // using your preferred type. See misc/cpp/HvkGui_stdlib.h for an Hvkplementation of this using std::string.
+            // using your preferred type. See misc/cpp/HvkGui_stdlib.h for an implementation of this using std::string.
             HelpMarker(
                 "Using HvkGuiInputTextFlags_CallbackResize to wire your custom string type to InputText().\n\n"
-                "See misc/cpp/HvkGui_stdlib.h for an Hvkplementation of this for std::string.");
+                "See misc/cpp/HvkGui_stdlib.h for an implementation of this for std::string.");
             struct Funcs
             {
                 static int MyResizeCallback(HvkGuiInputTextCallbackData* data)
@@ -3856,7 +3856,7 @@ static void DemoWindowWidgetsTextInput()
                     if (data->EventFlag == HvkGuiInputTextFlags_CallbackResize)
                     {
                         HvkVector<char>* my_str = (HvkVector<char>*)data->UserData;
-                        IM_ASSERT(my_str->begin() == data->Buf);
+                        Hvk_ASSERT(my_str->begin() == data->Buf);
                         my_str->resize(data->BufSize); // NB: On resizing calls, generally data->BufSize == data->BufTextLen + 1
                         data->Buf = my_str->begin();
                     }
@@ -3867,7 +3867,7 @@ static void DemoWindowWidgetsTextInput()
                 // For example, you code may declare a function 'HvkGui::InputText(const char* label, MyString* my_str)'
                 static bool MyInputTextMultiline(const char* label, HvkVector<char>* my_str, const HvkVec2& size = HvkVec2(0, 0), HvkGuiInputTextFlags flags = 0)
                 {
-                    IM_ASSERT((flags & HvkGuiInputTextFlags_CallbackResize) == 0);
+                    Hvk_ASSERT((flags & HvkGuiInputTextFlags_CallbackResize) == 0);
                     return HvkGui::InputTextMultiline(label, my_str->begin(), (size_t)my_str->size(), size, flags | HvkGuiInputTextFlags_CallbackResize, Funcs::MyResizeCallback, (void*)my_str);
                 }
             };
@@ -3892,7 +3892,7 @@ static void DemoWindowWidgetsTextInput()
             static char buf1[128] = "/path/to/some/folder/with/long/filename.cpp";
             static HvkGuiInputTextFlags flags = HvkGuiInputTextFlags_ElideLeft;
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_ElideLeft", &flags, HvkGuiInputTextFlags_ElideLeft);
-            HvkGui::InputText("Path", buf1, IM_ARRAYSIZE(buf1), flags);
+            HvkGui::InputText("Path", buf1, Hvk_ARRAYSIZE(buf1), flags);
             HvkGui::TreePop();
         }
 
@@ -3904,7 +3904,7 @@ static void DemoWindowWidgetsTextInput()
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_EscapeClearsAll", &flags, HvkGuiInputTextFlags_EscapeClearsAll);
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_ReadOnly", &flags, HvkGuiInputTextFlags_ReadOnly);
             HvkGui::CheckboxFlags("HvkGuiInputTextFlags_NoUndoRedo", &flags, HvkGuiInputTextFlags_NoUndoRedo);
-            HvkGui::InputText("Hello", buf1, IM_ARRAYSIZE(buf1), flags);
+            HvkGui::InputText("Hello", buf1, Hvk_ARRAYSIZE(buf1), flags);
             HvkGui::TreePop();
         }
 
@@ -3946,7 +3946,7 @@ static void DemoWindowWidgetsTooltips()
         {
             HvkGui::Text("I am a fancy tooltip");
             static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-            HvkGui::PlotLines("Curve", arr, IM_ARRAYSIZE(arr));
+            HvkGui::PlotLines("Curve", arr, Hvk_ARRAYSIZE(arr));
             HvkGui::Text("Sin(time) = %f", sinf((float)HvkGui::GetTime()));
             HvkGui::EndTooltip();
         }
@@ -4431,7 +4431,7 @@ static void DemoWindowLayout()
 
             HvkGui::SetCursorPosX(HvkGui::GetCursorPosX() + (float)offset_x);
             if (override_bg_color)
-                HvkGui::PushStyleColor(HvkGuiCol_ChildBg, IM_COL32(255, 0, 0, 100));
+                HvkGui::PushStyleColor(HvkGuiCol_ChildBg, Hvk_COL32(255, 0, 0, 100));
             HvkGui::BeginChild("Red", HvkVec2(200, 100), child_flags, HvkGuiWindowFlags_None);
             if (override_bg_color)
                 HvkGui::PopStyleColor();
@@ -4510,7 +4510,7 @@ static void DemoWindowLayout()
         HvkGui::PopItemWidth();
 
         HvkGui::Text("SetNextItemWidth/PushItemWidth(-Min(GetContentRegionAvail().x * 0.40f, GetFontSize() * 12))");
-        HvkGui::PushItemWidth(-IM_MIN(HvkGui::GetFontSize() * 12, HvkGui::GetContentRegionAvail().x * 0.40f));
+        HvkGui::PushItemWidth(-Hvk_MIN(HvkGui::GetFontSize() * 12, HvkGui::GetContentRegionAvail().x * 0.40f));
         HvkGui::DragFloat("float##5a", &f);
         if (show_indented_items)
         {
@@ -4585,7 +4585,7 @@ static void DemoWindowLayout()
         HvkGui::PushItemWidth(HvkGui::CalcTextSize("AAAAAAA").x);
         const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD" };
         static int item = -1;
-        HvkGui::Combo("Combo", &item, items, IM_ARRAYSIZE(items)); HvkGui::SameLine();
+        HvkGui::Combo("Combo", &item, items, Hvk_ARRAYSIZE(items)); HvkGui::SameLine();
         HvkGui::SliderFloat("X", &f0, 0.0f, 5.0f); HvkGui::SameLine();
         HvkGui::SliderFloat("Y", &f1, 0.0f, 5.0f); HvkGui::SameLine();
         HvkGui::SliderFloat("Z", &f2, 0.0f, 5.0f);
@@ -4596,7 +4596,7 @@ static void DemoWindowLayout()
         {
             if (i > 0) HvkGui::SameLine();
             HvkGui::PushID(i);
-            HvkGui::ListBox("", &selection[i], items, IM_ARRAYSIZE(items));
+            HvkGui::ListBox("", &selection[i], items, Hvk_ARRAYSIZE(items));
             HvkGui::PopID();
             //HvkGui::SetItemTooltip("ListBox %d hovered", i);
         }
@@ -4656,7 +4656,7 @@ static void DemoWindowLayout()
         // Capture the group size and create widgets using the same size
         HvkVec2 size = HvkGui::GetItemRectSize();
         const float values[5] = { 0.5f, 0.20f, 0.80f, 0.60f, 0.25f };
-        HvkGui::PlotHistogram("##values", values, IM_ARRAYSIZE(values), 0, NULL, 0.0f, 1.0f, size);
+        HvkGui::PlotHistogram("##values", values, Hvk_ARRAYSIZE(values), 0, NULL, 0.0f, 1.0f, size);
 
         HvkGui::Button("ACTION", HvkVec2((size.x - HvkGui::GetStyle().ItemSpacing.x) * 0.5f, size.y));
         HvkGui::SameLine();
@@ -5027,8 +5027,8 @@ static void DemoWindowLayout()
                 HvkGui::SetNextItemWidth(HvkGui::CalcTextSize("123456").x);
                 HvkGui::DragFloat("##csx", &contents_size_x);
                 HvkVec2 p = HvkGui::GetCursorScreenPos();
-                HvkGui::GetWindowDrawList()->AddRectFilled(p, HvkVec2(p.x + 10, p.y + 10), IM_COL32_WHITE);
-                HvkGui::GetWindowDrawList()->AddRectFilled(HvkVec2(p.x + contents_size_x - 10, p.y), HvkVec2(p.x + contents_size_x, p.y + 10), IM_COL32_WHITE);
+                HvkGui::GetWindowDrawList()->AddRectFilled(p, HvkVec2(p.x + 10, p.y + 10), Hvk_COL32_WHITE);
+                HvkGui::GetWindowDrawList()->AddRectFilled(HvkVec2(p.x + contents_size_x - 10, p.y), HvkVec2(p.x + contents_size_x, p.y + 10), Hvk_COL32_WHITE);
                 HvkGui::Dummy(HvkVec2(0, 10));
             }
             HvkGui::PopStyleVar(2);
@@ -5139,20 +5139,20 @@ static void DemoWindowLayout()
             {
             case 0:
                 HvkGui::PushClipRect(p0, p1, true);
-                draw_list->AddRectFilled(p0, p1, IM_COL32(90, 90, 120, 255));
-                draw_list->AddText(text_pos, IM_COL32_WHITE, text_str);
+                draw_list->AddRectFilled(p0, p1, Hvk_COL32(90, 90, 120, 255));
+                draw_list->AddText(text_pos, Hvk_COL32_WHITE, text_str);
                 HvkGui::PopClipRect();
                 break;
             case 1:
                 draw_list->PushClipRect(p0, p1, true);
-                draw_list->AddRectFilled(p0, p1, IM_COL32(90, 90, 120, 255));
-                draw_list->AddText(text_pos, IM_COL32_WHITE, text_str);
+                draw_list->AddRectFilled(p0, p1, Hvk_COL32(90, 90, 120, 255));
+                draw_list->AddText(text_pos, Hvk_COL32_WHITE, text_str);
                 draw_list->PopClipRect();
                 break;
             case 2:
                 HvkVec4 clip_rect(p0.x, p0.y, p1.x, p1.y); // AddText() takes a HvkVec4* here so let's convert.
-                draw_list->AddRectFilled(p0, p1, IM_COL32(90, 90, 120, 255));
-                draw_list->AddText(HvkGui::GetFont(), HvkGui::GetFontSize(), text_pos, IM_COL32_WHITE, text_str, NULL, 0.0f, &clip_rect);
+                draw_list->AddRectFilled(p0, p1, Hvk_COL32(90, 90, 120, 255));
+                draw_list->AddText(HvkGui::GetFont(), HvkGui::GetFontSize(), text_pos, Hvk_COL32_WHITE, text_str, NULL, 0.0f, &clip_rect);
                 break;
             }
         }
@@ -5240,7 +5240,7 @@ static void DemoWindowPopups()
         if (HvkGui::BeginPopup("my_select_popup"))
         {
             HvkGui::SeparatorText("Aquarium");
-            for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+            for (int i = 0; i < Hvk_ARRAYSIZE(names); i++)
                 if (HvkGui::Selectable(names[i]))
                     selected_fish = i;
             HvkGui::EndPopup();
@@ -5251,7 +5251,7 @@ static void DemoWindowPopups()
             HvkGui::OpenPopup("my_toggle_popup");
         if (HvkGui::BeginPopup("my_toggle_popup"))
         {
-            for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+            for (int i = 0; i < Hvk_ARRAYSIZE(names); i++)
                 HvkGui::MenuItem(names[i], "", &toggles[i]);
             if (HvkGui::BeginMenu("Sub-menu"))
             {
@@ -5267,7 +5267,7 @@ static void DemoWindowPopups()
                 HvkGui::OpenPopup("another popup");
             if (HvkGui::BeginPopup("another popup"))
             {
-                for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+                for (int i = 0; i < Hvk_ARRAYSIZE(names); i++)
                     HvkGui::MenuItem(names[i], "", &toggles[i]);
                 if (HvkGui::BeginMenu("Sub-menu"))
                 {
@@ -5389,7 +5389,7 @@ static void DemoWindowPopups()
             if (HvkGui::BeginPopupContextItem())
             {
                 HvkGui::Text("Edit name:");
-                HvkGui::InputText("##edit", name, IM_ARRAYSIZE(name));
+                HvkGui::InputText("##edit", name, Hvk_ARRAYSIZE(name));
                 if (HvkGui::Button("Close"))
                     HvkGui::CloseCurrentPopup();
                 HvkGui::EndPopup();
@@ -5551,7 +5551,7 @@ struct MyItem
             case MyItemColumnID_Name:           delta = (strcmp(a->Name, b->Name));     break;
             case MyItemColumnID_Quantity:       delta = (a->Quantity - b->Quantity);    break;
             case MyItemColumnID_Description:    delta = (strcmp(a->Name, b->Name));     break;
-            default: IM_ASSERT(0); break;
+            default: Hvk_ASSERT(0); break;
             }
             if (delta > 0)
                 return (sort_spec->SortDirection == HvkGuiSortDirection_Ascending) ? +1 : -1;
@@ -5594,13 +5594,13 @@ static void EditTableSizingFlags(HvkGuiTableFlags* p_flags)
         { HvkGuiTableFlags_SizingStretchSame,  "HvkGuiTableFlags_SizingStretchSame",  "Columns default to _WidthStretch with same weights." }
     };
     int idx;
-    for (idx = 0; idx < IM_ARRAYSIZE(policies); idx++)
+    for (idx = 0; idx < Hvk_ARRAYSIZE(policies); idx++)
         if (policies[idx].Value == (*p_flags & HvkGuiTableFlags_SizingMask_))
             break;
-    const char* preview_text = (idx < IM_ARRAYSIZE(policies)) ? policies[idx].Name + (idx > 0 ? strlen("HvkGuiTableFlags") : 0) : "";
+    const char* preview_text = (idx < Hvk_ARRAYSIZE(policies)) ? policies[idx].Name + (idx > 0 ? strlen("HvkGuiTableFlags") : 0) : "";
     if (HvkGui::BeginCombo("Sizing Policy", preview_text))
     {
-        for (int n = 0; n < IM_ARRAYSIZE(policies); n++)
+        for (int n = 0; n < Hvk_ARRAYSIZE(policies); n++)
             if (HvkGui::Selectable(policies[n].Name, idx == n))
                 *p_flags = (*p_flags & ~HvkGuiTableFlags_SizingMask_) | policies[n].Value;
         HvkGui::EndCombo();
@@ -5610,7 +5610,7 @@ static void EditTableSizingFlags(HvkGuiTableFlags* p_flags)
     if (HvkGui::BeginItemTooltip())
     {
         HvkGui::PushTextWrapPos(HvkGui::GetFontSize() * 50.0f);
-        for (int m = 0; m < IM_ARRAYSIZE(policies); m++)
+        for (int m = 0; m < Hvk_ARRAYSIZE(policies); m++)
         {
             HvkGui::Separator();
             HvkGui::Text("%s:", policies[m].Name);
@@ -6069,7 +6069,7 @@ static void DemoWindowTables()
                         HvkGui::Button(buf, HvkVec2(-FLT_MIN, 0.0f));
                     }
                     //if (HvkGui::TableGetColumnFlags() & HvkGuiTableColumnFlags_IsHovered)
-                    //    HvkGui::TableSetBgColor(HvkGuiTableBgTarget_CellBg, IM_COL32(0, 100, 0, 255));
+                    //    HvkGui::TableSetBgColor(HvkGuiTableBgTarget_CellBg, Hvk_COL32(0, 100, 0, 255));
                 }
             }
             HvkGui::EndTable();
@@ -6108,7 +6108,7 @@ static void DemoWindowTables()
                     strcpy(text_bufs[cell], "edit me");
                 HvkGui::SetNextItemWidth(-FLT_MIN);
                 HvkGui::PushID(cell);
-                HvkGui::InputText("##cell", text_bufs[cell], IM_ARRAYSIZE(text_bufs[cell]));
+                HvkGui::InputText("##cell", text_bufs[cell], Hvk_ARRAYSIZE(text_bufs[cell]));
                 HvkGui::PopID();
             }
             if (!show_widget_frame_bg)
@@ -6221,7 +6221,7 @@ static void DemoWindowTables()
                 case CT_ShowWidth:  HvkGui::Text("W: %.1f", HvkGui::GetContentRegionAvail().x); break;
                 case CT_Button:     HvkGui::Button(label); break;
                 case CT_FillButton: HvkGui::Button(label, HvkVec2(-FLT_MIN, 0.0f)); break;
-                case CT_InputText:  HvkGui::SetNextItemWidth(-FLT_MIN); HvkGui::InputText("##", text_buf, IM_ARRAYSIZE(text_buf)); break;
+                case CT_InputText:  HvkGui::SetNextItemWidth(-FLT_MIN); HvkGui::InputText("##", text_buf, Hvk_ARRAYSIZE(text_buf)); break;
                 }
                 HvkGui::PopID();
             }
@@ -6705,9 +6705,9 @@ static void DemoWindowTables()
         HvkGui::Combo("row bg type", (int*)&row_bg_type, "None\0Red\0Gradient\0");
         HvkGui::Combo("row bg target", (int*)&row_bg_target, "RowBg0\0RowBg1\0"); HvkGui::SameLine(); HelpMarker("Target RowBg0 to override the alternating odd/even colors,\nTarget RowBg1 to blend with them.");
         HvkGui::Combo("cell bg type", (int*)&cell_bg_type, "None\0Blue\0"); HvkGui::SameLine(); HelpMarker("We are colorizing cells to B1->C2 here.");
-        IM_ASSERT(row_bg_type >= 0 && row_bg_type <= 2);
-        IM_ASSERT(row_bg_target >= 0 && row_bg_target <= 1);
-        IM_ASSERT(cell_bg_type >= 0 && cell_bg_type <= 1);
+        Hvk_ASSERT(row_bg_type >= 0 && row_bg_type <= 2);
+        Hvk_ASSERT(row_bg_target >= 0 && row_bg_target <= 1);
+        Hvk_ASSERT(cell_bg_type >= 0 && cell_bg_type <= 1);
         PopStyleCompact();
 
         if (HvkGui::BeginTable("table1", 5, flags))
@@ -6940,7 +6940,7 @@ static void DemoWindowTables()
     if (HvkGui::TreeNode("Angled headers"))
     {
         const char* column_names[] = { "Track", "cabasa", "ride", "smash", "tom-hi", "tom-mid", "tom-low", "hihat-o", "hihat-c", "snare-s", "snare-c", "clap", "rim", "kick" };
-        const int columns_count = IM_ARRAYSIZE(column_names);
+        const int columns_count = Hvk_ARRAYSIZE(column_names);
         const int rows_count = 12;
 
         static HvkGuiTableFlags table_flags = HvkGuiTableFlags_SizingFixedFit | HvkGuiTableFlags_ScrollX | HvkGuiTableFlags_ScrollY | HvkGuiTableFlags_BordersOuter | HvkGuiTableFlags_BordersInnerH | HvkGuiTableFlags_Hideable | HvkGuiTableFlags_Resizable | HvkGuiTableFlags_Reorderable | HvkGuiTableFlags_HighlightHoveredColumn;
@@ -7169,7 +7169,7 @@ static void DemoWindowTables()
             items.resize(50, MyItem());
             for (int n = 0; n < items.Size; n++)
             {
-                const int template_n = n % IM_ARRAYSIZE(template_items_names);
+                const int template_n = n % Hvk_ARRAYSIZE(template_items_names);
                 MyItem& item = items[n];
                 item.ID = n;
                 item.Name = template_items_names[template_n];
@@ -7260,7 +7260,7 @@ static void DemoWindowTables()
         const char* contents_type_names[] = { "Text", "Button", "SmallButton", "FillButton", "Selectable", "Selectable (span row)" };
         static int freeze_cols = 1;
         static int freeze_rows = 1;
-        static int items_count = IM_ARRAYSIZE(template_items_names) * 2;
+        static int items_count = Hvk_ARRAYSIZE(template_items_names) * 2;
         static HvkVec2 outer_size_value = HvkVec2(0.0f, TEXT_BASE_HEIGHT * 12);
         static float row_min_height = 0.0f; // Auto
         static float inner_width_with_scroll = 0.0f; // Auto-extend
@@ -7378,7 +7378,7 @@ static void DemoWindowTables()
                 HvkGui::SameLine(); HelpMarker("Specify height of the Selectable item.");
 
                 HvkGui::DragInt("items_count", &items_count, 0.1f, 0, 9999);
-                HvkGui::Combo("items_type (first column)", &contents_type, contents_type_names, IM_ARRAYSIZE(contents_type_names));
+                HvkGui::Combo("items_type (first column)", &contents_type, contents_type_names, Hvk_ARRAYSIZE(contents_type_names));
                 //filter.Draw("filter");
                 HvkGui::TreePop();
             }
@@ -7398,7 +7398,7 @@ static void DemoWindowTables()
             items.resize(items_count, MyItem());
             for (int n = 0; n < items_count; n++)
             {
-                const int template_n = n % IM_ARRAYSIZE(template_items_names);
+                const int template_n = n % Hvk_ARRAYSIZE(template_items_names);
                 MyItem& item = items[n];
                 item.ID = n;
                 item.Name = template_items_names[template_n];
@@ -7800,10 +7800,10 @@ static void DemoWindowInputs()
                 HvkGui::Text("Mouse pos: <INVALID>");
             HvkGui::Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
             HvkGui::Text("Mouse down:");
-            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (HvkGui::IsMouseDown(i)) { HvkGui::SameLine(); HvkGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
+            for (int i = 0; i < Hvk_ARRAYSIZE(io.MouseDown); i++) if (HvkGui::IsMouseDown(i)) { HvkGui::SameLine(); HvkGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
             HvkGui::Text("Mouse wheel: %.1f", io.MouseWheel);
             HvkGui::Text("Mouse clicked count:");
-            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (io.MouseClickedCount[i] > 0) { HvkGui::SameLine(); HvkGui::Text("b%d: %d", i, io.MouseClickedCount[i]); }
+            for (int i = 0; i < Hvk_ARRAYSIZE(io.MouseDown); i++) if (io.MouseClickedCount[i] > 0) { HvkGui::SameLine(); HvkGui::Text("b%d: %d", i, io.MouseClickedCount[i]); }
 
             // We iterate both legacy native range and named HvkGuiKey ranges. This is a little unusual/odd but this allows
             // displaying the data for old/new backends.
@@ -7926,7 +7926,7 @@ static void DemoWindowInputs()
             // (Commented because the owner-aware version of Shortcut() is still in HvkGui_internal.h)
             //char str[16] = "Press Ctrl+A";
             //HvkGui::Spacing();
-            //HvkGui::InputText("InputTextB", str, IM_ARRAYSIZE(str), HvkGuiInputTextFlags_ReadOnly);
+            //HvkGui::InputText("InputTextB", str, Hvk_ARRAYSIZE(str), HvkGuiInputTextFlags_ReadOnly);
             //HvkGuiID item_id = HvkGui::GetItemID();
             //HvkGui::SameLine(); HelpMarker("Internal widgets always use _RouteFocused");
             //HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags, item_id) ? "PRESSED" : "...");
@@ -7951,7 +7951,7 @@ static void DemoWindowInputs()
                 HvkGui::Text("(in PopupF)");
                 HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags) ? "PRESSED" : "...");
                 // (Commented because the owner-aware version of Shortcut() is still in HvkGui_internal.h)
-                //HvkGui::InputText("InputTextG", str, IM_ARRAYSIZE(str), HvkGuiInputTextFlags_ReadOnly);
+                //HvkGui::InputText("InputTextG", str, Hvk_ARRAYSIZE(str), HvkGuiInputTextFlags_ReadOnly);
                 //HvkGui::Text("IsWindowFocused: %d, Shortcut: %s", HvkGui::IsWindowFocused(), HvkGui::Shortcut(key_chord, flags, HvkGui::GetItemID()) ? "PRESSED" : "...");
                 HvkGui::EndPopup();
             }
@@ -7966,7 +7966,7 @@ static void DemoWindowInputs()
         if (HvkGui::TreeNode("Mouse Cursors"))
         {
             const char* mouse_cursors_names[] = { "Arrow", "TextInput", "ResizeAll", "ResizeNS", "ResizeEW", "ResizeNESW", "ResizeNWSE", "Hand", "Wait", "Progress", "NotAllowed" };
-            IM_ASSERT(IM_ARRAYSIZE(mouse_cursors_names) == HvkGuiMouseCursor_COUNT);
+            Hvk_ASSERT(Hvk_ARRAYSIZE(mouse_cursors_names) == HvkGuiMouseCursor_COUNT);
 
             HvkGuiMouseCursor current = HvkGui::GetMouseCursor();
             const char* cursor_name = (current >= HvkGuiMouseCursor_Arrow) && (current < HvkGuiMouseCursor_COUNT) ? mouse_cursors_names[current] : "N/A";
@@ -7996,14 +7996,14 @@ static void DemoWindowInputs()
         {
             HvkGui::Text("Use Tab/Shift+Tab to cycle through keyboard editable fields.");
             static char buf[32] = "hello";
-            HvkGui::InputText("1", buf, IM_ARRAYSIZE(buf));
-            HvkGui::InputText("2", buf, IM_ARRAYSIZE(buf));
-            HvkGui::InputText("3", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("1", buf, Hvk_ARRAYSIZE(buf));
+            HvkGui::InputText("2", buf, Hvk_ARRAYSIZE(buf));
+            HvkGui::InputText("3", buf, Hvk_ARRAYSIZE(buf));
             HvkGui::PushItemFlag(HvkGuiItemFlags_NoTabStop, true);
-            HvkGui::InputText("4 (tab skip)", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("4 (tab skip)", buf, Hvk_ARRAYSIZE(buf));
             HvkGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
             HvkGui::PopItemFlag();
-            HvkGui::InputText("5", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("5", buf, Hvk_ARRAYSIZE(buf));
             HvkGui::TreePop();
         }
 
@@ -8017,16 +8017,16 @@ static void DemoWindowInputs()
             static char buf[128] = "click on a button to set focus";
 
             if (focus_1) HvkGui::SetKeyboardFocusHere();
-            HvkGui::InputText("1", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("1", buf, Hvk_ARRAYSIZE(buf));
             if (HvkGui::IsItemActive()) has_focus = 1;
 
             if (focus_2) HvkGui::SetKeyboardFocusHere();
-            HvkGui::InputText("2", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("2", buf, Hvk_ARRAYSIZE(buf));
             if (HvkGui::IsItemActive()) has_focus = 2;
 
             HvkGui::PushItemFlag(HvkGuiItemFlags_NoTabStop, true);
             if (focus_3) HvkGui::SetKeyboardFocusHere();
-            HvkGui::InputText("3 (tab skip)", buf, IM_ARRAYSIZE(buf));
+            HvkGui::InputText("3 (tab skip)", buf, Hvk_ARRAYSIZE(buf));
             if (HvkGui::IsItemActive()) has_focus = 3;
             HvkGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
             HvkGui::PopItemFlag();
@@ -8207,19 +8207,19 @@ void HvkGui::ShowAboutWindow(bool* p_open)
         HvkGui::Text("define: NDEBUG");
 #endif
 
-        // Heuristic to detect no-op IM_ASSERT() macros
+        // Heuristic to detect no-op Hvk_ASSERT() macros
         // - This is designed so people opening bug reports would convey and notice that they have disabled asserts for Dear HvkGui code.
         // - 16 is > strlen("((void)(_EXPR))") which we suggested in our Hvkconfig.h template as a possible way to disable.
         int assert_runs_expression = 0;
-        IM_ASSERT(++assert_runs_expression);
-        int assert_expand_len = (int)strlen(IM_STRINGIFY((IM_ASSERT(true))));
+        Hvk_ASSERT(++assert_runs_expression);
+        int assert_expand_len = (int)strlen(Hvk_STRINGIFY((Hvk_ASSERT(true))));
         bool assert_maybe_disabled = (!assert_runs_expression || assert_expand_len <= 16);
-        HvkGui::Text("IM_ASSERT: runs expression: %s. expand size: %s%s",
+        HvkGui::Text("Hvk_ASSERT: runs expression: %s. expand size: %s%s",
             assert_runs_expression ? "OK" : "KO", (assert_expand_len > 16) ? "OK" : "KO", assert_maybe_disabled ? " (MAYBE DISABLED?!)" : "");
         if (assert_maybe_disabled)
         {
             HvkGui::SameLine();
-            HelpMarker("IM_ASSERT() calls assert() by default. Compiling with NDEBUG will usually strip out assert() to nothing, which is NOT recommended because we use asserts to notify of programmer mistakes!");
+            HelpMarker("Hvk_ASSERT() calls assert() by default. Compiling with NDEBUG will usually strip out assert() to nothing, which is NOT recommended because we use asserts to notify of programmer mistakes!");
         }
 
         HvkGui::Separator();
@@ -8284,9 +8284,9 @@ bool HvkGui::ShowStyleSelector(const char* label)
     static int style_idx = -1;
     const char* style_names[] = { "Dark", "Light", "Classic" };
     bool ret = false;
-    if (HvkGui::BeginCombo(label, (style_idx >= 0 && style_idx < IM_ARRAYSIZE(style_names)) ? style_names[style_idx] : ""))
+    if (HvkGui::BeginCombo(label, (style_idx >= 0 && style_idx < Hvk_ARRAYSIZE(style_names)) ? style_names[style_idx] : ""))
     {
-        for (int n = 0; n < IM_ARRAYSIZE(style_names); n++)
+        for (int n = 0; n < Hvk_ARRAYSIZE(style_names); n++)
         {
             if (HvkGui::Selectable(style_names[n], style_idx == n, HvkGuiSelectableFlags_SelectOnNav))
             {
@@ -8491,13 +8491,13 @@ void HvkGui::ShowStyleEditor(HvkGuiStyle* ref)
                     LogToClipboard();
                 else
                     LogToTTY();
-                LogText("HvkVec4* colors = GetStyle().Colors;" IM_NEWLINE);
+                LogText("HvkVec4* colors = GetStyle().Colors;" Hvk_NEWLINE);
                 for (int i = 0; i < HvkGuiCol_COUNT; i++)
                 {
                     const HvkVec4& col = style.Colors[i];
                     const char* name = GetStyleColorName(i);
                     if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(HvkVec4)) != 0)
-                        LogText("colors[HvkGuiCol_%s]%*s= HvkVec4(%.2ff, %.2ff, %.2ff, %.2ff);" IM_NEWLINE,
+                        LogText("colors[HvkGuiCol_%s]%*s= HvkVec4(%.2ff, %.2ff, %.2ff, %.2ff);" Hvk_NEWLINE,
                             name, 23 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
                 }
                 LogFinish();
@@ -8616,7 +8616,7 @@ void HvkGui::ShowStyleEditor(HvkGuiStyle* ref)
                     // N is not always exact here due to how PathArcTo() function work internally
                     Text("R: %.f\nN: %d", rad, draw_list->_CalcCircleAutoSegmentCount(rad));
 
-                    const float canvas_width = IM_MAX(min_widget_width, rad * 2.0f);
+                    const float canvas_width = Hvk_MAX(min_widget_width, rad * 2.0f);
                     const float offset_x     = floorf(canvas_width * 0.5f);
                     const float offset_y     = floorf(RAD_MAX);
 
@@ -8795,7 +8795,7 @@ static void ShowExampleMenuFile()
 
     if (HvkGui::BeginMenu("Disabled", false)) // Disabled
     {
-        IM_ASSERT(0);
+        Hvk_ASSERT(0);
     }
     if (HvkGui::MenuItem("Checked", NULL, true)) {}
     HvkGui::Separator();
@@ -8845,7 +8845,7 @@ struct ExampleAppConsole
     // Portable helpers
     static int   Stricmp(const char* s1, const char* s2)         { int d; while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; } return d; }
     static int   Strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
-    static char* Strdup(const char* s)                           { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = HvkGui::MemAlloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
+    static char* Strdup(const char* s)                           { Hvk_ASSERT(s); size_t len = strlen(s) + 1; void* buf = HvkGui::MemAlloc(len); Hvk_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
     static void  Strtrim(char* s)                                { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
     void    ClearLog()
@@ -8855,14 +8855,14 @@ struct ExampleAppConsole
         Items.clear();
     }
 
-    void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
+    void    AddLog(const char* fmt, ...) Hvk_FMTARGS(2)
     {
         // FIXME-OPT
         char buf[1024];
         va_list args;
         va_start(args, fmt);
-        vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
-        buf[IM_ARRAYSIZE(buf)-1] = 0;
+        vsnprintf(buf, Hvk_ARRAYSIZE(buf), fmt, args);
+        buf[Hvk_ARRAYSIZE(buf)-1] = 0;
         va_end(args);
         Items.push_back(Strdup(buf));
     }
@@ -8887,8 +8887,8 @@ struct ExampleAppConsole
         }
 
         HvkGui::TextWrapped(
-            "This example Hvkplements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
-            "Hvkplementation may want to store entries along with extra data such as timestamp, emitter, etc.");
+            "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
+            "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");
         HvkGui::TextWrapped("Enter 'HELP' for help.");
 
         // TODO: display items starting from the bottom
@@ -8990,7 +8990,7 @@ struct ExampleAppConsole
         // Command-line
         bool reclaim_focus = false;
         HvkGuiInputTextFlags input_text_flags = HvkGuiInputTextFlags_EnterReturnsTrue | HvkGuiInputTextFlags_EscapeClearsAll | HvkGuiInputTextFlags_CallbackCompletion | HvkGuiInputTextFlags_CallbackHistory;
-        if (HvkGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
+        if (HvkGui::InputText("Input", InputBuf, Hvk_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
         {
             char* s = InputBuf;
             Strtrim(s);
@@ -9146,7 +9146,7 @@ struct ExampleAppConsole
                             HistoryPos = -1;
                 }
 
-                // A better Hvkplementation would preserve the data on the current input line along with cursor position.
+                // A better implementation would preserve the data on the current input line along with cursor position.
                 if (prev_history_pos != HistoryPos)
                 {
                     const char* history_str = (HistoryPos >= 0) ? History[HistoryPos] : "";
@@ -9193,7 +9193,7 @@ struct ExampleAppLog
         LineOffsets.push_back(0);
     }
 
-    void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
+    void    AddLog(const char* fmt, ...) Hvk_FMTARGS(2)
     {
         int old_size = Buf.size();
         va_list args;
@@ -9314,8 +9314,8 @@ static void ShowExampleAppLog(bool* p_open)
         const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
         for (int n = 0; n < 5; n++)
         {
-            const char* category = categories[counter % IM_ARRAYSIZE(categories)];
-            const char* word = words[counter % IM_ARRAYSIZE(words)];
+            const char* category = categories[counter % Hvk_ARRAYSIZE(categories)];
+            const char* word = words[counter % Hvk_ARRAYSIZE(words)];
             log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
                 HvkGui::GetFrameCount(), category, HvkGui::GetTime(), word);
             counter++;
@@ -9416,7 +9416,7 @@ struct ExampleAppPropertyEditor
             HvkGui::SetNextItemWidth(-FLT_MIN);
             HvkGui::SetNextItemShortcut(HvkGuiMod_Ctrl | HvkGuiKey_F, HvkGuiInputFlags_Tooltip);
             HvkGui::PushItemFlag(HvkGuiItemFlags_NoNavDefaultFocus, true);
-            if (HvkGui::InputTextWithHint("##Filter", "incl,-excl", Filter.InputBuf, IM_ARRAYSIZE(Filter.InputBuf), HvkGuiInputTextFlags_EscapeClearsAll))
+            if (HvkGui::InputTextWithHint("##Filter", "incl,-excl", Filter.InputBuf, Hvk_ARRAYSIZE(Filter.InputBuf), HvkGuiInputTextFlags_EscapeClearsAll))
                 Filter.Build();
             HvkGui::PopItemFlag();
 
@@ -9463,7 +9463,7 @@ struct ExampleAppPropertyEditor
                         {
                         case HvkGuiDataType_Bool:
                         {
-                            IM_ASSERT(field_desc.DataCount == 1);
+                            Hvk_ASSERT(field_desc.DataCount == 1);
                             HvkGui::Checkbox("##Editor", (bool*)field_ptr);
                             break;
                         }
@@ -9655,7 +9655,7 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
         }
         static void Square(HvkGuiSizeCallbackData* data)
         {
-            data->DesiredSize.x = data->DesiredSize.y = IM_MAX(data->DesiredSize.x, data->DesiredSize.y);
+            data->DesiredSize.x = data->DesiredSize.y = Hvk_MAX(data->DesiredSize.x, data->DesiredSize.y);
         }
         static void Step(HvkGuiSizeCallbackData* data)
         {
@@ -9722,7 +9722,7 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
             if (HvkGui::Button("Set 500x500")) { HvkGui::SetWindowSize(HvkVec2(500, 500)); } HvkGui::SameLine();
             if (HvkGui::Button("Set 800x200")) { HvkGui::SetWindowSize(HvkVec2(800, 200)); }
             HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 20);
-            HvkGui::Combo("Constraint", &type, test_desc, IM_ARRAYSIZE(test_desc));
+            HvkGui::Combo("Constraint", &type, test_desc, Hvk_ARRAYSIZE(test_desc));
             HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 20);
             HvkGui::DragInt("Lines", &display_lines, 0.2f, 1, 100);
             HvkGui::Checkbox("Auto-resize", &auto_resize);
@@ -9885,7 +9885,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
     HvkGui_DEMO_MARKER("Examples/Custom Rendering");
 
     // Tip: If you do a lot of custom rendering, you probably want to use your own geometrical types and benefit of
-    // overloaded operators, etc. Define IM_VEC2_CLASS_EXTRA in Hvkconfig.h to create Hvkplicit conversions between your
+    // overloaded operators, etc. Define Hvk_VEC2_CLASS_EXTRA in Hvkconfig.h to create Hvkplicit conversions between your
     // types and HvkVec2/HvkVec4. Dear HvkGui defines overloaded operators but they are internal to HvkGui.cpp and not
     // exposed outside (to avoid messing with your types) In this example we are not using the maths operators!
 
@@ -9898,22 +9898,22 @@ static void ShowExampleAppCustomRendering(bool* p_open)
 
             // Draw gradients
             // (note that those are currently exacerbating our sRGB/Linear issues)
-            // Calling HvkGui::GetColorU32() multiplies the given colors by the current Style Alpha, but you may pass the IM_COL32() directly as well..
+            // Calling HvkGui::GetColorU32() multiplies the given colors by the current Style Alpha, but you may pass the Hvk_COL32() directly as well..
             HvkGui::Text("Gradients");
             HvkVec2 gradient_size = HvkVec2(HvkGui::CalcItemWidth(), HvkGui::GetFrameHeight());
             {
                 HvkVec2 p0 = HvkGui::GetCursorScreenPos();
                 HvkVec2 p1 = HvkVec2(p0.x + gradient_size.x, p0.y + gradient_size.y);
-                HvkU32 col_a = HvkGui::GetColorU32(IM_COL32(0, 0, 0, 255));
-                HvkU32 col_b = HvkGui::GetColorU32(IM_COL32(255, 255, 255, 255));
+                HvkU32 col_a = HvkGui::GetColorU32(Hvk_COL32(0, 0, 0, 255));
+                HvkU32 col_b = HvkGui::GetColorU32(Hvk_COL32(255, 255, 255, 255));
                 draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
                 HvkGui::InvisibleButton("##gradient1", gradient_size);
             }
             {
                 HvkVec2 p0 = HvkGui::GetCursorScreenPos();
                 HvkVec2 p1 = HvkVec2(p0.x + gradient_size.x, p0.y + gradient_size.y);
-                HvkU32 col_a = HvkGui::GetColorU32(IM_COL32(0, 255, 0, 255));
-                HvkU32 col_b = HvkGui::GetColorU32(IM_COL32(255, 0, 0, 255));
+                HvkU32 col_a = HvkGui::GetColorU32(Hvk_COL32(0, 255, 0, 255));
+                HvkU32 col_b = HvkGui::GetColorU32(Hvk_COL32(255, 0, 0, 255));
                 draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
                 HvkGui::InvisibleButton("##gradient2", gradient_size);
             }
@@ -9964,7 +9964,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 draw_list->AddTriangle(HvkVec2(x+sz*0.5f,y), HvkVec2(x+sz, y+sz-0.5f), HvkVec2(x, y+sz-0.5f), col, th);x += sz + spacing;  // Triangle
                 //draw_list->AddTriangle(HvkVec2(x+sz*0.2f,y), HvkVec2(x, y+sz-0.5f), HvkVec2(x+sz*0.4f, y+sz-0.5f), col, th);x+= sz*0.4f + spacing; // Thin triangle
                 PathConcaveShape(draw_list, x, y, sz); draw_list->PathStroke(col, HvkDrawFlags_Closed, th);          x += sz + spacing;  // Concave Shape
-                //draw_list->AddPolyline(concave_shape, IM_ARRAYSIZE(concave_shape), col, HvkDrawFlags_Closed, th);
+                //draw_list->AddPolyline(concave_shape, Hvk_ARRAYSIZE(concave_shape), col, HvkDrawFlags_Closed, th);
                 draw_list->AddLine(HvkVec2(x, y), HvkVec2(x + sz, y), col, th);                                       x += sz + spacing;  // Horizontal line (note: drawing a filled rectangle will be faster!)
                 draw_list->AddLine(HvkVec2(x, y), HvkVec2(x, y + sz), col, th);                                       x += spacing;       // Vertical line (note: drawing a filled rectangle will be faster!)
                 draw_list->AddLine(HvkVec2(x, y), HvkVec2(x + sz, y + sz), col, th);                                  x += sz + spacing;  // Diagonal line
@@ -10010,7 +10010,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             draw_list->PathFillConvex(col);
             x += sz + spacing;
 
-            draw_list->AddRectFilledMultiColor(HvkVec2(x, y), HvkVec2(x + sz, y + sz), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
+            draw_list->AddRectFilledMultiColor(HvkVec2(x, y), HvkVec2(x + sz, y + sz), Hvk_COL32(0, 0, 0, 255), Hvk_COL32(255, 0, 0, 255), Hvk_COL32(255, 255, 0, 255), Hvk_COL32(0, 255, 0, 255));
             x += sz + spacing;
 
             HvkGui::Dummy(HvkVec2((sz + spacing) * 13.2f, (sz + spacing) * 3.0f));
@@ -10034,7 +10034,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             // Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
             // To use a child window instead we could use, e.g:
             //      HvkGui::PushStyleVar(HvkGuiStyleVar_WindowPadding, HvkVec2(0, 0));      // Disable padding
-            //      HvkGui::PushStyleColor(HvkGuiCol_ChildBg, IM_COL32(50, 50, 50, 255));  // Set a background color
+            //      HvkGui::PushStyleColor(HvkGuiCol_ChildBg, Hvk_COL32(50, 50, 50, 255));  // Set a background color
             //      HvkGui::BeginChild("canvas", HvkVec2(0.0f, 0.0f), HvkGuiChildFlags_Borders, HvkGuiWindowFlags_NoMove);
             //      HvkGui::PopStyleColor();
             //      HvkGui::PopStyleVar();
@@ -10051,8 +10051,8 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             // Draw border and background color
             HvkGuiIO& io = HvkGui::GetIO();
             HvkDrawList* draw_list = HvkGui::GetWindowDrawList();
-            draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-            draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+            draw_list->AddRectFilled(canvas_p0, canvas_p1, Hvk_COL32(50, 50, 50, 255));
+            draw_list->AddRect(canvas_p0, canvas_p1, Hvk_COL32(255, 255, 255, 255));
 
             // This will catch our interactions
             HvkGui::InvisibleButton("canvas", canvas_sz, HvkGuiButtonFlags_MouseButtonLeft | HvkGuiButtonFlags_MouseButtonRight);
@@ -10104,12 +10104,12 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             {
                 const float GRID_STEP = 64.0f;
                 for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-                    draw_list->AddLine(HvkVec2(canvas_p0.x + x, canvas_p0.y), HvkVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
+                    draw_list->AddLine(HvkVec2(canvas_p0.x + x, canvas_p0.y), HvkVec2(canvas_p0.x + x, canvas_p1.y), Hvk_COL32(200, 200, 200, 40));
                 for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-                    draw_list->AddLine(HvkVec2(canvas_p0.x, canvas_p0.y + y), HvkVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
+                    draw_list->AddLine(HvkVec2(canvas_p0.x, canvas_p0.y + y), HvkVec2(canvas_p1.x, canvas_p0.y + y), Hvk_COL32(200, 200, 200, 40));
             }
             for (int n = 0; n < points.Size; n += 2)
-                draw_list->AddLine(HvkVec2(origin.x + points[n].x, origin.y + points[n].y), HvkVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+                draw_list->AddLine(HvkVec2(origin.x + points[n].x, origin.y + points[n].y), HvkVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), Hvk_COL32(255, 255, 0, 255), 2.0f);
             draw_list->PopClipRect();
 
             HvkGui::EndTabItem();
@@ -10127,9 +10127,9 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             HvkVec2 window_size = HvkGui::GetWindowSize();
             HvkVec2 window_center = HvkVec2(window_pos.x + window_size.x * 0.5f, window_pos.y + window_size.y * 0.5f);
             if (draw_bg)
-                HvkGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * 0.6f, IM_COL32(255, 0, 0, 200), 0, 10 + 4);
+                HvkGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * 0.6f, Hvk_COL32(255, 0, 0, 200), 0, 10 + 4);
             if (draw_fg)
-                HvkGui::GetForegroundDrawList()->AddCircle(window_center, window_size.y * 0.6f, IM_COL32(0, 255, 0, 200), 0, 10);
+                HvkGui::GetForegroundDrawList()->AddCircle(window_center, window_size.y * 0.6f, Hvk_COL32(0, 255, 0, 200), 0, 10);
             HvkGui::EndTabItem();
         }
 
@@ -10143,8 +10143,8 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 HvkGui::Text("Blue shape is drawn first: appears in back");
                 HvkGui::Text("Red shape is drawn after: appears in front");
                 HvkVec2 p0 = HvkGui::GetCursorScreenPos();
-                draw_list->AddRectFilled(HvkVec2(p0.x, p0.y), HvkVec2(p0.x + 50, p0.y + 50), IM_COL32(0, 0, 255, 255)); // Blue
-                draw_list->AddRectFilled(HvkVec2(p0.x + 25, p0.y + 25), HvkVec2(p0.x + 75, p0.y + 75), IM_COL32(255, 0, 0, 255)); // Red
+                draw_list->AddRectFilled(HvkVec2(p0.x, p0.y), HvkVec2(p0.x + 50, p0.y + 50), Hvk_COL32(0, 0, 255, 255)); // Blue
+                draw_list->AddRectFilled(HvkVec2(p0.x + 25, p0.y + 25), HvkVec2(p0.x + 75, p0.y + 75), Hvk_COL32(255, 0, 0, 255)); // Red
                 HvkGui::Dummy(HvkVec2(75, 75));
             }
             HvkGui::Separator();
@@ -10157,9 +10157,9 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 // You can create any number of channels. Tables API use 1 channel per column in order to better batch draw calls.
                 draw_list->ChannelsSplit(2);
                 draw_list->ChannelsSetCurrent(1);
-                draw_list->AddRectFilled(HvkVec2(p1.x, p1.y), HvkVec2(p1.x + 50, p1.y + 50), IM_COL32(0, 0, 255, 255)); // Blue
+                draw_list->AddRectFilled(HvkVec2(p1.x, p1.y), HvkVec2(p1.x + 50, p1.y + 50), Hvk_COL32(0, 0, 255, 255)); // Blue
                 draw_list->ChannelsSetCurrent(0);
-                draw_list->AddRectFilled(HvkVec2(p1.x + 25, p1.y + 25), HvkVec2(p1.x + 75, p1.y + 75), IM_COL32(255, 0, 0, 255)); // Red
+                draw_list->AddRectFilled(HvkVec2(p1.x + 25, p1.y + 25), HvkVec2(p1.x + 75, p1.y + 75), Hvk_COL32(255, 0, 0, 255)); // Red
 
                 // Flatten/reorder channels. Red shape is in channel 0 and it appears below the Blue shape in channel 1.
                 // This works by copying draw indices only (vertices are not copied).
@@ -10414,7 +10414,7 @@ void ShowExampleAppDocuments(bool* p_open)
         if (HvkGui::BeginPopup("Rename"))
         {
             HvkGui::SetNextItemWidth(HvkGui::GetFontSize() * 30);
-            if (HvkGui::InputText("###Name", app.RenamingDoc->Name, IM_ARRAYSIZE(app.RenamingDoc->Name), HvkGuiInputTextFlags_EnterReturnsTrue))
+            if (HvkGui::InputText("###Name", app.RenamingDoc->Name, Hvk_ARRAYSIZE(app.RenamingDoc->Name), HvkGuiInputTextFlags_EnterReturnsTrue))
             {
                 HvkGui::CloseCurrentPopup();
                 app.RenamingDoc = NULL;
@@ -10599,7 +10599,7 @@ struct ExampleAssetsBrowser
 
         // Layout: calculate number of icon per line and number of lines
         LayoutItemSize = HvkVec2(floorf(IconSize), floorf(IconSize));
-        LayoutColumnCount = IM_MAX((int)(avail_width / (LayoutItemSize.x + LayoutItemSpacing)), 1);
+        LayoutColumnCount = Hvk_MAX((int)(avail_width / (LayoutItemSize.x + LayoutItemSpacing)), 1);
         LayoutLineCount = (Items.Size + LayoutColumnCount - 1) / LayoutColumnCount;
 
         // Layout: when stretching: allocate remaining space to more spacing. Round before division, so item_spacing may be non-integer.
@@ -10607,7 +10607,7 @@ struct ExampleAssetsBrowser
             LayoutItemSpacing = floorf(avail_width - LayoutItemSize.x * LayoutColumnCount) / LayoutColumnCount;
 
         LayoutItemStep = HvkVec2(LayoutItemSize.x + LayoutItemSpacing, LayoutItemSize.y + LayoutItemSpacing);
-        LayoutSelectableSpacing = IM_MAX(floorf(LayoutItemSpacing) - IconHitSpacing, 0.0f);
+        LayoutSelectableSpacing = Hvk_MAX(floorf(LayoutItemSpacing) - IconHitSpacing, 0.0f);
         LayoutOuterPadding = floorf(LayoutItemSpacing * 0.5f);
     }
 
@@ -10713,7 +10713,7 @@ struct ExampleAssetsBrowser
             // - Enable keyboard wrapping on X axis
             // (FIXME-MULTISELECT: We haven't designed/exposed a general nav wrapping api yet, so this flag is provided as a courtesy to avoid doing:
             //    HvkGui::NavMoveRequestTryWrapping(HvkGui::GetCurrentWindow(), HvkGuiNavMoveFlags_WrapX);
-            // When we finish Hvkplementing a more general API for this, we will obsolete this flag in favor of the new system)
+            // When we finish implementing a more general API for this, we will obsolete this flag in favor of the new system)
             ms_flags |= HvkGuiMultiSelectFlags_NavWrapX;
 
             HvkGuiMultiSelectIO* ms_io = HvkGui::BeginMultiSelect(ms_flags, Selection.Size, Items.Size);
@@ -10735,8 +10735,8 @@ struct ExampleAssetsBrowser
             HvkGui::PushStyleVar(HvkGuiStyleVar_ItemSpacing, HvkVec2(LayoutSelectableSpacing, LayoutSelectableSpacing));
 
             // Rendering parameters
-            const HvkU32 icon_type_overlay_colors[3] = { 0, IM_COL32(200, 70, 70, 255), IM_COL32(70, 170, 70, 255) };
-            const HvkU32 icon_bg_color = HvkGui::GetColorU32(IM_COL32(35, 35, 35, 220));
+            const HvkU32 icon_type_overlay_colors[3] = { 0, Hvk_COL32(200, 70, 70, 255), Hvk_COL32(70, 170, 70, 255) };
+            const HvkU32 icon_bg_color = HvkGui::GetColorU32(Hvk_COL32(35, 35, 35, 220));
             const HvkVec2 icon_type_overlay_size = HvkVec2(4.0f, 4.0f);
             const bool display_label = (LayoutItemSize.x >= HvkGui::CalcTextSize("999").x);
 
@@ -10752,7 +10752,7 @@ struct ExampleAssetsBrowser
                 for (int line_idx = clipper.DisplayStart; line_idx < clipper.DisplayEnd; line_idx++)
                 {
                     const int item_min_idx_for_current_line = line_idx * column_count;
-                    const int item_max_idx_for_current_line = IM_MIN((line_idx + 1) * column_count, Items.Size);
+                    const int item_max_idx_for_current_line = Hvk_MIN((line_idx + 1) * column_count, Items.Size);
                     for (int item_idx = item_min_idx_for_current_line; item_idx < item_max_idx_for_current_line; ++item_idx)
                     {
                         ExampleAsset* item_data = &Items[item_idx];
@@ -10767,7 +10767,7 @@ struct ExampleAssetsBrowser
                         bool item_is_visible = HvkGui::IsRectVisible(LayoutItemSize);
                         HvkGui::Selectable("", item_is_selected, HvkGuiSelectableFlags_None, LayoutItemSize);
 
-                        // Update our selection state Hvkmediately (without waiting for EndMultiSelect() requests)
+                        // Update our selection state immediately (without waiting for EndMultiSelect() requests)
                         // because we use this to alter the color of our text/icon.
                         if (HvkGui::IsItemToggledSelection())
                             item_is_selected = !item_is_selected;
@@ -10812,7 +10812,7 @@ struct ExampleAssetsBrowser
                             draw_list->AddRectFilled(box_min, box_max, icon_bg_color); // Background color
                             if (ShowTypeOverlay && item_data->Type != 0)
                             {
-                                HvkU32 type_col = icon_type_overlay_colors[item_data->Type % IM_ARRAYSIZE(icon_type_overlay_colors)];
+                                HvkU32 type_col = icon_type_overlay_colors[item_data->Type % Hvk_ARRAYSIZE(icon_type_overlay_colors)];
                                 draw_list->AddRectFilled(HvkVec2(box_max.x - 2 - icon_type_overlay_size.x, box_min.y + 2), HvkVec2(box_max.x - 2, box_min.y + 2 + icon_type_overlay_size.y), type_col);
                             }
                             if (display_label)
@@ -10863,7 +10863,7 @@ struct ExampleAssetsBrowser
 
                     // Zoom
                     IconSize *= powf(1.1f, (float)(int)ZoomWheelAccum);
-                    IconSize = IM_CLAMP(IconSize, 16.0f, 128.0f);
+                    IconSize = Hvk_CLAMP(IconSize, 16.0f, 128.0f);
                     ZoomWheelAccum -= (int)ZoomWheelAccum;
                     UpdateLayoutSizes(avail_width);
 

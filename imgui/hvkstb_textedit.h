@@ -12,8 +12,8 @@
 // stb_textedit.h - v1.14  - public domain - Sean Barrett
 // Development of this library was sponsored by RAD Game Tools
 //
-// This C header file Hvkplements the guts of a multi-line text-editing
-// widget; you Hvkplement display, word-wrapping, and low-level string
+// This C header file implements the guts of a multi-line text-editing
+// widget; you implement display, word-wrapping, and low-level string
 // insertion/deletion, and stb_textedit will map user inputs into
 // insertions & deletions, plus updates to the cursor position,
 // selection state, and undo state.
@@ -34,7 +34,7 @@
 // DEPENDENCIES
 //
 // Uses the C runtime function 'memmove', which you can override
-// by defining HvkSTB_TEXTEDIT_memmove before the Hvkplementation.
+// by defining HvkSTB_TEXTEDIT_memmove before the implementation.
 // Uses no other functions. Performs no runtime allocations.
 //
 //
@@ -105,13 +105,13 @@
 //      +          sizeof(STB_TEXTEDIT_CHARTYPE)      * STB_TEXTEDIT_UNDOCHARCOUNT
 //
 //
-// Hvkplementation mode:
+// implementation mode:
 //
 //   If you define STB_TEXTEDIT_IMPLEMENTATION before including this, it
-//   will compile the Hvkplementation of the text edit widget, depending
+//   will compile the implementation of the text edit widget, depending
 //   on a large number of symbols which must be defined before the include.
 //
-//   The Hvkplementation is defined only as static functions. You will then
+//   The implementation is defined only as static functions. You will then
 //   need to provide your own APIs in the same file which will access the
 //   static functions.
 //
@@ -122,14 +122,14 @@
 //   rich text; even with rich text stb_truetype interacts with your
 //   code as if there was an array of all the displayed characters.
 //
-// Symbols that must be the same in header-file and Hvkplementation mode:
+// Symbols that must be the same in header-file and implementation mode:
 //
 //     STB_TEXTEDIT_CHARTYPE             the character type
 //     STB_TEXTEDIT_POSITIONTYPE         small type that is a valid cursor position
 //     STB_TEXTEDIT_UNDOSTATECOUNT       the number of undo states to allow
 //     STB_TEXTEDIT_UNDOCHARCOUNT        the number of characters to store in the undo buffer
 //
-// Symbols you must define for Hvkplementation mode:
+// Symbols you must define for implementation mode:
 //
 //    STB_TEXTEDIT_STRING               the type of object representing a string being edited,
 //                                      typically this is a wrapper object with other data you need
@@ -196,7 +196,7 @@
 //
 // You can encode other things, such as CONTROL or ALT, in additional bits, and
 // then test for their presence in e.g. STB_TEXTEDIT_K_WORDLEFT. For example,
-// my Windows Hvkplementations add an additional CONTROL bit, and an additional KEYDOWN
+// my Windows implementations add an additional CONTROL bit, and an additional KEYDOWN
 // bit. Then all of the STB_TEXTEDIT_K_ values bitwise-or in the KEYDOWN bit,
 // and I pass both WM_KEYDOWN and WM_CHAR events to the "key" function in the
 // API below. The control keys will only match WM_KEYDOWN events because of the
@@ -368,7 +368,7 @@ typedef struct STB_TexteditState
    //
    // private data
    //
-   unsigned char cursor_at_end_of_line; // not Hvkplemented yet
+   unsigned char cursor_at_end_of_line; // not implemented yet
    unsigned char initialized;
    unsigned char has_preferred_x;
    unsigned char single_line;
@@ -399,12 +399,12 @@ typedef struct
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////
-////   Hvkplementation mode
+////   implementation mode
 ////
 ////
 
 
-// Hvkplementation isn't include-guarded, since it might have indirectly
+// implementation isn't include-guarded, since it might have indirectly
 // included just the "header" portion
 #ifdef HvkSTB_TEXTEDIT_IMPLEMENTATION
 
@@ -414,7 +414,7 @@ typedef struct
 #endif
 
 // [DEAR HvkGui]
-// Functions must be Hvkplemented for UTF8 support
+// Functions must be implemented for UTF8 support
 // Code in this file that uses those functions is modified for [DEAR HvkGui] and deviates from the original stb_textedit.
 // There is not necessarily a '[DEAR HvkGui]' at the usage sites.
 #ifndef HvkSTB_TEXTEDIT_GETPREVCHARINDEX
@@ -1247,8 +1247,8 @@ static void stb_textedit_discard_redo(StbUndoState *state)
       size_t move_size = (size_t)((HvkSTB_TEXTEDIT_UNDOSTATECOUNT - state->redo_point - 1) * sizeof(state->undo_rec[0]));
       const char* buf_begin = (char*)state->undo_rec; (void)buf_begin;
       const char* buf_end   = (char*)state->undo_rec + sizeof(state->undo_rec); (void)buf_end;
-      IM_ASSERT(((char*)(state->undo_rec + state->redo_point)) >= buf_begin);
-      IM_ASSERT(((char*)(state->undo_rec + state->redo_point + 1) + move_size) <= buf_end);
+      Hvk_ASSERT(((char*)(state->undo_rec + state->redo_point)) >= buf_begin);
+      Hvk_ASSERT(((char*)(state->undo_rec + state->redo_point + 1) + move_size) <= buf_end);
       HvkSTB_TEXTEDIT_memmove(state->undo_rec + state->redo_point+1, state->undo_rec + state->redo_point, move_size);
 
       // now move redo_point to point to the new one

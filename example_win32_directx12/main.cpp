@@ -222,7 +222,7 @@ int main(int, char**)
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
 	//HvkFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
-	//IM_ASSERT(font != nullptr);
+	//Hvk_ASSERT(font != nullptr);
 
 	// Our state
 	bool show_demo_window = true;

@@ -1,7 +1,7 @@
 // dear HvkGui: Platform Backend for Windows (standard windows API for 32-bits AND 64-bits applications)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 
-// Hvkplemented features:
+// implemented features:
 //  [X] Platform: Clipboard support (for Win32 this is actually part of core dear HvkGui)
 //  [X] Platform: Mouse support. Can discriminate Mouse/TouchScreen/Pen.
 //  [X] Platform: Keyboard support. Since 1.87 we are using the io.AddKeyEvent() function. Pass HvkGuiKey values to all key functions e.g. HvkGui::IsKeyPressed(HvkGuiKey_Space). [Legacy VK_* values are obsolete since 1.87 and not supported since 1.91.5]

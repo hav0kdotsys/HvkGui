@@ -100,9 +100,9 @@
 //   file, write:
 //      #define STB_TRUETYPE_IMPLEMENTATION
 //   before the #include of this file. This expands out the actual
-//   Hvkplementation into that C/C++ file.
+//   implementation into that C/C++ file.
 //
-//   To make the Hvkplementation private to the file that generates the Hvkplementation,
+//   To make the implementation private to the file that generates the implementation,
 //      #define STBTT_STATIC
 //
 //   Simple 3D API (don't ship this, but it's fine for tools and quick start)
@@ -144,7 +144,7 @@
 //
 // ADDITIONAL DOCUMENTATION
 //
-//   Hvkmediately after this block comment are a series of sample programs.
+//   immediately after this block comment are a series of sample programs.
 //
 //   After the sample programs is the "header file" section. This section
 //   includes documentation for each API function.
@@ -280,7 +280,7 @@
 //  Incomplete text-in-3d-api example, which draws quads properly aligned to be lossless.
 //  See "tests/truetype_demo_win32.c" for a complete version.
 #if 0
-#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate Hvkplementation
+#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
 #include "stb_truetype.h"
 
 unsigned char ttf_buffer[1<<20];
@@ -331,7 +331,7 @@ void my_stbtt_print(float x, float y, char *text)
 //
 #if 0
 #include <stdio.h>
-#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate Hvkplementation
+#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
 #include "stb_truetype.h"
 
 char ttf_buffer[1<<25];
@@ -1104,7 +1104,7 @@ enum { // languageID for STBTT_PLATFORM_ID_MAC
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ////
-////   HvkPLEMENTATION
+////   implementation
 ////
 ////
 
@@ -2029,7 +2029,7 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
       clear_stack = 1;
       b0 = stbtt__buf_get8(&b);
       switch (b0) {
-      // @TODO Hvkplement hinting
+      // @TODO implement hinting
       case 0x13: // hintmask
       case 0x14: // cntrmask
          if (in_header)
@@ -2171,7 +2171,7 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
          float dx, dy;
          int b1 = stbtt__buf_get8(&b);
          switch (b1) {
-         // @TODO These "flex" Hvkplementations ignore the flex-depth and resolution,
+         // @TODO These "flex" implementations ignore the flex-depth and resolution,
          // and always draw beziers.
          case 0x22: // hflex
             if (sp < 7) return STBTT__CSERR("hflex stack");
@@ -2252,7 +2252,7 @@ static int stbtt__run_charstring(const stbtt_fontinfo *info, int glyph_index, st
          if (b0 != 255 && b0 != 28 && b0 < 32)
             return STBTT__CSERR("reserved operator");
 
-         // push Hvkmediate
+         // push immediate
          if (b0 == 255) {
             f = (float)(stbtt_int32)stbtt__buf_get32(&b) / 0x10000;
          } else {
@@ -3239,7 +3239,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
             // if edge goes outside of box we're drawing, we require
             // clipping logic. since this does not match the intended use
             // of this library, we use a different, very slow brute
-            // force Hvkplementation
+            // force implementation
             // note though that this does happen some of the time because
             // x_top and x_bottom can be extrapolated at the top & bottom of
             // the shape and actually lie outside the bounding box
@@ -4869,7 +4869,7 @@ static int stbtt__matchpair(stbtt_uint8 *fc, stbtt_uint32 nm, stbtt_uint8 *name,
             // check if there's a prefix match
             stbtt_int32 matchlen = stbtt__CompareUTF8toUTF16_bigendian_prefix(name, nlen, fc+stringOffset+off,slen);
             if (matchlen >= 0) {
-               // check for target_id+1 Hvkmediately following, with same encoding & language
+               // check for target_id+1 immediately following, with same encoding & language
                if (i+1 < count && ttUSHORT(fc+loc+12+6) == next_id && ttUSHORT(fc+loc+12) == platform && ttUSHORT(fc+loc+12+2) == encoding && ttUSHORT(fc+loc+12+4) == language) {
                   slen = ttUSHORT(fc+loc+12+8);
                   off = ttUSHORT(fc+loc+12+10);
@@ -4882,7 +4882,7 @@ static int stbtt__matchpair(stbtt_uint8 *fc, stbtt_uint32 nm, stbtt_uint8 *name,
                         return 1;
                   }
                } else {
-                  // if nothing Hvkmediately following
+                  // if nothing immediately following
                   if (matchlen == nlen)
                      return 1;
                }

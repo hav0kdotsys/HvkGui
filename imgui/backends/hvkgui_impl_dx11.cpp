@@ -1,7 +1,7 @@
 // dear HvkGui: Renderer Backend for DirectX11
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
-// Hvkplemented features:
+// implemented features:
 //  [X] Renderer: User texture binding. Use 'ID3D11ShaderResourceView*' as texture identifier. Read the FAQ about HvkTextureID/HvkTextureRef!
 //  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (HvkGuiBackendFlags_RendererHasVtxOffset).
 //  [X] Renderer: Texture updates support for dynamic font atlas (HvkGuiBackendFlags_RendererHasTextures).
@@ -343,10 +343,10 @@ static void HvkGui_ImplDX11_DestroyTexture(HvkTextureData* tex)
 {
     if (HvkGui_ImplDX11_Texture* backend_tex = (HvkGui_ImplDX11_Texture*)tex->BackendUserData)
     {
-        IM_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
+        Hvk_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
         backend_tex->pTextureView->Release();
         backend_tex->pTexture->Release();
-        IM_DELETE(backend_tex);
+        Hvk_DELETE(backend_tex);
 
         // Clear identifiers and mark as destroyed (in order to allow e.g. calling InvalidateDeviceObjects while running)
         tex->SetTexID(HvkTextureID_Invalid);
@@ -362,10 +362,10 @@ void HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex)
     {
         // Create and upload new texture to graphics system
         //HvkGui_DEBUG_LOG("UpdateTexture #%03d: WantCreate %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
-        IM_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == nullptr);
-        IM_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
+        Hvk_ASSERT(tex->TexID == HvkTextureID_Invalid && tex->BackendUserData == nullptr);
+        Hvk_ASSERT(tex->Format == HvkTextureFormat_RGBA32);
         unsigned int* pixels = (unsigned int*)tex->GetPixels();
-        HvkGui_ImplDX11_Texture* backend_tex = IM_NEW(HvkGui_ImplDX11_Texture)();
+        HvkGui_ImplDX11_Texture* backend_tex = Hvk_NEW(HvkGui_ImplDX11_Texture)();
 
         // Create texture
         D3D11_TEXTURE2D_DESC desc;
@@ -384,7 +384,7 @@ void HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex)
         subResource.SysMemPitch = desc.Width * 4;
         subResource.SysMemSlicePitch = 0;
         bd->pd3dDevice->CreateTexture2D(&desc, &subResource, &backend_tex->pTexture);
-        IM_ASSERT(backend_tex->pTexture != nullptr && "Backend failed to create texture!");
+        Hvk_ASSERT(backend_tex->pTexture != nullptr && "Backend failed to create texture!");
 
         // Create texture view
         D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -394,7 +394,7 @@ void HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex)
         srvDesc.Texture2D.MipLevels = desc.MipLevels;
         srvDesc.Texture2D.MostDetailedMip = 0;
         bd->pd3dDevice->CreateShaderResourceView(backend_tex->pTexture, &srvDesc, &backend_tex->pTextureView);
-        IM_ASSERT(backend_tex->pTextureView != nullptr && "Backend failed to create texture!");
+        Hvk_ASSERT(backend_tex->pTextureView != nullptr && "Backend failed to create texture!");
 
         // Store identifiers
         tex->SetTexID((HvkTextureID)(intptr_t)backend_tex->pTextureView);
@@ -406,7 +406,7 @@ void HvkGui_ImplDX11_UpdateTexture(HvkTextureData* tex)
         // Update selected blocks. We only ever write to textures regions which have never been used before!
         // This backend choose to use tex->Updates[] but you can use tex->UpdateRect to upload a single region.
         HvkGui_ImplDX11_Texture* backend_tex = (HvkGui_ImplDX11_Texture*)tex->BackendUserData;
-        IM_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
+        Hvk_ASSERT(backend_tex->pTextureView == (ID3D11ShaderResourceView*)(intptr_t)tex->TexID);
         for (HvkTextureRect& r : tex->Updates)
         {
             D3D11_BOX box = { (UINT)r.x, (UINT)r.y, (UINT)0, (UINT)(r.x + r.w), (UINT)(r.y + r .h), (UINT)1 };
@@ -612,10 +612,10 @@ bool    HvkGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_c
 {
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGui_CHECKVERSION();
-    IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
+    Hvk_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
 
     // Setup backend capabilities flags
-    HvkGui_ImplDX11_Data* bd = IM_NEW(HvkGui_ImplDX11_Data)();
+    HvkGui_ImplDX11_Data* bd = Hvk_NEW(HvkGui_ImplDX11_Data)();
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "HvkGui_impl_dx11";
     io.BackendFlags |= HvkGuiBackendFlags_RendererHasVtxOffset;  // We can honor the HvkDrawCmd::VtxOffset field, allowing for large meshes.
@@ -648,7 +648,7 @@ bool    HvkGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_c
 void HvkGui_ImplDX11_Shutdown()
 {
     HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
-    IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
+    Hvk_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
     HvkGuiIO& io = HvkGui::GetIO();
     HvkGuiPlatformIO& platform_io = HvkGui::GetPlatformIO();
 
@@ -661,17 +661,17 @@ void HvkGui_ImplDX11_Shutdown()
     io.BackendRendererUserData = nullptr;
     io.BackendFlags &= ~(HvkGuiBackendFlags_RendererHasVtxOffset | HvkGuiBackendFlags_RendererHasTextures);
     platform_io.ClearRendererHandlers();
-    IM_DELETE(bd);
+    Hvk_DELETE(bd);
 }
 
 void HvkGui_ImplDX11_NewFrame()
 {
     HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call HvkGui_ImplDX11_Init()?");
+    Hvk_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call HvkGui_ImplDX11_Init()?");
 
     if (!bd->pVertexShader)
         if (!HvkGui_ImplDX11_CreateDeviceObjects())
-            IM_ASSERT(0 && "HvkGui_ImplDX11_CreateDeviceObjects() failed!");
+            Hvk_ASSERT(0 && "HvkGui_ImplDX11_CreateDeviceObjects() failed!");
 }
 
 //-----------------------------------------------------------------------------

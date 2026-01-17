@@ -197,8 +197,8 @@ struct HvkGuiListClipper;            // Helper to manually clip large list of it
 struct HvkGuiMultiSelectIO;          // Structure to interact with a BeginMultiSelect()/EndMultiSelect() block
 struct HvkGuiOnceUponAFrame;         // Helper for running a block of code not more than once a frame
 struct HvkGuiPayload;                // User data payload for drag and drop operations
-struct HvkGuiPlatformIO;             // Interface between platform/renderer backends and HvkGui (e.g. Clipboard, HvkE hooks). Extends HvkGuiIO. In docking branch, this gets extended to support multi-viewports.
-struct HvkGuiPlatformImeData;        // Platform HvkE data for io.PlatformSetImeDataFn() function.
+struct HvkGuiPlatformIO;             // Interface between platform/renderer backends and HvkGui (e.g. Clipboard, IME hooks). Extends HvkGuiIO. In docking branch, this gets extended to support multi-viewports.
+struct HvkGuiPlatformImeData;        // Platform IME data for io.PlatformSetImeDataFn() function.
 struct HvkGuiSelectionBasicStorage;  // Optional helper to store multi-selection state + apply multi-selection requests.
 struct HvkGuiSelectionExternalStorage;//Optional helper to apply multi-selection requests to existing randomly accessible storage.
 struct HvkGuiSelectionRequest;       // A selection request (stored in HvkGuiMultiSelectIO)
@@ -332,7 +332,7 @@ Hvk_MSVC_RUNTIME_CHECKS_RESTORE
 //   - To use something other than a 64-bit value: add '#define HvkTextureID MyTextureType*' in your Hvkconfig.h file.
 //   - This can be whatever to you want it to be! read the FAQ entry about textures for details.
 //   - You may decide to store a higher-level structure containing texture, sampler, shader etc. with various
-//     constructors if you like. You will need to Hvkplement ==/!= operators.
+//     constructors if you like. You will need to implement ==/!= operators.
 // History:
 // - In v1.91.4 (2024/10/08): the default type for HvkTextureID was changed from 'void*' to 'HvkU64'. This allowed backends requiring 64-bit worth of data to build on 32-bit architectures. Use intermediary intptr_t cast and read FAQ if you have casting warnings.
 // - In v1.92.0 (2025/06/11): added HvkTextureRef which carry either a HvkTextureID either a pointer to internal texture atlas. All user facing functions taking HvkTextureID changed to HvkTextureRef
@@ -370,7 +370,7 @@ struct HvkTextureRef
     HvkTextureRef(void* tex_id)              { _TexData = NULL; _TexID = (HvkTextureID)(size_t)tex_id; }  // For legacy backends casting to HvkTextureID
 #endif
 
-    inline HvkTextureID  GetTexID() const;   // == (_TexData ? _TexData->TexID : _TexID) // Hvkplemented below in the file.
+    inline HvkTextureID  GetTexID() const;   // == (_TexData ? _TexData->TexID : _TexID) // implemented below in the file.
 
     // Members (either are set, never both!)
     HvkTextureData*      _TexData;           //      A texture, generally owned by a HvkFontAtlas. Will convert to HvkTextureID during render loop, after texture has been uploaded.
@@ -396,7 +396,7 @@ namespace HvkGui
 
     // Main
     HvkGui_API HvkGuiIO&      GetIO();                                    // access the HvkGuiIO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)
-    HvkGui_API HvkGuiPlatformIO& GetPlatformIO();                         // access the HvkGuiPlatformIO structure (mostly hooks/functions to connect to platform/renderer and OS Clipboard, HvkE etc.)
+    HvkGui_API HvkGuiPlatformIO& GetPlatformIO();                         // access the HvkGuiPlatformIO structure (mostly hooks/functions to connect to platform/renderer and OS Clipboard, IME etc.)
     HvkGui_API HvkGuiStyle&   GetStyle();                                 // access the Style structure (colors, sizes). Always use PushStyleColor(), PushStyleVar() to modify style mid-frame!
     HvkGui_API void          NewFrame();                                 // start a new Dear HvkGui frame, you can submit any command from this point until Render()/EndFrame().
     HvkGui_API void          EndFrame();                                 // ends the Dear HvkGui frame. automatically called by Render(). If you don't need to render data (skipping rendering) you may call EndFrame() without Render()... but you'll have wasted CPU already! If you don't need to render, better to not create any windows and not call NewFrame() at all!
@@ -768,7 +768,7 @@ namespace HvkGui
     // - HvkGuiSelectionUserData is often used to store your item index within the current view (but may store something else).
     // - Read comments near HvkGuiMultiSelectIO for instructions/details and see 'Demo->Widgets->Selection State & Multi-Select' for demo.
     // - TreeNode() is technically supported but... using this correctly is more complicated. You need some sort of linear/random access to your tree,
-    //   which is suited to advanced trees setups already Hvkplementing filters and clipper. We will work simplifying the current demo.
+    //   which is suited to advanced trees setups already implementing filters and clipper. We will work simplifying the current demo.
     // - 'selection_size' and 'items_count' parameters are optional and used by a few features. If they are costly for you to compute, you may avoid them.
     HvkGui_API HvkGuiMultiSelectIO*   BeginMultiSelect(HvkGuiMultiSelectFlags flags, int selection_size = -1, int items_count = -1);
     HvkGui_API HvkGuiMultiSelectIO*   EndMultiSelect();
@@ -1413,7 +1413,7 @@ enum HvkGuiTabItemFlags_
     HvkGuiTabItemFlags_NoReorder                     = 1 << 5,   // Disable reordering this tab or having another tab cross over this tab
     HvkGuiTabItemFlags_Leading                       = 1 << 6,   // Enforce the tab position to the left of the tab bar (after the tab list popup button)
     HvkGuiTabItemFlags_Trailing                      = 1 << 7,   // Enforce the tab position to the right of the tab bar (before the scrolling buttons)
-    HvkGuiTabItemFlags_NoAssumedClosure              = 1 << 8,   // Tab is selected when trying to close + closure is not Hvkmediately assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
+    HvkGuiTabItemFlags_NoAssumedClosure              = 1 << 8,   // Tab is selected when trying to close + closure is not immediately assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
 };
 
 // Flags for HvkGui::IsWindowFocused()
@@ -1462,7 +1462,7 @@ enum HvkGuiHoveredFlags_
     // - generally you can use HvkGuiHoveredFlags_ForTooltip to use application-standardized flags.
     // - use those if you need specific overrides.
     HvkGuiHoveredFlags_Stationary                    = 1 << 13,  // Require mouse to be stationary for style.HoverStationaryDelay (~0.15 sec) _at least one time_. After this, can move on same item/window. Using the stationary test tends to reduces the need for a long delay.
-    HvkGuiHoveredFlags_DelayNone                     = 1 << 14,  // IsItemHovered() only: Return true Hvkmediately (default). As this is the default you generally ignore this.
+    HvkGuiHoveredFlags_DelayNone                     = 1 << 14,  // IsItemHovered() only: Return true immediately (default). As this is the default you generally ignore this.
     HvkGuiHoveredFlags_DelayShort                    = 1 << 15,  // IsItemHovered() only: Return true after style.HoverDelayShort elapsed (~0.15 sec) (shared between items) + requires mouse to be stationary for style.HoverStationaryDelay (once per item).
     HvkGuiHoveredFlags_DelayNormal                   = 1 << 16,  // IsItemHovered() only: Return true after style.HoverDelayNormal elapsed (~0.40 sec) (shared between items) + requires mouse to be stationary for style.HoverStationaryDelay (once per item).
     HvkGuiHoveredFlags_NoSharedDelay                 = 1 << 17,  // IsItemHovered() only: Disable shared delay system where moving from one item to the next keeps the previous timer for a short time (standard for tooltips with long delays)
@@ -1648,7 +1648,7 @@ enum HvkGuiKey : int
     // - Code polling every key (e.g. an interface to detect a key press for input mapping) might want to ignore those
     //   and prefer using the real keys (e.g. HvkGuiKey_LeftCtrl, HvkGuiKey_RightCtrl instead of HvkGuiMod_Ctrl).
     // - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.
-    //   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, HvkE, sticky keys and
+    //   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and
     //   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...
     // - On macOS, we swap Cmd(Super) and Ctrl keys at the time of the io.AddKeyEvent() call.
     HvkGuiMod_None                   = 0,
@@ -2180,12 +2180,12 @@ template<typename T> void Hvk_DELETE(T* p)   { if (p) { p->~T(); HvkGui::MemFree
 
 //-----------------------------------------------------------------------------
 // HvkVector<>
-// Lightweight std::vector<>-like class to avoid dragging dependencies (also, some Hvkplementations of STL with debug enabled are absurdly slow, we bypass it so our code runs fast in debug).
+// Lightweight std::vector<>-like class to avoid dragging dependencies (also, some implementations of STL with debug enabled are absurdly slow, we bypass it so our code runs fast in debug).
 //-----------------------------------------------------------------------------
 // - You generally do NOT need to care or use this ever. But we need to make it available in HvkGui.h because some of our public structures are relying on it.
 // - We use std-like naming convention here, which is a little unusual for this codebase.
 // - Hvkportant: clear() frees memory, resize(0) keep the allocated buffer. We use resize(0) a lot to intentionally recycle allocated buffers across frames and amortize our costs.
-// - Hvkportant: our Hvkplementation does NOT call C++ constructors/destructors, we treat everything as raw data! This is intentional but be extra mindful of that,
+// - Hvkportant: our implementation does NOT call C++ constructors/destructors, we treat everything as raw data! This is intentional but be extra mindful of that,
 //   Do NOT use this class as a std::vector replacement in your own code! Many of the structures used by dear HvkGui can be safely initialized by a zero-memset.
 //-----------------------------------------------------------------------------
 
@@ -2366,7 +2366,7 @@ struct HvkGuiStyle
 // - initialization: backends and user code writes to HvkGuiIO.
 // - main loop: backends writes to HvkGuiIO, user code and HvkGui code reads from HvkGuiIO.
 //-----------------------------------------------------------------------------
-// Also see HvkGui::GetPlatformIO() and HvkGuiPlatformIO struct for OS/platform related functions: clipboard, HvkE etc.
+// Also see HvkGui::GetPlatformIO() and HvkGuiPlatformIO struct for OS/platform related functions: clipboard, IME etc.
 //-----------------------------------------------------------------------------
 
 // [Internal] Storage used by IsKeyDown(), IsKeyPressed() etc functions.
@@ -2411,7 +2411,7 @@ struct HvkGuiIO
 
     // Miscellaneous options
     // (you can visualize and interact with all options in 'Demo->Configuration')
-    bool        MouseDrawCursor;                // = false          // Request HvkGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend Hvkplementations.
+    bool        MouseDrawCursor;                // = false          // Request HvkGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend implementations.
     bool        ConfigMacOSXBehaviors;          // = defined(__APPLE__) // Swap Cmd<>Ctrl keys + OS X style text editing cursor movement using Alt instead of Ctrl, Shortcuts using Cmd/Super instead of Ctrl, Line/Text Start and End using Cmd+Arrows instead of Home/End, Double click selects by word instead of selecting whole text, Multi-selection in lists uses Cmd/Super instead of Ctrl.
     bool        ConfigInputTrickleEventQueue;   // = true           // Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, Hvkproving interactions with low framerates.
     bool        ConfigInputTextCursorBlink;     // = true           // Enable blinking cursor (optional as some users consider it to be distracting).
@@ -2590,7 +2590,7 @@ struct HvkGuiIO
     //int       KeyMap[HvkGuiKey_COUNT];             // [LEGACY] Input: map of indices into the KeysDown[512] entries array which represent your "native" keyboard state. The first 512 are now unused and should be kept zero. Legacy backend will write into KeyMap[] using HvkGuiKey_ indices which are always >512.
     //bool      KeysDown[HvkGuiKey_COUNT];           // [LEGACY] Input: Keyboard keys that are pressed (ideally left in the "native" order your engine has access to keyboard keys, so you can use your own defines/enums for keys). This used to be [512] sized. It is now HvkGuiKey_COUNT to allow legacy io.KeysDown[GetKeyIndex(...)] to work without an overflow.
     //float     NavInputs[HvkGuiNavInput_COUNT];     // [LEGACY] Since 1.88, NavInputs[] was removed. Backends from 1.60 to 1.86 won't build. Feed gamepad inputs via io.AddKeyEvent() and HvkGuiKey_GamepadXXX enums.
-    //void*     HvkeWindowHandle;                    // [Obsoleted in 1.87] Set HvkGuiViewport::PlatformHandleRaw instead. Set this to your HWND to get automatic HvkE cursor positioning.
+    //void*     IMEWindowHandle;                    // [Obsoleted in 1.87] Set HvkGuiViewport::PlatformHandleRaw instead. Set this to your HWND to get automatic IME cursor positioning.
 
 #ifndef HvkGui_DISABLE_OBSOLETE_FUNCTIONS
     float       FontGlobalScale;                    // Moved io.FontGlobalScale to style.FontScaleMain in 1.92 (June 2025)
@@ -2960,16 +2960,16 @@ struct HvkColor
 // Multi-selection system
 // Documentation at: https://github.com/ocornut/HvkGui/wiki/Multi-Select
 // - Refer to 'Demo->Widgets->Selection State & Multi-Select' for demos using this.
-// - This system Hvkplements standard multi-selection idioms (Ctrl+Mouse/Keyboard, Shift+Mouse/Keyboard, etc)
+// - This system implements standard multi-selection idioms (Ctrl+Mouse/Keyboard, Shift+Mouse/Keyboard, etc)
 //   with support for clipper (skipping non-visible items), box-select and many other details.
 // - Selectable(), Checkbox() are supported but custom widgets may use it as well.
 // - TreeNode() is technically supported but... using this correctly is more complicated: you need some sort of linear/random access to your tree,
-//   which is suited to advanced trees setups also Hvkplementing filters and clipper. We will work toward simplifying and demoing it.
+//   which is suited to advanced trees setups also implementing filters and clipper. We will work toward simplifying and demoing it.
 // - In the spirit of Dear HvkGui design, your code owns actual selection data.
 //   This is designed to allow all kinds of selection storage you may use in your application e.g. set/map/hash.
 // About HvkGuiSelectionBasicStorage:
 // - This is an optional helper to store a selection state and apply selection requests.
-// - It is used by our demos and provided as a convenience to quickly Hvkplement multi-selection.
+// - It is used by our demos and provided as a convenience to quickly implement multi-selection.
 // Usage:
 // - Identify submitted items with SetNextItemSelectionUserData(), most likely using an index into your current data-set.
 // - Store and maintain actual selection data using persistent object identifiers.
@@ -3053,7 +3053,7 @@ struct HvkGuiSelectionRequest
 };
 
 // Optional helper to store multi-selection state + apply multi-selection requests.
-// - Used by our demos and provided as a convenience to easily Hvkplement basic multi-selection.
+// - Used by our demos and provided as a convenience to easily implement basic multi-selection.
 // - Iterate selection with 'void* it = NULL; HvkGuiID id; while (selection.GetNextSelectedItem(&it, &id)) { ... }'
 //   Or you can check 'if (Contains(id)) { ... }' for each possible object if their number is not too high to iterate.
 // - USING THIS IS NOT MANDATORY. This is only a helper and not a required API.
@@ -3072,7 +3072,7 @@ struct HvkGuiSelectionBasicStorage
 {
     // Members
     int             Size;           //          // Number of selected items, maintained by this helper.
-    bool            PreserveOrder;  // = false  // GetNextSelectedItem() will return ordered selection (currently Hvkplemented by two additional sorts of selection. Could be Hvkproved)
+    bool            PreserveOrder;  // = false  // GetNextSelectedItem() will return ordered selection (currently implemented by two additional sorts of selection. Could be Hvkproved)
     void*           UserData;       // = NULL   // User data for use by adapter function        // e.g. selection.UserData = (void*)my_items;
     HvkGuiID         (*AdapterIndexToStorageId)(HvkGuiSelectionBasicStorage* self, int idx);      // e.g. selection.AdapterIndexToStorageId = [](HvkGuiSelectionBasicStorage* self, int idx) { return ((MyItems**)self->UserData)[idx]->ID; };
     int             _SelectionOrder;// [Internal] Increasing counter to store selection order
@@ -3505,7 +3505,7 @@ struct HvkTextureData
 
     // Called by Renderer backend
     // - Call SetTexID() and SetStatus() after honoring texture requests. Never modify TexID and Status directly!
-    // - A backend may decide to destroy a texture that we did not request to destroy, which is fine (e.g. freeing resources), but we Hvkmediately set the texture back in _WantCreate mode.
+    // - A backend may decide to destroy a texture that we did not request to destroy, which is fine (e.g. freeing resources), but we immediately set the texture back in _WantCreate mode.
     void    SetTexID(HvkTextureID tex_id)            { TexID = tex_id; }
     void    SetStatus(HvkTextureStatus status)       { Status = status; if (status == HvkTextureStatus_Destroyed && !WantDestroyNextFrame) Status = HvkTextureStatus_WantCreate; }
 };
@@ -3539,7 +3539,7 @@ struct HvkFontConfig
     float           GlyphMaxAdvanceX;       // FLT_MAX  // Maximum AdvanceX for glyphs
     float           GlyphExtraAdvanceX;     // 0        // Extra spacing (in pixels) between glyphs. Please contact us if you are using this. // FIXME-NEWATLAS: Intentionally unscaled
     HvkU32           FontNo;                 // 0        // Index of font within TTF/OTF file
-    unsigned int    FontLoaderFlags;        // 0        // Settings for custom font builder. THIS IS BUILDER HvkPLEMENTATION DEPENDENT. Leave as zero if unsure.
+    unsigned int    FontLoaderFlags;        // 0        // Settings for custom font builder. THIS IS BUILDER implementation DEPENDENT. Leave as zero if unsure.
     //unsigned int  FontBuilderFlags;       // --       // [Renamed in 1.92] Ue FontLoaderFlags.
     float           RasterizerMultiply;     // 1.0f     // Linearly brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable. This is a silly thing we may remove in the future.
     float           RasterizerDensity;      // 1.0f     // [LEGACY: this only makes sense when HvkGuiBackendFlags_RendererHasTextures is not supported] DPI scale multiplier for rasterization. Not altering other font metrics: makes it easy to swap between e.g. a 100% and a 400% fonts for a zooming display, or handle Retina screen. HvkPORTANT: If you change this it is expected that you increase/decrease font scale roughly to the inverse of this, otherwise quality may look lowered.
@@ -3695,7 +3695,7 @@ struct HvkFontAtlas
 
     // Register and retrieve custom rectangles
     // - You can request arbitrary rectangles to be packed into the atlas, for your own purpose.
-    // - Since 1.92.0, packing is done Hvkmediately in the function call (previously packing was done during the Build call)
+    // - Since 1.92.0, packing is done immediately in the function call (previously packing was done during the Build call)
     // - You can render your pixels into the texture right after calling the AddCustomRect() functions.
     // - VERY HvkPORTANT:
     //   - Texture may be created/resized at any time when calling HvkGui or HvkFontAtlas functions.
@@ -3712,7 +3712,7 @@ struct HvkFontAtlas
     //   - HvkFontAtlasCustomRect    --> Renamed to HvkFontAtlasRect
     HvkGui_API HvkFontAtlasRectId AddCustomRect(int width, int height, HvkFontAtlasRect* out_r = NULL);// Register a rectangle. Return -1 (HvkFontAtlasRectId_Invalid) on error.
     HvkGui_API void              RemoveCustomRect(HvkFontAtlasRectId id);                             // Unregister a rectangle. Existing pixels will stay in texture until resized / garbage collected.
-    HvkGui_API bool              GetCustomRect(HvkFontAtlasRectId id, HvkFontAtlasRect* out_r) const;  // Get rectangle coordinates for current texture. Valid Hvkmediately, never store this (read above)!
+    HvkGui_API bool              GetCustomRect(HvkFontAtlasRectId id, HvkFontAtlasRect* out_r) const;  // Get rectangle coordinates for current texture. Valid immediately, never store this (read above)!
 
     //-------------------------------------------
     // Members
@@ -3756,7 +3756,7 @@ struct HvkFontAtlas
     const HvkFontLoader*         FontLoader;         // Font loader opaque interface (default to use FreeType when HvkGui_ENABLE_FREETYPE is defined, otherwise default to use stb_truetype). Use SetFontLoader() to change this at runtime.
     const char*                 FontLoaderName;     // Font loader name (for display e.g. in About box) == FontLoader->Name
     void*                       FontLoaderData;     // Font backend opaque storage
-    unsigned int                FontLoaderFlags;    // Shared flags (for all fonts) for font loader. THIS IS BUILD HvkPLEMENTATION DEPENDENT (e.g. Per-font override is also available in HvkFontConfig).
+    unsigned int                FontLoaderFlags;    // Shared flags (for all fonts) for font loader. THIS IS BUILD implementation DEPENDENT (e.g. Per-font override is also available in HvkFontConfig).
     int                         RefCount;           // Number of contexts using this atlas
     HvkGuiContext*               OwnerContext;       // Context which own the atlas will be in charge of updating and destroying it.
 
@@ -3957,8 +3957,8 @@ struct HvkGuiPlatformIO
     bool        (*Platform_OpenInShellFn)(HvkGuiContext* ctx, const char* path);
     void*       Platform_OpenInShellUserData;
 
-    // Optional: Notify OS Input Method Editor of the screen position of your cursor for text input position (e.g. when using Japanese/Chinese HvkE on Windows)
-    // (default to use native Hvkm32 api on Windows)
+    // Optional: Notify OS Input Method Editor of the screen position of your cursor for text input position (e.g. when using Japanese/Chinese IME on Windows)
+    // (default to use native imm32 api on Windows)
     void        (*Platform_SetImeDataFn)(HvkGuiContext* ctx, HvkGuiViewport* viewport, HvkGuiPlatformImeData* data);
     void*       Platform_ImeUserData;
     //void      (*SetPlatformImeDataFn)(HvkGuiViewport* viewport, HvkGuiPlatformImeData* data); // [Renamed to platform_io.PlatformSetImeDataFn in 1.91.1]
@@ -3994,13 +3994,13 @@ struct HvkGuiPlatformIO
     HvkGui_API void ClearRendererHandlers();    // Clear all Renderer_XXX fields. Typically called on Renderer Backend shutdown.
 };
 
-// (Optional) Support for HvkE (Input Method Editor) via the platform_io.Platform_SetImeDataFn() function. Handler is called during EndFrame().
+// (Optional) Support for IME (Input Method Editor) via the platform_io.Platform_SetImeDataFn() function. Handler is called during EndFrame().
 struct HvkGuiPlatformImeData
 {
-    bool    WantVisible;            // A widget wants the HvkE to be visible.
-    bool    WantTextInput;          // A widget wants text input, not necessarily HvkE to be visible. This is automatically set to the upcoming value of io.WantTextInput.
-    HvkVec2  InputPos;               // Position of input cursor (for HvkE).
-    float   InputLineHeight;        // Line height (for HvkE).
+    bool    WantVisible;            // A widget wants the IME to be visible.
+    bool    WantTextInput;          // A widget wants text input, not necessarily IME to be visible. This is automatically set to the upcoming value of io.WantTextInput.
+    HvkVec2  InputPos;               // Position of input cursor (for IME).
+    float   InputLineHeight;        // Line height (for IME).
     HvkGuiID ViewportId;             // ID of platform window/viewport.
 
     HvkGuiPlatformImeData()          { memset(this, 0, sizeof(*this)); }
@@ -4057,7 +4057,7 @@ namespace HvkGui
     //static inline float GetWindowContentRegionWidth()                                               { return GetWindowContentRegionMax().x - GetWindowContentRegionMin().x; }
     //-- OBSOLETED in 1.81 (from February 2021)
     //static inline bool  ListBoxHeader(const char* label, const HvkVec2& size = HvkVec2(0, 0))         { return BeginListBox(label, size); }
-    //static inline bool  ListBoxHeader(const char* label, int items_count, int height_in_items = -1) { float height = GetTextLineHeightWithSpacing() * ((height_in_items < 0 ? HvkMin(items_count, 7) : height_in_items) + 0.25f) + GetStyle().FramePadding.y * 2.0f; return BeginListBox(label, HvkVec2(0.0f, height)); } // Helper to calculate size from items_count and height_in_items
+    //static inline bool  ListBoxHeader(const char* label, int items_count, int height_in_items = -1) { float height = GetTextLineHeightWithSpacing() * ((height_in_items < 0 ? Immin(items_count, 7) : height_in_items) + 0.25f) + GetStyle().FramePadding.y * 2.0f; return BeginListBox(label, HvkVec2(0.0f, height)); } // Helper to calculate size from items_count and height_in_items
     //static inline void  ListBoxFooter()                                                             { EndListBox(); }
     //-- OBSOLETED in 1.79 (from August 2020)
     //static inline void  OpenPopupContextItem(const char* str_id = NULL, HvkGuiMouseButton mb = 1)    { OpenPopupOnItemClick(str_id, mb); } // Bool return value removed. Use IsWindowAppearing() in BeginPopup() instead. Renamed in 1.77, renamed back in 1.79. Sorry!
@@ -4177,7 +4177,5 @@ typedef HvkFontAtlasRect HvkFontAtlasCustomRect;
 #include "HvkGui_user.h"
 #endif
 #endif
-
-namespace HvkGui = HvkGui;
 
 #endif // #ifndef HvkGui_DISABLE

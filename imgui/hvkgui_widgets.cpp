@@ -103,30 +103,30 @@ static const float          DRAGDROP_HOLD_TO_OPEN_TIMER = 0.70f;    // Time for 
 static const float          DRAG_MOUSE_THRESHOLD_FACTOR = 0.50f;    // Multiplier for the default value of io.MouseDragThreshold to make DragFloat/DragInt react faster to mouse drags.
 
 // Those MIN/MAX values are not define because we need to point to them
-static const signed char    IM_S8_MIN  = -128;
-static const signed char    IM_S8_MAX  = 127;
-static const unsigned char  IM_U8_MIN  = 0;
-static const unsigned char  IM_U8_MAX  = 0xFF;
-static const signed short   IM_S16_MIN = -32768;
-static const signed short   IM_S16_MAX = 32767;
-static const unsigned short IM_U16_MIN = 0;
-static const unsigned short IM_U16_MAX = 0xFFFF;
-static const HvkS32          IM_S32_MIN = INT_MIN;    // (-2147483647 - 1), (0x80000000);
-static const HvkS32          IM_S32_MAX = INT_MAX;    // (2147483647), (0x7FFFFFFF)
-static const HvkU32          IM_U32_MIN = 0;
-static const HvkU32          IM_U32_MAX = UINT_MAX;   // (0xFFFFFFFF)
+static const signed char    Hvk_S8_MIN  = -128;
+static const signed char    Hvk_S8_MAX  = 127;
+static const unsigned char  Hvk_U8_MIN  = 0;
+static const unsigned char  Hvk_U8_MAX  = 0xFF;
+static const signed short   Hvk_S16_MIN = -32768;
+static const signed short   Hvk_S16_MAX = 32767;
+static const unsigned short Hvk_U16_MIN = 0;
+static const unsigned short Hvk_U16_MAX = 0xFFFF;
+static const HvkS32          Hvk_S32_MIN = INT_MIN;    // (-2147483647 - 1), (0x80000000);
+static const HvkS32          Hvk_S32_MAX = INT_MAX;    // (2147483647), (0x7FFFFFFF)
+static const HvkU32          Hvk_U32_MIN = 0;
+static const HvkU32          Hvk_U32_MAX = UINT_MAX;   // (0xFFFFFFFF)
 #ifdef LLONG_MIN
-static const HvkS64          IM_S64_MIN = LLONG_MIN;  // (-9223372036854775807ll - 1ll);
-static const HvkS64          IM_S64_MAX = LLONG_MAX;  // (9223372036854775807ll);
+static const HvkS64          Hvk_S64_MIN = LLONG_MIN;  // (-9223372036854775807ll - 1ll);
+static const HvkS64          Hvk_S64_MAX = LLONG_MAX;  // (9223372036854775807ll);
 #else
-static const HvkS64          IM_S64_MIN = -9223372036854775807LL - 1;
-static const HvkS64          IM_S64_MAX = 9223372036854775807LL;
+static const HvkS64          Hvk_S64_MIN = -9223372036854775807LL - 1;
+static const HvkS64          Hvk_S64_MAX = 9223372036854775807LL;
 #endif
-static const HvkU64          IM_U64_MIN = 0;
+static const HvkU64          Hvk_U64_MIN = 0;
 #ifdef ULLONG_MAX
-static const HvkU64          IM_U64_MAX = ULLONG_MAX; // (0xFFFFFFFFFFFFFFFFull);
+static const HvkU64          Hvk_U64_MAX = ULLONG_MAX; // (0xFFFFFFFFFFFFFFFFull);
 #else
-static const HvkU64          IM_U64_MAX = (2ULL * 9223372036854775807LL + 1);
+static const HvkU64          Hvk_U64_MAX = (2ULL * 9223372036854775807LL + 1);
 #endif
 
 //-------------------------------------------------------------------------
@@ -210,11 +210,11 @@ void HvkGui::TextEx(const char* text, const char* text_end, HvkGuiTextFlags flag
                 int lines_skipped = 0;
                 while (line < text_end && lines_skipped < lines_skippable)
                 {
-                    const char* line_end = (const char*)HvkMemchr(line, '\n', text_end - line);
+                    const char* line_end = (const char*)Immemchr(line, '\n', text_end - line);
                     if (!line_end)
                         line_end = text_end;
                     if ((flags & HvkGuiTextFlags_NoWidthForLargeClippedText) == 0)
-                        text_size.x = HvkMax(text_size.x, CalcTextSize(line, line_end).x);
+                        text_size.x = Immax(text_size.x, CalcTextSize(line, line_end).x);
                     line = line_end + 1;
                     lines_skipped++;
                 }
@@ -231,10 +231,10 @@ void HvkGui::TextEx(const char* text, const char* text_end, HvkGuiTextFlags flag
                 if (IsClippedEx(line_rect, 0))
                     break;
 
-                const char* line_end = (const char*)HvkMemchr(line, '\n', text_end - line);
+                const char* line_end = (const char*)Immemchr(line, '\n', text_end - line);
                 if (!line_end)
                     line_end = text_end;
-                text_size.x = HvkMax(text_size.x, CalcTextSize(line, line_end).x);
+                text_size.x = Immax(text_size.x, CalcTextSize(line, line_end).x);
                 RenderText(pos, line, line_end, false);
                 line = line_end + 1;
                 line_rect.Min.y += line_height;
@@ -246,11 +246,11 @@ void HvkGui::TextEx(const char* text, const char* text_end, HvkGuiTextFlags flag
             int lines_skipped = 0;
             while (line < text_end)
             {
-                const char* line_end = (const char*)HvkMemchr(line, '\n', text_end - line);
+                const char* line_end = (const char*)Immemchr(line, '\n', text_end - line);
                 if (!line_end)
                     line_end = text_end;
                 if ((flags & HvkGuiTextFlags_NoWidthForLargeClippedText) == 0)
-                    text_size.x = HvkMax(text_size.x, CalcTextSize(line, line_end).x);
+                    text_size.x = Immax(text_size.x, CalcTextSize(line, line_end).x);
                 line = line_end + 1;
                 lines_skipped++;
             }
@@ -362,9 +362,9 @@ void HvkGui::TextAlignedV(float align_x, float size_x, const char* fmt, va_list 
 
     HvkVec2 pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
     HvkVec2 pos_max(pos.x + size_x, window->ClipRect.Max.y);
-    HvkVec2 size(HvkMin(size_x, text_size.x), text_size.y);
-    window->DC.CursorMaxPos.x = HvkMax(window->DC.CursorMaxPos.x, pos.x + text_size.x);
-    window->DC.IdealMaxPos.x = HvkMax(window->DC.IdealMaxPos.x, pos.x + text_size.x);
+    HvkVec2 size(Immin(size_x, text_size.x), text_size.y);
+    window->DC.CursorMaxPos.x = Immax(window->DC.CursorMaxPos.x, pos.x + text_size.x);
+    window->DC.IdealMaxPos.x = Immax(window->DC.IdealMaxPos.x, pos.x + text_size.x);
     if (align_x > 0.0f && text_size.x < size_x)
         pos.x += HvkTrunc((size_x - text_size.x) * align_x);
     RenderTextEllipsis(window->DrawList, pos, pos_max, pos_max.x, text, text_end, &text_size);
@@ -404,7 +404,7 @@ void HvkGui::LabelTextV(const char* label, const char* fmt, va_list args)
 
     const HvkVec2 pos = window->DC.CursorPos;
     const HvkRect value_bb(pos, pos + HvkVec2(w, value_size.y + style.FramePadding.y * 2));
-    const HvkRect total_bb(pos, pos + HvkVec2(w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), HvkMax(value_size.y, label_size.y) + style.FramePadding.y * 2));
+    const HvkRect total_bb(pos, pos + HvkVec2(w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), Immax(value_size.y, label_size.y) + style.FramePadding.y * 2));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, 0))
         return;
@@ -598,7 +598,7 @@ bool HvkGui::ButtonBehavior(const HvkRect& bb, HvkGuiID id, bool* out_hovered, b
     const HvkGuiID test_owner_id = (flags & HvkGuiButtonFlags_NoTestKeyOwner) ? HvkGuiKeyOwner_Any : id;
     if (hovered)
     {
-        IM_ASSERT(id != 0); // Lazily check inside rare path.
+        Hvk_ASSERT(id != 0); // Lazily check inside rare path.
 
         // Poll mouse buttons
         // - 'mouse_button_clicked' is generally carried into ActiveIdMouseButton when setting ActiveId.
@@ -694,7 +694,7 @@ bool HvkGui::ButtonBehavior(const HvkRect& bb, HvkGuiID id, bool* out_hovered, b
                 const HvkGuiKeyData* key1 = GetKeyData(HvkGuiKey_Space);
                 const HvkGuiKeyData* key2 = GetKeyData(HvkGuiKey_Enter);
                 const HvkGuiKeyData* key3 = GetKeyData(HvkGuiKey_NavGamepadActivate);
-                const float t1 = HvkMax(HvkMax(key1->DownDuration, key2->DownDuration), key3->DownDuration);
+                const float t1 = Immax(Immax(key1->DownDuration, key2->DownDuration), key3->DownDuration);
                 nav_activated_by_inputs = CalcTypematicRepeatAmount(t1 - g.IO.DeltaTime, t1, g.IO.KeyRepeatDelay, g.IO.KeyRepeatRate) > 0;
             }
             if (nav_activated_by_code || nav_activated_by_inputs)
@@ -837,7 +837,7 @@ bool HvkGui::InvisibleButton(const char* str_id, const HvkVec2& size_arg, HvkGui
         return false;
 
     // Cannot use zero-size for InvisibleButton(). Unlike Button() there is not way to fallback using the label size.
-    IM_ASSERT(size_arg.x != 0.0f && size_arg.y != 0.0f);
+    Hvk_ASSERT(size_arg.x != 0.0f && size_arg.y != 0.0f);
 
     const HvkGuiID id = window->GetID(str_id);
     HvkVec2 size = CalcItemSize(size_arg, 0.0f, 0.0f);
@@ -876,7 +876,7 @@ bool HvkGui::ArrowButtonEx(const char* str_id, HvkGuiDir dir, HvkVec2 size, HvkG
     const HvkU32 text_col = GetColorU32(HvkGuiCol_Text);
     RenderNavCursor(bb, id);
     RenderFrame(bb.Min, bb.Max, bg_col, true, g.Style.FrameRounding);
-    RenderArrow(window->DrawList, bb.Min + HvkVec2(HvkMax(0.0f, (size.x - g.FontSize) * 0.5f), HvkMax(0.0f, (size.y - g.FontSize) * 0.5f)), text_col, dir);
+    RenderArrow(window->DrawList, bb.Min + HvkVec2(Immax(0.0f, (size.x - g.FontSize) * 0.5f), Immax(0.0f, (size.y - g.FontSize) * 0.5f)), text_col, dir);
 
     HvkGui_TEST_ENGINE_ITEM_INFO(id, str_id, g.LastItemData.StatusFlags);
     return pressed;
@@ -965,13 +965,13 @@ HvkRect HvkGui::GetWindowScrollbarRect(HvkGuiWindow* window, HvkGuiAxis axis)
     const HvkRect outer_rect = window->Rect();
     const HvkRect inner_rect = window->InnerRect;
     const float scrollbar_size = window->ScrollbarSizes[axis ^ 1]; // (ScrollbarSizes.x = width of Y scrollbar; ScrollbarSizes.y = height of X scrollbar)
-    IM_ASSERT(scrollbar_size >= 0.0f);
-    const float border_size = IM_ROUND(window->WindowBorderSize * 0.5f);
-    const float border_top = (window->Flags & HvkGuiWindowFlags_MenuBar) ? IM_ROUND(g.Style.FrameBorderSize * 0.5f) : 0.0f;
+    Hvk_ASSERT(scrollbar_size >= 0.0f);
+    const float border_size = Hvk_ROUND(window->WindowBorderSize * 0.5f);
+    const float border_top = (window->Flags & HvkGuiWindowFlags_MenuBar) ? Hvk_ROUND(g.Style.FrameBorderSize * 0.5f) : 0.0f;
     if (axis == HvkGuiAxis_X)
-        return HvkRect(inner_rect.Min.x + border_size, HvkMax(outer_rect.Min.y + border_size, outer_rect.Max.y - border_size - scrollbar_size), inner_rect.Max.x - border_size, outer_rect.Max.y - border_size);
+        return HvkRect(inner_rect.Min.x + border_size, Immax(outer_rect.Min.y + border_size, outer_rect.Max.y - border_size - scrollbar_size), inner_rect.Max.x - border_size, outer_rect.Max.y - border_size);
     else
-        return HvkRect(HvkMax(outer_rect.Min.x, outer_rect.Max.x - border_size - scrollbar_size), inner_rect.Min.y + border_top, outer_rect.Max.x - border_size, inner_rect.Max.y - border_size);
+        return HvkRect(Immax(outer_rect.Min.x, outer_rect.Max.x - border_size - scrollbar_size), inner_rect.Min.y + border_top, outer_rect.Max.x - border_size, inner_rect.Max.y - border_size);
 }
 
 void HvkGui::Scrollbar(HvkGuiAxis axis)
@@ -1024,7 +1024,7 @@ bool HvkGui::ScrollbarEx(const HvkRect& bb_frame, HvkGuiID id, HvkGuiAxis axis, 
     // When we are too small, start hiding and disabling the grab (this reduce visual noise on very small window and facilitate using the window resize grab)
     float alpha = 1.0f;
     if ((axis == HvkGuiAxis_Y) && bb_frame_height < bb_frame_width)
-        alpha = HvkSaturate(bb_frame_height / HvkMax(bb_frame_width * 2.0f, 1.0f));
+        alpha = HvkSaturate(bb_frame_height / Immax(bb_frame_width * 2.0f, 1.0f));
     if (alpha <= 0.0f)
         return false;
 
@@ -1032,7 +1032,7 @@ bool HvkGui::ScrollbarEx(const HvkRect& bb_frame, HvkGuiID id, HvkGuiAxis axis, 
     const bool allow_interaction = (alpha >= 1.0f);
 
     HvkRect bb = bb_frame;
-    float padding = IM_TRUNC(HvkMin(style.ScrollbarPadding, HvkMin(bb_frame_width, bb_frame_height) * 0.5f));
+    float padding = Hvk_TRUNC(Immin(style.ScrollbarPadding, Immin(bb_frame_width, bb_frame_height) * 0.5f));
     bb.Expand(-padding);
 
     // V denote the main, longer axis of the scrollbar (= height for a vertical scrollbar)
@@ -1042,9 +1042,9 @@ bool HvkGui::ScrollbarEx(const HvkRect& bb_frame, HvkGuiID id, HvkGuiAxis axis, 
 
     // Calculate the height of our grabbable box. It generally represent the amount visible (vs the total scrollable amount)
     // But we maintain a minimum size in pixel to allow for the user to still aim inside.
-    IM_ASSERT(HvkMax(size_contents_v, size_visible_v) > 0.0f); // Adding this assert to check if the HvkMax(XXX,1.0f) is still needed. PLEASE CONTACT ME if this triggers.
-    const HvkS64 win_size_v = HvkMax(HvkMax(size_contents_v, size_visible_v), (HvkS64)1);
-    const float grab_h_minsize = HvkMin(bb.GetSize()[axis], style.GrabMinSize);
+    Hvk_ASSERT(Immax(size_contents_v, size_visible_v) > 0.0f); // Adding this assert to check if the Immax(XXX,1.0f) is still needed. PLEASE CONTACT ME if this triggers.
+    const HvkS64 win_size_v = Immax(Immax(size_contents_v, size_visible_v), (HvkS64)1);
+    const float grab_h_minsize = Immin(bb.GetSize()[axis], style.GrabMinSize);
     const float grab_h_pixels = HvkClamp(scrollbar_size_v * ((float)size_visible_v / (float)win_size_v), grab_h_minsize, scrollbar_size_v);
     const float grab_h_norm = grab_h_pixels / scrollbar_size_v;
 
@@ -1054,7 +1054,7 @@ bool HvkGui::ScrollbarEx(const HvkRect& bb_frame, HvkGuiID id, HvkGuiAxis axis, 
     ItemAdd(bb_frame, id, NULL, HvkGuiItemFlags_NoNav);
     ButtonBehavior(bb, id, &hovered, &held, HvkGuiButtonFlags_NoNavFocus);
 
-    const HvkS64 scroll_max = HvkMax((HvkS64)1, size_contents_v - size_visible_v);
+    const HvkS64 scroll_max = Immax((HvkS64)1, size_contents_v - size_visible_v);
     float scroll_ratio = HvkSaturate((float)*p_scroll_v / (float)scroll_max);
     float grab_v_norm = scroll_ratio * (scrollbar_size_v - grab_h_pixels) / scrollbar_size_v; // Grab position in normalized space
     if (held && allow_interaction && grab_h_norm < 1.0f)
@@ -1148,7 +1148,7 @@ void HvkGui::Hvkage(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const Hvk
 void HvkGui::Hvkage(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0, const HvkVec2& uv1, const HvkVec4& tint_col, const HvkVec4& border_col)
 {
     HvkGuiContext& g = *GHvkGui;
-    PushStyleVar(HvkGuiStyleVar_ImageBorderSize, (border_col.w > 0.0f) ? HvkMax(1.0f, g.Style.HvkageBorderSize) : 0.0f); // Preserve legacy behavior where border is always visible when border_col's Alpha is >0.0f
+    PushStyleVar(HvkGuiStyleVar_ImageBorderSize, (border_col.w > 0.0f) ? Immax(1.0f, g.Style.HvkageBorderSize) : 0.0f); // Preserve legacy behavior where border is always visible when border_col's Alpha is >0.0f
     PushStyleColor(HvkGuiCol_Border, border_col);
     HvkageWithBg(tex_ref, Hvkage_size, uv0, uv1, HvkVec4(0, 0, 0, 0), tint_col);
     PopStyleColor();
@@ -1175,7 +1175,7 @@ bool HvkGui::HvkageButtonEx(HvkGuiID id, HvkTextureRef tex_ref, const HvkVec2& H
     // Render
     const HvkU32 col = GetColorU32((held && hovered) ? HvkGuiCol_ButtonActive : hovered ? HvkGuiCol_ButtonHovered : HvkGuiCol_Button);
     RenderNavCursor(bb, id);
-    RenderFrame(bb.Min, bb.Max, col, true, HvkClamp((float)HvkMin(padding.x, padding.y), 0.0f, g.Style.FrameRounding));
+    RenderFrame(bb.Min, bb.Max, col, true, HvkClamp((float)Immin(padding.x, padding.y), 0.0f, g.Style.FrameRounding));
     if (bg_col.w > 0.0f)
         window->DrawList->AddRectFilled(bb.Min + padding, bb.Max - padding, GetColorU32(bg_col));
     window->DrawList->AddImage(tex_ref, bb.Min + padding, bb.Max - padding, uv0, uv1, GetColorU32(tint_col));
@@ -1273,12 +1273,12 @@ bool HvkGui::Checkbox(const char* label, bool* v)
         {
             // Undocumented tristate/mixed/indeterminate checkbox (#2644)
             // This may seem awkwardly designed because the aim is to make HvkGuiItemFlags_MixedValue supported by all widgets (not just checkbox)
-            HvkVec2 pad(HvkMax(1.0f, IM_TRUNC(square_sz / 3.6f)), HvkMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
+            HvkVec2 pad(Immax(1.0f, Hvk_TRUNC(square_sz / 3.6f)), Immax(1.0f, Hvk_TRUNC(square_sz / 3.6f)));
             window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
         }
         else if (*v)
         {
-            const float pad = HvkMax(1.0f, IM_TRUNC(square_sz / 6.0f));
+            const float pad = Immax(1.0f, Hvk_TRUNC(square_sz / 6.0f));
             RenderCheckMark(window->DrawList, check_bb.Min + HvkVec2(pad, pad), check_col, square_sz - pad * 2.0f);
         }
     }
@@ -1359,8 +1359,8 @@ bool HvkGui::RadioButton(const char* label, bool active)
         return false;
 
     HvkVec2 center = check_bb.GetCenter();
-    center.x = IM_ROUND(center.x);
-    center.y = IM_ROUND(center.y);
+    center.x = Hvk_ROUND(center.x);
+    center.y = Hvk_ROUND(center.y);
     const float radius = (square_sz - 1.0f) * 0.5f;
 
     bool hovered, held;
@@ -1373,7 +1373,7 @@ bool HvkGui::RadioButton(const char* label, bool active)
     window->DrawList->AddCircleFilled(center, radius, GetColorU32((held && hovered) ? HvkGuiCol_FrameBgActive : hovered ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg), num_segment);
     if (active)
     {
-        const float pad = HvkMax(1.0f, IM_TRUNC(square_sz / 6.0f));
+        const float pad = Immax(1.0f, Hvk_TRUNC(square_sz / 6.0f));
         window->DrawList->AddCircleFilled(center, radius - pad, GetColorU32(HvkGuiCol_CheckMark));
     }
 
@@ -1452,7 +1452,7 @@ void HvkGui::ProgressBar(float fraction, const HvkVec2& size_arg, const char* ov
     {
         if (!overlay)
         {
-            HvkFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%.0f%%", fraction * 100 + 0.01f);
+            HvkFormatString(overlay_buf, Hvk_ARRAYSIZE(overlay_buf), "%.0f%%", fraction * 100 + 0.01f);
             overlay = overlay_buf;
         }
 
@@ -1473,7 +1473,7 @@ void HvkGui::Bullet()
 
     HvkGuiContext& g = *GHvkGui;
     const HvkGuiStyle& style = g.Style;
-    const float line_height = HvkMax(HvkMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), g.FontSize);
+    const float line_height = Immax(Immin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), g.FontSize);
     const HvkRect bb(window->DC.CursorPos, window->DC.CursorPos + HvkVec2(g.FontSize, line_height));
     ItemSize(bb);
     if (!ItemAdd(bb, 0))
@@ -1618,8 +1618,8 @@ void HvkGui::AlignTextToFramePadding()
         return;
 
     HvkGuiContext& g = *GHvkGui;
-    window->DC.CurrLineSize.y = HvkMax(window->DC.CurrLineSize.y, g.FontSize + g.Style.FramePadding.y * 2);
-    window->DC.CurrLineTextBaseOffset = HvkMax(window->DC.CurrLineTextBaseOffset, g.Style.FramePadding.y);
+    window->DC.CurrLineSize.y = Immax(window->DC.CurrLineSize.y, g.FontSize + g.Style.FramePadding.y * 2);
+    window->DC.CurrLineTextBaseOffset = Immax(window->DC.CurrLineTextBaseOffset, g.Style.FramePadding.y);
 }
 
 // Horizontal/vertical separating line
@@ -1632,8 +1632,8 @@ void HvkGui::SeparatorEx(HvkGuiSeparatorFlags flags, float thickness)
         return;
 
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(HvkIsPowerOfTwo(flags & (HvkGuiSeparatorFlags_Horizontal | HvkGuiSeparatorFlags_Vertical)));   // Check that only 1 option is selected
-    IM_ASSERT(thickness > 0.0f);
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & (HvkGuiSeparatorFlags_Horizontal | HvkGuiSeparatorFlags_Vertical)));   // Check that only 1 option is selected
+    Hvk_ASSERT(thickness > 0.0f);
 
     if (flags & HvkGuiSeparatorFlags_Vertical)
     {
@@ -1718,9 +1718,9 @@ void HvkGui::SeparatorTextEx(HvkGuiID id, const char* label, const char* label_e
     const HvkVec2 padding = style.SeparatorTextPadding;
 
     const float separator_thickness = style.SeparatorTextBorderSize;
-    const HvkVec2 min_size(label_size.x + extra_w + padding.x * 2.0f, HvkMax(label_size.y + padding.y * 2.0f, separator_thickness));
+    const HvkVec2 min_size(label_size.x + extra_w + padding.x * 2.0f, Immax(label_size.y + padding.y * 2.0f, separator_thickness));
     const HvkRect bb(pos, HvkVec2(window->WorkRect.Max.x, pos.y + min_size.y));
-    const float text_baseline_y = HvkTrunc((bb.GetHeight() - label_size.y) * style.SeparatorTextAlign.y + 0.99999f); //HvkMax(padding.y, HvkFloor((style.SeparatorTextSize - label_size.y) * 0.5f));
+    const float text_baseline_y = HvkTrunc((bb.GetHeight() - label_size.y) * style.SeparatorTextAlign.y + 0.99999f); //Immax(padding.y, HvkFloor((style.SeparatorTextSize - label_size.y) * 0.5f));
     ItemSize(min_size, text_baseline_y);
     if (!ItemAdd(bb, id))
         return;
@@ -1729,8 +1729,8 @@ void HvkGui::SeparatorTextEx(HvkGuiID id, const char* label, const char* label_e
     const float sep2_x2 = bb.Max.x;
     const float seps_y = HvkTrunc((bb.Min.y + bb.Max.y) * 0.5f + 0.99999f);
 
-    const float label_avail_w = HvkMax(0.0f, sep2_x2 - sep1_x1 - padding.x * 2.0f);
-    const HvkVec2 label_pos(pos.x + padding.x + HvkMax(0.0f, (label_avail_w - label_size.x - extra_w) * style.SeparatorTextAlign.x), pos.y + text_baseline_y); // FIXME-ALIGN
+    const float label_avail_w = Immax(0.0f, sep2_x2 - sep1_x1 - padding.x * 2.0f);
+    const HvkVec2 label_pos(pos.x + padding.x + Immax(0.0f, (label_avail_w - label_size.x - extra_w) * style.SeparatorTextAlign.x), pos.y + text_baseline_y); // FIXME-ALIGN
 
     // This allows using SameLine() to position something in the 'extra_w'
     window->DC.CursorPosPrevLine.x = label_pos.x + label_size.x;
@@ -1805,8 +1805,8 @@ bool HvkGui::SplitterBehavior(const HvkRect& bb, HvkGuiID id, HvkGuiAxis axis, f
         float mouse_delta = (g.IO.MousePos - g.ActiveIdClickOffset - bb_interact.Min)[axis];
 
         // Minimum pane size
-        float size_1_maximum_delta = HvkMax(0.0f, *size1 - min_size1);
-        float size_2_maximum_delta = HvkMax(0.0f, *size2 - min_size2);
+        float size_1_maximum_delta = Immax(0.0f, *size1 - min_size1);
+        float size_2_maximum_delta = Immax(0.0f, *size2 - min_size2);
         if (mouse_delta < -size_1_maximum_delta)
             mouse_delta = -size_1_maximum_delta;
         if (mouse_delta > size_2_maximum_delta)
@@ -1815,15 +1815,15 @@ bool HvkGui::SplitterBehavior(const HvkRect& bb, HvkGuiID id, HvkGuiAxis axis, f
         // Apply resize
         if (mouse_delta != 0.0f)
         {
-            *size1 = HvkMax(*size1 + mouse_delta, min_size1);
-            *size2 = HvkMax(*size2 - mouse_delta, min_size2);
+            *size1 = Immax(*size1 + mouse_delta, min_size1);
+            *size2 = Immax(*size2 - mouse_delta, min_size2);
             bb_render.Translate((axis == HvkGuiAxis_X) ? HvkVec2(mouse_delta, 0.0f) : HvkVec2(0.0f, mouse_delta));
             MarkItemEdited(id);
         }
     }
 
     // Render at new position
-    if (bg_col & IM_COL32_A_MASK)
+    if (bg_col & Hvk_COL32_A_MASK)
         window->DrawList->AddRectFilled(bb_render.Min, bb_render.Max, bg_col, 0.0f);
     const HvkU32 col = GetColorU32(held ? HvkGuiCol_SeparatorActive : (hovered && g.HoveredIdTimer >= hover_visibility_delay) ? HvkGuiCol_SeparatorHovered : HvkGuiCol_Separator);
     window->DrawList->AddRectFilled(bb_render.Min, bb_render.Max, col, 0.0f);
@@ -1847,7 +1847,7 @@ void HvkGui::ShrinkWidths(HvkGuiShrinkWidthItem* items, int count, float width_e
     if (count == 1)
     {
         if (items[0].Width >= 0.0f)
-            items[0].Width = HvkMax(items[0].Width - width_excess, width_min);
+            items[0].Width = Immax(items[0].Width - width_excess, width_min);
         return;
     }
     HvkQsort(items, (size_t)count, sizeof(HvkGuiShrinkWidthItem), ShrinkWidthItemComparer); // Sort largest first, smallest last.
@@ -1857,13 +1857,13 @@ void HvkGui::ShrinkWidths(HvkGuiShrinkWidthItem* items, int count, float width_e
         while (count_same_width < count && items[0].Width <= items[count_same_width].Width)
             count_same_width++;
         float max_width_to_remove_per_item = (count_same_width < count && items[count_same_width].Width >= 0.0f) ? (items[0].Width - items[count_same_width].Width) : (items[0].Width - 1.0f);
-        max_width_to_remove_per_item = HvkMin(items[0].Width - width_min, max_width_to_remove_per_item);
+        max_width_to_remove_per_item = Immin(items[0].Width - width_min, max_width_to_remove_per_item);
         if (max_width_to_remove_per_item <= 0.0f)
             break;
-        float base_width_to_remove_per_item = HvkMin(width_excess / count_same_width, max_width_to_remove_per_item);
+        float base_width_to_remove_per_item = Immin(width_excess / count_same_width, max_width_to_remove_per_item);
         for (int item_n = 0; item_n < count_same_width; item_n++)
         {
-            float width_to_remove_for_this_item = HvkMin(base_width_to_remove_per_item, items[item_n].Width - width_min);
+            float width_to_remove_for_this_item = Immin(base_width_to_remove_per_item, items[item_n].Width - width_min);
             items[item_n].Width -= width_to_remove_for_this_item;
             width_excess -= width_to_remove_for_this_item;
         }
@@ -1881,7 +1881,7 @@ void HvkGui::ShrinkWidths(HvkGuiShrinkWidthItem* items, int count, float width_e
     while (width_excess > 0.0f)
         for (int n = 0; n < count && width_excess > 0.0f; n++)
         {
-            float width_to_add = HvkMin(items[n].InitialWidth - items[n].Width, 1.0f);
+            float width_to_add = Immin(items[n].InitialWidth - items[n].Width, 1.0f);
             items[n].Width += width_to_add;
             width_excess -= width_to_add;
         }
@@ -1919,9 +1919,9 @@ bool HvkGui::BeginCombo(const char* label, const char* preview_value, HvkGuiComb
 
     const HvkGuiStyle& style = g.Style;
     const HvkGuiID id = window->GetID(label);
-    IM_ASSERT((flags & (HvkGuiComboFlags_NoArrowButton | HvkGuiComboFlags_NoPreview)) != (HvkGuiComboFlags_NoArrowButton | HvkGuiComboFlags_NoPreview)); // Can't use both flags together
+    Hvk_ASSERT((flags & (HvkGuiComboFlags_NoArrowButton | HvkGuiComboFlags_NoPreview)) != (HvkGuiComboFlags_NoArrowButton | HvkGuiComboFlags_NoPreview)); // Can't use both flags together
     if (flags & HvkGuiComboFlags_WidthFitPreview)
-        IM_ASSERT((flags & (HvkGuiComboFlags_NoPreview | (HvkGuiComboFlags)HvkGuiComboFlags_CustomPreview)) == 0);
+        Hvk_ASSERT((flags & (HvkGuiComboFlags_NoPreview | (HvkGuiComboFlags)HvkGuiComboFlags_CustomPreview)) == 0);
 
     const float arrow_size = (flags & HvkGuiComboFlags_NoArrowButton) ? 0.0f : GetFrameHeight();
     const HvkVec2 label_size = CalcTextSize(label, NULL, true);
@@ -1946,7 +1946,7 @@ bool HvkGui::BeginCombo(const char* label, const char* preview_value, HvkGuiComb
 
     // Render shape
     const HvkU32 frame_col = GetColorU32(hovered ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg);
-    const float value_x2 = HvkMax(bb.Min.x, bb.Max.x - arrow_size);
+    const float value_x2 = Immax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavCursor(bb, id);
     if (!(flags & HvkGuiComboFlags_NoPreview))
         window->DrawList->AddRectFilled(bb.Min, HvkVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & HvkGuiComboFlags_NoArrowButton) ? HvkDrawFlags_RoundCornersAll : HvkDrawFlags_RoundCornersLeft);
@@ -1964,7 +1964,7 @@ bool HvkGui::BeginCombo(const char* label, const char* preview_value, HvkGuiComb
     if (flags & HvkGuiComboFlags_CustomPreview)
     {
         g.ComboPreviewData.PreviewRect = HvkRect(bb.Min.x, bb.Min.y, value_x2, bb.Max.y);
-        IM_ASSERT(preview_value == NULL || preview_value[0] == 0);
+        Hvk_ASSERT(preview_value == NULL || preview_value[0] == 0);
         preview_value = NULL;
     }
 
@@ -1998,13 +1998,13 @@ bool HvkGui::BeginComboPopup(HvkGuiID popup_id, const HvkRect& bb, HvkGuiComboFl
     float w = bb.GetWidth();
     if (g.NextWindowData.HasFlags & HvkGuiNextWindowDataFlags_HasSizeConstraint)
     {
-        g.NextWindowData.SizeConstraintRect.Min.x = HvkMax(g.NextWindowData.SizeConstraintRect.Min.x, w);
+        g.NextWindowData.SizeConstraintRect.Min.x = Immax(g.NextWindowData.SizeConstraintRect.Min.x, w);
     }
     else
     {
         if ((flags & HvkGuiComboFlags_HeightMask_) == 0)
             flags |= HvkGuiComboFlags_HeightRegular;
-        IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiComboFlags_HeightMask_)); // Only one
+        Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiComboFlags_HeightMask_)); // Only one
         int popup_max_height_in_items = -1;
         if (flags & HvkGuiComboFlags_HeightRegular)     popup_max_height_in_items = 8;
         else if (flags & HvkGuiComboFlags_HeightSmall)  popup_max_height_in_items = 4;
@@ -2019,7 +2019,7 @@ bool HvkGui::BeginComboPopup(HvkGuiID popup_id, const HvkRect& bb, HvkGuiComboFl
 
     // This is essentially a specialized version of BeginPopupEx()
     char name[16];
-    HvkFormatString(name, IM_ARRAYSIZE(name), "##Combo_%02d", g.BeginComboDepth); // Recycle windows based on depth
+    HvkFormatString(name, Hvk_ARRAYSIZE(name), "##Combo_%02d", g.BeginComboDepth); // Recycle windows based on depth
 
     // Set position given a custom constraint (peak into expected window size so we can position it)
     // FIXME: This might be easier to express with an hypothetical SetNextWindowPosConstraints() function?
@@ -2044,7 +2044,7 @@ bool HvkGui::BeginComboPopup(HvkGuiID popup_id, const HvkRect& bb, HvkGuiComboFl
     {
         EndPopup();
         if (!g.IO.ConfigDebugBeginReturnValueOnce && !g.IO.ConfigDebugBeginReturnValueLoop) // Begin may only return false with those debug tools activated.
-            IM_ASSERT(0); // This should never happen as we tested for IsPopupOpen() above
+            Hvk_ASSERT(0); // This should never happen as we tested for IsPopupOpen() above
         return false;
     }
     g.BeginComboDepth++;
@@ -2068,7 +2068,7 @@ bool HvkGui::BeginComboPreview()
 
     if (window->SkipItems || !(g.LastItemData.StatusFlags & HvkGuiItemStatusFlags_Visible))
         return false;
-    IM_ASSERT(g.LastItemData.Rect.Min.x == preview_data->PreviewRect.Min.x && g.LastItemData.Rect.Min.y == preview_data->PreviewRect.Min.y); // Didn't call after BeginCombo/EndCombo block or forgot to pass HvkGuiComboFlags_CustomPreview flag?
+    Hvk_ASSERT(g.LastItemData.Rect.Min.x == preview_data->PreviewRect.Min.x && g.LastItemData.Rect.Min.y == preview_data->PreviewRect.Min.y); // Didn't call after BeginCombo/EndCombo block or forgot to pass HvkGuiComboFlags_CustomPreview flag?
     if (!window->ClipRect.Overlaps(preview_data->PreviewRect)) // Narrower test (optional)
         return false;
 
@@ -2103,7 +2103,7 @@ void HvkGui::EndComboPreview()
         }
     PopClipRect();
     window->DC.CursorPos = preview_data->BackupCursorPos;
-    window->DC.CursorMaxPos = HvkMax(window->DC.CursorMaxPos, preview_data->BackupCursorMaxPos);
+    window->DC.CursorMaxPos = Immax(window->DC.CursorMaxPos, preview_data->BackupCursorMaxPos);
     window->DC.CursorPosPrevLine = preview_data->BackupCursorPosPrevLine;
     window->DC.PrevLineTextBaseOffset = preview_data->BackupPrevLineTextBaseOffset;
     window->DC.LayoutType = preview_data->BackupLayout;
@@ -2242,7 +2242,7 @@ bool HvkGui::Combo(const char* label, int* current_item, bool (*old_getter)(void
 
 static const HvkU32 GDefaultRgbaColorMarkers[4] =
 {
-    IM_COL32(240,20,20,255), IM_COL32(20,240,20,255), IM_COL32(20,20,240,255), IM_COL32(140,140,140,255)
+    Hvk_COL32(240,20,20,255), Hvk_COL32(20,240,20,255), Hvk_COL32(20,20,240,255), Hvk_COL32(140,140,140,255)
 };
 
 static const HvkGuiDataTypeInfo GDataTypeInfo[] =
@@ -2265,11 +2265,11 @@ static const HvkGuiDataTypeInfo GDataTypeInfo[] =
     { sizeof(bool),             "bool", "%d",   "%d"    },  // HvkGuiDataType_Bool
     { 0,                        "char*","%s",   "%s"    },  // HvkGuiDataType_String
 };
-IM_STATIC_ASSERT(IM_ARRAYSIZE(GDataTypeInfo) == HvkGuiDataType_COUNT);
+Hvk_STATIC_ASSERT(Hvk_ARRAYSIZE(GDataTypeInfo) == HvkGuiDataType_COUNT);
 
 const HvkGuiDataTypeInfo* HvkGui::DataTypeGetInfo(HvkGuiDataType data_type)
 {
-    IM_ASSERT(data_type >= 0 && data_type < HvkGuiDataType_COUNT);
+    Hvk_ASSERT(data_type >= 0 && data_type < HvkGuiDataType_COUNT);
     return &GDataTypeInfo[data_type];
 }
 
@@ -2292,46 +2292,46 @@ int HvkGui::DataTypeFormatString(char* buf, int buf_size, HvkGuiDataType data_ty
         return HvkFormatString(buf, buf_size, format, *(const HvkS16*)p_data);
     if (data_type == HvkGuiDataType_U16)
         return HvkFormatString(buf, buf_size, format, *(const HvkU16*)p_data);
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return 0;
 }
 
 void HvkGui::DataTypeApplyOp(HvkGuiDataType data_type, int op, void* output, const void* arg1, const void* arg2)
 {
-    IM_ASSERT(op == '+' || op == '-');
+    Hvk_ASSERT(op == '+' || op == '-');
     switch (data_type)
     {
         case HvkGuiDataType_S8:
-            if (op == '+') { *(HvkS8*)output  = HvkAddClampOverflow(*(const HvkS8*)arg1,  *(const HvkS8*)arg2,  IM_S8_MIN,  IM_S8_MAX); }
-            if (op == '-') { *(HvkS8*)output  = HvkSubClampOverflow(*(const HvkS8*)arg1,  *(const HvkS8*)arg2,  IM_S8_MIN,  IM_S8_MAX); }
+            if (op == '+') { *(HvkS8*)output  = HvkAddClampOverflow(*(const HvkS8*)arg1,  *(const HvkS8*)arg2,  Hvk_S8_MIN,  Hvk_S8_MAX); }
+            if (op == '-') { *(HvkS8*)output  = HvkSubClampOverflow(*(const HvkS8*)arg1,  *(const HvkS8*)arg2,  Hvk_S8_MIN,  Hvk_S8_MAX); }
             return;
         case HvkGuiDataType_U8:
-            if (op == '+') { *(HvkU8*)output  = HvkAddClampOverflow(*(const HvkU8*)arg1,  *(const HvkU8*)arg2,  IM_U8_MIN,  IM_U8_MAX); }
-            if (op == '-') { *(HvkU8*)output  = HvkSubClampOverflow(*(const HvkU8*)arg1,  *(const HvkU8*)arg2,  IM_U8_MIN,  IM_U8_MAX); }
+            if (op == '+') { *(HvkU8*)output  = HvkAddClampOverflow(*(const HvkU8*)arg1,  *(const HvkU8*)arg2,  Hvk_U8_MIN,  Hvk_U8_MAX); }
+            if (op == '-') { *(HvkU8*)output  = HvkSubClampOverflow(*(const HvkU8*)arg1,  *(const HvkU8*)arg2,  Hvk_U8_MIN,  Hvk_U8_MAX); }
             return;
         case HvkGuiDataType_S16:
-            if (op == '+') { *(HvkS16*)output = HvkAddClampOverflow(*(const HvkS16*)arg1, *(const HvkS16*)arg2, IM_S16_MIN, IM_S16_MAX); }
-            if (op == '-') { *(HvkS16*)output = HvkSubClampOverflow(*(const HvkS16*)arg1, *(const HvkS16*)arg2, IM_S16_MIN, IM_S16_MAX); }
+            if (op == '+') { *(HvkS16*)output = HvkAddClampOverflow(*(const HvkS16*)arg1, *(const HvkS16*)arg2, Hvk_S16_MIN, Hvk_S16_MAX); }
+            if (op == '-') { *(HvkS16*)output = HvkSubClampOverflow(*(const HvkS16*)arg1, *(const HvkS16*)arg2, Hvk_S16_MIN, Hvk_S16_MAX); }
             return;
         case HvkGuiDataType_U16:
-            if (op == '+') { *(HvkU16*)output = HvkAddClampOverflow(*(const HvkU16*)arg1, *(const HvkU16*)arg2, IM_U16_MIN, IM_U16_MAX); }
-            if (op == '-') { *(HvkU16*)output = HvkSubClampOverflow(*(const HvkU16*)arg1, *(const HvkU16*)arg2, IM_U16_MIN, IM_U16_MAX); }
+            if (op == '+') { *(HvkU16*)output = HvkAddClampOverflow(*(const HvkU16*)arg1, *(const HvkU16*)arg2, Hvk_U16_MIN, Hvk_U16_MAX); }
+            if (op == '-') { *(HvkU16*)output = HvkSubClampOverflow(*(const HvkU16*)arg1, *(const HvkU16*)arg2, Hvk_U16_MIN, Hvk_U16_MAX); }
             return;
         case HvkGuiDataType_S32:
-            if (op == '+') { *(HvkS32*)output = HvkAddClampOverflow(*(const HvkS32*)arg1, *(const HvkS32*)arg2, IM_S32_MIN, IM_S32_MAX); }
-            if (op == '-') { *(HvkS32*)output = HvkSubClampOverflow(*(const HvkS32*)arg1, *(const HvkS32*)arg2, IM_S32_MIN, IM_S32_MAX); }
+            if (op == '+') { *(HvkS32*)output = HvkAddClampOverflow(*(const HvkS32*)arg1, *(const HvkS32*)arg2, Hvk_S32_MIN, Hvk_S32_MAX); }
+            if (op == '-') { *(HvkS32*)output = HvkSubClampOverflow(*(const HvkS32*)arg1, *(const HvkS32*)arg2, Hvk_S32_MIN, Hvk_S32_MAX); }
             return;
         case HvkGuiDataType_U32:
-            if (op == '+') { *(HvkU32*)output = HvkAddClampOverflow(*(const HvkU32*)arg1, *(const HvkU32*)arg2, IM_U32_MIN, IM_U32_MAX); }
-            if (op == '-') { *(HvkU32*)output = HvkSubClampOverflow(*(const HvkU32*)arg1, *(const HvkU32*)arg2, IM_U32_MIN, IM_U32_MAX); }
+            if (op == '+') { *(HvkU32*)output = HvkAddClampOverflow(*(const HvkU32*)arg1, *(const HvkU32*)arg2, Hvk_U32_MIN, Hvk_U32_MAX); }
+            if (op == '-') { *(HvkU32*)output = HvkSubClampOverflow(*(const HvkU32*)arg1, *(const HvkU32*)arg2, Hvk_U32_MIN, Hvk_U32_MAX); }
             return;
         case HvkGuiDataType_S64:
-            if (op == '+') { *(HvkS64*)output = HvkAddClampOverflow(*(const HvkS64*)arg1, *(const HvkS64*)arg2, IM_S64_MIN, IM_S64_MAX); }
-            if (op == '-') { *(HvkS64*)output = HvkSubClampOverflow(*(const HvkS64*)arg1, *(const HvkS64*)arg2, IM_S64_MIN, IM_S64_MAX); }
+            if (op == '+') { *(HvkS64*)output = HvkAddClampOverflow(*(const HvkS64*)arg1, *(const HvkS64*)arg2, Hvk_S64_MIN, Hvk_S64_MAX); }
+            if (op == '-') { *(HvkS64*)output = HvkSubClampOverflow(*(const HvkS64*)arg1, *(const HvkS64*)arg2, Hvk_S64_MIN, Hvk_S64_MAX); }
             return;
         case HvkGuiDataType_U64:
-            if (op == '+') { *(HvkU64*)output = HvkAddClampOverflow(*(const HvkU64*)arg1, *(const HvkU64*)arg2, IM_U64_MIN, IM_U64_MAX); }
-            if (op == '-') { *(HvkU64*)output = HvkSubClampOverflow(*(const HvkU64*)arg1, *(const HvkU64*)arg2, IM_U64_MIN, IM_U64_MAX); }
+            if (op == '+') { *(HvkU64*)output = HvkAddClampOverflow(*(const HvkU64*)arg1, *(const HvkU64*)arg2, Hvk_U64_MIN, Hvk_U64_MAX); }
+            if (op == '-') { *(HvkU64*)output = HvkSubClampOverflow(*(const HvkU64*)arg1, *(const HvkU64*)arg2, Hvk_U64_MIN, Hvk_U64_MAX); }
             return;
         case HvkGuiDataType_Float:
             if (op == '+') { *(float*)output = *(const float*)arg1 + *(const float*)arg2; }
@@ -2343,7 +2343,7 @@ void HvkGui::DataTypeApplyOp(HvkGuiDataType data_type, int op, void* output, con
             return;
         case HvkGuiDataType_COUNT: break;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
 }
 
 // User can input math operators (e.g. +100) to edit a numerical values.
@@ -2374,7 +2374,7 @@ bool HvkGui::DataTypeApplyFromText(const char* buf, HvkGuiDataType data_type, vo
     if (data_type == HvkGuiDataType_Float || data_type == HvkGuiDataType_Double)
         format = type_info->ScanFmt;
     else
-        format = HvkParseFormatSanitizeForScanning(format, format_sanitized, IM_ARRAYSIZE(format_sanitized));
+        format = HvkParseFormatSanitizeForScanning(format, format_sanitized, Hvk_ARRAYSIZE(format_sanitized));
 
     // Small types need a 32-bit buffer to receive the result from scanf()
     int v32 = 0;
@@ -2383,15 +2383,15 @@ bool HvkGui::DataTypeApplyFromText(const char* buf, HvkGuiDataType data_type, vo
     if (type_info->Size < 4)
     {
         if (data_type == HvkGuiDataType_S8)
-            *(HvkS8*)p_data = (HvkS8)HvkClamp(v32, (int)IM_S8_MIN, (int)IM_S8_MAX);
+            *(HvkS8*)p_data = (HvkS8)HvkClamp(v32, (int)Hvk_S8_MIN, (int)Hvk_S8_MAX);
         else if (data_type == HvkGuiDataType_U8)
-            *(HvkU8*)p_data = (HvkU8)HvkClamp(v32, (int)IM_U8_MIN, (int)IM_U8_MAX);
+            *(HvkU8*)p_data = (HvkU8)HvkClamp(v32, (int)Hvk_U8_MIN, (int)Hvk_U8_MAX);
         else if (data_type == HvkGuiDataType_S16)
-            *(HvkS16*)p_data = (HvkS16)HvkClamp(v32, (int)IM_S16_MIN, (int)IM_S16_MAX);
+            *(HvkS16*)p_data = (HvkS16)HvkClamp(v32, (int)Hvk_S16_MIN, (int)Hvk_S16_MAX);
         else if (data_type == HvkGuiDataType_U16)
-            *(HvkU16*)p_data = (HvkU16)HvkClamp(v32, (int)IM_U16_MIN, (int)IM_U16_MAX);
+            *(HvkU16*)p_data = (HvkU16)HvkClamp(v32, (int)Hvk_U16_MIN, (int)Hvk_U16_MAX);
         else
-            IM_ASSERT(0);
+            Hvk_ASSERT(0);
     }
 
     return memcmp(&data_backup, p_data, type_info->Size) != 0;
@@ -2421,7 +2421,7 @@ int HvkGui::DataTypeCompare(HvkGuiDataType data_type, const void* arg_1, const v
     case HvkGuiDataType_Double: return DataTypeCompareT<double>((const double*)arg_1, (const double*)arg_2);
     case HvkGuiDataType_COUNT:  break;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return 0;
 }
 
@@ -2450,7 +2450,7 @@ bool HvkGui::DataTypeClamp(HvkGuiDataType data_type, void* p_data, const void* p
     case HvkGuiDataType_Double: return DataTypeClampT<double>((double*)p_data, (const double*)p_min, (const double*)p_max);
     case HvkGuiDataType_COUNT:  break;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return false;
 }
 
@@ -2465,26 +2465,26 @@ static float GetMinimumStepAtDecimalPrecision(int decimal_precision)
     static const float min_steps[10] = { 1.0f, 0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f, 0.000001f, 0.0000001f, 0.00000001f, 0.000000001f };
     if (decimal_precision < 0)
         return FLT_MIN;
-    return (decimal_precision < IM_ARRAYSIZE(min_steps)) ? min_steps[decimal_precision] : HvkPow(10.0f, (float)-decimal_precision);
+    return (decimal_precision < Hvk_ARRAYSIZE(min_steps)) ? min_steps[decimal_precision] : HvkPow(10.0f, (float)-decimal_precision);
 }
 
 template<typename TYPE>
 TYPE HvkGui::RoundScalarWithFormatT(const char* format, HvkGuiDataType data_type, TYPE v)
 {
-    IM_UNUSED(data_type);
-    IM_ASSERT(data_type == HvkGuiDataType_Float || data_type == HvkGuiDataType_Double);
+    Hvk_UNUSED(data_type);
+    Hvk_ASSERT(data_type == HvkGuiDataType_Float || data_type == HvkGuiDataType_Double);
     const char* fmt_start = HvkParseFormatFindStart(format);
     if (fmt_start[0] != '%' || fmt_start[1] == '%') // Don't apply if the value is not visible in the format string
         return v;
 
     // Sanitize format
     char fmt_sanitized[32];
-    HvkParseFormatSanitizeForPrinting(fmt_start, fmt_sanitized, IM_ARRAYSIZE(fmt_sanitized));
+    HvkParseFormatSanitizeForPrinting(fmt_start, fmt_sanitized, Hvk_ARRAYSIZE(fmt_sanitized));
     fmt_start = fmt_sanitized;
 
     // Format value with our rounding, and read back
     char v_str[64];
-    HvkFormatString(v_str, IM_ARRAYSIZE(v_str), fmt_start, v);
+    HvkFormatString(v_str, Hvk_ARRAYSIZE(v_str), fmt_start, v);
     const char* p = v_str;
     while (*p == ' ')
         p++;
@@ -2544,7 +2544,7 @@ bool HvkGui::DragBehaviorT(HvkGuiDataType data_type, TYPE* v, float v_speed, con
         const bool tweak_fast = IsKeyDown((g.NavInputSource == HvkGuiInputSource_Gamepad) ? HvkGuiKey_NavGamepadTweakFast : HvkGuiKey_NavKeyboardTweakFast);
         const float tweak_factor = (flags & HvkGuiSliderFlags_NoSpeedTweaks) ? 1.0f : tweak_slow ? 1.0f / 10.0f : tweak_fast ? 10.0f : 1.0f;
         adjust_delta = GetNavTweakPressedAmount(axis) * tweak_factor;
-        v_speed = HvkMax(v_speed, GetMinimumStepAtDecimalPrecision(decimal_precision));
+        v_speed = Immax(v_speed, GetMinimumStepAtDecimalPrecision(decimal_precision));
     }
     adjust_delta *= v_speed;
 
@@ -2647,7 +2647,7 @@ bool HvkGui::DragBehaviorT(HvkGuiDataType data_type, TYPE* v, float v_speed, con
 bool HvkGui::DragBehavior(HvkGuiID id, HvkGuiDataType data_type, void* p_v, float v_speed, const void* p_min, const void* p_max, const char* format, HvkGuiSliderFlags flags)
 {
     // Read HvkGui.cpp "API BREAKING CHANGES" section for 1.78 if you hit this assert.
-    IM_ASSERT((flags == 1 || (flags & HvkGuiSliderFlags_InvalidMask_) == 0) && "Invalid HvkGuiSliderFlags flags! Has the legacy 'float power' argument been mistakenly cast to flags? Call function with HvkGuiSliderFlags_Logarithmic flags instead.");
+    Hvk_ASSERT((flags == 1 || (flags & HvkGuiSliderFlags_InvalidMask_) == 0) && "Invalid HvkGuiSliderFlags flags! Has the legacy 'float power' argument been mistakenly cast to flags? Call function with HvkGuiSliderFlags_Logarithmic flags instead.");
 
     HvkGuiContext& g = *GHvkGui;
     if (g.ActiveId == id)
@@ -2665,19 +2665,19 @@ bool HvkGui::DragBehavior(HvkGuiID id, HvkGuiDataType data_type, void* p_v, floa
 
     switch (data_type)
     {
-    case HvkGuiDataType_S8:     { HvkS32 v32 = (HvkS32)*(HvkS8*)p_v;  bool r = DragBehaviorT<HvkS32, HvkS32, float>(HvkGuiDataType_S32, &v32, v_speed, p_min ? *(const HvkS8*) p_min : IM_S8_MIN,  p_max ? *(const HvkS8*)p_max  : IM_S8_MAX,  format, flags); if (r) *(HvkS8*)p_v = (HvkS8)v32; return r; }
-    case HvkGuiDataType_U8:     { HvkU32 v32 = (HvkU32)*(HvkU8*)p_v;  bool r = DragBehaviorT<HvkU32, HvkS32, float>(HvkGuiDataType_U32, &v32, v_speed, p_min ? *(const HvkU8*) p_min : IM_U8_MIN,  p_max ? *(const HvkU8*)p_max  : IM_U8_MAX,  format, flags); if (r) *(HvkU8*)p_v = (HvkU8)v32; return r; }
-    case HvkGuiDataType_S16:    { HvkS32 v32 = (HvkS32)*(HvkS16*)p_v; bool r = DragBehaviorT<HvkS32, HvkS32, float>(HvkGuiDataType_S32, &v32, v_speed, p_min ? *(const HvkS16*)p_min : IM_S16_MIN, p_max ? *(const HvkS16*)p_max : IM_S16_MAX, format, flags); if (r) *(HvkS16*)p_v = (HvkS16)v32; return r; }
-    case HvkGuiDataType_U16:    { HvkU32 v32 = (HvkU32)*(HvkU16*)p_v; bool r = DragBehaviorT<HvkU32, HvkS32, float>(HvkGuiDataType_U32, &v32, v_speed, p_min ? *(const HvkU16*)p_min : IM_U16_MIN, p_max ? *(const HvkU16*)p_max : IM_U16_MAX, format, flags); if (r) *(HvkU16*)p_v = (HvkU16)v32; return r; }
-    case HvkGuiDataType_S32:    return DragBehaviorT<HvkS32, HvkS32, float >(data_type, (HvkS32*)p_v,  v_speed, p_min ? *(const HvkS32* )p_min : IM_S32_MIN, p_max ? *(const HvkS32* )p_max : IM_S32_MAX, format, flags);
-    case HvkGuiDataType_U32:    return DragBehaviorT<HvkU32, HvkS32, float >(data_type, (HvkU32*)p_v,  v_speed, p_min ? *(const HvkU32* )p_min : IM_U32_MIN, p_max ? *(const HvkU32* )p_max : IM_U32_MAX, format, flags);
-    case HvkGuiDataType_S64:    return DragBehaviorT<HvkS64, HvkS64, double>(data_type, (HvkS64*)p_v,  v_speed, p_min ? *(const HvkS64* )p_min : IM_S64_MIN, p_max ? *(const HvkS64* )p_max : IM_S64_MAX, format, flags);
-    case HvkGuiDataType_U64:    return DragBehaviorT<HvkU64, HvkS64, double>(data_type, (HvkU64*)p_v,  v_speed, p_min ? *(const HvkU64* )p_min : IM_U64_MIN, p_max ? *(const HvkU64* )p_max : IM_U64_MAX, format, flags);
+    case HvkGuiDataType_S8:     { HvkS32 v32 = (HvkS32)*(HvkS8*)p_v;  bool r = DragBehaviorT<HvkS32, HvkS32, float>(HvkGuiDataType_S32, &v32, v_speed, p_min ? *(const HvkS8*) p_min : Hvk_S8_MIN,  p_max ? *(const HvkS8*)p_max  : Hvk_S8_MAX,  format, flags); if (r) *(HvkS8*)p_v = (HvkS8)v32; return r; }
+    case HvkGuiDataType_U8:     { HvkU32 v32 = (HvkU32)*(HvkU8*)p_v;  bool r = DragBehaviorT<HvkU32, HvkS32, float>(HvkGuiDataType_U32, &v32, v_speed, p_min ? *(const HvkU8*) p_min : Hvk_U8_MIN,  p_max ? *(const HvkU8*)p_max  : Hvk_U8_MAX,  format, flags); if (r) *(HvkU8*)p_v = (HvkU8)v32; return r; }
+    case HvkGuiDataType_S16:    { HvkS32 v32 = (HvkS32)*(HvkS16*)p_v; bool r = DragBehaviorT<HvkS32, HvkS32, float>(HvkGuiDataType_S32, &v32, v_speed, p_min ? *(const HvkS16*)p_min : Hvk_S16_MIN, p_max ? *(const HvkS16*)p_max : Hvk_S16_MAX, format, flags); if (r) *(HvkS16*)p_v = (HvkS16)v32; return r; }
+    case HvkGuiDataType_U16:    { HvkU32 v32 = (HvkU32)*(HvkU16*)p_v; bool r = DragBehaviorT<HvkU32, HvkS32, float>(HvkGuiDataType_U32, &v32, v_speed, p_min ? *(const HvkU16*)p_min : Hvk_U16_MIN, p_max ? *(const HvkU16*)p_max : Hvk_U16_MAX, format, flags); if (r) *(HvkU16*)p_v = (HvkU16)v32; return r; }
+    case HvkGuiDataType_S32:    return DragBehaviorT<HvkS32, HvkS32, float >(data_type, (HvkS32*)p_v,  v_speed, p_min ? *(const HvkS32* )p_min : Hvk_S32_MIN, p_max ? *(const HvkS32* )p_max : Hvk_S32_MAX, format, flags);
+    case HvkGuiDataType_U32:    return DragBehaviorT<HvkU32, HvkS32, float >(data_type, (HvkU32*)p_v,  v_speed, p_min ? *(const HvkU32* )p_min : Hvk_U32_MIN, p_max ? *(const HvkU32* )p_max : Hvk_U32_MAX, format, flags);
+    case HvkGuiDataType_S64:    return DragBehaviorT<HvkS64, HvkS64, double>(data_type, (HvkS64*)p_v,  v_speed, p_min ? *(const HvkS64* )p_min : Hvk_S64_MIN, p_max ? *(const HvkS64* )p_max : Hvk_S64_MAX, format, flags);
+    case HvkGuiDataType_U64:    return DragBehaviorT<HvkU64, HvkS64, double>(data_type, (HvkU64*)p_v,  v_speed, p_min ? *(const HvkU64* )p_min : Hvk_U64_MIN, p_max ? *(const HvkU64* )p_max : Hvk_U64_MAX, format, flags);
     case HvkGuiDataType_Float:  return DragBehaviorT<float, float, float >(data_type, (float*)p_v,  v_speed, p_min ? *(const float* )p_min : -FLT_MAX,   p_max ? *(const float* )p_max : FLT_MAX,    format, flags);
     case HvkGuiDataType_Double: return DragBehaviorT<double,double,double>(data_type, (double*)p_v, v_speed, p_min ? *(const double*)p_min : -DBL_MAX,   p_max ? *(const double*)p_max : DBL_MAX,    format, flags);
     case HvkGuiDataType_COUNT:  break;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return false;
 }
 
@@ -2774,7 +2774,7 @@ bool HvkGui::DragScalar(const char* label, HvkGuiDataType data_type, void* p_dat
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
+    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, Hvk_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, HvkVec2(0.5f, 0.5f));
@@ -2856,13 +2856,13 @@ bool HvkGui::DragFloatRange2(const char* label, float* v_current_min, float* v_c
     PushMultiItemsWidths(2, CalcItemWidth());
 
     float min_min = (v_min >= v_max) ? -FLT_MAX : v_min;
-    float min_max = (v_min >= v_max) ? *v_current_max : HvkMin(v_max, *v_current_max);
+    float min_max = (v_min >= v_max) ? *v_current_max : Immin(v_max, *v_current_max);
     HvkGuiSliderFlags min_flags = flags | ((min_min == min_max) ? HvkGuiSliderFlags_ReadOnly : 0);
     bool value_changed = DragScalar("##min", HvkGuiDataType_Float, v_current_min, v_speed, &min_min, &min_max, format, min_flags);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
 
-    float max_min = (v_min >= v_max) ? *v_current_min : HvkMax(v_min, *v_current_min);
+    float max_min = (v_min >= v_max) ? *v_current_min : Immax(v_min, *v_current_min);
     float max_max = (v_min >= v_max) ? FLT_MAX : v_max;
     HvkGuiSliderFlags max_flags = flags | ((max_min == max_max) ? HvkGuiSliderFlags_ReadOnly : 0);
     value_changed |= DragScalar("##max", HvkGuiDataType_Float, v_current_max, v_speed, &max_min, &max_max, format_max ? format_max : format, max_flags);
@@ -2910,13 +2910,13 @@ bool HvkGui::DragIntRange2(const char* label, int* v_current_min, int* v_current
     PushMultiItemsWidths(2, CalcItemWidth());
 
     int min_min = (v_min >= v_max) ? INT_MIN : v_min;
-    int min_max = (v_min >= v_max) ? *v_current_max : HvkMin(v_max, *v_current_max);
+    int min_max = (v_min >= v_max) ? *v_current_max : Immin(v_max, *v_current_max);
     HvkGuiSliderFlags min_flags = flags | ((min_min == min_max) ? HvkGuiSliderFlags_ReadOnly : 0);
     bool value_changed = DragInt("##min", v_current_min, v_speed, min_min, min_max, format, min_flags);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
 
-    int max_min = (v_min >= v_max) ? *v_current_min : HvkMax(v_min, *v_current_min);
+    int max_min = (v_min >= v_max) ? *v_current_min : Immax(v_min, *v_current_min);
     int max_max = (v_min >= v_max) ? INT_MAX : v_max;
     HvkGuiSliderFlags max_flags = flags | ((max_min == max_max) ? HvkGuiSliderFlags_ReadOnly : 0);
     value_changed |= DragInt("##max", v_current_max, v_speed, max_min, max_max, format_max ? format_max : format, max_flags);
@@ -2959,7 +2959,7 @@ float HvkGui::ScaleRatioFromValueT(HvkGuiDataType data_type, TYPE v, TYPE v_min,
 {
     if (v_min == v_max)
         return 0.0f;
-    IM_UNUSED(data_type);
+    Hvk_UNUSED(data_type);
 
     const TYPE v_clamped = (v_min < v_max) ? HvkClamp(v, v_min, v_max) : HvkClamp(v, v_max, v_min);
     if (is_logarithmic)
@@ -3040,7 +3040,7 @@ TYPE HvkGui::ScaleValueFromRatioT(HvkGuiDataType data_type, float t, TYPE v_min,
 
         if ((v_min * v_max) < 0.0f) // Range crosses zero, so we have to do this in two parts
         {
-            float zero_point_center = (-(float)HvkMin(v_min, v_max)) / HvkAbs((float)v_max - (float)v_min); // The zero point in parametric space
+            float zero_point_center = (-(float)Immin(v_min, v_max)) / HvkAbs((float)v_max - (float)v_min); // The zero point in parametric space
             float zero_point_snap_L = zero_point_center - zero_deadzone_halfsize;
             float zero_point_snap_R = zero_point_center + zero_deadzone_halfsize;
             if (t_with_flip >= zero_point_snap_L && t_with_flip <= zero_point_snap_R)
@@ -3094,8 +3094,8 @@ bool HvkGui::SliderBehaviorT(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data
     const float slider_sz = (bb.Max[axis] - bb.Min[axis]) - grab_padding * 2.0f;
     float grab_sz = style.GrabMinSize;
     if (!is_floating_point && v_range_f >= 0.0f)                         // v_range_f < 0 may happen on integer overflows
-        grab_sz = HvkMax(slider_sz / (v_range_f + 1), style.GrabMinSize); // For integer sliders: if possible have the grab size represent 1 unit
-    grab_sz = HvkMin(grab_sz, slider_sz);
+        grab_sz = Immax(slider_sz / (v_range_f + 1), style.GrabMinSize); // For integer sliders: if possible have the grab size represent 1 unit
+    grab_sz = Immin(grab_sz, slider_sz);
     const float slider_usable_sz = slider_sz - grab_sz;
     const float slider_usable_pos_min = bb.Min[axis] + grab_padding + grab_sz * 0.5f;
     const float slider_usable_pos_max = bb.Max[axis] - grab_padding - grab_sz * 0.5f;
@@ -3107,7 +3107,7 @@ bool HvkGui::SliderBehaviorT(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data
         // When using logarithmic sliders, we need to clamp to avoid hitting zero, but our choice of clamp value greatly affects slider precision. We attempt to use the specified precision to estimate a good lower bound.
         const int decimal_precision = is_floating_point ? HvkParseFormatPrecision(format, 3) : 1;
         logarithmic_zero_epsilon = HvkPow(0.1f, (float)decimal_precision);
-        zero_deadzone_halfsize = (style.LogSliderDeadzone * 0.5f) / HvkMax(slider_usable_sz, 1.0f);
+        zero_deadzone_halfsize = (style.LogSliderDeadzone * 0.5f) / Immax(slider_usable_sz, 1.0f);
     }
 
     // Process interacting with the slider
@@ -3202,9 +3202,9 @@ bool HvkGui::SliderBehaviorT(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data
                     float new_clicked_t = ScaleRatioFromValueT<TYPE, SIGNEDTYPE, FLOATTYPE>(data_type, v_new, v_min, v_max, is_logarithmic, logarithmic_zero_epsilon, zero_deadzone_halfsize);
 
                     if (delta > 0)
-                        g.SliderCurrentAccum -= HvkMin(new_clicked_t - old_clicked_t, delta);
+                        g.SliderCurrentAccum -= Immin(new_clicked_t - old_clicked_t, delta);
                     else
-                        g.SliderCurrentAccum -= HvkMax(new_clicked_t - old_clicked_t, delta);
+                        g.SliderCurrentAccum -= Immax(new_clicked_t - old_clicked_t, delta);
                 }
 
                 g.SliderCurrentAccumDirty = false;
@@ -3258,8 +3258,8 @@ bool HvkGui::SliderBehaviorT(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data
 bool HvkGui::SliderBehavior(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data_type, void* p_v, const void* p_min, const void* p_max, const char* format, HvkGuiSliderFlags flags, HvkRect* out_grab_bb)
 {
     // Read HvkGui.cpp "API BREAKING CHANGES" section for 1.78 if you hit this assert.
-    IM_ASSERT((flags == 1 || (flags & HvkGuiSliderFlags_InvalidMask_) == 0) && "Invalid HvkGuiSliderFlags flags! Has the legacy 'float power' argument been mistakenly cast to flags? Call function with HvkGuiSliderFlags_Logarithmic flags instead.");
-    IM_ASSERT((flags & HvkGuiSliderFlags_WrapAround) == 0); // Not supported by SliderXXX(), only by DragXXX()
+    Hvk_ASSERT((flags == 1 || (flags & HvkGuiSliderFlags_InvalidMask_) == 0) && "Invalid HvkGuiSliderFlags flags! Has the legacy 'float power' argument been mistakenly cast to flags? Call function with HvkGuiSliderFlags_Logarithmic flags instead.");
+    Hvk_ASSERT((flags & HvkGuiSliderFlags_WrapAround) == 0); // Not supported by SliderXXX(), only by DragXXX()
 
     switch (data_type)
     {
@@ -3268,26 +3268,26 @@ bool HvkGui::SliderBehavior(const HvkRect& bb, HvkGuiID id, HvkGuiDataType data_
     case HvkGuiDataType_S16: { HvkS32 v32 = (HvkS32)*(HvkS16*)p_v; bool r = SliderBehaviorT<HvkS32, HvkS32, float>(bb, id, HvkGuiDataType_S32, &v32, *(const HvkS16*)p_min, *(const HvkS16*)p_max, format, flags, out_grab_bb); if (r) *(HvkS16*)p_v = (HvkS16)v32; return r; }
     case HvkGuiDataType_U16: { HvkU32 v32 = (HvkU32)*(HvkU16*)p_v; bool r = SliderBehaviorT<HvkU32, HvkS32, float>(bb, id, HvkGuiDataType_U32, &v32, *(const HvkU16*)p_min, *(const HvkU16*)p_max, format, flags, out_grab_bb); if (r) *(HvkU16*)p_v = (HvkU16)v32; return r; }
     case HvkGuiDataType_S32:
-        IM_ASSERT(*(const HvkS32*)p_min >= IM_S32_MIN / 2 && *(const HvkS32*)p_max <= IM_S32_MAX / 2);
+        Hvk_ASSERT(*(const HvkS32*)p_min >= Hvk_S32_MIN / 2 && *(const HvkS32*)p_max <= Hvk_S32_MAX / 2);
         return SliderBehaviorT<HvkS32, HvkS32, float >(bb, id, data_type, (HvkS32*)p_v,  *(const HvkS32*)p_min,  *(const HvkS32*)p_max,  format, flags, out_grab_bb);
     case HvkGuiDataType_U32:
-        IM_ASSERT(*(const HvkU32*)p_max <= IM_U32_MAX / 2);
+        Hvk_ASSERT(*(const HvkU32*)p_max <= Hvk_U32_MAX / 2);
         return SliderBehaviorT<HvkU32, HvkS32, float >(bb, id, data_type, (HvkU32*)p_v,  *(const HvkU32*)p_min,  *(const HvkU32*)p_max,  format, flags, out_grab_bb);
     case HvkGuiDataType_S64:
-        IM_ASSERT(*(const HvkS64*)p_min >= IM_S64_MIN / 2 && *(const HvkS64*)p_max <= IM_S64_MAX / 2);
+        Hvk_ASSERT(*(const HvkS64*)p_min >= Hvk_S64_MIN / 2 && *(const HvkS64*)p_max <= Hvk_S64_MAX / 2);
         return SliderBehaviorT<HvkS64, HvkS64, double>(bb, id, data_type, (HvkS64*)p_v,  *(const HvkS64*)p_min,  *(const HvkS64*)p_max,  format, flags, out_grab_bb);
     case HvkGuiDataType_U64:
-        IM_ASSERT(*(const HvkU64*)p_max <= IM_U64_MAX / 2);
+        Hvk_ASSERT(*(const HvkU64*)p_max <= Hvk_U64_MAX / 2);
         return SliderBehaviorT<HvkU64, HvkS64, double>(bb, id, data_type, (HvkU64*)p_v,  *(const HvkU64*)p_min,  *(const HvkU64*)p_max,  format, flags, out_grab_bb);
     case HvkGuiDataType_Float:
-        IM_ASSERT(*(const float*)p_min >= -FLT_MAX / 2.0f && *(const float*)p_max <= FLT_MAX / 2.0f);
+        Hvk_ASSERT(*(const float*)p_min >= -FLT_MAX / 2.0f && *(const float*)p_max <= FLT_MAX / 2.0f);
         return SliderBehaviorT<float, float, float >(bb, id, data_type, (float*)p_v,  *(const float*)p_min,  *(const float*)p_max,  format, flags, out_grab_bb);
     case HvkGuiDataType_Double:
-        IM_ASSERT(*(const double*)p_min >= -DBL_MAX / 2.0f && *(const double*)p_max <= DBL_MAX / 2.0f);
+        Hvk_ASSERT(*(const double*)p_min >= -DBL_MAX / 2.0f && *(const double*)p_max <= DBL_MAX / 2.0f);
         return SliderBehaviorT<double, double, double>(bb, id, data_type, (double*)p_v, *(const double*)p_min, *(const double*)p_max, format, flags, out_grab_bb);
     case HvkGuiDataType_COUNT: break;
     }
-    IM_ASSERT(0);
+    Hvk_ASSERT(0);
     return false;
 }
 
@@ -3371,7 +3371,7 @@ bool HvkGui::SliderScalar(const char* label, HvkGuiDataType data_type, void* p_d
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
+    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, Hvk_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, HvkVec2(0.5f, 0.5f));
@@ -3445,10 +3445,10 @@ bool HvkGui::SliderAngle(const char* label, float* v_rad, float v_degrees_min, f
 {
     if (format == NULL)
         format = "%.0f deg";
-    float v_deg = (*v_rad) * 360.0f / (2 * IM_PI);
+    float v_deg = (*v_rad) * 360.0f / (2 * Hvk_PI);
     bool value_changed = SliderFloat(label, &v_deg, v_degrees_min, v_degrees_max, format, flags);
     if (value_changed)
-        *v_rad = v_deg * (2 * IM_PI) / 360.0f;
+        *v_rad = v_deg * (2 * Hvk_PI) / 360.0f;
     return value_changed;
 }
 
@@ -3524,7 +3524,7 @@ bool HvkGui::VSliderScalar(const char* label, const HvkVec2& size, HvkGuiDataTyp
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     // For the vertical slider we allow centered text to overlap the frame padding
     char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
+    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, Hvk_ARRAYSIZE(value_buf), data_type, p_data, format);
     RenderTextClipped(HvkVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, HvkVec2(0.5f, 0.0f));
     if (label_size.x > 0.0f)
         RenderText(HvkVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
@@ -3609,7 +3609,7 @@ const char* HvkParseFormatTrimDecorations(const char* fmt, char* buf, size_t buf
     const char* fmt_end = HvkParseFormatFindEnd(fmt_start);
     if (fmt_end[0] == 0) // If we only have leading decoration, we don't need to copy the data.
         return fmt_start;
-    HvkStrncpy(buf, fmt_start, HvkMin((size_t)(fmt_end - fmt_start) + 1, buf_size));
+    HvkStrncpy(buf, fmt_start, Immin((size_t)(fmt_end - fmt_start) + 1, buf_size));
     return buf;
 }
 
@@ -3619,8 +3619,8 @@ const char* HvkParseFormatTrimDecorations(const char* fmt, char* buf, size_t buf
 void HvkParseFormatSanitizeForPrinting(const char* fmt_in, char* fmt_out, size_t fmt_out_size)
 {
     const char* fmt_end = HvkParseFormatFindEnd(fmt_in);
-    IM_UNUSED(fmt_out_size);
-    IM_ASSERT((size_t)(fmt_end - fmt_in + 1) < fmt_out_size); // Format is too long, let us know if this happens to you!
+    Hvk_UNUSED(fmt_out_size);
+    Hvk_ASSERT((size_t)(fmt_end - fmt_in + 1) < fmt_out_size); // Format is too long, let us know if this happens to you!
     while (fmt_in < fmt_end)
     {
         char c = *fmt_in++;
@@ -3635,8 +3635,8 @@ const char* HvkParseFormatSanitizeForScanning(const char* fmt_in, char* fmt_out,
 {
     const char* fmt_end = HvkParseFormatFindEnd(fmt_in);
     const char* fmt_out_begin = fmt_out;
-    IM_UNUSED(fmt_out_size);
-    IM_ASSERT((size_t)(fmt_end - fmt_in + 1) < fmt_out_size); // Format is too long, let us know if this happens to you!
+    Hvk_UNUSED(fmt_out_size);
+    Hvk_ASSERT((size_t)(fmt_end - fmt_in + 1) < fmt_out_size); // Format is too long, let us know if this happens to you!
     bool has_type = false;
     while (fmt_in < fmt_end)
     {
@@ -3707,7 +3707,7 @@ bool HvkGui::TempInputText(const HvkRect& bb, HvkGuiID id, const char* label, ch
     if (init)
     {
         // First frame we started displaying the InputText widget, we expect it to take the active id.
-        IM_ASSERT(g.ActiveId == id);
+        Hvk_ASSERT(g.ActiveId == id);
         g.TempInputId = g.ActiveId;
     }
     return value_changed;
@@ -3724,16 +3724,16 @@ bool HvkGui::TempInputScalar(const HvkRect& bb, HvkGuiID id, const char* label, 
     const HvkGuiDataTypeInfo* type_info = DataTypeGetInfo(data_type);
     char fmt_buf[32];
     char data_buf[32];
-    format = HvkParseFormatTrimDecorations(format, fmt_buf, IM_ARRAYSIZE(fmt_buf));
+    format = HvkParseFormatTrimDecorations(format, fmt_buf, Hvk_ARRAYSIZE(fmt_buf));
     if (format[0] == 0)
         format = type_info->PrintFmt;
-    DataTypeFormatString(data_buf, IM_ARRAYSIZE(data_buf), data_type, p_data, format);
+    DataTypeFormatString(data_buf, Hvk_ARRAYSIZE(data_buf), data_type, p_data, format);
     HvkStrTrimBlanks(data_buf);
 
     HvkGuiInputTextFlags flags = HvkGuiInputTextFlags_AutoSelectAll | (HvkGuiInputTextFlags)HvkGuiInputTextFlags_LocalizeDecimalPoint;
     g.LastItemData.ItemFlags |= HvkGuiItemFlags_NoMarkEdited; // Because TempInputText() uses HvkGuiInputTextFlags_MergedItem it doesn't submit a new item, so we poke LastItemData.
     bool value_changed = false;
-    if (TempInputText(bb, id, label, data_buf, IM_ARRAYSIZE(data_buf), flags))
+    if (TempInputText(bb, id, label, data_buf, Hvk_ARRAYSIZE(data_buf), flags))
     {
         // Backup old value
         size_t data_type_size = type_info->Size;
@@ -3775,7 +3775,7 @@ bool HvkGui::InputScalar(const char* label, HvkGuiDataType data_type, void* p_da
 
     HvkGuiContext& g = *GHvkGui;
     HvkGuiStyle& style = g.Style;
-    IM_ASSERT((flags & HvkGuiInputTextFlags_EnterReturnsTrue) == 0); // Not supported by InputScalar(). Please open an issue if you this would be useful to you. Otherwise use IsItemDeactivatedAfterEdit()!
+    Hvk_ASSERT((flags & HvkGuiInputTextFlags_EnterReturnsTrue) == 0); // Not supported by InputScalar(). Please open an issue if you this would be useful to you. Otherwise use IsItemDeactivatedAfterEdit()!
 
     if (format == NULL)
         format = DataTypeGetInfo(data_type)->PrintFmt;
@@ -3786,7 +3786,7 @@ bool HvkGui::InputScalar(const char* label, HvkGuiDataType data_type, void* p_da
     if ((flags & HvkGuiInputTextFlags_DisplayEmptyRefVal) && DataTypeCompare(data_type, p_data, p_data_default) == 0)
         buf[0] = 0;
     else
-        DataTypeFormatString(buf, IM_ARRAYSIZE(buf), data_type, p_data, format);
+        DataTypeFormatString(buf, Hvk_ARRAYSIZE(buf), data_type, p_data, format);
 
     // Disable the MarkItemEdited() call in InputText but keep HvkGuiItemStatusFlags_Edited.
     // We call MarkItemEdited() ourselves by comparing the actual data rather than the string.
@@ -3796,7 +3796,7 @@ bool HvkGui::InputScalar(const char* label, HvkGuiDataType data_type, void* p_da
     bool value_changed = false;
     if (p_step == NULL)
     {
-        if (InputText(label, buf, IM_ARRAYSIZE(buf), flags))
+        if (InputText(label, buf, Hvk_ARRAYSIZE(buf), flags))
             value_changed = DataTypeApplyFromText(buf, data_type, p_data, format, (flags & HvkGuiInputTextFlags_ParseEmptyRefVal) ? p_data_default : NULL);
     }
     else
@@ -3805,8 +3805,8 @@ bool HvkGui::InputScalar(const char* label, HvkGuiDataType data_type, void* p_da
 
         BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
         PushID(label);
-        SetNextItemWidth(HvkMax(1.0f, CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
-        if (InputText("", buf, IM_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected ID from outside point of view
+        SetNextItemWidth(Immax(1.0f, CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
+        if (InputText("", buf, Hvk_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected ID from outside point of view
             value_changed = DataTypeApplyFromText(buf, data_type, p_data, format, (flags & HvkGuiInputTextFlags_ParseEmptyRefVal) ? p_data_default : NULL);
         HvkGui_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | HvkGuiItemStatusFlags_Inputable);
 
@@ -3952,7 +3952,7 @@ namespace HvkStb
 // If you want to use InputText() with std::string or any custom dynamic string type, use the wrapper in misc/cpp/HvkGui_stdlib.h/.cpp!
 bool HvkGui::InputText(const char* label, char* buf, size_t buf_size, HvkGuiInputTextFlags flags, HvkGuiInputTextCallback callback, void* user_data)
 {
-    IM_ASSERT(!(flags & HvkGuiInputTextFlags_Multiline)); // call InputTextMultiline()
+    Hvk_ASSERT(!(flags & HvkGuiInputTextFlags_Multiline)); // call InputTextMultiline()
     return InputTextEx(label, NULL, buf, (int)buf_size, HvkVec2(0, 0), flags, callback, user_data);
 }
 
@@ -3963,7 +3963,7 @@ bool HvkGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, c
 
 bool HvkGui::InputTextWithHint(const char* label, const char* hint, char* buf, size_t buf_size, HvkGuiInputTextFlags flags, HvkGuiInputTextCallback callback, void* user_data)
 {
-    IM_ASSERT(!(flags & HvkGuiInputTextFlags_Multiline)); // call InputTextMultiline() or  InputTextEx() manually if you need multi-line + hint.
+    Hvk_ASSERT(!(flags & HvkGuiInputTextFlags_Multiline)); // call InputTextMultiline() or  InputTextEx() manually if you need multi-line + hint.
     return InputTextEx(label, hint, buf, (int)buf_size, HvkVec2(0, 0), flags, callback, user_data);
 }
 
@@ -3971,7 +3971,7 @@ static HvkVec2 InputTextCalcTextSize(HvkGuiContext* ctx, const char* text_begin,
 {
     HvkGuiContext& g = *ctx;
     HvkGuiInputTextState* obj = &g.InputTextState;
-    IM_ASSERT(text_end_display >= text_begin && text_end_display <= text_end);
+    Hvk_ASSERT(text_end_display >= text_begin && text_end_display <= text_end);
     return HvkFontCalcTextSizeEx(g.Font, g.FontSize, FLT_MAX, obj->WrapWidth, text_begin, text_end_display, text_end, out_remaining, out_offset, flags);
 }
 
@@ -3983,7 +3983,7 @@ static HvkVec2 InputTextCalcTextSize(HvkGuiContext* ctx, const char* text_begin,
 namespace HvkStb
 {
 static int     STB_TEXTEDIT_STRINGLEN(const HvkGuiInputTextState* obj)                             { return obj->TextLen; }
-static char    STB_TEXTEDIT_GETCHAR(const HvkGuiInputTextState* obj, int idx)                      { IM_ASSERT(idx >= 0 && idx <= obj->TextLen); return obj->TextSrc[idx]; }
+static char    STB_TEXTEDIT_GETCHAR(const HvkGuiInputTextState* obj, int idx)                      { Hvk_ASSERT(idx >= 0 && idx <= obj->TextLen); return obj->TextSrc[idx]; }
 static float   STB_TEXTEDIT_GETWIDTH(HvkGuiInputTextState* obj, int line_start_idx, int char_idx)  { unsigned int c; HvkTextCharFromUtf8(&c, obj->TextSrc + line_start_idx + char_idx, obj->TextSrc + obj->TextLen); if ((HvkWchar)c == '\n') return HvkSTB_TEXTEDIT_GETWIDTH_NEWLINE; HvkGuiContext& g = *obj->Ctx; return g.FontBaked->GetCharAdvance((HvkWchar)c) * g.FontBakedScale; }
 static char    STB_TEXTEDIT_NEWLINE = '\n';
 static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, HvkGuiInputTextState* obj, int line_start_idx)
@@ -4164,7 +4164,7 @@ static int STB_TEXTEDIT_MOVELINEEND_IMPL(HvkGuiInputTextState* obj, HvkStb::STB_
 static void STB_TEXTEDIT_DELETECHARS(HvkGuiInputTextState* obj, int pos, int n)
 {
     // Offset remaining text (+ copy zero terminator)
-    IM_ASSERT(obj->TextSrc == obj->TextA.Data);
+    Hvk_ASSERT(obj->TextSrc == obj->TextA.Data);
     char* dst = obj->TextA.Data + pos;
     char* src = obj->TextA.Data + pos + n;
     memmove(dst, src, obj->TextLen - n - pos + 1);
@@ -4176,7 +4176,7 @@ static int STB_TEXTEDIT_INSERTCHARS(HvkGuiInputTextState* obj, int pos, const ch
 {
     const bool is_resizable = (obj->Flags & HvkGuiInputTextFlags_CallbackResize) != 0;
     const int text_len = obj->TextLen;
-    IM_ASSERT(pos <= text_len);
+    Hvk_ASSERT(pos <= text_len);
 
     // We support partial insertion (with a mod in stb_textedit.h)
     const int avail = obj->BufCapacity - 1 - obj->TextLen;
@@ -4186,10 +4186,10 @@ static int STB_TEXTEDIT_INSERTCHARS(HvkGuiInputTextState* obj, int pos, const ch
         return 0;
 
     // Grow internal buffer if needed
-    IM_ASSERT(obj->TextSrc == obj->TextA.Data);
+    Hvk_ASSERT(obj->TextSrc == obj->TextA.Data);
     if (text_len + new_text_len + 1 > obj->TextA.Size && is_resizable)
     {
-        obj->TextA.resize(text_len + HvkClamp(new_text_len, 32, HvkMax(256, new_text_len)) + 1);
+        obj->TextA.resize(text_len + HvkClamp(new_text_len, 32, Immax(256, new_text_len)) + 1);
         obj->TextSrc = obj->TextA.Data;
     }
 
@@ -4244,7 +4244,7 @@ static void stb_textedit_replace(HvkGuiInputTextState* str, STB_TexteditState* s
         state->has_preferred_x = 0;
         return;
     }
-    IM_ASSERT(0); // Failed to insert character, normally shouldn't happen because of how we currently use stb_textedit_replace()
+    Hvk_ASSERT(0); // Failed to insert character, normally shouldn't happen because of how we currently use stb_textedit_replace()
 }
 
 } // namespace HvkStb
@@ -4253,13 +4253,13 @@ static void stb_textedit_replace(HvkGuiInputTextState* str, STB_TexteditState* s
 HvkGuiInputTextState::HvkGuiInputTextState()
 {
     memset(this, 0, sizeof(*this));
-    Stb = IM_NEW(HvkStbTexteditState);
+    Stb = Hvk_NEW(HvkStbTexteditState);
     memset(Stb, 0, sizeof(*Stb));
 }
 
 HvkGuiInputTextState::~HvkGuiInputTextState()
 {
-    IM_DELETE(Stb);
+    Hvk_DELETE(Stb);
 }
 
 void HvkGuiInputTextState::OnKeyPressed(int key)
@@ -4287,7 +4287,7 @@ void HvkGuiInputTextState::OnCharPressed(unsigned int c)
 
 // Those functions are not inlined in HvkGui_internal.h, allowing us to hide HvkStbTexteditState from that header.
 void HvkGuiInputTextState::CursorAnimReset()                 { CursorAnim = -0.30f; } // After a user-input the cursor stays on for a while without blinking
-void HvkGuiInputTextState::CursorClamp()                     { Stb->cursor = HvkMin(Stb->cursor, TextLen); Stb->select_start = HvkMin(Stb->select_start, TextLen); Stb->select_end = HvkMin(Stb->select_end, TextLen); }
+void HvkGuiInputTextState::CursorClamp()                     { Stb->cursor = Immin(Stb->cursor, TextLen); Stb->select_start = Immin(Stb->select_start, TextLen); Stb->select_end = Immin(Stb->select_end, TextLen); }
 bool HvkGuiInputTextState::HasSelection() const              { return Stb->select_start != Stb->select_end; }
 void HvkGuiInputTextState::ClearSelection()                  { Stb->select_start = Stb->select_end = Stb->cursor; }
 int  HvkGuiInputTextState::GetCursorPos() const              { return Stb->cursor; }
@@ -4310,7 +4310,7 @@ HvkGuiInputTextCallbackData::HvkGuiInputTextCallbackData()
 // buffer, but nowadays they both work on UTF-8 data. Should aim to merge both.
 void HvkGuiInputTextCallbackData::DeleteChars(int pos, int bytes_count)
 {
-    IM_ASSERT(pos + bytes_count <= BufTextLen);
+    Hvk_ASSERT(pos + bytes_count <= BufTextLen);
     char* dst = Buf + pos;
     const char* src = Buf + pos + bytes_count;
     memmove(dst, src, BufTextLen - bytes_count - pos + 1);
@@ -4332,7 +4332,7 @@ void HvkGuiInputTextCallbackData::InsertChars(int pos, const char* new_text, con
 
     HvkGuiContext& g = *Ctx;
     HvkGuiInputTextState* obj = &g.InputTextState;
-    IM_ASSERT(obj->ID != 0 && g.ActiveId == obj->ID);
+    Hvk_ASSERT(obj->ID != 0 && g.ActiveId == obj->ID);
     const bool is_resizable = (Flags & HvkGuiInputTextFlags_CallbackResize) != 0;
     const bool is_readonly = (Flags & HvkGuiInputTextFlags_ReadOnly) != 0;
     int new_text_len = new_text_end ? (int)(new_text_end - new_text) : (int)HvkStrlen(new_text);
@@ -4347,8 +4347,8 @@ void HvkGuiInputTextCallbackData::InsertChars(int pos, const char* new_text, con
     // Grow internal buffer if needed
     if (new_text_len + BufTextLen + 1 > obj->TextA.Size && is_resizable && !is_readonly)
     {
-        IM_ASSERT(Buf == obj->TextA.Data);
-        int new_buf_size = BufTextLen + HvkClamp(new_text_len * 4, 32, HvkMax(256, new_text_len)) + 1;
+        Hvk_ASSERT(Buf == obj->TextA.Data);
+        int new_buf_size = BufTextLen + HvkClamp(new_text_len * 4, 32, Immax(256, new_text_len)) + 1;
         obj->TextA.resize(new_buf_size + 1);
         obj->TextSrc = obj->TextA.Data;
         Buf = obj->TextA.Data;
@@ -4372,7 +4372,7 @@ void HvkGui::PushPasswordFont()
 {
     HvkGuiContext& g = *GHvkGui;
     HvkFontBaked* backup = &g.InputTextPasswordFontBackupBaked;
-    IM_ASSERT(backup->IndexAdvanceX.Size == 0 && backup->IndexLookup.Size == 0);
+    Hvk_ASSERT(backup->IndexAdvanceX.Size == 0 && backup->IndexLookup.Size == 0);
     HvkFontGlyph* glyph = g.FontBaked->FindGlyph('*');
     g.InputTextPasswordFontBackupFlags = g.Font->Flags;
     backup->FallbackGlyphIndex = g.FontBaked->FallbackGlyphIndex;
@@ -4393,7 +4393,7 @@ void HvkGui::PopPasswordFont()
     g.FontBaked->FallbackAdvanceX = backup->FallbackAdvanceX;
     g.FontBaked->IndexLookup.swap(backup->IndexLookup);
     g.FontBaked->IndexAdvanceX.swap(backup->IndexAdvanceX);
-    IM_ASSERT(backup->IndexAdvanceX.Size == 0 && backup->IndexLookup.Size == 0);
+    Hvk_ASSERT(backup->IndexAdvanceX.Size == 0 && backup->IndexLookup.Size == 0);
 }
 
 // Return false to discard a character.
@@ -4431,7 +4431,7 @@ static bool InputTextFilterCharacter(HvkGuiContext* ctx, unsigned int* p_char, H
     }
 
     // Filter Unicode ranges we are not handling in this build
-    if (c > IM_UNICODE_CODEPOINT_MAX)
+    if (c > Hvk_UNICODE_CODEPOINT_MAX)
         return false;
 
     // Generic named filters
@@ -4508,7 +4508,7 @@ static bool InputTextFilterCharacter(HvkGuiContext* ctx, unsigned int* p_char, H
 // FIXME: Ideally we should transition toward (1) making InsertChars()/DeleteChars() update undo-stack (2) discourage (and keep reconcile) or obsolete (and remove reconcile) accessing buffer directly.
 static void InputTextReconcileUndoState(HvkGuiInputTextState* state, const char* old_buf, int old_length, const char* new_buf, int new_length)
 {
-    const int shorter_length = HvkMin(old_length, new_length);
+    const int shorter_length = Immin(old_length, new_length);
     int first_diff;
     for (first_diff = 0; first_diff < shorter_length; first_diff++)
         if (old_buf[first_diff] != new_buf[first_diff])
@@ -4547,8 +4547,8 @@ void HvkGui::InputTextDeactivateHook(HvkGuiID id)
     }
     else
     {
-        IM_ASSERT(state->TextA.Data != 0);
-        IM_ASSERT(state->TextA[state->TextLen] == 0);
+        Hvk_ASSERT(state->TextA.Data != 0);
+        Hvk_ASSERT(state->TextA[state->TextLen] == 0);
         g.InputTextDeactivatedState.TextA.resize(state->TextLen + 1);
         memcpy(g.InputTextDeactivatedState.TextA.Data, state->TextA.Data, state->TextLen + 1);
     }
@@ -4596,7 +4596,7 @@ static int InputTextLineIndexBuild(HvkGuiInputTextFlags flags, HvkGuiTextIndex* 
         {
             if (size++ <= max_output_buffer_size)
                 line_index->Offsets.push_back((int)(s - buf));
-            s = (const char*)HvkMemchr(s, '\n', buf_end - s);
+            s = (const char*)Immemchr(s, '\n', buf_end - s);
         }
     }
     else
@@ -4657,12 +4657,12 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     if (window->SkipItems)
         return false;
 
-    IM_ASSERT(buf != NULL && buf_size >= 0);
-    IM_ASSERT(!((flags & HvkGuiInputTextFlags_CallbackHistory) && (flags & HvkGuiInputTextFlags_Multiline)));        // Can't use both together (they both use up/down keys)
-    IM_ASSERT(!((flags & HvkGuiInputTextFlags_CallbackCompletion) && (flags & HvkGuiInputTextFlags_AllowTabInput))); // Can't use both together (they both use tab key)
-    IM_ASSERT(!((flags & HvkGuiInputTextFlags_ElideLeft) && (flags & HvkGuiInputTextFlags_Multiline)));              // Multiline does not not work with left-trimming
-    IM_ASSERT((flags & HvkGuiInputTextFlags_WordWrap) == 0 || (flags & HvkGuiInputTextFlags_Password) == 0);         // WordWrap does not work with Password mode.
-    IM_ASSERT((flags & HvkGuiInputTextFlags_WordWrap) == 0 || (flags & HvkGuiInputTextFlags_Multiline) != 0);        // WordWrap does not work in single-line mode.
+    Hvk_ASSERT(buf != NULL && buf_size >= 0);
+    Hvk_ASSERT(!((flags & HvkGuiInputTextFlags_CallbackHistory) && (flags & HvkGuiInputTextFlags_Multiline)));        // Can't use both together (they both use up/down keys)
+    Hvk_ASSERT(!((flags & HvkGuiInputTextFlags_CallbackCompletion) && (flags & HvkGuiInputTextFlags_AllowTabInput))); // Can't use both together (they both use tab key)
+    Hvk_ASSERT(!((flags & HvkGuiInputTextFlags_ElideLeft) && (flags & HvkGuiInputTextFlags_Multiline)));              // Multiline does not not work with left-trimming
+    Hvk_ASSERT((flags & HvkGuiInputTextFlags_WordWrap) == 0 || (flags & HvkGuiInputTextFlags_Password) == 0);         // WordWrap does not work with Password mode.
+    Hvk_ASSERT((flags & HvkGuiInputTextFlags_WordWrap) == 0 || (flags & HvkGuiInputTextFlags_Multiline) != 0);        // WordWrap does not work in single-line mode.
 
     HvkGuiContext& g = *GHvkGui;
     HvkGuiIO& io = g.IO;
@@ -4751,14 +4751,14 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     const bool is_undoable = (flags & HvkGuiInputTextFlags_NoUndoRedo) == 0;
     const bool is_resizable = (flags & HvkGuiInputTextFlags_CallbackResize) != 0;
     if (is_resizable)
-        IM_ASSERT(callback != NULL); // Must provide a callback if you set the HvkGuiInputTextFlags_CallbackResize flag!
+        Hvk_ASSERT(callback != NULL); // Must provide a callback if you set the HvkGuiInputTextFlags_CallbackResize flag!
 
     // Word-wrapping: enforcing a fixed width not altered by vertical scrollbar makes things easier, notably to track cursor reliably and avoid one-frame glitches.
     // Instead of using HvkGuiWindowFlags_AlwaysVerticalScrollbar we account for that space if the scrollbar is not visible.
     const bool is_wordwrap = (flags & HvkGuiInputTextFlags_WordWrap) != 0;
     float wrap_width = 0.0f;
     if (is_wordwrap)
-        wrap_width = HvkMax(1.0f, GetContentRegionAvail().x + (draw_window->ScrollbarY ? 0.0f : -g.Style.ScrollbarSize));
+        wrap_width = Immax(1.0f, GetContentRegionAvail().x + (draw_window->ScrollbarY ? 0.0f : -g.Style.ScrollbarSize));
 
     const bool input_requested_by_nav = (g.ActiveId != id) && ((g.NavActivateId == id) && ((g.NavActivateFlags & HvkGuiActivateFlags_PreferInput) || (g.NavInputSource == HvkGuiInputSource_Keyboard)));
 
@@ -4777,7 +4777,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     if (init_reload_from_user_buf)
     {
         int new_len = (int)HvkStrlen(buf);
-        IM_ASSERT(new_len + 1 <= buf_size && "Is your input buffer properly zero-terminated?");
+        Hvk_ASSERT(new_len + 1 <= buf_size && "Is your input buffer properly zero-terminated?");
         state->WantReloadUserBuf = false;
         InputTextReconcileUndoState(state, state->TextA.Data, state->TextLen, buf, new_len);
         state->TextA.resize(buf_size + 1); // we use +1 to make sure that .Data is always pointing to at least an empty string.
@@ -4798,7 +4798,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         // Take a copy of the initial buffer value.
         // From the moment we focused we are normally ignoring the content of 'buf' (unless we are in read-only mode)
         const int buf_len = (int)HvkStrlen(buf);
-        IM_ASSERT(((buf_len + 1 <= buf_size) || (buf_len == 0 && buf_size == 0)) && "Is your input buffer properly zero-terminated?");
+        Hvk_ASSERT(((buf_len + 1 <= buf_size) || (buf_len == 0 && buf_size == 0)) && "Is your input buffer properly zero-terminated?");
         state->TextToRevertTo.resize(buf_len + 1);    // UTF-8. we use +1 to make sure that .Data is always pointing to at least an empty string.
         memcpy(state->TextToRevertTo.Data, buf, buf_len + 1);
 
@@ -4820,10 +4820,10 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         // Find initial scroll position for right alignment
         state->Scroll = HvkVec2(0.0f, 0.0f);
         if (flags & HvkGuiInputTextFlags_ElideLeft)
-            state->Scroll.x += HvkMax(0.0f, CalcTextSize(buf).x - frame_size.x + style.FramePadding.x * 2.0f);
+            state->Scroll.x += Immax(0.0f, CalcTextSize(buf).x - frame_size.x + style.FramePadding.x * 2.0f);
 
         // Recycle existing cursor/selection/undo stack but clamp position
-        // Note a single mouse click will override the cursor/position Hvkmediately by calling stb_textedit_click handler.
+        // Note a single mouse click will override the cursor/position immediately by calling stb_textedit_click handler.
         if (!recycle_state)
             stb_textedit_initialize_state(state->Stb, !is_multiline);
 
@@ -4844,7 +4844,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     const bool is_osx = io.ConfigMacOSXBehaviors;
     if (g.ActiveId != id && init_make_active)
     {
-        IM_ASSERT(state && state->ID == id);
+        Hvk_ASSERT(state && state->ID == id);
         SetActiveID(id, window);
         SetFocusID(id, window);
         FocusWindow(window);
@@ -4889,7 +4889,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     if (state != NULL)
         state->TextSrc = is_readonly ? buf : state->TextA.Data;
 
-    // We have an edge case if ActiveId was set through another widget (e.g. widget being swapped), clear id Hvkmediately (don't wait until the end of the function)
+    // We have an edge case if ActiveId was set through another widget (e.g. widget being swapped), clear id immediately (don't wait until the end of the function)
     if (g.ActiveId == id && state == NULL)
         ClearActiveID();
 
@@ -4923,7 +4923,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     // Process mouse inputs and character inputs
     if (g.ActiveId == id)
     {
-        IM_ASSERT(state != NULL);
+        Hvk_ASSERT(state != NULL);
         state->Edited = false;
         state->BufCapacity = buf_size;
         state->Flags = flags;
@@ -5009,7 +5009,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
                 if (InputTextFilterCharacter(&g, &c, flags, callback, callback_user_data))
                     state->OnCharPressed(c);
             }
-            // FIXME: Hvkplement Shift+Tab
+            // FIXME: implement Shift+Tab
             /*
             if (Shortcut(HvkGuiKey_Tab | HvkGuiMod_Shift, HvkGuiInputFlags_Repeat, id))
             {
@@ -5017,7 +5017,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
             */
         }
 
-        // Process regular text input (before we check for Return because using some HvkE will effectively send a Return?)
+        // Process regular text input (before we check for Return because using some IME will effectively send a Return?)
         // We ignore Ctrl inputs, but need to allow Alt+Ctrl as some keyboards (e.g. German) use AltGR (which _is_ Alt+Ctrl) to input certain characters.
         const bool ignore_char_inputs = (io.KeyCtrl && !io.KeyAlt) || (is_osx && io.KeyCtrl);
         if (io.InputQueueCharacters.Size > 0)
@@ -5042,9 +5042,9 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     bool revert_edit = false;
     if (g.ActiveId == id && !g.ActiveIdIsJustActivated && !clear_active_id)
     {
-        IM_ASSERT(state != NULL);
+        Hvk_ASSERT(state != NULL);
 
-        const int row_count_per_page = HvkMax((int)((inner_size.y - style.FramePadding.y) / g.FontSize), 1);
+        const int row_count_per_page = Immax((int)((inner_size.y - style.FramePadding.y) / g.FontSize), 1);
         state->Stb->row_count_per_page = row_count_per_page;
 
         const int k_mask = (io.KeyShift ? STB_TEXTEDIT_K_SHIFT : 0);
@@ -5072,8 +5072,8 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         // FIXME-OSX: Missing support for Alt(option)+Right/Left = go to end of line, or next line if already in end of line.
         if (IsKeyPressed(HvkGuiKey_LeftArrow))                        { state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINESTART : is_wordmove_key_down ? STB_TEXTEDIT_K_WORDLEFT : STB_TEXTEDIT_K_LEFT) | k_mask); }
         else if (IsKeyPressed(HvkGuiKey_RightArrow))                  { state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINEEND : is_wordmove_key_down ? STB_TEXTEDIT_K_WORDRIGHT : STB_TEXTEDIT_K_RIGHT) | k_mask); }
-        else if (IsKeyPressed(HvkGuiKey_UpArrow) && is_multiline)     { if (io.KeyCtrl) SetScrollY(draw_window, HvkMax(draw_window->Scroll.y - g.FontSize, 0.0f)); else state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_TEXTSTART : STB_TEXTEDIT_K_UP) | k_mask); }
-        else if (IsKeyPressed(HvkGuiKey_DownArrow) && is_multiline)   { if (io.KeyCtrl) SetScrollY(draw_window, HvkMin(draw_window->Scroll.y + g.FontSize, GetScrollMaxY())); else state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_TEXTEND : STB_TEXTEDIT_K_DOWN) | k_mask); }
+        else if (IsKeyPressed(HvkGuiKey_UpArrow) && is_multiline)     { if (io.KeyCtrl) SetScrollY(draw_window, Immax(draw_window->Scroll.y - g.FontSize, 0.0f)); else state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_TEXTSTART : STB_TEXTEDIT_K_UP) | k_mask); }
+        else if (IsKeyPressed(HvkGuiKey_DownArrow) && is_multiline)   { if (io.KeyCtrl) SetScrollY(draw_window, Immin(draw_window->Scroll.y + g.FontSize, GetScrollMaxY())); else state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_TEXTEND : STB_TEXTEDIT_K_DOWN) | k_mask); }
         else if (IsKeyPressed(HvkGuiKey_PageUp) && is_multiline)      { state->OnKeyPressed(STB_TEXTEDIT_K_PGUP | k_mask); scroll_y -= row_count_per_page * g.FontSize; }
         else if (IsKeyPressed(HvkGuiKey_PageDown) && is_multiline)    { state->OnKeyPressed(STB_TEXTEDIT_K_PGDOWN | k_mask); scroll_y += row_count_per_page * g.FontSize; }
         else if (IsKeyPressed(HvkGuiKey_Home))                        { state->OnKeyPressed(io.KeyCtrl ? STB_TEXTEDIT_K_TEXTSTART | k_mask : STB_TEXTEDIT_K_LINESTART | k_mask); }
@@ -5155,8 +5155,8 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
             if (g.PlatformIO.Platform_SetClipboardTextFn != NULL)
             {
                 // SetClipboardText() only takes null terminated strings + state->TextSrc may point to read-only user buffer, so we need to make a copy.
-                const int ib = state->HasSelection() ? HvkMin(state->Stb->select_start, state->Stb->select_end) : 0;
-                const int ie = state->HasSelection() ? HvkMax(state->Stb->select_start, state->Stb->select_end) : state->TextLen;
+                const int ib = state->HasSelection() ? Immin(state->Stb->select_start, state->Stb->select_end) : 0;
+                const int ie = state->HasSelection() ? Immax(state->Stb->select_start, state->Stb->select_end) : state->TextLen;
                 g.TempBuffer.reserve(ie - ib + 1);
                 memcpy(g.TempBuffer.Data, state->TextSrc + ib, ie - ib);
                 g.TempBuffer.Data[ie - ib] = 0;
@@ -5210,13 +5210,13 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
     int apply_new_text_length = 0;
     if (g.ActiveId == id)
     {
-        IM_ASSERT(state != NULL);
+        Hvk_ASSERT(state != NULL);
         if (revert_edit && !is_readonly)
         {
             if (flags & HvkGuiInputTextFlags_EscapeClearsAll)
             {
                 // Clear input
-                IM_ASSERT(state->TextA.Data[0] != 0);
+                Hvk_ASSERT(state->TextA.Data[0] != 0);
                 apply_new_text = "";
                 apply_new_text_length = 0;
                 value_changed = true;
@@ -5244,13 +5244,13 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         const bool apply_edit_back_to_user_buffer = true;// !revert_edit || (validated && (flags & HvkGuiInputTextFlags_EnterReturnsTrue) != 0);
         if (apply_edit_back_to_user_buffer)
         {
-            // Apply current edited text Hvkmediately.
+            // Apply current edited text immediately.
             // Note that as soon as the input box is active, the in-widget value gets priority over any underlying modification of the input buffer
 
             // User callback
             if ((flags & (HvkGuiInputTextFlags_CallbackCompletion | HvkGuiInputTextFlags_CallbackHistory | HvkGuiInputTextFlags_CallbackEdit | HvkGuiInputTextFlags_CallbackAlways)) != 0)
             {
-                IM_ASSERT(callback != NULL);
+                Hvk_ASSERT(callback != NULL);
 
                 // The reason we specify the usage semantic (Completion/History) is that Completion needs to disable keyboard TABBING at the moment.
                 HvkGuiInputTextFlags event_flag = 0;
@@ -5289,7 +5289,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
 
                     // FIXME-OPT: Undo stack reconcile needs a backup of the data until we rework API, see #7925
                     char* callback_buf = is_readonly ? buf : state->TextA.Data;
-                    IM_ASSERT(callback_buf == state->TextSrc);
+                    Hvk_ASSERT(callback_buf == state->TextSrc);
                     state->CallbackTextBackup.resize(state->TextLen + 1);
                     memcpy(state->CallbackTextBackup.Data, callback_buf, state->TextLen + 1);
 
@@ -5307,9 +5307,9 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
 
                     // Read back what user may have modified
                     callback_buf = is_readonly ? buf : state->TextA.Data; // Pointer may have been invalidated by a resize callback
-                    IM_ASSERT(callback_data.Buf == callback_buf);         // Invalid to modify those fields
-                    IM_ASSERT(callback_data.BufSize == state->BufCapacity);
-                    IM_ASSERT(callback_data.Flags == flags);
+                    Hvk_ASSERT(callback_data.Buf == callback_buf);         // Invalid to modify those fields
+                    Hvk_ASSERT(callback_data.BufSize == state->BufCapacity);
+                    Hvk_ASSERT(callback_data.Flags == flags);
                     if (callback_data.BufDirty || callback_data.CursorPos != state->Stb->cursor)
                         state->CursorFollow = true;
                     state->Stb->cursor = HvkClamp(callback_data.CursorPos, 0, callback_data.BufTextLen);
@@ -5318,7 +5318,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
                     if (callback_data.BufDirty)
                     {
                         // Callback may update buffer and thus set buf_dirty even in read-only mode.
-                        IM_ASSERT(callback_data.BufTextLen == (int)HvkStrlen(callback_data.Buf)); // You need to maintain BufTextLen if you change the text!
+                        Hvk_ASSERT(callback_data.BufTextLen == (int)HvkStrlen(callback_data.Buf)); // You need to maintain BufTextLen if you change the text!
                         InputTextReconcileUndoState(state, state->CallbackTextBackup.Data, state->CallbackTextBackup.Size - 1, callback_data.Buf, callback_data.BufTextLen);
                         state->TextLen = callback_data.BufTextLen;  // Assume correct length and valid UTF-8 from user, saves us an extra strlen()
                         state->CursorAnimReset();
@@ -5355,7 +5355,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         //// We cannot test for 'backup_current_text_length != apply_new_text_length' here because we have no guarantee that the size
         //// of our owned buffer matches the size of the string object held by the user, and by design we allow InputText() to be used
         //// without any storage on user's side.
-        IM_ASSERT(apply_new_text_length >= 0);
+        Hvk_ASSERT(apply_new_text_length >= 0);
         if (is_resizable)
         {
             HvkGuiInputTextCallbackData callback_data;
@@ -5364,18 +5364,18 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
             callback_data.Flags = flags;
             callback_data.Buf = buf;
             callback_data.BufTextLen = apply_new_text_length;
-            callback_data.BufSize = HvkMax(buf_size, apply_new_text_length + 1);
+            callback_data.BufSize = Immax(buf_size, apply_new_text_length + 1);
             callback_data.UserData = callback_user_data;
             callback(&callback_data);
             buf = callback_data.Buf;
             buf_size = callback_data.BufSize;
-            apply_new_text_length = HvkMin(callback_data.BufTextLen, buf_size - 1);
-            IM_ASSERT(apply_new_text_length <= buf_size);
+            apply_new_text_length = Immin(callback_data.BufTextLen, buf_size - 1);
+            Hvk_ASSERT(apply_new_text_length <= buf_size);
         }
         //HvkGui_DEBUG_PRINT("InputText(\"%s\"): apply_new_text length %d\n", label, apply_new_text_length);
 
         // If the underlying buffer resize was denied or not carried to the next frame, apply_new_text_length+1 may be >= buf_size.
-        HvkStrncpy(buf, apply_new_text, HvkMin(apply_new_text_length + 1, buf_size));
+        HvkStrncpy(buf, apply_new_text, Immin(apply_new_text_length + 1, buf_size));
     }
 
     // Release active ID at the end of the function (so e.g. pressing Return still does a final application of the value)
@@ -5446,11 +5446,11 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         line_count = InputTextLineIndexBuild(flags, line_index, buf_display, buf_display_end, wrap_width, will_scroll_y ? INT_MAX : line_visible_n1 + 1, buf_display_end ? NULL : &buf_display_end);
     }
     line_index->EndOffset = (int)(buf_display_end - buf_display);
-    line_visible_n1 = HvkMin(line_visible_n1, line_count);
+    line_visible_n1 = Immin(line_visible_n1, line_count);
 
     // Store text height (we don't need width)
     text_size = HvkVec2(inner_size.x, line_count * g.FontSize);
-    //GetForegroundDrawList()->AddRect(draw_pos + HvkVec2(0, line_visible_n0 * g.FontSize), draw_pos + HvkVec2(frame_size.x, line_visible_n1 * g.FontSize), IM_COL32(255, 0, 0, 255));
+    //GetForegroundDrawList()->AddRect(draw_pos + HvkVec2(0, line_visible_n0 * g.FontSize), draw_pos + HvkVec2(frame_size.x, line_visible_n1 * g.FontSize), Hvk_COL32(255, 0, 0, 255));
 
     // Calculate blinking cursor position
     const HvkVec2 cursor_offset = render_cursor && state ? InputTextLineIndexGetPosOffset(g, state, line_index, buf_display, buf_display_end, state->Stb->cursor) : HvkVec2(0.0f, 0.0f);
@@ -5467,7 +5467,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         // - Measure text height (for scrollbar)
         // We are attempting to do most of that in **one main pass** to minimize the computation cost (non-negligible for large amount of text) + 2nd pass for selection rendering (we could merge them by an extra refactoring effort)
         // FIXME: This should occur on buf_display but we'd need to maintain cursor/select_start/select_end for UTF-8.
-        IM_ASSERT(state != NULL);
+        Hvk_ASSERT(state != NULL);
         state->LineCount = line_count;
 
         // Scroll
@@ -5480,9 +5480,9 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
                 const float scroll_increment_x = inner_size.x * 0.25f;
                 const float visible_width = inner_size.x - style.FramePadding.x;
                 if (cursor_offset.x < state->Scroll.x)
-                    state->Scroll.x = IM_TRUNC(HvkMax(0.0f, cursor_offset.x - scroll_increment_x));
+                    state->Scroll.x = Hvk_TRUNC(Immax(0.0f, cursor_offset.x - scroll_increment_x));
                 else if (cursor_offset.x - visible_width >= state->Scroll.x)
-                    state->Scroll.x = IM_TRUNC(cursor_offset.x - visible_width + scroll_increment_x);
+                    state->Scroll.x = Hvk_TRUNC(cursor_offset.x - visible_width + scroll_increment_x);
             }
             else
             {
@@ -5494,7 +5494,7 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
             {
                 // Test if cursor is vertically visible
                 if (cursor_offset.y - g.FontSize < scroll_y)
-                    new_scroll_y = HvkMax(0.0f, cursor_offset.y - g.FontSize);
+                    new_scroll_y = Immax(0.0f, cursor_offset.y - g.FontSize);
                 else if (cursor_offset.y - (inner_size.y - style.FramePadding.y * 2.0f) >= scroll_y)
                     new_scroll_y = cursor_offset.y - inner_size.y + style.FramePadding.y * 2.0f;
             }
@@ -5509,12 +5509,12 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         }
         if (new_scroll_y != scroll_y)
         {
-            const float scroll_max_y = HvkMax((text_size.y + style.FramePadding.y * 2.0f) - inner_size.y, 0.0f);
+            const float scroll_max_y = Immax((text_size.y + style.FramePadding.y * 2.0f) - inner_size.y, 0.0f);
             scroll_y = HvkClamp(new_scroll_y, 0.0f, scroll_max_y);
-            draw_pos.y += (draw_window->Scroll.y - scroll_y);   // Manipulate cursor pos Hvkmediately avoid a frame of lag
+            draw_pos.y += (draw_window->Scroll.y - scroll_y);   // Manipulate cursor pos immediately avoid a frame of lag
             draw_window->Scroll.y = scroll_y;
             CalcClipRectVisibleItemsY(clip_rect, draw_pos, g.FontSize, &line_visible_n0, &line_visible_n1);
-            line_visible_n1 = HvkMin(line_visible_n1, line_count);
+            line_visible_n1 = Immin(line_visible_n1, line_count);
         }
 
         // Draw selection
@@ -5524,10 +5524,10 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
             const HvkU32 bg_color = GetColorU32(HvkGuiCol_TextSelectedBg, render_cursor ? 1.0f : 0.6f); // FIXME: current code flow mandate that render_cursor is always true here, we are leaving the transparent one for tests.
             const float bg_offy_up = is_multiline ? 0.0f : -1.0f;    // FIXME: those offsets should be part of the style? they don't play so well with multi-line selection.
             const float bg_offy_dn = is_multiline ? 0.0f : 2.0f;
-            const float bg_eol_width = IM_TRUNC(g.FontBaked->GetCharAdvance((HvkWchar)' ') * 0.50f); // So we can see selected empty lines
+            const float bg_eol_width = Hvk_TRUNC(g.FontBaked->GetCharAdvance((HvkWchar)' ') * 0.50f); // So we can see selected empty lines
 
-            const char* text_selected_begin = buf_display + HvkMin(state->Stb->select_start, state->Stb->select_end);
-            const char* text_selected_end = buf_display + HvkMax(state->Stb->select_start, state->Stb->select_end);
+            const char* text_selected_begin = buf_display + Immin(state->Stb->select_start, state->Stb->select_end);
+            const char* text_selected_end = buf_display + Immax(state->Stb->select_start, state->Stb->select_end);
             for (int line_n = line_visible_n0; line_n < line_visible_n1; line_n++)
             {
                 const char* p = line_index->get_line_begin(buf_display, line_n);
@@ -5560,11 +5560,11 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
 
     // Find render position for right alignment (single-line only)
     if (g.ActiveId != id && flags & HvkGuiInputTextFlags_ElideLeft)
-        draw_pos.x = HvkMin(draw_pos.x, frame_bb.Max.x - CalcTextSize(buf_display, NULL).x - style.FramePadding.x);
+        draw_pos.x = Immin(draw_pos.x, frame_bb.Max.x - CalcTextSize(buf_display, NULL).x - style.FramePadding.x);
     //draw_scroll.x = state->Scroll.x; // Preserve scroll when inactive?
 
     // Render text
-    if ((is_multiline || (buf_display_end - buf_display) < buf_display_max_length) && (text_col & IM_COL32_A_MASK) && (line_visible_n0 < line_visible_n1))
+    if ((is_multiline || (buf_display_end - buf_display) < buf_display_max_length) && (text_col & Hvk_COL32_A_MASK) && (line_visible_n0 < line_visible_n1))
         g.Font->RenderText(draw_window->DrawList, g.FontSize,
             draw_pos - draw_scroll + HvkVec2(0.0f, line_visible_n0 * g.FontSize),
             text_col, clip_rect.AsVec4(),
@@ -5582,17 +5582,17 @@ bool HvkGui::InputTextEx(const char* label, const char* hint, char* buf, int buf
         if (cursor_is_visible && cursor_screen_rect.Overlaps(clip_rect))
             draw_window->DrawList->AddLine(cursor_screen_rect.Min, cursor_screen_rect.GetBL(), GetColorU32(HvkGuiCol_InputTextCursor), 1.0f); // FIXME-DPI: Cursor thickness (#7031)
 
-        // Notify OS of text input position for advanced HvkE (-1 x offset so that Windows HvkE can cover our cursor. Bit of an extra nicety.)
+        // Notify OS of text input position for advanced IME (-1 x offset so that Windows IME can cover our cursor. Bit of an extra nicety.)
         // This is required for some backends (SDL3) to start emitting character/text inputs.
         // As per #6341, make sure we don't set that on the deactivating frame.
         if (!is_readonly && g.ActiveId == id)
         {
-            HvkGuiPlatformImeData* Hvke_data = &g.PlatformImeData; // (this is a public struct, passed to io.Platform_SetImeDataFn() handler)
-            Hvke_data->WantVisible = true;
-            Hvke_data->WantTextInput = true;
-            Hvke_data->InputPos = HvkVec2(cursor_screen_pos.x - 1.0f, cursor_screen_pos.y - g.FontSize);
-            Hvke_data->InputLineHeight = g.FontSize;
-            Hvke_data->ViewportId = window->Viewport->ID;
+            HvkGuiPlatformImeData* IME_data = &g.PlatformImeData; // (this is a public struct, passed to io.Platform_SetImeDataFn() handler)
+            IME_data->WantVisible = true;
+            IME_data->WantTextInput = true;
+            IME_data->InputPos = HvkVec2(cursor_screen_pos.x - 1.0f, cursor_screen_pos.y - g.FontSize);
+            IME_data->InputLineHeight = g.FontSize;
+            IME_data->ViewportId = window->Viewport->ID;
         }
     }
 
@@ -5675,7 +5675,7 @@ void HvkGui::DebugNodeInputTextState(HvkGuiInputTextState* state)
     }
     EndChild();
 #else
-    IM_UNUSED(state);
+    Hvk_UNUSED(state);
 #endif
 }
 
@@ -5702,7 +5702,7 @@ bool HvkGui::ColorEdit3(const char* label, float col[3], HvkGuiColorEditFlags fl
 static void ColorEditRestoreH(const float* col, float* H)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(g.ColorEditCurrentID != 0);
+    Hvk_ASSERT(g.ColorEditCurrentID != 0);
     if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != HvkGui::ColorConvertFloat4ToU32(HvkVec4(col[0], col[1], col[2], 0)))
         return;
     *H = g.ColorEditSavedHue;
@@ -5713,7 +5713,7 @@ static void ColorEditRestoreH(const float* col, float* H)
 static void ColorEditRestoreHS(const float* col, float* H, float* S, float* V)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(g.ColorEditCurrentID != 0);
+    Hvk_ASSERT(g.ColorEditCurrentID != 0);
     if (g.ColorEditSavedID != g.ColorEditCurrentID || g.ColorEditSavedColor != HvkGui::ColorConvertFloat4ToU32(HvkVec4(col[0], col[1], col[2], 0)))
         return;
 
@@ -5768,14 +5768,14 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
     if (!(flags & HvkGuiColorEditFlags_InputMask_))
         flags |= (g.ColorEditOptions & HvkGuiColorEditFlags_InputMask_);
     flags |= (g.ColorEditOptions & ~(HvkGuiColorEditFlags_DisplayMask_ | HvkGuiColorEditFlags_DataTypeMask_ | HvkGuiColorEditFlags_PickerMask_ | HvkGuiColorEditFlags_InputMask_));
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DisplayMask_)); // Check that only 1 is selected
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));   // Check that only 1 is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DisplayMask_)); // Check that only 1 is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));   // Check that only 1 is selected
 
     const bool alpha = (flags & HvkGuiColorEditFlags_NoAlpha) == 0;
     const bool hdr = (flags & HvkGuiColorEditFlags_HDR) != 0;
     const int components = alpha ? 4 : 3;
     const float w_button = (flags & HvkGuiColorEditFlags_NoSmallPreview) ? 0.0f : (square_sz + style.ItemInnerSpacing.x);
-    const float w_inputs = HvkMax(w_full - w_button, 1.0f);
+    const float w_inputs = Immax(w_full - w_button, 1.0f);
     w_full = w_inputs + w_button;
 
     // Convert to the formats we need
@@ -5788,7 +5788,7 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
         ColorConvertRGBtoHSV(f[0], f[1], f[2], f[0], f[1], f[2]);
         ColorEditRestoreHS(col, &f[0], &f[1], &f[2]);
     }
-    int i[4] = { IM_F32_TO_INT8_UNBOUND(f[0]), IM_F32_TO_INT8_UNBOUND(f[1]), IM_F32_TO_INT8_UNBOUND(f[2]), IM_F32_TO_INT8_UNBOUND(f[3]) };
+    int i[4] = { Hvk_F32_TO_INT8_UNBOUND(f[0]), Hvk_F32_TO_INT8_UNBOUND(f[1]), Hvk_F32_TO_INT8_UNBOUND(f[2]), Hvk_F32_TO_INT8_UNBOUND(f[3]) };
 
     bool value_changed = false;
     bool value_changed_as_float = false;
@@ -5801,7 +5801,7 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
     {
         // RGB/HSV 0..255 Sliders
         const float w_items = w_inputs - style.ItemInnerSpacing.x * (components - 1);
-        const float w_per_component = IM_TRUNC(w_items / components);
+        const float w_per_component = Hvk_TRUNC(w_items / components);
         const bool draw_color_marker = (flags & (HvkGuiColorEditFlags_DisplayHSV | HvkGuiColorEditFlags_NoColorMarkers)) == 0;
 
         const bool hide_prefix = draw_color_marker || (w_per_component <= CalcTextSize((flags & HvkGuiColorEditFlags_Float) ? "M:0.000" : "M:000").x);
@@ -5826,8 +5826,8 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
         {
             if (n > 0)
                 SameLine(0, style.ItemInnerSpacing.x);
-            float next_split = IM_TRUNC(w_items * (n + 1) / components);
-            SetNextItemWidth(HvkMax(next_split - prev_split, 1.0f));
+            float next_split = Hvk_TRUNC(w_items * (n + 1) / components);
+            SetNextItemWidth(Immax(next_split - prev_split, 1.0f));
             prev_split = next_split;
             if (draw_color_marker)
                 SetNextItemColorMarker(GDefaultRgbaColorMarkers[n]);
@@ -5851,11 +5851,11 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
         // RGB Hexadecimal Input
         char buf[64];
         if (alpha)
-            HvkFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X%02X", HvkClamp(i[0], 0, 255), HvkClamp(i[1], 0, 255), HvkClamp(i[2], 0, 255), HvkClamp(i[3], 0, 255));
+            HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "#%02X%02X%02X%02X", HvkClamp(i[0], 0, 255), HvkClamp(i[1], 0, 255), HvkClamp(i[2], 0, 255), HvkClamp(i[3], 0, 255));
         else
-            HvkFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X", HvkClamp(i[0], 0, 255), HvkClamp(i[1], 0, 255), HvkClamp(i[2], 0, 255));
+            HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "#%02X%02X%02X", HvkClamp(i[0], 0, 255), HvkClamp(i[1], 0, 255), HvkClamp(i[2], 0, 255));
         SetNextItemWidth(w_inputs);
-        if (InputText("##Text", buf, IM_ARRAYSIZE(buf), HvkGuiInputTextFlags_CharsUppercase))
+        if (InputText("##Text", buf, Hvk_ARRAYSIZE(buf), HvkGuiInputTextFlags_CharsUppercase))
         {
             value_changed = true;
             char* p = buf;
@@ -5868,7 +5868,7 @@ bool HvkGui::ColorEdit4(const char* label, float col[4], HvkGuiColorEditFlags fl
                 r = sscanf(p, "%02X%02X%02X%02X", (unsigned int*)&i[0], (unsigned int*)&i[1], (unsigned int*)&i[2], (unsigned int*)&i[3]); // Treat at unsigned (%X is unsigned)
             else
                 r = sscanf(p, "%02X%02X%02X", (unsigned int*)&i[0], (unsigned int*)&i[1], (unsigned int*)&i[2]);
-            IM_UNUSED(r); // Fixes C6031: Return value ignored: 'sscanf'.
+            Hvk_UNUSED(r); // Fixes C6031: Return value ignored: 'sscanf'.
         }
         if (!(flags & HvkGuiColorEditFlags_NoOptions))
             OpenPopupOnItemClick("context", HvkGuiPopupFlags_MouseButtonRight);
@@ -5995,11 +5995,11 @@ bool HvkGui::ColorPicker3(const char* label, float col[3], HvkGuiColorEditFlags 
 // Helper for ColorPicker4()
 static void RenderArrowsForVerticalBar(HvkDrawList* draw_list, HvkVec2 pos, HvkVec2 half_sz, float bar_w, float alpha)
 {
-    HvkU32 alpha8 = IM_F32_TO_INT8_SAT(alpha);
-    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + half_sz.x + 1,         pos.y), HvkVec2(half_sz.x + 2, half_sz.y + 1), HvkGuiDir_Right, IM_COL32(0,0,0,alpha8));
-    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + half_sz.x,             pos.y), half_sz,                              HvkGuiDir_Right, IM_COL32(255,255,255,alpha8));
-    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + bar_w - half_sz.x - 1, pos.y), HvkVec2(half_sz.x + 2, half_sz.y + 1), HvkGuiDir_Left,  IM_COL32(0,0,0,alpha8));
-    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + bar_w - half_sz.x,     pos.y), half_sz,                              HvkGuiDir_Left,  IM_COL32(255,255,255,alpha8));
+    HvkU32 alpha8 = Hvk_F32_TO_INT8_SAT(alpha);
+    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + half_sz.x + 1,         pos.y), HvkVec2(half_sz.x + 2, half_sz.y + 1), HvkGuiDir_Right, Hvk_COL32(0,0,0,alpha8));
+    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + half_sz.x,             pos.y), half_sz,                              HvkGuiDir_Right, Hvk_COL32(255,255,255,alpha8));
+    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + bar_w - half_sz.x - 1, pos.y), HvkVec2(half_sz.x + 2, half_sz.y + 1), HvkGuiDir_Left,  Hvk_COL32(0,0,0,alpha8));
+    HvkGui::RenderArrowPointingAt(draw_list, HvkVec2(pos.x + bar_w - half_sz.x,     pos.y), half_sz,                              HvkGuiDir_Left,  Hvk_COL32(255,255,255,alpha8));
 }
 
 // Note: ColorPicker4() only accesses 3 floats if HvkGuiColorEditFlags_NoAlpha flag is set.
@@ -6039,8 +6039,8 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
         flags |= ((g.ColorEditOptions & HvkGuiColorEditFlags_PickerMask_) ? g.ColorEditOptions : HvkGuiColorEditFlags_DefaultOptions_) & HvkGuiColorEditFlags_PickerMask_;
     if (!(flags & HvkGuiColorEditFlags_InputMask_))
         flags |= ((g.ColorEditOptions & HvkGuiColorEditFlags_InputMask_) ? g.ColorEditOptions : HvkGuiColorEditFlags_DefaultOptions_) & HvkGuiColorEditFlags_InputMask_;
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_PickerMask_)); // Check that only 1 is selected
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));  // Check that only 1 is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_PickerMask_)); // Check that only 1 is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));  // Check that only 1 is selected
     if (!(flags & HvkGuiColorEditFlags_NoOptions))
         flags |= (g.ColorEditOptions & HvkGuiColorEditFlags_AlphaBar);
 
@@ -6050,10 +6050,10 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
     HvkVec2 picker_pos = window->DC.CursorPos;
     float square_sz = GetFrameHeight();
     float bars_width = square_sz; // Arbitrary smallish width of Hue/Alpha picking bars
-    float sv_picker_size = HvkMax(bars_width * 1, width - (alpha_bar ? 2 : 1) * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
+    float sv_picker_size = Immax(bars_width * 1, width - (alpha_bar ? 2 : 1) * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
     float bar0_pos_x = picker_pos.x + sv_picker_size + style.ItemInnerSpacing.x;
     float bar1_pos_x = bar0_pos_x + bars_width + style.ItemInnerSpacing.x;
-    float bars_triangles_half_sz = IM_TRUNC(bars_width * 0.20f);
+    float bars_triangles_half_sz = Hvk_TRUNC(bars_width * 0.20f);
 
     float backup_initial_col[4];
     memcpy(backup_initial_col, col, components * sizeof(float));
@@ -6097,13 +6097,13 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
             if (initial_dist2 >= (wheel_r_inner - 1) * (wheel_r_inner - 1) && initial_dist2 <= (wheel_r_outer + 1) * (wheel_r_outer + 1))
             {
                 // Interactive with Hue wheel
-                H = HvkAtan2(current_off.y, current_off.x) / IM_PI * 0.5f;
+                H = HvkAtan2(current_off.y, current_off.x) / Hvk_PI * 0.5f;
                 if (H < 0.0f)
                     H += 1.0f;
                 value_changed = value_changed_h = true;
             }
-            float cos_hue_angle = HvkCos(-H * 2.0f * IM_PI);
-            float sin_hue_angle = HvkSin(-H * 2.0f * IM_PI);
+            float cos_hue_angle = HvkCos(-H * 2.0f * Hvk_PI);
+            float sin_hue_angle = HvkSin(-H * 2.0f * Hvk_PI);
             if (HvkTriangleContainsPoint(triangle_pa, triangle_pb, triangle_pc, HvkRotate(initial_off, cos_hue_angle, sin_hue_angle)))
             {
                 // Interacting with SV triangle
@@ -6260,7 +6260,7 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
             G = col[1];
             B = col[2];
             ColorConvertRGBtoHSV(R, G, B, H, S, V);
-            ColorEditRestoreHS(col, &H, &S, &V);   // Fix local Hue as display below will use it Hvkmediately.
+            ColorEditRestoreHS(col, &H, &S, &V);   // Fix local Hue as display below will use it immediately.
         }
         else if (flags & HvkGuiColorEditFlags_InputHSV)
         {
@@ -6271,11 +6271,11 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
         }
     }
 
-    const int style_alpha8 = IM_F32_TO_INT8_SAT(style.Alpha);
-    const HvkU32 col_black = IM_COL32(0,0,0,style_alpha8);
-    const HvkU32 col_white = IM_COL32(255,255,255,style_alpha8);
-    const HvkU32 col_midgrey = IM_COL32(128,128,128,style_alpha8);
-    const HvkU32 col_hues[6 + 1] = { IM_COL32(255,0,0,style_alpha8), IM_COL32(255,255,0,style_alpha8), IM_COL32(0,255,0,style_alpha8), IM_COL32(0,255,255,style_alpha8), IM_COL32(0,0,255,style_alpha8), IM_COL32(255,0,255,style_alpha8), IM_COL32(255,0,0,style_alpha8) };
+    const int style_alpha8 = Hvk_F32_TO_INT8_SAT(style.Alpha);
+    const HvkU32 col_black = Hvk_COL32(0,0,0,style_alpha8);
+    const HvkU32 col_white = Hvk_COL32(255,255,255,style_alpha8);
+    const HvkU32 col_midgrey = Hvk_COL32(128,128,128,style_alpha8);
+    const HvkU32 col_hues[6 + 1] = { Hvk_COL32(255,0,0,style_alpha8), Hvk_COL32(255,255,0,style_alpha8), Hvk_COL32(0,255,0,style_alpha8), Hvk_COL32(0,255,255,style_alpha8), Hvk_COL32(0,0,255,style_alpha8), Hvk_COL32(255,0,255,style_alpha8), Hvk_COL32(255,0,0,style_alpha8) };
 
     HvkVec4 hue_color_f(1, 1, 1, style.Alpha); ColorConvertHSVtoRGB(H, 1, 1, hue_color_f.x, hue_color_f.y, hue_color_f.z);
     HvkU32 hue_color32 = ColorConvertFloat4ToU32(hue_color_f);
@@ -6287,11 +6287,11 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
     {
         // Render Hue Wheel
         const float aeps = 0.5f / wheel_r_outer; // Half a pixel arc length in radians (2pi cancels out).
-        const int segment_per_arc = HvkMax(4, (int)wheel_r_outer / 12);
+        const int segment_per_arc = Immax(4, (int)wheel_r_outer / 12);
         for (int n = 0; n < 6; n++)
         {
-            const float a0 = (n)     /6.0f * 2.0f * IM_PI - aeps;
-            const float a1 = (n+1.0f)/6.0f * 2.0f * IM_PI + aeps;
+            const float a0 = (n)     /6.0f * 2.0f * Hvk_PI - aeps;
+            const float a1 = (n+1.0f)/6.0f * 2.0f * Hvk_PI + aeps;
             const int vert_start_idx = draw_list->VtxBuffer.Size;
             draw_list->PathArcTo(wheel_center, (wheel_r_inner + wheel_r_outer)*0.5f, a0, a1, segment_per_arc);
             draw_list->PathStroke(col_white, 0, wheel_thickness);
@@ -6304,8 +6304,8 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
         }
 
         // Render Cursor + preview on Hue Wheel
-        float cos_hue_angle = HvkCos(H * 2.0f * IM_PI);
-        float sin_hue_angle = HvkSin(H * 2.0f * IM_PI);
+        float cos_hue_angle = HvkCos(H * 2.0f * Hvk_PI);
+        float sin_hue_angle = HvkSin(H * 2.0f * Hvk_PI);
         HvkVec2 hue_cursor_pos(wheel_center.x + cos_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f, wheel_center.y + sin_hue_angle * (wheel_r_inner + wheel_r_outer) * 0.5f);
         float hue_cursor_rad = value_changed_h ? wheel_thickness * 0.65f : wheel_thickness * 0.55f;
         int hue_cursor_segments = draw_list->_CalcCircleAutoSegmentCount(hue_cursor_rad); // Lock segment count so the +1 one matches others.
@@ -6331,13 +6331,13 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
         draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + HvkVec2(sv_picker_size, sv_picker_size), col_white, hue_color32, hue_color32, col_white);
         draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + HvkVec2(sv_picker_size, sv_picker_size), 0, 0, col_black, col_black);
         RenderFrameBorder(picker_pos, picker_pos + HvkVec2(sv_picker_size, sv_picker_size), 0.0f);
-        sv_cursor_pos.x = HvkClamp(IM_ROUND(picker_pos.x + HvkSaturate(S)     * sv_picker_size), picker_pos.x + 2, picker_pos.x + sv_picker_size - 2); // Sneakily prevent the circle to stick out too much
-        sv_cursor_pos.y = HvkClamp(IM_ROUND(picker_pos.y + HvkSaturate(1 - V) * sv_picker_size), picker_pos.y + 2, picker_pos.y + sv_picker_size - 2);
+        sv_cursor_pos.x = HvkClamp(Hvk_ROUND(picker_pos.x + HvkSaturate(S)     * sv_picker_size), picker_pos.x + 2, picker_pos.x + sv_picker_size - 2); // Sneakily prevent the circle to stick out too much
+        sv_cursor_pos.y = HvkClamp(Hvk_ROUND(picker_pos.y + HvkSaturate(1 - V) * sv_picker_size), picker_pos.y + 2, picker_pos.y + sv_picker_size - 2);
 
         // Render Hue Bar
         for (int i = 0; i < 6; ++i)
             draw_list->AddRectFilledMultiColor(HvkVec2(bar0_pos_x, picker_pos.y + i * (sv_picker_size / 6)), HvkVec2(bar0_pos_x + bars_width, picker_pos.y + (i + 1) * (sv_picker_size / 6)), col_hues[i], col_hues[i], col_hues[i + 1], col_hues[i + 1]);
-        float bar0_line_y = IM_ROUND(picker_pos.y + H * sv_picker_size);
+        float bar0_line_y = Hvk_ROUND(picker_pos.y + H * sv_picker_size);
         RenderFrameBorder(HvkVec2(bar0_pos_x, picker_pos.y), HvkVec2(bar0_pos_x + bars_width, picker_pos.y + sv_picker_size), 0.0f);
         RenderArrowsForVerticalBar(draw_list, HvkVec2(bar0_pos_x - 1, bar0_line_y), HvkVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
     }
@@ -6355,8 +6355,8 @@ bool HvkGui::ColorPicker4(const char* label, float col[4], HvkGuiColorEditFlags 
         float alpha = HvkSaturate(col[3]);
         HvkRect bar1_bb(bar1_pos_x, picker_pos.y, bar1_pos_x + bars_width, picker_pos.y + sv_picker_size);
         RenderColorRectWithAlphaCheckerboard(draw_list, bar1_bb.Min, bar1_bb.Max, 0, bar1_bb.GetWidth() / 2.0f, HvkVec2(0.0f, 0.0f));
-        draw_list->AddRectFilledMultiColor(bar1_bb.Min, bar1_bb.Max, user_col32_striped_of_alpha, user_col32_striped_of_alpha, user_col32_striped_of_alpha & ~IM_COL32_A_MASK, user_col32_striped_of_alpha & ~IM_COL32_A_MASK);
-        float bar1_line_y = IM_ROUND(picker_pos.y + (1.0f - alpha) * sv_picker_size);
+        draw_list->AddRectFilledMultiColor(bar1_bb.Min, bar1_bb.Max, user_col32_striped_of_alpha, user_col32_striped_of_alpha, user_col32_striped_of_alpha & ~Hvk_COL32_A_MASK, user_col32_striped_of_alpha & ~Hvk_COL32_A_MASK);
+        float bar1_line_y = Hvk_ROUND(picker_pos.y + (1.0f - alpha) * sv_picker_size);
         RenderFrameBorder(bar1_bb.Min, bar1_bb.Max, 0.0f);
         RenderArrowsForVerticalBar(draw_list, HvkVec2(bar1_pos_x - 1, bar1_line_y), HvkVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
     }
@@ -6405,8 +6405,8 @@ bool HvkGui::ColorButton(const char* desc_id, const HvkVec4& col, HvkGuiColorEdi
         ColorConvertHSVtoRGB(col_rgb.x, col_rgb.y, col_rgb.z, col_rgb.x, col_rgb.y, col_rgb.z);
 
     HvkVec4 col_rgb_without_alpha(col_rgb.x, col_rgb.y, col_rgb.z, 1.0f);
-    float grid_step = HvkMin(size.x, size.y) / 2.99f;
-    float rounding = HvkMin(g.Style.FrameRounding, grid_step * 0.5f);
+    float grid_step = Immin(size.x, size.y) / 2.99f;
+    float rounding = Immin(g.Style.FrameRounding, grid_step * 0.5f);
     HvkRect bb_inner = bb;
     float off = 0.0f;
     if ((flags & HvkGuiColorEditFlags_NoBorder) == 0)
@@ -6416,7 +6416,7 @@ bool HvkGui::ColorButton(const char* desc_id, const HvkVec4& col, HvkGuiColorEdi
     }
     if ((flags & HvkGuiColorEditFlags_AlphaPreviewHalf) && col_rgb.w < 1.0f)
     {
-        float mid_x = IM_ROUND((bb_inner.Min.x + bb_inner.Max.x) * 0.5f);
+        float mid_x = Hvk_ROUND((bb_inner.Min.x + bb_inner.Max.x) * 0.5f);
         if ((flags & HvkGuiColorEditFlags_AlphaNoBg) == 0)
             RenderColorRectWithAlphaCheckerboard(window->DrawList, HvkVec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, GetColorU32(col_rgb), grid_step, HvkVec2(-grid_step + off, off), rounding, HvkDrawFlags_RoundCornersRight);
         else
@@ -6474,10 +6474,10 @@ void HvkGui::SetColorEditOptions(HvkGuiColorEditFlags flags)
         flags |= HvkGuiColorEditFlags_DefaultOptions_ & HvkGuiColorEditFlags_PickerMask_;
     if ((flags & HvkGuiColorEditFlags_InputMask_) == 0)
         flags |= HvkGuiColorEditFlags_DefaultOptions_ & HvkGuiColorEditFlags_InputMask_;
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DisplayMask_));    // Check only 1 option is selected
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DataTypeMask_));   // Check only 1 option is selected
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_PickerMask_));     // Check only 1 option is selected
-    IM_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));      // Check only 1 option is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DisplayMask_));    // Check only 1 option is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_DataTypeMask_));   // Check only 1 option is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_PickerMask_));     // Check only 1 option is selected
+    Hvk_ASSERT(HvkIsPowerOfTwo(flags & HvkGuiColorEditFlags_InputMask_));      // Check only 1 option is selected
     g.ColorEditOptions = flags;
 }
 
@@ -6497,7 +6497,7 @@ void HvkGui::ColorTooltip(const char* text, const float* col, HvkGuiColorEditFla
 
     HvkVec2 sz(g.FontSize * 3 + g.Style.FramePadding.y * 2, g.FontSize * 3 + g.Style.FramePadding.y * 2);
     HvkVec4 cf(col[0], col[1], col[2], (flags & HvkGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
-    int cr = IM_F32_TO_INT8_SAT(col[0]), cg = IM_F32_TO_INT8_SAT(col[1]), cb = IM_F32_TO_INT8_SAT(col[2]), ca = (flags & HvkGuiColorEditFlags_NoAlpha) ? 255 : IM_F32_TO_INT8_SAT(col[3]);
+    int cr = Hvk_F32_TO_INT8_SAT(col[0]), cg = Hvk_F32_TO_INT8_SAT(col[1]), cb = Hvk_F32_TO_INT8_SAT(col[2]), ca = (flags & HvkGuiColorEditFlags_NoAlpha) ? 255 : Hvk_F32_TO_INT8_SAT(col[3]);
     HvkGuiColorEditFlags flags_to_forward = HvkGuiColorEditFlags_InputMask_ | HvkGuiColorEditFlags_AlphaMask_;
     ColorButton("##preview", cf, (flags & flags_to_forward) | HvkGuiColorEditFlags_NoTooltip, sz);
     SameLine();
@@ -6547,20 +6547,20 @@ void HvkGui::ColorEditOptionsPopup(const float* col, HvkGuiColorEditFlags flags)
         OpenPopup("Copy");
     if (BeginPopup("Copy"))
     {
-        int cr = IM_F32_TO_INT8_SAT(col[0]), cg = IM_F32_TO_INT8_SAT(col[1]), cb = IM_F32_TO_INT8_SAT(col[2]), ca = (flags & HvkGuiColorEditFlags_NoAlpha) ? 255 : IM_F32_TO_INT8_SAT(col[3]);
+        int cr = Hvk_F32_TO_INT8_SAT(col[0]), cg = Hvk_F32_TO_INT8_SAT(col[1]), cb = Hvk_F32_TO_INT8_SAT(col[2]), ca = (flags & HvkGuiColorEditFlags_NoAlpha) ? 255 : Hvk_F32_TO_INT8_SAT(col[3]);
         char buf[64];
-        HvkFormatString(buf, IM_ARRAYSIZE(buf), "(%.3ff, %.3ff, %.3ff, %.3ff)", col[0], col[1], col[2], (flags & HvkGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
+        HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "(%.3ff, %.3ff, %.3ff, %.3ff)", col[0], col[1], col[2], (flags & HvkGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
         if (Selectable(buf))
             SetClipboardText(buf);
-        HvkFormatString(buf, IM_ARRAYSIZE(buf), "(%d,%d,%d,%d)", cr, cg, cb, ca);
+        HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "(%d,%d,%d,%d)", cr, cg, cb, ca);
         if (Selectable(buf))
             SetClipboardText(buf);
-        HvkFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X", cr, cg, cb);
+        HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "#%02X%02X%02X", cr, cg, cb);
         if (Selectable(buf))
             SetClipboardText(buf);
         if (!(flags & HvkGuiColorEditFlags_NoAlpha))
         {
-            HvkFormatString(buf, IM_ARRAYSIZE(buf), "#%02X%02X%02X%02X", cr, cg, cb, ca);
+            HvkFormatString(buf, Hvk_ARRAYSIZE(buf), "#%02X%02X%02X%02X", cr, cg, cb, ca);
             if (Selectable(buf))
                 SetClipboardText(buf);
         }
@@ -6583,7 +6583,7 @@ void HvkGui::ColorPickerOptionsPopup(const float* ref_col, HvkGuiColorEditFlags 
     PushItemFlag(HvkGuiItemFlags_NoMarkEdited, true);
     if (allow_opt_picker)
     {
-        HvkVec2 picker_size(g.FontSize * 8, HvkMax(g.FontSize * 8 - (GetFrameHeight() + g.Style.ItemInnerSpacing.x), 1.0f)); // FIXME: Picker size copied from main picker function
+        HvkVec2 picker_size(g.FontSize * 8, Immax(g.FontSize * 8 - (GetFrameHeight() + g.Style.ItemInnerSpacing.x), 1.0f)); // FIXME: Picker size copied from main picker function
         PushItemWidth(picker_size.x);
         for (int picker_type = 0; picker_type < 2; picker_type++)
         {
@@ -6813,14 +6813,14 @@ bool HvkGui::TreeNodeBehavior(HvkGuiID id, HvkGuiTreeNodeFlags flags, const char
     // When not framed, we vertically increase height up to typical framed widget height
     const bool display_frame = (flags & HvkGuiTreeNodeFlags_Framed) != 0;
     const bool use_frame_padding = (display_frame || (flags & HvkGuiTreeNodeFlags_FramePadding));
-    const HvkVec2 padding = use_frame_padding ? style.FramePadding : HvkVec2(style.FramePadding.x, HvkMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
+    const HvkVec2 padding = use_frame_padding ? style.FramePadding : HvkVec2(style.FramePadding.x, Immin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
 
     if (!label_end)
         label_end = FindRenderedTextEnd(label);
     const HvkVec2 label_size = CalcTextSize(label, label_end, false);
 
     const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);   // Collapsing arrow width + Spacing
-    const float text_offset_y = use_frame_padding ? HvkMax(style.FramePadding.y, window->DC.CurrLineTextBaseOffset) : window->DC.CurrLineTextBaseOffset; // Latch before ItemSize changes it
+    const float text_offset_y = use_frame_padding ? Immax(style.FramePadding.y, window->DC.CurrLineTextBaseOffset) : window->DC.CurrLineTextBaseOffset; // Latch before ItemSize changes it
     const float text_width = g.FontSize + label_size.x + padding.x * 2;                         // Include collapsing arrow
 
     const float frame_height = label_size.y + padding.y * 2;
@@ -6833,7 +6833,7 @@ bool HvkGui::TreeNodeBehavior(HvkGuiID id, HvkGuiTreeNodeFlags flags, const char
     frame_bb.Max.y = window->DC.CursorPos.y + (text_offset_y - padding.y) + frame_height;
     if (display_frame)
     {
-        const float outer_extend = IM_TRUNC(window->WindowPadding.x * 0.5f); // Framed header expand a little outside of current limits
+        const float outer_extend = Hvk_TRUNC(window->WindowPadding.x * 0.5f); // Framed header expand a little outside of current limits
         frame_bb.Min.x -= outer_extend;
         frame_bb.Max.x += outer_extend;
     }
@@ -6891,7 +6891,7 @@ bool HvkGui::TreeNodeBehavior(HvkGuiID id, HvkGuiTreeNodeFlags flags, const char
         if ((flags & HvkGuiTreeNodeFlags_DrawLinesToNodes) && (window->DC.TreeRecordsClippedNodesY2Mask & (1 << (window->DC.TreeDepth - 1))))
         {
             HvkGuiTreeNodeStackData* parent_data = &g.TreeNodeStack.Data[g.TreeNodeStack.Size - 1];
-            parent_data->DrawLinesToNodesY2 = HvkMax(parent_data->DrawLinesToNodesY2, window->DC.CursorPos.y); // Don't need to aim to mid Y position as we are clipped anyway.
+            parent_data->DrawLinesToNodesY2 = Immax(parent_data->DrawLinesToNodesY2, window->DC.CursorPos.y); // Don't need to aim to mid Y position as we are clipped anyway.
             if (frame_bb.Min.y >= window->ClipRect.Max.y)
                 window->DC.TreeRecordsClippedNodesY2Mask &= ~(1 << (window->DC.TreeDepth - 1)); // Done
         }
@@ -6917,7 +6917,7 @@ bool HvkGui::TreeNodeBehavior(HvkGuiID id, HvkGuiTreeNodeFlags flags, const char
         button_flags |= HvkGuiButtonFlags_PressedOnDragDropHold;
 
     // We allow clicking on the arrow section with keyboard modifiers held, in order to easily
-    // allow browsing a tree while preserving selection with code Hvkplementing multi-selection patterns.
+    // allow browsing a tree while preserving selection with code implementing multi-selection patterns.
     // When clicking on the rest of the tree node we always disallow keyboard modifiers.
     const float arrow_hit_x1 = (text_pos.x - text_offset_x) - style.TouchExtraPadding.x;
     const float arrow_hit_x2 = (text_pos.x - text_offset_x) + (g.FontSize + padding.x * 2.0f) + style.TouchExtraPadding.x;
@@ -6978,7 +6978,7 @@ bool HvkGui::TreeNodeBehavior(HvkGuiID id, HvkGuiTreeNodeFlags flags, const char
         }
         else if (pressed && g.DragDropHoldJustPressedId == id)
         {
-            IM_ASSERT(button_flags & HvkGuiButtonFlags_PressedOnDragDropHold);
+            Hvk_ASSERT(button_flags & HvkGuiButtonFlags_PressedOnDragDropHold);
             if (!is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
                 toggled = true;
             else
@@ -7097,8 +7097,8 @@ void HvkGui::TreeNodeDrawLineToChildNode(const HvkVec2& target_pos)
     float x1 = HvkTrunc(parent_data->DrawLinesX1);
     float x2 = HvkTrunc(target_pos.x - g.Style.ItemInnerSpacing.x);
     float y = HvkTrunc(target_pos.y);
-    float rounding = (g.Style.TreeLinesRounding > 0.0f) ? HvkMin(x2 - x1, g.Style.TreeLinesRounding) : 0.0f;
-    parent_data->DrawLinesToNodesY2 = HvkMax(parent_data->DrawLinesToNodesY2, y - rounding);
+    float rounding = (g.Style.TreeLinesRounding > 0.0f) ? Immin(x2 - x1, g.Style.TreeLinesRounding) : 0.0f;
+    parent_data->DrawLinesToNodesY2 = Immax(parent_data->DrawLinesToNodesY2, y - rounding);
     if (x1 >= x2)
         return;
     if (rounding > 0.0f)
@@ -7120,18 +7120,18 @@ void HvkGui::TreeNodeDrawLineToTreePop(const HvkGuiTreeNodeStackData* data)
 {
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
-    float y1 = HvkMax(data->NavRect.Max.y, window->ClipRect.Min.y);
+    float y1 = Immax(data->NavRect.Max.y, window->ClipRect.Min.y);
     float y2 = data->DrawLinesToNodesY2;
     if (data->TreeFlags & HvkGuiTreeNodeFlags_DrawLinesFull)
     {
         float y2_full = window->DC.CursorPos.y;
         if (g.CurrentTable)
-            y2_full = HvkMax(g.CurrentTable->RowPosY2, y2_full);
+            y2_full = Immax(g.CurrentTable->RowPosY2, y2_full);
         y2_full = HvkTrunc(y2_full - g.Style.ItemSpacing.y - g.FontSize * 0.5f);
         if (y2 + (g.Style.ItemSpacing.y + g.Style.TreeLinesRounding) < y2_full) // FIXME: threshold to use ToNodes Y2 instead of Full Y2 when close by ItemSpacing.y
             y2 = y2_full;
     }
-    y2 = HvkMin(y2, window->ClipRect.Max.y);
+    y2 = Immin(y2, window->ClipRect.Max.y);
     if (y2 <= y1)
         return;
     float x = HvkTrunc(data->DrawLinesX1);
@@ -7179,7 +7179,7 @@ void HvkGui::TreePop()
     if (window->DC.TreeHasStackDataDepthMask & tree_depth_mask)
     {
         const HvkGuiTreeNodeStackData* data = &g.TreeNodeStack.Data[g.TreeNodeStack.Size - 1];
-        IM_ASSERT(data->ID == window->IDStack.back());
+        Hvk_ASSERT(data->ID == window->IDStack.back());
 
         // Handle Left arrow to move to parent tree node (when HvkGuiTreeNodeFlags_NavLeftJumpsToParent is enabled)
         if (data->TreeFlags & HvkGuiTreeNodeFlags_NavLeftJumpsToParent)
@@ -7195,7 +7195,7 @@ void HvkGui::TreePop()
         window->DC.TreeRecordsClippedNodesY2Mask &= ~tree_depth_mask;
     }
 
-    IM_ASSERT(window->IDStack.Size > 1); // There should always be 1 element in the IDStack (pushed during window creation). If this triggers you called TreePop/PopID too much.
+    Hvk_ASSERT(window->IDStack.Size > 1); // There should always be 1 element in the IDStack (pushed during window creation). If this triggers you called TreePop/PopID too much.
     PopID();
 }
 
@@ -7264,7 +7264,7 @@ bool HvkGui::CollapsingHeader(const char* label, bool* p_visible, HvkGuiTreeNode
         HvkGuiContext& g = *GHvkGui;
         HvkGuiLastItemData last_item_backup = g.LastItemData;
         float button_size = g.FontSize;
-        float button_x = HvkMax(g.LastItemData.Rect.Min.x, g.LastItemData.Rect.Max.x - g.Style.FramePadding.x - button_size);
+        float button_x = Immax(g.LastItemData.Rect.Min.x, g.LastItemData.Rect.Max.x - g.Style.FramePadding.x - button_size);
         float button_y = g.LastItemData.Rect.Min.y + g.Style.FramePadding.y;
         HvkGuiID close_button_id = GetIDWithSeed("#CLOSE", NULL, id);
         if (CloseButton(close_button_id, HvkVec2(button_x, button_y)))
@@ -7308,7 +7308,7 @@ bool HvkGui::Selectable(const char* label, bool selected, HvkGuiSelectableFlags 
     const float min_x = span_all_columns ? window->ParentWorkRect.Min.x : pos.x;
     const float max_x = span_all_columns ? window->ParentWorkRect.Max.x : window->WorkRect.Max.x;
     if (size_arg.x == 0.0f || (flags & HvkGuiSelectableFlags_SpanAvailWidth))
-        size.x = HvkMax(label_size.x, max_x - min_x);
+        size.x = Immax(label_size.x, max_x - min_x);
 
     // Selectables are meant to be tightly packed together with no click-gap, so we extend their box to cover spacing between selectable.
     // FIXME: Not part of layout so not included in clipper calculation, but ItemSize currently doesn't allow offsetting CursorPos.
@@ -7317,14 +7317,14 @@ bool HvkGui::Selectable(const char* label, bool selected, HvkGuiSelectableFlags 
     {
         const float spacing_x = span_all_columns ? 0.0f : style.ItemSpacing.x;
         const float spacing_y = style.ItemSpacing.y;
-        const float spacing_L = IM_TRUNC(spacing_x * 0.50f);
-        const float spacing_U = IM_TRUNC(spacing_y * 0.50f);
+        const float spacing_L = Hvk_TRUNC(spacing_x * 0.50f);
+        const float spacing_U = Hvk_TRUNC(spacing_y * 0.50f);
         bb.Min.x -= spacing_L;
         bb.Min.y -= spacing_U;
         bb.Max.x += (spacing_x - spacing_L);
         bb.Max.y += (spacing_y - spacing_U);
     }
-    //if (g.IO.KeyCtrl) { GetForegroundDrawList()->AddRect(bb.Min, bb.Max, IM_COL32(0, 255, 0, 255)); }
+    //if (g.IO.KeyCtrl) { GetForegroundDrawList()->AddRect(bb.Min, bb.Max, Hvk_COL32(0, 255, 0, 255)); }
 
     const bool disabled_item = (flags & HvkGuiSelectableFlags_Disabled) != 0;
     const HvkGuiItemFlags extra_item_flags = disabled_item ? (HvkGuiItemFlags)HvkGuiItemFlags_Disabled : HvkGuiItemFlags_None;
@@ -7451,7 +7451,7 @@ bool HvkGui::Selectable(const char* label, bool selected, HvkGuiSelectableFlags 
 
     // Text stays at the submission position. Alignment/clipping extents ignore SpanAllColumns.
     if (is_visible)
-        RenderTextClipped(pos, HvkVec2(HvkMin(pos.x + size.x, window->WorkRect.Max.x), pos.y + size.y), label, NULL, &label_size, style.SelectableTextAlign, &bb);
+        RenderTextClipped(pos, HvkVec2(Immin(pos.x + size.x, window->WorkRect.Max.x), pos.y + size.y), label, NULL, &label_size, style.SelectableTextAlign, &bb);
 
     // Automatically close popups
     if (pressed && !auto_selected && (window->Flags & HvkGuiWindowFlags_Popup) && !(flags & HvkGuiSelectableFlags_NoAutoClosePopups) && (g.LastItemData.ItemFlags & HvkGuiItemFlags_AutoClosePopups))
@@ -7513,7 +7513,7 @@ HvkGuiTypingSelectRequest* HvkGui::GetTypingSelectRequest(HvkGuiTypingSelectFlag
     }
 
     // Append to buffer
-    const int buffer_max_len = IM_ARRAYSIZE(data->SearchBuffer) - 1;
+    const int buffer_max_len = Hvk_ARRAYSIZE(data->SearchBuffer) - 1;
     int buffer_len = (int)HvkStrlen(data->SearchBuffer);
     bool select_request = false;
     for (HvkWchar w : g.IO.InputQueueCharacters)
@@ -7564,7 +7564,7 @@ HvkGuiTypingSelectRequest* HvkGui::GetTypingSelectRequest(HvkGuiTypingSelectFlag
     out_request->SingleCharSize = 0;
 
     // Calculate if buffer contains the same character repeated.
-    // - This can be used to Hvkplement a special search mode on first character.
+    // - This can be used to implement a special search mode on first character.
     // - Performed on UTF-8 codepoint for correctness.
     // - SingleCharMode is always set for first input character, because it usually leads to a "next".
     if (flags & HvkGuiTypingSelectFlags_AllowSingleCharMode)
@@ -7593,7 +7593,7 @@ static int HvkStrimatchlen(const char* s1, const char* s1_end, const char* s2)
     return match_len;
 }
 
-// Default handler for finding a result for typing-select. You may Hvkplement your own.
+// Default handler for finding a result for typing-select. You may implement your own.
 // You might want to display a tooltip to visualize the current request SearchBuffer
 // When SingleCharMode is set:
 // - it is better to NOT display a tooltip of other on-screen display indicator.
@@ -7629,7 +7629,7 @@ int HvkGui::TypingSelectFindNextSingleCharMatch(HvkGuiTypingSelectRequest* req, 
             continue;
         if (return_next_match)                           // Return next matching item after current item.
             return idx;
-        if (first_match_idx == -1 && nav_item_idx == -1) // Return first match Hvkmediately if we don't have a nav_item_idx value.
+        if (first_match_idx == -1 && nav_item_idx == -1) // Return first match immediately if we don't have a nav_item_idx value.
             return idx;
         if (first_match_idx == -1)                       // Record first match for wrapping.
             first_match_idx = idx;
@@ -7664,7 +7664,7 @@ void HvkGui::DebugNodeTypingSelectState(HvkGuiTypingSelectState* data)
     Text("SingleCharMode = %d, Size = %d, Lock = %d", data->Request.SingleCharMode, data->Request.SingleCharSize, data->SingleCharModeLock);
     Text("LastRequest = time: %.2f, frame: %d", data->LastRequestTime, data->LastRequestFrame);
 #else
-    IM_UNUSED(data);
+    Hvk_UNUSED(data);
 #endif
 }
 
@@ -7724,7 +7724,7 @@ static void BoxSelectDeactivateDrag(HvkGuiBoxSelectState* bs)
 static void BoxSelectScrollWithMouseDrag(HvkGuiBoxSelectState* bs, HvkGuiWindow* window, const HvkRect& inner_r)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(bs->Window == window);
+    Hvk_ASSERT(bs->Window == window);
     for (int n = 0; n < 2; n++) // each axis
     {
         const float mouse_pos = g.IO.MousePos[n];
@@ -7774,10 +7774,10 @@ bool HvkGui::BeginBoxSelect(const HvkRect& scope_rect, HvkGuiWindow* window, Hvk
     HvkVec2 curr_end_pos_abs = g.IO.MousePos;
     if (ms_flags & HvkGuiMultiSelectFlags_ScopeWindow) // Box-select scrolling only happens with ScopeWindow
         curr_end_pos_abs = HvkClamp(curr_end_pos_abs, scope_rect.Min, scope_rect.Max);
-    bs->BoxSelectRectPrev.Min = HvkMin(start_pos_abs, prev_end_pos_abs);
-    bs->BoxSelectRectPrev.Max = HvkMax(start_pos_abs, prev_end_pos_abs);
-    bs->BoxSelectRectCurr.Min = HvkMin(start_pos_abs, curr_end_pos_abs);
-    bs->BoxSelectRectCurr.Max = HvkMax(start_pos_abs, curr_end_pos_abs);
+    bs->BoxSelectRectPrev.Min = Immin(start_pos_abs, prev_end_pos_abs);
+    bs->BoxSelectRectPrev.Max = Immax(start_pos_abs, prev_end_pos_abs);
+    bs->BoxSelectRectCurr.Min = Immin(start_pos_abs, curr_end_pos_abs);
+    bs->BoxSelectRectCurr.Max = Immax(start_pos_abs, curr_end_pos_abs);
 
     // Box-select 2D mode detects horizontal changes (vertical ones are already picked by Clipper)
     // Storing an extra rect used by widgets supporting box-select.
@@ -7789,9 +7789,9 @@ bool HvkGui::BeginBoxSelect(const HvkRect& scope_rect, HvkGuiWindow* window, Hvk
             bs->UnclipRect.Add(bs->BoxSelectRectCurr);
         }
 
-    //GetForegroundDrawList()->AddRect(bs->UnclipRect.Min, bs->UnclipRect.Max, IM_COL32(255,0,0,200), 0.0f, 0, 3.0f);
-    //GetForegroundDrawList()->AddRect(bs->BoxSelectRectPrev.Min, bs->BoxSelectRectPrev.Max, IM_COL32(255,0,0,200), 0.0f, 0, 3.0f);
-    //GetForegroundDrawList()->AddRect(bs->BoxSelectRectCurr.Min, bs->BoxSelectRectCurr.Max, IM_COL32(0,255,0,200), 0.0f, 0, 1.0f);
+    //GetForegroundDrawList()->AddRect(bs->UnclipRect.Min, bs->UnclipRect.Max, Hvk_COL32(255,0,0,200), 0.0f, 0, 3.0f);
+    //GetForegroundDrawList()->AddRect(bs->BoxSelectRectPrev.Min, bs->BoxSelectRectPrev.Max, Hvk_COL32(255,0,0,200), 0.0f, 0, 3.0f);
+    //GetForegroundDrawList()->AddRect(bs->BoxSelectRectCurr.Min, bs->BoxSelectRectCurr.Max, Hvk_COL32(0,255,0,200), 0.0f, 0, 1.0f);
     return true;
 }
 
@@ -7800,7 +7800,7 @@ void HvkGui::EndBoxSelect(const HvkRect& scope_rect, HvkGuiMultiSelectFlags ms_f
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
     HvkGuiBoxSelectState* bs = &g.BoxSelectState;
-    IM_ASSERT(bs->IsActive);
+    Hvk_ASSERT(bs->IsActive);
     bs->UnclipMode = false;
 
     // Render selection rectangle
@@ -7816,7 +7816,7 @@ void HvkGui::EndBoxSelect(const HvkRect& scope_rect, HvkGuiMultiSelectFlags ms_f
     {
         HvkRect scroll_r = scope_rect;
         scroll_r.Expand(-g.FontSize);
-        //GetForegroundDrawList()->AddRect(scroll_r.Min, scroll_r.Max, IM_COL32(0, 255, 0, 255));
+        //GetForegroundDrawList()->AddRect(scroll_r.Min, scroll_r.Max, Hvk_COL32(0, 255, 0, 255));
         if (!scroll_r.Contains(g.IO.MousePos))
             BoxSelectScrollWithMouseDrag(bs, window, scroll_r);
     }
@@ -7838,11 +7838,11 @@ void HvkGui::EndBoxSelect(const HvkRect& scope_rect, HvkGuiMultiSelectFlags ms_f
 static void DebugLogMultiSelectRequests(const char* function, const HvkGuiMultiSelectIO* io)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_UNUSED(function);
+    Hvk_UNUSED(function);
     for (const HvkGuiSelectionRequest& req : io->Requests)
     {
         if (req.Type == HvkGuiSelectionRequestType_SetAll)    HvkGui_DEBUG_LOG_SELECTION("[selection] %s: Request: SetAll %d (= %s)\n", function, req.Selected, req.Selected ? "SelectAll" : "Clear");
-        if (req.Type == HvkGuiSelectionRequestType_SetRange)  HvkGui_DEBUG_LOG_SELECTION("[selection] %s: Request: SetRange %" IM_PRId64 "..%" IM_PRId64 " (0x%" IM_PRIX64 "..0x%" IM_PRIX64 ") = %d (dir %d)\n", function, req.RangeFirstItem, req.RangeLastItem, req.RangeFirstItem, req.RangeLastItem, req.Selected, req.RangeDirection);
+        if (req.Type == HvkGuiSelectionRequestType_SetRange)  HvkGui_DEBUG_LOG_SELECTION("[selection] %s: Request: SetRange %" Hvk_PRId64 "..%" Hvk_PRId64 " (0x%" Hvk_PRIX64 "..0x%" Hvk_PRIX64 ") = %d (dir %d)\n", function, req.RangeFirstItem, req.RangeLastItem, req.RangeFirstItem, req.RangeLastItem, req.Selected, req.RangeDirection);
     }
 }
 
@@ -7852,7 +7852,7 @@ static HvkRect CalcScopeRect(HvkGuiMultiSelectTempData* ms, HvkGuiWindow* window
     if (ms->Flags & HvkGuiMultiSelectFlags_ScopeRect)
     {
         // Warning: this depends on CursorMaxPos so it means to be called by EndMultiSelect() only
-        return HvkRect(ms->ScopeRectMin, HvkMax(window->DC.CursorMaxPos, ms->ScopeRectMin));
+        return HvkRect(ms->ScopeRectMin, Immax(window->DC.CursorMaxPos, ms->ScopeRectMin));
     }
     else
     {
@@ -7862,7 +7862,7 @@ static HvkRect CalcScopeRect(HvkGuiMultiSelectTempData* ms, HvkGuiWindow* window
             scope_rect = g.CurrentTable->HostClipRect;
 
         // Add inner table decoration (#7821) // FIXME: Why not baking in InnerClipRect?
-        scope_rect.Min = HvkMin(scope_rect.Min + HvkVec2(window->DecoInnerSizeX1, window->DecoInnerSizeY1), scope_rect.Max);
+        scope_rect.Min = Immin(scope_rect.Min + HvkVec2(window->DecoInnerSizeX1, window->DecoInnerSizeY1), scope_rect.Max);
         return scope_rect;
     }
 }
@@ -7883,7 +7883,7 @@ HvkGuiMultiSelectIO* HvkGui::BeginMultiSelect(HvkGuiMultiSelectFlags flags, int 
     if (++g.MultiSelectTempDataStacked > g.MultiSelectTempData.Size)
         g.MultiSelectTempData.resize(g.MultiSelectTempDataStacked, HvkGuiMultiSelectTempData());
     HvkGuiMultiSelectTempData* ms = &g.MultiSelectTempData[g.MultiSelectTempDataStacked - 1];
-    IM_STATIC_ASSERT(offsetof(HvkGuiMultiSelectTempData, IO) == 0); // Clear() relies on that.
+    Hvk_STATIC_ASSERT(offsetof(HvkGuiMultiSelectTempData, IO) == 0); // Clear() relies on that.
     g.CurrentMultiSelect = ms;
     if ((flags & (HvkGuiMultiSelectFlags_ScopeWindow | HvkGuiMultiSelectFlags_ScopeRect)) == 0)
         flags |= HvkGuiMultiSelectFlags_ScopeWindow;
@@ -7939,7 +7939,7 @@ HvkGuiMultiSelectIO* HvkGui::BeginMultiSelect(HvkGuiMultiSelectFlags flags, int 
         if (ms->KeyMods & HvkGuiMod_Shift)
             ms->IsKeyboardSetRange = true;
         if (ms->IsKeyboardSetRange)
-            IM_ASSERT(storage->RangeSrcItem != HvkGuiSelectionUserData_Invalid); // Not ready -> could clear?
+            Hvk_ASSERT(storage->RangeSrcItem != HvkGuiSelectionUserData_Invalid); // Not ready -> could clear?
         if ((ms->KeyMods & (HvkGuiMod_Ctrl | HvkGuiMod_Shift)) == 0 && (flags & (HvkGuiMultiSelectFlags_NoAutoClear | HvkGuiMultiSelectFlags_NoAutoSelect)) == 0)
             request_clear = true;
     }
@@ -8004,9 +8004,9 @@ HvkGuiMultiSelectIO* HvkGui::EndMultiSelect()
     HvkGuiMultiSelectTempData* ms = g.CurrentMultiSelect;
     HvkGuiMultiSelectState* storage = ms->Storage;
     HvkGuiWindow* window = g.CurrentWindow;
-    IM_ASSERT_USER_ERROR(ms->FocusScopeId == g.CurrentFocusScopeId, "EndMultiSelect() FocusScope mismatch!");
-    IM_ASSERT(g.CurrentMultiSelect != NULL && storage->Window == g.CurrentWindow);
-    IM_ASSERT(g.MultiSelectTempDataStacked > 0 && &g.MultiSelectTempData[g.MultiSelectTempDataStacked - 1] == g.CurrentMultiSelect);
+    Hvk_ASSERT_USER_ERROR(ms->FocusScopeId == g.CurrentFocusScopeId, "EndMultiSelect() FocusScope mismatch!");
+    Hvk_ASSERT(g.CurrentMultiSelect != NULL && storage->Window == g.CurrentWindow);
+    Hvk_ASSERT(g.MultiSelectTempDataStacked > 0 && &g.MultiSelectTempData[g.MultiSelectTempDataStacked - 1] == g.CurrentMultiSelect);
 
     HvkRect scope_rect = CalcScopeRect(ms, window);
     if (ms->IsFocused)
@@ -8059,12 +8059,12 @@ HvkGuiMultiSelectIO* HvkGui::EndMultiSelect()
     // Courtesy nav wrapping helper flag
     if (ms->Flags & HvkGuiMultiSelectFlags_NavWrapX)
     {
-        IM_ASSERT(ms->Flags & HvkGuiMultiSelectFlags_ScopeWindow); // Only supported at window scope
+        Hvk_ASSERT(ms->Flags & HvkGuiMultiSelectFlags_ScopeWindow); // Only supported at window scope
         HvkGui::NavMoveRequestTryWrapping(HvkGui::GetCurrentWindow(), HvkGuiNavMoveFlags_WrapX);
     }
 
     // Unwind
-    window->DC.CursorMaxPos = HvkMax(ms->BackupCursorMaxPos, window->DC.CursorMaxPos);
+    window->DC.CursorMaxPos = Immax(ms->BackupCursorMaxPos, window->DC.CursorMaxPos);
     PopFocusScope();
 
     if (g.DebugLogFlags & HvkGuiDebugLogFlags_EventSelection)
@@ -8112,7 +8112,7 @@ void HvkGui::MultiSelectItemHeader(HvkGuiID id, bool* p_selected, HvkGuiButtonFl
     {
         HvkGuiMultiSelectState* storage = ms->Storage;
         HvkGuiSelectionUserData item_data = g.NextItemData.SelectionUserData;
-        IM_ASSERT(g.NextItemData.FocusScopeId == g.CurrentFocusScopeId && "Forgot to call SetNextItemSelectionUserData() prior to item, required in BeginMultiSelect()/EndMultiSelect() scope");
+        Hvk_ASSERT(g.NextItemData.FocusScopeId == g.CurrentFocusScopeId && "Forgot to call SetNextItemSelectionUserData() prior to item, required in BeginMultiSelect()/EndMultiSelect() scope");
 
         // Apply SetAll (Clear/SelectAll) requests requested by BeginMultiSelect().
         // This is only useful if the user hasn't processed them already, and this only works if the user isn't using the clipper.
@@ -8124,7 +8124,7 @@ void HvkGui::MultiSelectItemHeader(HvkGuiID id, bool* p_selected, HvkGuiButtonFl
         // For this to work, we need someone to set 'RangeSrcPassedBy = true' at some point (either clipper either SetNextItemSelectionUserData() function)
         if (ms->IsKeyboardSetRange)
         {
-            IM_ASSERT(id != 0 && (ms->KeyMods & HvkGuiMod_Shift) != 0);
+            Hvk_ASSERT(id != 0 && (ms->KeyMods & HvkGuiMod_Shift) != 0);
             const bool is_range_dst = (ms->RangeDstPassedBy == false) && g.NavJustMovedToId == id;     // Assume that g.NavJustMovedToId is not clipped.
             if (is_range_dst)
                 ms->RangeDstPassedBy = true;
@@ -8137,7 +8137,7 @@ void HvkGui::MultiSelectItemHeader(HvkGuiID id, bool* p_selected, HvkGuiButtonFl
             if (is_range_src || is_range_dst || ms->RangeSrcPassedBy != ms->RangeDstPassedBy)
             {
                 // Apply range-select value to visible items
-                IM_ASSERT(storage->RangeSrcItem != HvkGuiSelectionUserData_Invalid && storage->RangeSelected != -1);
+                Hvk_ASSERT(storage->RangeSrcItem != HvkGuiSelectionUserData_Invalid && storage->RangeSelected != -1);
                 selected = (storage->RangeSelected != 0);
             }
             else if ((ms->KeyMods & HvkGuiMod_Ctrl) == 0 && (ms->Flags & HvkGuiMultiSelectFlags_NoAutoClear) == 0)
@@ -8250,7 +8250,7 @@ void HvkGui::MultiSelectItemFooter(HvkGuiID id, bool* p_selected, bool* p_presse
                     selected = !selected;
                     MultiSelectAddSetRange(ms, selected, +1, item_data, item_data);
                 }
-                storage->LastSelectionSize = HvkMax(storage->LastSelectionSize + 1, 1);
+                storage->LastSelectionSize = Immax(storage->LastSelectionSize + 1, 1);
             }
         }
 
@@ -8316,7 +8316,7 @@ void HvkGui::MultiSelectItemFooter(HvkGuiID id, bool* p_selected, bool* p_presse
         bool range_selected;
         if (is_shift && !is_singleselect)
         {
-            //IM_ASSERT(storage->HasRangeSrc && storage->HasRangeValue);
+            //Hvk_ASSERT(storage->HasRangeSrc && storage->HasRangeValue);
             if (storage->RangeSrcItem == HvkGuiSelectionUserData_Invalid)
                 storage->RangeSrcItem = item_data;
             if ((flags & HvkGuiMultiSelectFlags_NoAutoSelect) == 0)
@@ -8401,12 +8401,12 @@ void HvkGui::DebugNodeMultiSelectState(HvkGuiMultiSelectState* storage)
     if (!is_active) { PopStyleColor(); }
     if (!open)
         return;
-    Text("RangeSrcItem = %" IM_PRId64 " (0x%" IM_PRIX64 "), RangeSelected = %d", storage->RangeSrcItem, storage->RangeSrcItem, storage->RangeSelected);
-    Text("NavIdItem = %" IM_PRId64 " (0x%" IM_PRIX64 "), NavIdSelected = %d", storage->NavIdItem, storage->NavIdItem, storage->NavIdSelected);
+    Text("RangeSrcItem = %" Hvk_PRId64 " (0x%" Hvk_PRIX64 "), RangeSelected = %d", storage->RangeSrcItem, storage->RangeSrcItem, storage->RangeSelected);
+    Text("NavIdItem = %" Hvk_PRId64 " (0x%" Hvk_PRIX64 "), NavIdSelected = %d", storage->NavIdItem, storage->NavIdItem, storage->NavIdSelected);
     Text("LastSelectionSize = %d", storage->LastSelectionSize); // Provided by user
     TreePop();
 #else
-    IM_UNUSED(storage);
+    Hvk_UNUSED(storage);
 #endif
 }
 
@@ -8462,7 +8462,7 @@ bool HvkGuiSelectionBasicStorage::GetNextSelectedItem(void** opaque_it, HvkGuiID
         HvkQsort(_Storage.Data.Data, (size_t)_Storage.Data.Size, sizeof(HvkGuiStoragePair), PairComparerByValueInt); // ~HvkGuiStorage::BuildSortByValueInt()
     if (it == NULL)
         it = _Storage.Data.Data;
-    IM_ASSERT(it >= _Storage.Data.Data && it <= it_end);
+    Hvk_ASSERT(it >= _Storage.Data.Data && it <= it_end);
     if (it != it_end)
         while (it->val_i == 0 && it < it_end)
             it++;
@@ -8513,7 +8513,7 @@ static void HvkGuiSelectionBasicStorage_BatchFinish(HvkGuiSelectionBasicStorage*
 //   and constructing a view index <> object id/ptr data structure anyway.
 // WHEN YOUR APPLICATION SETTLES ON A CHOICE, YOU WILL PROBABLY PREFER TO GET RID OF THIS UNNECESSARY 'HvkGuiSelectionBasicStorage' INDIRECTION LOGIC.
 // Notice that with the simplest adapter (using indices everywhere), all functions return their parameters.
-// The most simple Hvkplementation (using indices everywhere) would look like:
+// The most simple implementation (using indices everywhere) would look like:
 //   for (HvkGuiSelectionRequest& req : ms_io->Requests)
 //   {
 //      if (req.Type == HvkGuiSelectionRequestType_SetAll)    { Clear(); if (req.Selected) { for (int n = 0; n < items_count; n++) { SetItemSelected(n, true); } }
@@ -8524,8 +8524,8 @@ void HvkGuiSelectionBasicStorage::ApplyRequests(HvkGuiMultiSelectIO* ms_io)
     // For convenience we obtain ItemsCount as passed to BeginMultiSelect(), which is optional.
     // It makes sense when using HvkGuiSelectionBasicStorage to simply pass your items count to BeginMultiSelect().
     // Other scheme may handle SetAll differently.
-    IM_ASSERT(ms_io->ItemsCount != -1 && "Missing value for items_count in BeginMultiSelect() call!");
-    IM_ASSERT(AdapterIndexToStorageId != NULL);
+    Hvk_ASSERT(ms_io->ItemsCount != -1 && "Missing value for items_count in BeginMultiSelect() call!");
+    Hvk_ASSERT(AdapterIndexToStorageId != NULL);
 
     // This is optimized/specialized to cope with very large selections (e.g. 100k+ items)
     // - A simpler version could call SetItemSelected() directly instead of HvkGuiSelectionBasicStorage_BatchSetItemSelected() + HvkGuiSelectionBasicStorage_BatchFinish().
@@ -8590,7 +8590,7 @@ HvkGuiSelectionExternalStorage::HvkGuiSelectionExternalStorage()
 // This makes no assumption about underlying storage.
 void HvkGuiSelectionExternalStorage::ApplyRequests(HvkGuiMultiSelectIO* ms_io)
 {
-    IM_ASSERT(AdapterSetItemSelected);
+    Hvk_ASSERT(AdapterSetItemSelected);
     for (HvkGuiSelectionRequest& req : ms_io->Requests)
     {
         if (req.Type == HvkGuiSelectionRequestType_SetAll)
@@ -8629,7 +8629,7 @@ bool HvkGui::BeginListBox(const char* label, const HvkVec2& size_arg)
     // Size default to hold ~7.25 items.
     // Fractional number of items helps seeing that we can scroll down/up without looking at scrollbar.
     HvkVec2 size = HvkTrunc(CalcItemSize(size_arg, CalcItemWidth(), GetTextLineHeightWithSpacing() * 7.25f + style.FramePadding.y * 2.0f));
-    HvkVec2 frame_size = HvkVec2(size.x, HvkMax(size.y, label_size.y));
+    HvkVec2 frame_size = HvkVec2(size.x, Immax(size.y, label_size.y));
     HvkRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
     HvkRect bb(frame_bb.Min, frame_bb.Max + HvkVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
     g.NextItemData.ClearFlags();
@@ -8648,7 +8648,7 @@ bool HvkGui::BeginListBox(const char* label, const HvkVec2& size_arg)
     {
         HvkVec2 label_pos = HvkVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y);
         RenderText(label_pos, label);
-        window->DC.CursorMaxPos = HvkMax(window->DC.CursorMaxPos, label_pos + label_size);
+        window->DC.CursorMaxPos = Immax(window->DC.CursorMaxPos, label_pos + label_size);
         AlignTextToFramePadding();
     }
 
@@ -8660,8 +8660,8 @@ void HvkGui::EndListBox()
 {
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
-    IM_ASSERT((window->Flags & HvkGuiWindowFlags_ChildWindow) && "Mismatched BeginListBox/EndListBox calls. Did you test the return value of BeginListBox?");
-    IM_UNUSED(window);
+    Hvk_ASSERT((window->Flags & HvkGuiWindowFlags_ChildWindow) && "Mismatched BeginListBox/EndListBox calls. Did you test the return value of BeginListBox?");
+    Hvk_UNUSED(window);
 
     EndChild();
     EndGroup(); // This is only required to be able to do IsItemXXX query on the whole ListBox including label
@@ -8681,7 +8681,7 @@ bool HvkGui::ListBox(const char* label, int* current_item, const char* (*getter)
 
     // Calculate size from "height_in_items"
     if (height_in_items < 0)
-        height_in_items = HvkMin(items_count, 7);
+        height_in_items = Immin(items_count, 7);
     float height_in_items_f = height_in_items + 0.25f;
     HvkVec2 size(0.0f, HvkTrunc(GetTextLineHeightWithSpacing() * height_in_items_f + g.Style.FramePadding.y * 2.0f));
 
@@ -8765,8 +8765,8 @@ int HvkGui::PlotEx(HvkGuiPlotType plot_type, const char* label, float (*values_g
             const float v = values_getter(data, i);
             if (v != v) // Ignore NaN values
                 continue;
-            v_min = HvkMin(v_min, v);
-            v_max = HvkMax(v_max, v);
+            v_min = Immin(v_min, v);
+            v_max = Immax(v_max, v);
         }
         if (scale_min == FLT_MAX)
             scale_min = v_min;
@@ -8780,7 +8780,7 @@ int HvkGui::PlotEx(HvkGuiPlotType plot_type, const char* label, float (*values_g
     int idx_hovered = -1;
     if (values_count >= values_count_min)
     {
-        int res_w = HvkMin((int)frame_size.x, values_count) + ((plot_type == HvkGuiPlotType_Lines) ? -1 : 0);
+        int res_w = Immin((int)frame_size.x, values_count) + ((plot_type == HvkGuiPlotType_Lines) ? -1 : 0);
         int item_count = values_count + ((plot_type == HvkGuiPlotType_Lines) ? -1 : 0);
 
         // Tooltip on hover
@@ -8788,7 +8788,7 @@ int HvkGui::PlotEx(HvkGuiPlotType plot_type, const char* label, float (*values_g
         {
             const float t = HvkClamp((g.IO.MousePos.x - inner_bb.Min.x) / (inner_bb.Max.x - inner_bb.Min.x), 0.0f, 0.9999f);
             const int v_idx = (int)(t * item_count);
-            IM_ASSERT(v_idx >= 0 && v_idx < values_count);
+            Hvk_ASSERT(v_idx >= 0 && v_idx < values_count);
 
             const float v0 = values_getter(data, (v_idx + values_offset) % values_count);
             const float v1 = values_getter(data, (v_idx + 1 + values_offset) % values_count);
@@ -8814,7 +8814,7 @@ int HvkGui::PlotEx(HvkGuiPlotType plot_type, const char* label, float (*values_g
         {
             const float t1 = t0 + t_step;
             const int v1_idx = (int)(t0 * item_count + 0.5f);
-            IM_ASSERT(v1_idx >= 0 && v1_idx < values_count);
+            Hvk_ASSERT(v1_idx >= 0 && v1_idx < values_count);
             const float v1 = values_getter(data, (v1_idx + values_offset + 1) % values_count);
             const HvkVec2 tp1 = HvkVec2( t1, 1.0f - HvkSaturate((v1 - scale_min) * inv_scale) );
 
@@ -8913,7 +8913,7 @@ void HvkGui::Value(const char* prefix, float v, const char* float_format)
     if (float_format)
     {
         char fmt[64];
-        HvkFormatString(fmt, IM_ARRAYSIZE(fmt), "%%s: %s", float_format);
+        HvkFormatString(fmt, Hvk_ARRAYSIZE(fmt), "%%s: %s", float_format);
         Text(fmt, prefix, v);
     }
     else
@@ -8952,7 +8952,7 @@ void HvkGuiMenuColumns::CalcNextTotalWidth(bool update_offsets)
 {
     HvkU16 offset = 0;
     bool want_spacing = false;
-    for (int i = 0; i < IM_ARRAYSIZE(Widths); i++)
+    for (int i = 0; i < Hvk_ARRAYSIZE(Widths); i++)
     {
         HvkU16 width = Widths[i];
         if (want_spacing && width > 0)
@@ -8971,12 +8971,12 @@ void HvkGuiMenuColumns::CalcNextTotalWidth(bool update_offsets)
 
 float HvkGuiMenuColumns::DeclColumns(float w_icon, float w_label, float w_shortcut, float w_mark)
 {
-    Widths[0] = HvkMax(Widths[0], (HvkU16)w_icon);
-    Widths[1] = HvkMax(Widths[1], (HvkU16)w_label);
-    Widths[2] = HvkMax(Widths[2], (HvkU16)w_shortcut);
-    Widths[3] = HvkMax(Widths[3], (HvkU16)w_mark);
+    Widths[0] = Immax(Widths[0], (HvkU16)w_icon);
+    Widths[1] = Immax(Widths[1], (HvkU16)w_label);
+    Widths[2] = Immax(Widths[2], (HvkU16)w_shortcut);
+    Widths[3] = Immax(Widths[3], (HvkU16)w_mark);
     CalcNextTotalWidth(false);
-    return (float)HvkMax(TotalWidth, NextTotalWidth);
+    return (float)Immax(TotalWidth, NextTotalWidth);
 }
 
 // FIXME: Provided a rectangle perhaps e.g. a BeginMenuBarEx() could be used anywhere..
@@ -8991,15 +8991,15 @@ bool HvkGui::BeginMenuBar()
     if (!(window->Flags & HvkGuiWindowFlags_MenuBar))
         return false;
 
-    IM_ASSERT(!window->DC.MenuBarAppending);
+    Hvk_ASSERT(!window->DC.MenuBarAppending);
     BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
     PushID("##MenuBar");
 
     // We don't clip with current window clipping rectangle as it is already set to the area below. However we clip with window full rect.
     // We remove 1 worth of rounding to Max.x to that text in long menus and small windows don't tend to display over the lower-right rounded area, which looks particularly glitchy.
-    const float border_top = HvkMax(window->WindowBorderSize * 0.5f - window->TitleBarHeight, 0.0f);
+    const float border_top = Immax(window->WindowBorderSize * 0.5f - window->TitleBarHeight, 0.0f);
     HvkRect bar_rect = window->MenuBarRect();
-    HvkRect clip_rect(IM_ROUND(bar_rect.Min.x + window->WindowBorderSize * 0.5f), IM_ROUND(bar_rect.Min.y + border_top), IM_ROUND(HvkMax(bar_rect.Min.x, bar_rect.Max.x - HvkMax(window->WindowRounding, window->WindowBorderSize * 0.5f))), IM_ROUND(bar_rect.Max.y));
+    HvkRect clip_rect(Hvk_ROUND(bar_rect.Min.x + window->WindowBorderSize * 0.5f), Hvk_ROUND(bar_rect.Min.y + border_top), Hvk_ROUND(Immax(bar_rect.Min.x, bar_rect.Max.x - Immax(window->WindowRounding, window->WindowBorderSize * 0.5f))), Hvk_ROUND(bar_rect.Max.y));
     clip_rect.ClipWith(window->OuterRectClipped);
     PushClipRect(clip_rect.Min, clip_rect.Max, false);
 
@@ -9020,9 +9020,9 @@ void HvkGui::EndMenuBar()
         return;
     HvkGuiContext& g = *GHvkGui;
 
-    IM_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
-    IM_ASSERT(window->Flags & HvkGuiWindowFlags_MenuBar);
-    IM_ASSERT(window->DC.MenuBarAppending);
+    Hvk_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
+    Hvk_ASSERT(window->Flags & HvkGuiWindowFlags_MenuBar);
+    Hvk_ASSERT(window->DC.MenuBarAppending);
 
     // Nav: When a move request within one of our child menu failed, capture the request to navigate among our siblings.
     if (NavMoveRequestButNoResultYet() && (g.NavMoveDir == HvkGuiDir_Left || g.NavMoveDir == HvkGuiDir_Right) && (g.NavWindow->Flags & HvkGuiWindowFlags_ChildMenu))
@@ -9036,7 +9036,7 @@ void HvkGui::EndMenuBar()
             // To do so we claim focus back, restore NavId and then process the movement request for yet another frame.
             // This involve a one-frame delay which isn't very problematic in this situation. We could remove it by scoring in advance for multiple window (probably not worth bothering)
             const HvkGuiNavLayer layer = HvkGuiNavLayer_Menu;
-            IM_ASSERT(window->DC.NavLayersActiveMaskNext & (1 << layer)); // Sanity check (FIXME: Seems unnecessary)
+            Hvk_ASSERT(window->DC.NavLayersActiveMaskNext & (1 << layer)); // Sanity check (FIXME: Seems unnecessary)
             FocusWindow(window);
             SetNavID(window->NavLastIds[layer], layer, 0, window->NavRectRel[layer]);
             // FIXME-NAV: How to deal with this when not using g.IO.ConfigNavCursorVisibleAuto?
@@ -9052,14 +9052,14 @@ void HvkGui::EndMenuBar()
 
     PopClipRect();
     PopID();
-    IM_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
+    Hvk_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
     window->DC.MenuBarOffset.x = window->DC.CursorPos.x - window->Pos.x; // Save horizontal position so next append can reuse it. This is kinda equivalent to a per-layer CursorPos.
 
     // FIXME: Extremely confusing, cleanup by (a) working on WorkRect stack system (b) not using a Group confusingly here.
     HvkGuiGroupData& group_data = g.GroupStack.back();
     group_data.EmitItem = false;
     HvkVec2 restore_cursor_max_pos = group_data.BackupCursorMaxPos;
-    window->DC.IdealMaxPos.x = HvkMax(window->DC.IdealMaxPos.x, window->DC.CursorMaxPos.x - window->Scroll.x); // Convert ideal extents for scrolling layer equivalent.
+    window->DC.IdealMaxPos.x = Immax(window->DC.IdealMaxPos.x, window->DC.CursorMaxPos.x - window->Scroll.x); // Convert ideal extents for scrolling layer equivalent.
     EndGroup(); // Restore position on layer 0 // FIXME: Misleading to use a group for that backup/restore
     window->DC.LayoutType = HvkGuiLayoutType_Vertical;
     window->DC.IsSameLine = false;
@@ -9073,7 +9073,7 @@ void HvkGui::EndMenuBar()
 // FIXME: The "rect-cut" aspect of this could be formalized into a lower-level helper (rect-cut: https://halt.software/dead-simple-layouts)
 bool HvkGui::BeginViewportSideBar(const char* name, HvkGuiViewport* viewport_p, HvkGuiDir dir, float axis_size, HvkGuiWindowFlags window_flags)
 {
-    IM_ASSERT(dir != HvkGuiDir_None);
+    Hvk_ASSERT(dir != HvkGuiDir_None);
 
     HvkGuiWindow* bar_window = FindWindowByName(name);
     if (bar_window == NULL || bar_window->BeginCount == 0)
@@ -9114,7 +9114,7 @@ bool HvkGui::BeginMainMenuBar()
     // For the main menu bar, which cannot be moved, we honor g.Style.DisplaySafeAreaPadding to ensure text can be visible on a TV set.
     // FIXME: This could be generalized as an opt-in way to clamp window->DC.CursorStartPos to avoid SafeArea?
     // FIXME: Consider removing support for safe area down the line... it's messy. Nowadays consoles have support for TV calibration in OS settings.
-    g.NextWindowData.MenuBarOffsetMinVal = HvkVec2(g.Style.DisplaySafeAreaPadding.x, HvkMax(g.Style.DisplaySafeAreaPadding.y - g.Style.FramePadding.y, 0.0f));
+    g.NextWindowData.MenuBarOffsetMinVal = HvkVec2(g.Style.DisplaySafeAreaPadding.x, Immax(g.Style.DisplaySafeAreaPadding.y - g.Style.FramePadding.y, 0.0f));
     HvkGuiWindowFlags window_flags = HvkGuiWindowFlags_NoScrollbar | HvkGuiWindowFlags_NoSavedSettings | HvkGuiWindowFlags_MenuBar;
     float height = GetFrameHeight();
     bool is_open = BeginViewportSideBar("##MainMenuBar", viewport, HvkGuiDir_Up, height, window_flags);
@@ -9136,7 +9136,7 @@ void HvkGui::EndMainMenuBar()
     HvkGuiContext& g = *GHvkGui;
     if (!g.CurrentWindow->DC.MenuBarAppending)
     {
-        IM_ASSERT_USER_ERROR(0, "Calling EndMainMenuBar() not from a menu-bar!"); // Not technically testing that it is the main menu bar
+        Hvk_ASSERT_USER_ERROR(0, "Calling EndMainMenuBar() not from a menu-bar!"); // Not technically testing that it is the main menu bar
         return;
     }
 
@@ -9233,7 +9233,7 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         // Menu inside a horizontal menu bar
         // Selectable extend their highlight by half ItemSpacing in each direction.
         // For ChildMenu, the popup position will be overwritten by the call to FindBestWindowPosForPopup() in Begin()
-        window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * 0.5f);
+        window->DC.CursorPos.x += Hvk_TRUNC(style.ItemSpacing.x * 0.5f);
         PushStyleVarX(HvkGuiStyleVar_ItemSpacing, style.ItemSpacing.x * 2.0f);
         float w = label_size.x;
         HvkVec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, pos.y + window->DC.CurrLineTextBaseOffset);
@@ -9241,8 +9241,8 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         LogSetNextTextDecoration("[", "]");
         RenderText(text_pos, label);
         PopStyleVar();
-        window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
-        popup_pos = HvkVec2(pos.x - 1.0f - IM_TRUNC(style.ItemSpacing.x * 0.5f), text_pos.y - style.FramePadding.y + window->MenuBarHeight);
+        window->DC.CursorPos.x += Hvk_TRUNC(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
+        popup_pos = HvkVec2(pos.x - 1.0f - Hvk_TRUNC(style.ItemSpacing.x * 0.5f), text_pos.y - style.FramePadding.y + window->MenuBarHeight);
     }
     else
     {
@@ -9250,9 +9250,9 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         // (In a typical menu window where all items are BeginMenu() or MenuItem() calls, extra_w will always be 0.0f.
         //  Only when they are other items sticking out we're going to add spacing, yet only register minimum width into the layout system.)
         float icon_w = (icon && icon[0]) ? CalcTextSize(icon, NULL).x : 0.0f;
-        float checkmark_w = IM_TRUNC(g.FontSize * 1.20f);
+        float checkmark_w = Hvk_TRUNC(g.FontSize * 1.20f);
         float min_w = window->DC.MenuColumns.DeclColumns(icon_w, label_size.x, 0.0f, checkmark_w); // Feedback to next frame
-        float extra_w = HvkMax(0.0f, GetContentRegionAvail().x - min_w);
+        float extra_w = Immax(0.0f, GetContentRegionAvail().x - min_w);
         HvkVec2 text_pos(window->DC.CursorPos.x, pos.y + window->DC.CurrLineTextBaseOffset);
         pressed = Selectable("", menu_is_open, selectable_flags | HvkGuiSelectableFlags_SpanAvailWidth, HvkVec2(min_w, label_size.y));
         LogSetNextTextDecoration("", ">");
@@ -9275,7 +9275,7 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
     if (window->DC.LayoutType == HvkGuiLayoutType_Vertical) // (window->Flags & (HvkGuiWindowFlags_Popup|HvkGuiWindowFlags_ChildMenu))
     {
         // Close menu when not hovering it anymore unless we are moving roughly in the direction of the menu
-        // Hvkplement http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown to avoid using timers, so menus feels more reactive.
+        // implement http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown to avoid using timers, so menus feels more reactive.
         bool moving_toward_child_menu = false;
         HvkGuiPopupData* child_popup = (g.BeginPopupStack.Size < g.OpenPopupStack.Size) ? &g.OpenPopupStack[g.BeginPopupStack.Size] : NULL; // Popup candidate (testing below)
         HvkGuiWindow* child_menu_window = (child_popup && child_popup->Window && child_popup->Window->ParentWindow == window) ? child_popup->Window : NULL;
@@ -9291,10 +9291,10 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
             ta.x += child_dir * -0.5f;
             tb.x += child_dir * ref_unit;
             tc.x += child_dir * ref_unit;
-            tb.y = ta.y + HvkMax((tb.y - pad_farmost_h) - ta.y, -ref_unit * 8.0f); // Triangle has maximum height to limit the slope and the bias toward large sub-menus
-            tc.y = ta.y + HvkMin((tc.y + pad_farmost_h) - ta.y, +ref_unit * 8.0f);
+            tb.y = ta.y + Immax((tb.y - pad_farmost_h) - ta.y, -ref_unit * 8.0f); // Triangle has maximum height to limit the slope and the bias toward large sub-menus
+            tc.y = ta.y + Immin((tc.y + pad_farmost_h) - ta.y, +ref_unit * 8.0f);
             moving_toward_child_menu = HvkTriangleContainsPoint(ta, tb, tc, g.IO.MousePos);
-            //GetForegroundDrawList()->AddTriangleFilled(ta, tb, tc, moving_toward_child_menu ? IM_COL32(0,128,0,128) : IM_COL32(128,0,0,128)); // [DEBUG]
+            //GetForegroundDrawList()->AddTriangleFilled(ta, tb, tc, moving_toward_child_menu ? Hvk_COL32(0,128,0,128) : Hvk_COL32(128,0,0,128)); // [DEBUG]
         }
 
         // The 'HovereWindow == window' check creates an inconsistency (e.g. moving away from menu slowly tends to hit same window, whereas moving away fast does not)
@@ -9365,7 +9365,7 @@ bool HvkGui::BeginMenuEx(const char* label, const char* icon, bool enabled)
         PopStyleVar();
         if (menu_is_open)
         {
-            // Hvkplement what HvkGuiPopupFlags_NoReopenAlwaysNavInit would do:
+            // implement what HvkGuiPopupFlags_NoReopenAlwaysNavInit would do:
             // Perform an init request in the case the popup was already open (via a previous mouse hover)
             if (want_open && want_open_nav_init && !g.NavInitRequest)
             {
@@ -9398,7 +9398,7 @@ void HvkGui::EndMenu()
     // Nav: When a left move request our menu failed, close ourselves.
     HvkGuiContext& g = *GHvkGui;
     HvkGuiWindow* window = g.CurrentWindow;
-    IM_ASSERT(window->Flags & HvkGuiWindowFlags_Popup);  // Mismatched BeginMenu()/EndMenu() calls
+    Hvk_ASSERT(window->Flags & HvkGuiWindowFlags_Popup);  // Mismatched BeginMenu()/EndMenu() calls
     HvkGuiWindow* parent_window = window->ParentWindow;  // Should always be != NULL is we passed assert.
     if (window->BeginCount == window->BeginCountPreviousFrame)
         if (g.NavMoveDir == HvkGuiDir_Left && NavMoveRequestButNoResultYet())
@@ -9442,14 +9442,14 @@ bool HvkGui::MenuItemEx(const char* label, const char* icon, const char* shortcu
         // Mimic the exact layout spacing of BeginMenu() to allow MenuItem() inside a menu bar, which is a little misleading but may be useful
         // Note that in this situation: we don't render the shortcut, we render a highlight instead of the selected tick mark.
         float w = label_size.x;
-        window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * 0.5f);
+        window->DC.CursorPos.x += Hvk_TRUNC(style.ItemSpacing.x * 0.5f);
         HvkVec2 text_pos(window->DC.CursorPos.x + offsets->OffsetLabel, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
         PushStyleVarX(HvkGuiStyleVar_ItemSpacing, style.ItemSpacing.x * 2.0f);
         pressed = Selectable("", selected, selectable_flags, HvkVec2(w, 0.0f));
         PopStyleVar();
         if (g.LastItemData.StatusFlags & HvkGuiItemStatusFlags_Visible)
             RenderText(text_pos, label);
-        window->DC.CursorPos.x += IM_TRUNC(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
+        window->DC.CursorPos.x += Hvk_TRUNC(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
     }
     else
     {
@@ -9458,9 +9458,9 @@ bool HvkGui::MenuItemEx(const char* label, const char* icon, const char* shortcu
         //  Only when they are other items sticking out we're going to add spacing, yet only register minimum width into the layout system.)
         float icon_w = (icon && icon[0]) ? CalcTextSize(icon, NULL).x : 0.0f;
         float shortcut_w = (shortcut && shortcut[0]) ? CalcTextSize(shortcut, NULL).x : 0.0f;
-        float checkmark_w = IM_TRUNC(g.FontSize * 1.20f);
+        float checkmark_w = Hvk_TRUNC(g.FontSize * 1.20f);
         float min_w = window->DC.MenuColumns.DeclColumns(icon_w, label_size.x, shortcut_w, checkmark_w); // Feedback for next frame
-        float stretch_w = HvkMax(0.0f, GetContentRegionAvail().x - min_w);
+        float stretch_w = Immax(0.0f, GetContentRegionAvail().x - min_w);
         HvkVec2 text_pos(pos.x, pos.y + window->DC.CurrLineTextBaseOffset);
         pressed = Selectable("", false, selectable_flags | HvkGuiSelectableFlags_SpanAvailWidth, HvkVec2(min_w, label_size.y));
         if (g.LastItemData.StatusFlags & HvkGuiItemStatusFlags_Visible)
@@ -9619,8 +9619,8 @@ bool    HvkGui::BeginTabBar(const char* str_id, HvkGuiTabBarFlags flags)
     HvkGuiTabBar* tab_bar = g.TabBars.GetOrAddByKey(id);
     HvkRect tab_bar_bb = HvkRect(window->DC.CursorPos.x, window->DC.CursorPos.y, window->WorkRect.Max.x, window->DC.CursorPos.y + g.FontSize + g.Style.FramePadding.y * 2);
     tab_bar->ID = id;
-    tab_bar->SeparatorMinX = tab_bar_bb.Min.x - IM_TRUNC(window->WindowPadding.x * 0.5f);
-    tab_bar->SeparatorMaxX = tab_bar_bb.Max.x + IM_TRUNC(window->WindowPadding.x * 0.5f);
+    tab_bar->SeparatorMinX = tab_bar_bb.Min.x - Hvk_TRUNC(window->WindowPadding.x * 0.5f);
+    tab_bar->SeparatorMaxX = tab_bar_bb.Max.x + Hvk_TRUNC(window->WindowPadding.x * 0.5f);
     //if (g.NavWindow && IsWindowChildOf(g.NavWindow, window, false, false))
     flags |= HvkGuiTabBarFlags_IsFocused;
     return BeginTabBarEx(tab_bar, tab_bar_bb, flags);
@@ -9633,7 +9633,7 @@ bool    HvkGui::BeginTabBarEx(HvkGuiTabBar* tab_bar, const HvkRect& tab_bar_bb, 
     if (window->SkipItems)
         return false;
 
-    IM_ASSERT(tab_bar->ID != 0);
+    Hvk_ASSERT(tab_bar->ID != 0);
     if ((flags & HvkGuiTabBarFlags_DockNode) == 0)
         PushOverrideID(tab_bar->ID);
 
@@ -9697,7 +9697,7 @@ void    HvkGui::EndTabBar()
     HvkGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT_USER_ERROR(tab_bar != NULL, "Mismatched BeginTabBar()/EndTabBar()!");
+        Hvk_ASSERT_USER_ERROR(tab_bar != NULL, "Mismatched BeginTabBar()/EndTabBar()!");
         return;
     }
 
@@ -9709,7 +9709,7 @@ void    HvkGui::EndTabBar()
     const bool tab_bar_appearing = (tab_bar->PrevFrameVisible + 1 < g.FrameCount);
     if (tab_bar->VisibleTabWasSubmitted || tab_bar->VisibleTabId == 0 || tab_bar_appearing)
     {
-        tab_bar->CurrTabsContentsHeight = HvkMax(window->DC.CursorPos.y - tab_bar->BarRect.Max.y, tab_bar->CurrTabsContentsHeight);
+        tab_bar->CurrTabsContentsHeight = Immax(window->DC.CursorPos.y - tab_bar->BarRect.Max.y, tab_bar->CurrTabsContentsHeight);
         window->DC.CursorPos.y = tab_bar->BarRect.Max.y + tab_bar->CurrTabsContentsHeight;
     }
     else
@@ -9830,7 +9830,7 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
     for (int tab_n = 0; tab_n < tab_bar->Tabs.Size; tab_n++)
     {
         HvkGuiTabItem* tab = &tab_bar->Tabs[tab_n];
-        IM_ASSERT(tab->LastFrameVisible >= tab_bar->PrevFrameVisible);
+        Hvk_ASSERT(tab->LastFrameVisible >= tab_bar->PrevFrameVisible);
 
         if ((most_recently_selected_tab == NULL || most_recently_selected_tab->LastFrameSelected < tab->LastFrameSelected) && !(tab->Flags & HvkGuiTabItemFlags_Button))
             most_recently_selected_tab = tab;
@@ -9839,27 +9839,27 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
         if (scroll_to_tab_id == 0 && g.NavJustMovedToId == tab->ID)
             scroll_to_tab_id = tab->ID;
 
-        // Refresh tab width Hvkmediately, otherwise changes of style e.g. style.FramePadding.x would noticeably lag in the tab bar.
+        // Refresh tab width immediately, otherwise changes of style e.g. style.FramePadding.x would noticeably lag in the tab bar.
         // Additionally, when using TabBarAddTab() to manipulate tab bar order we occasionally insert new tabs that don't have a width yet,
         // and we cannot wait for the next BeginTabItem() call. We cannot compute this width within TabBarAddTab() because font size depends on the active window.
         const char* tab_name = TabBarGetTabName(tab_bar, tab);
         const bool has_close_button_or_unsaved_marker = (tab->Flags & HvkGuiTabItemFlags_NoCloseButton) == 0 || (tab->Flags & HvkGuiTabItemFlags_UnsavedDocument);
         tab->ContentWidth = (tab->RequestedWidth >= 0.0f) ? tab->RequestedWidth : TabItemCalcSize(tab_name, has_close_button_or_unsaved_marker).x;
         if ((tab->Flags & HvkGuiTabItemFlags_Button) == 0)
-            tab->ContentWidth = HvkMax(tab->ContentWidth, g.Style.TabMinWidthBase);
+            tab->ContentWidth = Immax(tab->ContentWidth, g.Style.TabMinWidthBase);
 
         int section_n = TabItemGetSectionIdx(tab);
         HvkGuiTabBarSection* section = &sections[section_n];
         section->Width += tab->ContentWidth + (section_n == curr_section_n ? g.Style.ItemInnerSpacing.x : 0.0f);
-        section->WidthAfterShrinkMinWidth += HvkMin(tab->ContentWidth, shrink_min_width) + (section_n == curr_section_n ? g.Style.ItemInnerSpacing.x : 0.0f);
+        section->WidthAfterShrinkMinWidth += Immin(tab->ContentWidth, shrink_min_width) + (section_n == curr_section_n ? g.Style.ItemInnerSpacing.x : 0.0f);
         curr_section_n = section_n;
 
         // Store data so we can build an array sorted by width if we need to shrink tabs down
-        IM_MSVC_WARNING_SUPPRESS(6385);
+        Hvk_MSVC_WARNING_SUPPRESS(6385);
         HvkGuiShrinkWidthItem* shrink_width_item = &g.ShrinkWidthBuffer[shrink_buffer_indexes[section_n]++];
         shrink_width_item->Index = tab_n;
         shrink_width_item->Width = shrink_width_item->InitialWidth = tab->ContentWidth;
-        tab->Width = HvkMax(tab->ContentWidth, 1.0f);
+        tab->Width = Immax(tab->ContentWidth, 1.0f);
     }
 
     // Compute total ideal width (used for e.g. auto-resizing a window)
@@ -9893,7 +9893,7 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
     bool central_section_is_visible = (section_0_w + section_2_w) < tab_bar->BarRect.GetWidth();
     float width_excess;
     if (central_section_is_visible)
-        width_excess = HvkMax(section_1_w - (tab_bar->BarRect.GetWidth() - section_0_w - section_2_w), 0.0f); // Excess used to shrink central section
+        width_excess = Immax(section_1_w - (tab_bar->BarRect.GetWidth() - section_0_w - section_2_w), 0.0f); // Excess used to shrink central section
     else
         width_excess = (section_0_w + section_2_w) - tab_bar->BarRect.GetWidth(); // Excess used to shrink leading/trailing section
 
@@ -9909,11 +9909,11 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
         for (int tab_n = shrink_data_offset; tab_n < shrink_data_offset + shrink_data_count; tab_n++)
         {
             HvkGuiTabItem* tab = &tab_bar->Tabs[g.ShrinkWidthBuffer[tab_n].Index];
-            float shrinked_width = IM_TRUNC(g.ShrinkWidthBuffer[tab_n].Width);
+            float shrinked_width = Hvk_TRUNC(g.ShrinkWidthBuffer[tab_n].Width);
             if (shrinked_width < 0.0f)
                 continue;
 
-            shrinked_width = HvkMax(1.0f, shrinked_width);
+            shrinked_width = Immax(1.0f, shrinked_width);
             int section_n = TabItemGetSectionIdx(tab);
             sections[section_n].Width -= (tab->Width - shrinked_width);
             tab->Width = shrinked_width;
@@ -9928,7 +9928,7 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
     {
         HvkGuiTabBarSection* section = &sections[section_n];
         if (section_n == 2)
-            tab_offset = HvkMin(HvkMax(0.0f, tab_bar->BarRect.GetWidth() - section->Width), tab_offset);
+            tab_offset = Immin(Immax(0.0f, tab_bar->BarRect.GetWidth() - section->Width), tab_offset);
 
         for (int tab_n = 0; tab_n < section->TabCount; tab_n++)
         {
@@ -9937,7 +9937,7 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
             tab->NameOffset = -1;
             tab_offset += tab->Width + (tab_n < section->TabCount - 1 ? g.Style.ItemInnerSpacing.x : 0.0f);
         }
-        tab_bar->WidthAllTabs += HvkMax(section->Width + section->Spacing, 0.0f);
+        tab_bar->WidthAllTabs += Immax(section->Width + section->Spacing, 0.0f);
         tab_offset += section->Spacing;
         section_tab_index += section->TabCount;
     }
@@ -9979,8 +9979,8 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
     {
         // Scrolling speed adjust itself so we can always reach our target in 1/3 seconds.
         // Teleport if we are aiming far off the visible line
-        tab_bar->ScrollingSpeed = HvkMax(tab_bar->ScrollingSpeed, 70.0f * g.FontSize);
-        tab_bar->ScrollingSpeed = HvkMax(tab_bar->ScrollingSpeed, HvkFabs(tab_bar->ScrollingTarget - tab_bar->ScrollingAnim) / 0.3f);
+        tab_bar->ScrollingSpeed = Immax(tab_bar->ScrollingSpeed, 70.0f * g.FontSize);
+        tab_bar->ScrollingSpeed = Immax(tab_bar->ScrollingSpeed, HvkFabs(tab_bar->ScrollingTarget - tab_bar->ScrollingAnim) / 0.3f);
         const bool teleport = (tab_bar->PrevFrameVisible + 1 < g.FrameCount) || (tab_bar->ScrollingTargetDistToVisibility > 10.0f * g.FontSize);
         tab_bar->ScrollingAnim = teleport ? tab_bar->ScrollingTarget : HvkLinearSweep(tab_bar->ScrollingAnim, tab_bar->ScrollingTarget, g.IO.DeltaTime * tab_bar->ScrollingSpeed);
     }
@@ -9995,14 +9995,14 @@ static void HvkGui::TabBarLayout(HvkGuiTabBar* tab_bar)
     HvkGuiWindow* window = g.CurrentWindow;
     window->DC.CursorPos = tab_bar->BarRect.Min;
     ItemSize(HvkVec2(tab_bar->WidthAllTabs, tab_bar->BarRect.GetHeight()), tab_bar->FramePadding.y);
-    window->DC.IdealMaxPos.x = HvkMax(window->DC.IdealMaxPos.x, tab_bar->BarRect.Min.x + tab_bar->WidthAllTabsIdeal);
+    window->DC.IdealMaxPos.x = Immax(window->DC.IdealMaxPos.x, tab_bar->BarRect.Min.x + tab_bar->WidthAllTabsIdeal);
 }
 
 // Dockable windows uses Name/ID in the global namespace. Non-dockable items use the ID stack.
 static HvkU32   HvkGui::TabBarCalcTabID(HvkGuiTabBar* tab_bar, const char* label, HvkGuiWindow* docked_window)
 {
-    IM_ASSERT(docked_window == NULL); // master branch only
-    IM_UNUSED(docked_window);
+    Hvk_ASSERT(docked_window == NULL); // master branch only
+    Hvk_UNUSED(docked_window);
     if (tab_bar->Flags & HvkGuiTabBarFlags_DockNode)
     {
         HvkGuiID id = HvkHashStr(label);
@@ -10050,7 +10050,7 @@ const char* HvkGui::TabBarGetTabName(HvkGuiTabBar* tab_bar, HvkGuiTabItem* tab)
 {
     if (tab->NameOffset == -1)
         return "N/A";
-    IM_ASSERT(tab->NameOffset < tab_bar->TabsNames.Buf.Size);
+    Hvk_ASSERT(tab->NameOffset < tab_bar->TabsNames.Buf.Size);
     return tab_bar->TabsNames.Buf.Data + tab->NameOffset;
 }
 
@@ -10091,8 +10091,8 @@ void HvkGui::TabBarCloseTab(HvkGuiTabBar* tab_bar, HvkGuiTabItem* tab)
 
 static float HvkGui::TabBarScrollClamp(HvkGuiTabBar* tab_bar, float scrolling)
 {
-    scrolling = HvkMin(scrolling, tab_bar->WidthAllTabs - tab_bar->BarRect.GetWidth());
-    return HvkMax(scrolling, 0.0f);
+    scrolling = Immin(scrolling, tab_bar->WidthAllTabs - tab_bar->BarRect.GetWidth());
+    return Immax(scrolling, 0.0f);
 }
 
 // Note: we may scroll to tab that are not selected! e.g. using keyboard arrow keys
@@ -10118,13 +10118,13 @@ static void HvkGui::TabBarScrollToTab(HvkGuiTabBar* tab_bar, HvkGuiID tab_id, Hv
     if (tab_bar->ScrollingTarget > tab_x1 || (tab_x2 - tab_x1 >= scrollable_width))
     {
         // Scroll to the left
-        tab_bar->ScrollingTargetDistToVisibility = HvkMax(tab_bar->ScrollingAnim - tab_x2, 0.0f);
+        tab_bar->ScrollingTargetDistToVisibility = Immax(tab_bar->ScrollingAnim - tab_x2, 0.0f);
         tab_bar->ScrollingTarget = tab_x1;
     }
     else if (tab_bar->ScrollingTarget < tab_x2 - scrollable_width)
     {
         // Scroll to the right
-        tab_bar->ScrollingTargetDistToVisibility = HvkMax((tab_x1 - scrollable_width) - tab_bar->ScrollingAnim, 0.0f);
+        tab_bar->ScrollingTargetDistToVisibility = Immax((tab_x1 - scrollable_width) - tab_bar->ScrollingAnim, 0.0f);
         tab_bar->ScrollingTarget = tab_x2 - scrollable_width;
     }
 }
@@ -10136,15 +10136,15 @@ void HvkGui::TabBarQueueFocus(HvkGuiTabBar* tab_bar, HvkGuiTabItem* tab)
 
 void HvkGui::TabBarQueueFocus(HvkGuiTabBar* tab_bar, const char* tab_name)
 {
-    IM_ASSERT((tab_bar->Flags & HvkGuiTabBarFlags_DockNode) == 0); // Only supported for manual/explicit tab bars
+    Hvk_ASSERT((tab_bar->Flags & HvkGuiTabBarFlags_DockNode) == 0); // Only supported for manual/explicit tab bars
     HvkGuiID tab_id = TabBarCalcTabID(tab_bar, tab_name, NULL);
     tab_bar->NextSelectedTabId = tab_id;
 }
 
 void HvkGui::TabBarQueueReorder(HvkGuiTabBar* tab_bar, HvkGuiTabItem* tab, int offset)
 {
-    IM_ASSERT(offset != 0);
-    IM_ASSERT(tab_bar->ReorderRequestTabId == 0);
+    Hvk_ASSERT(offset != 0);
+    Hvk_ASSERT(tab_bar->ReorderRequestTabId == 0);
     tab_bar->ReorderRequestTabId = tab->ID;
     tab_bar->ReorderRequestOffset = (HvkS16)offset;
 }
@@ -10152,7 +10152,7 @@ void HvkGui::TabBarQueueReorder(HvkGuiTabBar* tab_bar, HvkGuiTabItem* tab, int o
 void HvkGui::TabBarQueueReorderFromMousePos(HvkGuiTabBar* tab_bar, HvkGuiTabItem* src_tab, HvkVec2 mouse_pos)
 {
     HvkGuiContext& g = *GHvkGui;
-    IM_ASSERT(tab_bar->ReorderRequestTabId == 0);
+    Hvk_ASSERT(tab_bar->ReorderRequestTabId == 0);
     if ((tab_bar->Flags & HvkGuiTabBarFlags_Reorderable) == 0)
         return;
 
@@ -10176,7 +10176,7 @@ void HvkGui::TabBarQueueReorderFromMousePos(HvkGuiTabBar* tab_bar, HvkGuiTabItem
         // Include spacing after tab, so when mouse cursor is between tabs we would not continue checking further tabs that are not hovered.
         const float x1 = bar_offset + dst_tab->Offset - g.Style.ItemInnerSpacing.x;
         const float x2 = bar_offset + dst_tab->Offset + dst_tab->Width + g.Style.ItemInnerSpacing.x;
-        //GetForegroundDrawList()->AddRect(HvkVec2(x1, tab_bar->BarRect.Min.y), HvkVec2(x2, tab_bar->BarRect.Max.y), IM_COL32(255, 0, 0, 255));
+        //GetForegroundDrawList()->AddRect(HvkVec2(x1, tab_bar->BarRect.Min.y), HvkVec2(x2, tab_bar->BarRect.Max.y), Hvk_COL32(255, 0, 0, 255));
         if ((dir < 0 && mouse_pos.x > x1) || (dir > 0 && mouse_pos.x < x2))
             break;
     }
@@ -10191,7 +10191,7 @@ bool HvkGui::TabBarProcessReorder(HvkGuiTabBar* tab_bar)
     if (tab1 == NULL || (tab1->Flags & HvkGuiTabItemFlags_NoReorder))
         return false;
 
-    //IM_ASSERT(tab_bar->Flags & HvkGuiTabBarFlags_Reorderable); // <- this may happen when using debug tools
+    //Hvk_ASSERT(tab_bar->Flags & HvkGuiTabBarFlags_Reorderable); // <- this may happen when using debug tools
     int tab2_order = TabBarGetTabOrder(tab_bar, tab1) + tab_bar->ReorderRequestOffset;
     if (tab2_order < 0 || tab2_order >= tab_bar->Tabs.Size)
         return false;
@@ -10225,7 +10225,7 @@ static HvkGuiTabItem* HvkGui::TabBarScrollingButtons(HvkGuiTabBar* tab_bar)
     const float scrolling_buttons_width = arrow_button_size.x * 2.0f;
 
     const HvkVec2 backup_cursor_pos = window->DC.CursorPos;
-    //window->DrawList->AddRect(HvkVec2(tab_bar->BarRect.Max.x - scrolling_buttons_width, tab_bar->BarRect.Min.y), HvkVec2(tab_bar->BarRect.Max.x, tab_bar->BarRect.Max.y), IM_COL32(255,0,0,255));
+    //window->DrawList->AddRect(HvkVec2(tab_bar->BarRect.Max.x - scrolling_buttons_width, tab_bar->BarRect.Min.y), HvkVec2(tab_bar->BarRect.Max.x, tab_bar->BarRect.Max.y), Hvk_COL32(255,0,0,255));
 
     int select_dir = 0;
     HvkVec4 arrow_col = g.Style.Colors[HvkGuiCol_Text];
@@ -10238,7 +10238,7 @@ static HvkGuiTabItem* HvkGui::TabBarScrollingButtons(HvkGuiTabBar* tab_bar)
     const float backup_repeat_rate = g.IO.KeyRepeatRate;
     g.IO.KeyRepeatDelay = 0.250f;
     g.IO.KeyRepeatRate = 0.200f;
-    float x = HvkMax(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.x - scrolling_buttons_width);
+    float x = Immax(tab_bar->BarRect.Min.x, tab_bar->BarRect.Max.x - scrolling_buttons_width);
     window->DC.CursorPos = HvkVec2(x, tab_bar->BarRect.Min.y);
     if (ArrowButtonEx("##<", HvkGuiDir_Left, arrow_button_size, HvkGuiButtonFlags_PressedOnClick))
         select_dir = -1;
@@ -10340,10 +10340,10 @@ bool    HvkGui::BeginTabItem(const char* label, bool* p_open, HvkGuiTabItemFlags
     HvkGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT_USER_ERROR(tab_bar, "Needs to be called between BeginTabBar() and EndTabBar()!");
+        Hvk_ASSERT_USER_ERROR(tab_bar, "Needs to be called between BeginTabBar() and EndTabBar()!");
         return false;
     }
-    IM_ASSERT((flags & HvkGuiTabItemFlags_Button) == 0); // BeginTabItem() Can't be used with button flags, use TabItemButton() instead!
+    Hvk_ASSERT((flags & HvkGuiTabItemFlags_Button) == 0); // BeginTabItem() Can't be used with button flags, use TabItemButton() instead!
 
     bool ret = TabItemEx(tab_bar, label, p_open, flags, NULL);
     if (ret && !(flags & HvkGuiTabItemFlags_NoPushId))
@@ -10364,10 +10364,10 @@ void    HvkGui::EndTabItem()
     HvkGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
+        Hvk_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
         return;
     }
-    IM_ASSERT(tab_bar->LastTabItemIdx >= 0);
+    Hvk_ASSERT(tab_bar->LastTabItemIdx >= 0);
     HvkGuiTabItem* tab = &tab_bar->Tabs[tab_bar->LastTabItemIdx];
     if (!(tab->Flags & HvkGuiTabItemFlags_NoPushId))
         PopID();
@@ -10383,7 +10383,7 @@ bool    HvkGui::TabItemButton(const char* label, HvkGuiTabItemFlags flags)
     HvkGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
+        Hvk_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
         return false;
     }
     return TabItemEx(tab_bar, label, NULL, flags | HvkGuiTabItemFlags_Button | HvkGuiTabItemFlags_NoReorder, NULL);
@@ -10399,7 +10399,7 @@ void    HvkGui::TabItemSpacing(const char* str_id, HvkGuiTabItemFlags flags, flo
     HvkGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
+        Hvk_ASSERT_USER_ERROR(tab_bar != NULL, "Needs to be called between BeginTabBar() and EndTabBar()!");
         return;
     }
     SetNextItemWidth(width);
@@ -10432,8 +10432,8 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
         return false;
     }
 
-    IM_ASSERT(!p_open || !(flags & HvkGuiTabItemFlags_Button));
-    IM_ASSERT((flags & (HvkGuiTabItemFlags_Leading | HvkGuiTabItemFlags_Trailing)) != (HvkGuiTabItemFlags_Leading | HvkGuiTabItemFlags_Trailing)); // Can't use both Leading and Trailing
+    Hvk_ASSERT(!p_open || !(flags & HvkGuiTabItemFlags_Button));
+    Hvk_ASSERT((flags & (HvkGuiTabItemFlags_Leading | HvkGuiTabItemFlags_Trailing)) != (HvkGuiTabItemFlags_Leading | HvkGuiTabItemFlags_Trailing)); // Can't use both Leading and Trailing
 
     // Store into HvkGuiTabItemFlags_NoCloseButton, also honor HvkGuiTabItemFlags_NoCloseButton passed by user (although not documented)
     if (flags & HvkGuiTabItemFlags_NoCloseButton)
@@ -10459,7 +10459,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
     if (g.NextItemData.HasFlags & HvkGuiNextItemDataFlags_HasWidth)
         size.x = tab->RequestedWidth = g.NextItemData.Width;
     if (tab_is_new)
-        tab->Width = HvkMax(1.0f, size.x);
+        tab->Width = Immax(1.0f, size.x);
     tab->ContentWidth = size.x;
     tab->BeginOrder = tab_bar->TabsActiveCount++;
 
@@ -10474,7 +10474,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
     // Append name _WITH_ the zero-terminator
     if (docked_window != NULL)
     {
-        IM_ASSERT(docked_window == NULL); // master branch only
+        Hvk_ASSERT(docked_window == NULL); // master branch only
     }
     else
     {
@@ -10523,7 +10523,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
     const bool is_central_section = (tab->Flags & HvkGuiTabItemFlags_SectionMask_) == 0;
     size.x = tab->Width;
     if (is_central_section)
-        window->DC.CursorPos = tab_bar->BarRect.Min + HvkVec2(IM_TRUNC(tab->Offset - tab_bar->ScrollingAnim), 0.0f);
+        window->DC.CursorPos = tab_bar->BarRect.Min + HvkVec2(Hvk_TRUNC(tab->Offset - tab_bar->ScrollingAnim), 0.0f);
     else
         window->DC.CursorPos = tab_bar->BarRect.Min + HvkVec2(tab->Offset, 0.0f);
     HvkVec2 pos = window->DC.CursorPos;
@@ -10532,7 +10532,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
     // We don't have CPU clipping primitives to clip the CloseButton (until it becomes a texture), so need to add an extra draw call (temporary in the case of vertical animation)
     const bool want_clip_rect = is_central_section && (bb.Min.x < tab_bar->ScrollingRectMinX || bb.Max.x > tab_bar->ScrollingRectMaxX);
     if (want_clip_rect)
-        PushClipRect(HvkVec2(HvkMax(bb.Min.x, tab_bar->ScrollingRectMinX), bb.Min.y - 1), HvkVec2(tab_bar->ScrollingRectMaxX, bb.Max.y), true);
+        PushClipRect(HvkVec2(Immax(bb.Min.x, tab_bar->ScrollingRectMinX), bb.Min.y - 1), HvkVec2(tab_bar->ScrollingRectMaxX, bb.Max.y), true);
 
     HvkVec2 backup_cursor_max_pos = window->DC.CursorMaxPos;
     ItemSize(bb.GetSize(), style.FramePadding.y);
@@ -10580,7 +10580,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
     if (hovered && g.HoveredIdNotActiveTimer > TOOLTIP_DELAY && bb.GetWidth() < tab->ContentWidth)
     {
         // Enlarge tab display when hovering
-        bb.Max.x = bb.Min.x + IM_TRUNC(HvkLerp(bb.GetWidth(), tab->ContentWidth, HvkSaturate((g.HoveredIdNotActiveTimer - 0.40f) * 6.0f)));
+        bb.Max.x = bb.Min.x + Hvk_TRUNC(HvkLerp(bb.GetWidth(), tab->ContentWidth, HvkSaturate((g.HoveredIdNotActiveTimer - 0.40f) * 6.0f)));
         display_draw_list = GetForegroundDrawList(window);
         TabItemBackground(display_draw_list, bb, flags, GetColorU32(HvkGuiCol_TitleBgActive));
     }
@@ -10647,7 +10647,7 @@ bool    HvkGui::TabItemEx(HvkGuiTabBar* tab_bar, const char* label, bool* p_open
         PopClipRect();
     window->DC.CursorPos = backup_main_cursor_pos;
 
-    IM_ASSERT(!is_tab_button || !(tab_bar->SelectedTabId == tab->ID && is_tab_button)); // TabItemButton should not be selected
+    Hvk_ASSERT(!is_tab_button || !(tab_bar->SelectedTabId == tab->ID && is_tab_button)); // TabItemButton should not be selected
     if (is_tab_button)
         return pressed;
     return tab_contents_visible;
@@ -10678,12 +10678,12 @@ HvkVec2 HvkGui::TabItemCalcSize(const char* label, bool has_close_button_or_unsa
         size.x += g.Style.FramePadding.x + (g.Style.ItemInnerSpacing.x + g.FontSize); // We use Y intentionally to fit the close button circle.
     else
         size.x += g.Style.FramePadding.x + 1.0f;
-    return HvkVec2(HvkMin(size.x, TabBarCalcMaxTabWidth()), size.y);
+    return HvkVec2(Immin(size.x, TabBarCalcMaxTabWidth()), size.y);
 }
 
 HvkVec2 HvkGui::TabItemCalcSize(HvkGuiWindow*)
 {
-    IM_ASSERT(0); // This function exists to facilitate merge with 'docking' branch.
+    Hvk_ASSERT(0); // This function exists to facilitate merge with 'docking' branch.
     return HvkVec2(0.0f, 0.0f);
 }
 
@@ -10692,9 +10692,9 @@ void HvkGui::TabItemBackground(HvkDrawList* draw_list, const HvkRect& bb, HvkGui
     // While rendering tabs, we trim 1 pixel off the top of our bounding box so they can fit within a regular frame height while looking "detached" from it.
     HvkGuiContext& g = *GHvkGui;
     const float width = bb.GetWidth();
-    IM_UNUSED(flags);
-    IM_ASSERT(width > 0.0f);
-    const float rounding = HvkMax(0.0f, HvkMin((flags & HvkGuiTabItemFlags_Button) ? g.Style.FrameRounding : g.Style.TabRounding, width * 0.5f - 1.0f));
+    Hvk_UNUSED(flags);
+    Hvk_ASSERT(width > 0.0f);
+    const float rounding = Immax(0.0f, Immin((flags & HvkGuiTabItemFlags_Button) ? g.Style.FrameRounding : g.Style.TabRounding, width * 0.5f - 1.0f));
     const float y1 = bb.Min.y + 1.0f;
     const float y2 = bb.Max.y - g.Style.TabBarBorderSize;
     draw_list->PathLineTo(HvkVec2(bb.Min.x, y2));
@@ -10742,11 +10742,11 @@ void HvkGui::TabItemLabelAndCloseButton(HvkDrawList* draw_list, const HvkRect& b
     if (out_text_clipped)
     {
         *out_text_clipped = (text_ellipsis_clip_bb.Min.x + label_size.x) > text_ellipsis_clip_bb.Max.x;
-        //draw_list->AddCircle(text_ellipsis_clip_bb.Min, 3.0f, *out_text_clipped ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 255, 0, 255));
+        //draw_list->AddCircle(text_ellipsis_clip_bb.Min, 3.0f, *out_text_clipped ? Hvk_COL32(255, 0, 0, 255) : Hvk_COL32(0, 255, 0, 255));
     }
 
     const float button_sz = g.FontSize;
-    const HvkVec2 button_pos(HvkMax(bb.Min.x, bb.Max.x - frame_padding.x - button_sz), bb.Min.y + frame_padding.y);
+    const HvkVec2 button_pos(Immax(bb.Min.x, bb.Max.x - frame_padding.x - button_sz), bb.Min.y + frame_padding.y);
 
     // Close Button & Unsaved Marker
     // We are relying on a subtle and confusing distinction between 'hovered' and 'g.HoveredId' which happens because we are using HvkGuiButtonFlags_AllowOverlapMode + SetItemAllowOverlap()
@@ -10760,9 +10760,9 @@ void HvkGui::TabItemLabelAndCloseButton(HvkDrawList* draw_list, const HvkRect& b
     if (close_button_id != 0)
     {
         if (is_contents_visible)
-            close_button_visible = (g.Style.TabCloseButtonMinWidthSelected < 0.0f) ? true : (is_hovered && bb.GetWidth() >= HvkMax(button_sz, g.Style.TabCloseButtonMinWidthSelected));
+            close_button_visible = (g.Style.TabCloseButtonMinWidthSelected < 0.0f) ? true : (is_hovered && bb.GetWidth() >= Immax(button_sz, g.Style.TabCloseButtonMinWidthSelected));
         else
-            close_button_visible = (g.Style.TabCloseButtonMinWidthUnselected < 0.0f) ? true : (is_hovered && bb.GetWidth() >= HvkMax(button_sz, g.Style.TabCloseButtonMinWidthUnselected));
+            close_button_visible = (g.Style.TabCloseButtonMinWidthUnselected < 0.0f) ? true : (is_hovered && bb.GetWidth() >= Immax(button_sz, g.Style.TabCloseButtonMinWidthUnselected));
     }
 
     // When tabs/document is unsaved, the unsaved marker takes priority over the close button.

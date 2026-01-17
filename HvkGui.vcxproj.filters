@@ -56,7 +56,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
+    <ClInclude Include="imgui\\hvkstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="imgui\\hvkstb_truetype.h">

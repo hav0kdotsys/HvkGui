@@ -146,7 +146,7 @@
     <ClCompile Include="example_win32_directx12\main.cpp" />
     <ClCompile Include="imgui\\backends\\hvkgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\\backends\\hvkgui_impl_dx12.cpp" />
-    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\\backends\\hvkgui_impl_win32.cpp" />
     <ClCompile Include="imgui\\hvkgui.cpp" />
     <ClCompile Include="imgui\\hvkgui_demo.cpp" />
     <ClCompile Include="imgui\\hvkgui_draw.cpp" />

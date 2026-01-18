@@ -1302,6 +1302,7 @@ enum HvkGuiNextWindowDataFlags_
     HvkGuiNextWindowDataFlags_HasWindowFlags     = 1 << 8,
     HvkGuiNextWindowDataFlags_HasChildFlags      = 1 << 9,
     HvkGuiNextWindowDataFlags_HasRefreshPolicy   = 1 << 10,
+    HvkGuiNextWindowDataFlags_HasTexturedBorder  = 1 << 11,
 };
 
 // Storage for SetNexWindow** functions
@@ -1327,6 +1328,8 @@ struct HvkGuiNextWindowData
     float                       BgAlphaVal;             // Override background alpha
     HvkVec2                      MenuBarOffsetMinVal;    // (Always on) This is not exposed publicly, so we don't clear it and it doesn't have a corresponding flag (could we? for consistency?)
     HvkGuiWindowRefreshFlags     RefreshFlagsVal;
+    HvkTextureRef                BorderTexRef;
+    HvkTexturedBorderStyle       BorderStyle;
 
     HvkGuiNextWindowData()       { memset(this, 0, sizeof(*this)); }
     inline void ClearFlags()    { HasFlags = HvkGuiNextWindowDataFlags_None; }
@@ -2639,6 +2642,9 @@ struct HvkGui_API HvkGuiWindow
     HvkVec2                  WindowPadding;                      // Window padding at the time of Begin().
     float                   WindowRounding;                     // Window rounding at the time of Begin(). May be clamped lower to avoid rendering artifacts with title bar, menu bar etc.
     float                   WindowBorderSize;                   // Window border size at the time of Begin().
+    HvkTextureRef            BorderTexRef;                       // Optional textured border texture.
+    HvkTexturedBorderStyle   BorderStyle;                        // Textured border style.
+    bool                    BorderHasTexture;                   // True when BorderTexRef is valid for this window.
     float                   TitleBarHeight, MenuBarHeight;      // Note that those used to be function before 2024/05/28. If you have old code calling TitleBarHeight() you can change it to TitleBarHeight.
     float                   DecoOuterSizeX1, DecoOuterSizeY1;   // Left/Up offsets. Sum of non-scrolling outer decorations (X1 generally == 0.0f. Y1 generally = TitleBarHeight + MenuBarHeight). Locked during Begin().
     float                   DecoOuterSizeX2, DecoOuterSizeY2;   // Right/Down offsets (X2 generally == ScrollbarSize.x, Y2 == ScrollbarSizes.y).

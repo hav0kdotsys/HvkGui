@@ -76,15 +76,22 @@ struct HvkGui_ImplDX11_Data
     ID3D11VertexShader*         pVertexShader;
     ID3D11InputLayout*          pInputLayout;
     ID3D11Buffer*               pVertexConstantBuffer;
-    ID3D11PixelShader*          pPixelShader;
+    ID3D11PixelShader*          pPixelShaderMRT;
+    ID3D11PixelShader*          pPixelShaderBase;
+    ID3D11PixelShader*          pPixelShaderEmissive;
+    ID3D11PixelShader*          pPixelShaderLDR;
     ID3D11SamplerState*         pTexSamplerLinear;
     ID3D11RasterizerState*      pRasterizerState;
-    ID3D11BlendState*           pBlendState;
+    ID3D11BlendState*           pBlendStateMRT;
+    ID3D11BlendState*           pBlendStateBase;
+    ID3D11BlendState*           pBlendStateEmissive;
     ID3D11DepthStencilState*    pDepthStencilState;
     int                         VertexBufferSize;
     int                         IndexBufferSize;
+    HvkGui_ImplDX11_OutputMode  OutputMode;
+ 
 
-    HvkGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; }
+    HvkGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; OutputMode = HvkGui_ImplDX11_OutputMode_MRT; }
 };
 
 struct VERTEX_CONSTANT_BUFFER_DX11
@@ -97,6 +104,12 @@ struct VERTEX_CONSTANT_BUFFER_DX11
 static HvkGui_ImplDX11_Data* HvkGui_ImplDX11_GetBackendData()
 {
     return HvkGui::GetCurrentContext() ? (HvkGui_ImplDX11_Data*)HvkGui::GetIO().BackendRendererUserData : nullptr;
+}
+
+void HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode mode)
+{
+    if (HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData())
+        bd->OutputMode = mode;
 }
 
 // Functions
@@ -143,7 +156,24 @@ static void HvkGui_ImplDX11_SetupRenderState(const HvkDrawData* draw_data, ID3D1
     device_ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     device_ctx->VSSetShader(bd->pVertexShader, nullptr, 0);
     device_ctx->VSSetConstantBuffers(0, 1, &bd->pVertexConstantBuffer);
-    device_ctx->PSSetShader(bd->pPixelShader, nullptr, 0);
+    ID3D11PixelShader* pixel_shader = bd->pPixelShaderMRT;
+    ID3D11BlendState* blend_state = bd->pBlendStateMRT;
+    if (bd->OutputMode == HvkGui_ImplDX11_OutputMode_BaseOnly)
+    {
+        pixel_shader = bd->pPixelShaderBase ? bd->pPixelShaderBase : pixel_shader;
+        blend_state = bd->pBlendStateBase ? bd->pBlendStateBase : blend_state;
+    }
+    else if (bd->OutputMode == HvkGui_ImplDX11_OutputMode_EmissiveOnly)
+    {
+        pixel_shader = bd->pPixelShaderEmissive ? bd->pPixelShaderEmissive : pixel_shader;
+        blend_state = bd->pBlendStateEmissive ? bd->pBlendStateEmissive : blend_state;
+    }
+    else if (bd->OutputMode == HvkGui_ImplDX11_OutputMode_LDR)
+    {
+        pixel_shader = bd->pPixelShaderLDR ? bd->pPixelShaderLDR : pixel_shader;
+        blend_state = bd->pBlendStateBase ? bd->pBlendStateBase : blend_state;
+    }
+    device_ctx->PSSetShader(pixel_shader, nullptr, 0);
     device_ctx->PSSetSamplers(0, 1, &bd->pTexSamplerLinear);
     device_ctx->GSSetShader(nullptr, nullptr, 0);
     device_ctx->HSSetShader(nullptr, nullptr, 0); // In theory we should backup and restore this as well.. very infrequently used..
@@ -152,7 +182,7 @@ static void HvkGui_ImplDX11_SetupRenderState(const HvkDrawData* draw_data, ID3D1
 
     // Setup render state
     const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
-    device_ctx->OMSetBlendState(bd->pBlendState, blend_factor, 0xffffffff);
+    device_ctx->OMSetBlendState(blend_state, blend_factor, 0xffffffff);
     device_ctx->OMSetDepthStencilState(bd->pDepthStencilState, 0);
     device_ctx->RSSetState(bd->pRasterizerState);
 }
@@ -231,7 +261,7 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
         UINT                        SampleMask;
         UINT                        StencilRef;
         ID3D11DepthStencilState*    DepthStencilState;
-        ID3D11ShaderResourceView*   PSShaderResource;
+        ID3D11ShaderResourceView*   PSShaderResource[2];
         ID3D11SamplerState*         PSSampler;
         ID3D11PixelShader*          PS;
         ID3D11VertexShader*         VS;
@@ -251,7 +281,7 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
     device->RSGetState(&old.RS);
     device->OMGetBlendState(&old.BlendState, old.BlendFactor, &old.SampleMask);
     device->OMGetDepthStencilState(&old.DepthStencilState, &old.StencilRef);
-    device->PSGetShaderResources(0, 1, &old.PSShaderResource);
+    device->PSGetShaderResources(0, 2, old.PSShaderResource);
     device->PSGetSamplers(0, 1, &old.PSSampler);
     old.PSInstancesCount = old.VSInstancesCount = old.GSInstancesCount = 256;
     device->PSGetShader(&old.PS, old.PSInstances, &old.PSInstancesCount);
@@ -309,8 +339,14 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
                 device->RSSetScissorRects(1, &r);
 
                 // Bind texture, Draw
-                ID3D11ShaderResourceView* texture_srv = (ID3D11ShaderResourceView*)pcmd->GetTexID();
-                device->PSSetShaderResources(0, 1, &texture_srv);
+                HvkTextureID emissive_id = pcmd->GetEmissiveTexID();
+                if (emissive_id == HvkTextureID_Invalid)
+                    emissive_id = pcmd->GetTexID();
+                ID3D11ShaderResourceView* texture_srvs[2] = {
+                    (ID3D11ShaderResourceView*)pcmd->GetTexID(),
+                    (ID3D11ShaderResourceView*)emissive_id
+                };
+                device->PSSetShaderResources(0, 2, texture_srvs);
                 device->DrawIndexed(pcmd->ElemCount, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset);
             }
         }
@@ -325,7 +361,9 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
     device->RSSetState(old.RS); if (old.RS) old.RS->Release();
     device->OMSetBlendState(old.BlendState, old.BlendFactor, old.SampleMask); if (old.BlendState) old.BlendState->Release();
     device->OMSetDepthStencilState(old.DepthStencilState, old.StencilRef); if (old.DepthStencilState) old.DepthStencilState->Release();
-    device->PSSetShaderResources(0, 1, &old.PSShaderResource); if (old.PSShaderResource) old.PSShaderResource->Release();
+    device->PSSetShaderResources(0, 2, old.PSShaderResource);
+    if (old.PSShaderResource[0]) old.PSShaderResource[0]->Release();
+    if (old.PSShaderResource[1]) old.PSShaderResource[1]->Release();
     device->PSSetSamplers(0, 1, &old.PSSampler); if (old.PSSampler) old.PSSampler->Release();
     device->PSSetShader(old.PS, old.PSInstances, old.PSInstancesCount); if (old.PS) old.PS->Release();
     for (UINT i = 0; i < old.PSInstancesCount; i++) if (old.PSInstances[i]) old.PSInstances[i]->Release();
@@ -443,6 +481,8 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
               float2 pos : POSITION;\
               float4 col : COLOR0;\
               float2 uv  : TEXCOORD0;\
+              float  emissive : TEXCOORD1;\
+              float4 emissive_col : COLOR1;\
             };\
             \
             struct PS_INPUT\
@@ -450,6 +490,8 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
               float4 pos : SV_POSITION;\
               float4 col : COLOR0;\
               float2 uv  : TEXCOORD0;\
+              float  emissive : TEXCOORD1;\
+              float4 emissive_col : COLOR1;\
             };\
             \
             PS_INPUT main(VS_INPUT input)\
@@ -458,6 +500,8 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
               output.pos = mul( ProjectionMatrix, float4(input.pos.xy, 0.f, 1.f));\
               output.col = input.col;\
               output.uv  = input.uv;\
+              output.emissive = input.emissive;\
+              output.emissive_col = input.emissive_col;\
               return output;\
             }";
 
@@ -476,8 +520,10 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
             { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(HvkDrawVert, pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)offsetof(HvkDrawVert, uv),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)offsetof(HvkDrawVert, col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 1, DXGI_FORMAT_R32_FLOAT,      0, (UINT)offsetof(HvkDrawVert, emissive), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "COLOR",    1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)offsetof(HvkDrawVert, emissive_col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
-        if (bd->pd3dDevice->CreateInputLayout(local_layout, 3, vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &bd->pInputLayout) != S_OK)
+        if (bd->pd3dDevice->CreateInputLayout(local_layout, 5, vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &bd->pInputLayout) != S_OK)
         {
             vertexShaderBlob->Release();
             return false;
@@ -498,31 +544,135 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
 
     // Create the pixel shader
     {
-        static const char* pixelShader =
+        static const char* pixelShaderMRT =
             "struct PS_INPUT\
             {\
             float4 pos : SV_POSITION;\
             float4 col : COLOR0;\
             float2 uv  : TEXCOORD0;\
+            float  emissive : TEXCOORD1;\
+            float4 emissive_col : COLOR1;\
+            };\
+            struct PS_OUTPUT\
+            {\
+            float4 base_col : SV_Target0;\
+            float4 emissive_out : SV_Target1;\
             };\
             sampler sampler0;\
             Texture2D texture0;\
+            Texture2D texture1;\
+            float3 SrgbToLinear(float3 c)\
+            {\
+            return pow(c, 2.2);\
+            }\
+            \
+            PS_OUTPUT main(PS_INPUT input)\
+            {\
+            PS_OUTPUT o;\
+            float4 tex = texture0.Sample(sampler0, input.uv);\
+            float4 srgb = input.col * tex;\
+            float alpha = srgb.a;\
+            float3 base_linear = SrgbToLinear(srgb.rgb);\
+            base_linear *= alpha;\
+            o.base_col = float4(base_linear, alpha);\
+            float4 emissive_texel = texture1.Sample(sampler0, input.uv);\
+            float emissive_alpha = emissive_texel.a * alpha;\
+            float3 emissive_tex = SrgbToLinear(emissive_texel.rgb);\
+            float3 emissive_linear = emissive_tex * SrgbToLinear(input.emissive_col.rgb) * input.emissive * emissive_alpha;\
+            o.emissive_out = float4(emissive_linear, 1.0);\
+            return o;\
+            }";
+        static const char* pixelShaderBase =
+            "struct PS_INPUT\
+            {\
+            float4 pos : SV_POSITION;\
+            float4 col : COLOR0;\
+            float2 uv  : TEXCOORD0;\
+            float  emissive : TEXCOORD1;\
+            float4 emissive_col : COLOR1;\
+            };\
+            sampler sampler0;\
+            Texture2D texture0;\
+            float3 SrgbToLinear(float3 c)\
+            {\
+            return pow(c, 2.2);\
+            }\
             \
             float4 main(PS_INPUT input) : SV_Target\
             {\
-            float4 out_col = input.col * texture0.Sample(sampler0, input.uv); \
-            return out_col; \
+            float4 tex = texture0.Sample(sampler0, input.uv);\
+            float4 srgb = input.col * tex;\
+            float alpha = srgb.a;\
+            float3 base_linear = SrgbToLinear(srgb.rgb);\
+            base_linear *= alpha;\
+            return float4(base_linear, alpha);\
+            }";
+        static const char* pixelShaderEmissive =
+            "struct PS_INPUT\
+            {\
+            float4 pos : SV_POSITION;\
+            float4 col : COLOR0;\
+            float2 uv  : TEXCOORD0;\
+            float  emissive : TEXCOORD1;\
+            float4 emissive_col : COLOR1;\
+            };\
+            sampler sampler0;\
+            Texture2D texture0;\
+            Texture2D texture1;\
+            float3 SrgbToLinear(float3 c)\
+            {\
+            return pow(c, 2.2);\
+            }\
+            \
+            float4 main(PS_INPUT input) : SV_Target\
+            {\
+            float4 emissive_texel = texture1.Sample(sampler0, input.uv);\
+            float alpha = input.col.a * emissive_texel.a;\
+            float3 emissive_tex = SrgbToLinear(emissive_texel.rgb);\
+            float3 emissive_linear = emissive_tex * SrgbToLinear(input.emissive_col.rgb) * input.emissive * alpha;\
+            return float4(emissive_linear, 1.0);\
+            }";
+        static const char* pixelShaderLDR =
+            "struct PS_INPUT\
+            {\
+            float4 pos : SV_POSITION;\
+            float4 col : COLOR0;\
+            float2 uv  : TEXCOORD0;\
+            float  emissive : TEXCOORD1;\
+            float4 emissive_col : COLOR1;\
+            };\
+            sampler sampler0;\
+            Texture2D texture0;\
+            float4 main(PS_INPUT input) : SV_Target\
+            {\
+            float4 tex = texture0.Sample(sampler0, input.uv);\
+            float4 srgb = input.col * tex;\
+            srgb.rgb *= srgb.a;\
+            return srgb;\
             }";
 
-        ID3DBlob* pixelShaderBlob;
-        if (FAILED(D3DCompile(pixelShader, strlen(pixelShader), nullptr, nullptr, nullptr, "main", "ps_4_0", 0, 0, &pixelShaderBlob, nullptr)))
-            return false; // NB: Pass ID3DBlob* pErrorBlob to D3DCompile() to get error showing in (const char*)pErrorBlob->GetBufferPointer(). Make sure to Release() the blob!
-        if (bd->pd3dDevice->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, &bd->pPixelShader) != S_OK)
+        auto create_pixel_shader = [&](const char* source, ID3D11PixelShader** out_shader) -> bool
         {
+            ID3DBlob* pixelShaderBlob = nullptr;
+            if (FAILED(D3DCompile(source, strlen(source), nullptr, nullptr, nullptr, "main", "ps_4_0", 0, 0, &pixelShaderBlob, nullptr)))
+                return false;
+            if (bd->pd3dDevice->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, out_shader) != S_OK)
+            {
+                pixelShaderBlob->Release();
+                return false;
+            }
             pixelShaderBlob->Release();
+            return true;
+        };
+
+        if (!create_pixel_shader(pixelShaderMRT, &bd->pPixelShaderMRT))
             return false;
-        }
-        pixelShaderBlob->Release();
+        if (!create_pixel_shader(pixelShaderBase, &bd->pPixelShaderBase))
+            return false;
+        if (!create_pixel_shader(pixelShaderEmissive, &bd->pPixelShaderEmissive))
+            return false;
+        if (!create_pixel_shader(pixelShaderLDR, &bd->pPixelShaderLDR))
+            return false;
     }
 
     // Create the blending setup
@@ -530,15 +680,48 @@ bool    HvkGui_ImplDX11_CreateDeviceObjects()
         D3D11_BLEND_DESC desc;
         ZeroMemory(&desc, sizeof(desc));
         desc.AlphaToCoverageEnable = false;
+        desc.IndependentBlendEnable = TRUE;
         desc.RenderTarget[0].BlendEnable = true;
-        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
         desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
         desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
         desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
         desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
         desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
         desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-        bd->pd3dDevice->CreateBlendState(&desc, &bd->pBlendState);
+        desc.RenderTarget[1].BlendEnable = true;
+        desc.RenderTarget[1].SrcBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[1].DestBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[1].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[1].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[1].DestBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[1].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        bd->pd3dDevice->CreateBlendState(&desc, &bd->pBlendStateMRT);
+
+        ZeroMemory(&desc, sizeof(desc));
+        desc.AlphaToCoverageEnable = false;
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        bd->pd3dDevice->CreateBlendState(&desc, &bd->pBlendStateBase);
+
+        ZeroMemory(&desc, sizeof(desc));
+        desc.AlphaToCoverageEnable = false;
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        bd->pd3dDevice->CreateBlendState(&desc, &bd->pBlendStateEmissive);
     }
 
     // Create the rasterizer state
@@ -599,10 +782,15 @@ void    HvkGui_ImplDX11_InvalidateDeviceObjects()
     if (bd->pTexSamplerLinear)      { bd->pTexSamplerLinear->Release(); bd->pTexSamplerLinear = nullptr; }
     if (bd->pIB)                    { bd->pIB->Release(); bd->pIB = nullptr; }
     if (bd->pVB)                    { bd->pVB->Release(); bd->pVB = nullptr; }
-    if (bd->pBlendState)            { bd->pBlendState->Release(); bd->pBlendState = nullptr; }
+    if (bd->pBlendStateMRT)         { bd->pBlendStateMRT->Release(); bd->pBlendStateMRT = nullptr; }
+    if (bd->pBlendStateBase)        { bd->pBlendStateBase->Release(); bd->pBlendStateBase = nullptr; }
+    if (bd->pBlendStateEmissive)    { bd->pBlendStateEmissive->Release(); bd->pBlendStateEmissive = nullptr; }
     if (bd->pDepthStencilState)     { bd->pDepthStencilState->Release(); bd->pDepthStencilState = nullptr; }
     if (bd->pRasterizerState)       { bd->pRasterizerState->Release(); bd->pRasterizerState = nullptr; }
-    if (bd->pPixelShader)           { bd->pPixelShader->Release(); bd->pPixelShader = nullptr; }
+    if (bd->pPixelShaderMRT)        { bd->pPixelShaderMRT->Release(); bd->pPixelShaderMRT = nullptr; }
+    if (bd->pPixelShaderBase)       { bd->pPixelShaderBase->Release(); bd->pPixelShaderBase = nullptr; }
+    if (bd->pPixelShaderEmissive)   { bd->pPixelShaderEmissive->Release(); bd->pPixelShaderEmissive = nullptr; }
+    if (bd->pPixelShaderLDR)        { bd->pPixelShaderLDR->Release(); bd->pPixelShaderLDR = nullptr; }
     if (bd->pVertexConstantBuffer)  { bd->pVertexConstantBuffer->Release(); bd->pVertexConstantBuffer = nullptr; }
     if (bd->pInputLayout)           { bd->pInputLayout->Release(); bd->pInputLayout = nullptr; }
     if (bd->pVertexShader)          { bd->pVertexShader->Release(); bd->pVertexShader = nullptr; }

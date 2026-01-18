@@ -24,6 +24,14 @@
 #include <dxgiformat.h> // DXGI_FORMAT
 #include <d3d12.h>      // D3D12_CPU_DESCRIPTOR_HANDLE
 
+enum HvkGui_ImplDX12_OutputMode
+{
+    HvkGui_ImplDX12_OutputMode_MRT = 0,
+    HvkGui_ImplDX12_OutputMode_BaseOnly,
+    HvkGui_ImplDX12_OutputMode_EmissiveOnly,
+    HvkGui_ImplDX12_OutputMode_LDR
+};
+
 // Initialization data, for HvkGui_ImplDX12_Init()
 struct HvkGui_ImplDX12_InitInfo
 {
@@ -52,6 +60,8 @@ HvkGui_IMPL_API bool     HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* info);
 HvkGui_IMPL_API void     HvkGui_ImplDX12_Shutdown();
 HvkGui_IMPL_API void     HvkGui_ImplDX12_NewFrame();
 HvkGui_IMPL_API void     HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsCommandList* graphics_command_list);
+HvkGui_IMPL_API void     HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode mode);
+HvkGui_IMPL_API void     HvkGui_ImplDX12_SetLdrFormat(DXGI_FORMAT format);
 
 #ifndef HvkGui_DISABLE_OBSOLETE_FUNCTIONS
 // Legacy initialization API Obsoleted in 1.91.5

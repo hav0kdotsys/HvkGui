@@ -24,11 +24,20 @@ struct ID3D11DeviceContext;
 struct ID3D11SamplerState;
 struct ID3D11Buffer;
 
+enum HvkGui_ImplDX11_OutputMode
+{
+    HvkGui_ImplDX11_OutputMode_MRT = 0,
+    HvkGui_ImplDX11_OutputMode_BaseOnly,
+    HvkGui_ImplDX11_OutputMode_EmissiveOnly,
+    HvkGui_ImplDX11_OutputMode_LDR
+};
+
 // Follow "Getting Started" link and check examples/ folder to learn about using backends!
 HvkGui_IMPL_API bool     HvkGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context);
 HvkGui_IMPL_API void     HvkGui_ImplDX11_Shutdown();
 HvkGui_IMPL_API void     HvkGui_ImplDX11_NewFrame();
 HvkGui_IMPL_API void     HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data);
+HvkGui_IMPL_API void     HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode mode);
 
 // Use if you want to reset your rendering device without losing Dear HvkGui state.
 HvkGui_IMPL_API bool     HvkGui_ImplDX11_CreateDeviceObjects();

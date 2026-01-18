@@ -62,6 +62,7 @@ HvkGui_IMPL_API void     HvkGui_ImplDX12_NewFrame();
 HvkGui_IMPL_API void     HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsCommandList* graphics_command_list);
 HvkGui_IMPL_API void     HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode mode);
 HvkGui_IMPL_API void     HvkGui_ImplDX12_SetLdrFormat(DXGI_FORMAT format);
+HvkGui_IMPL_API void     HvkGui_ImplDX12_SetForceEmissiveFromBase(bool enable);
 
 #ifndef HvkGui_DISABLE_OBSOLETE_FUNCTIONS
 // Legacy initialization API Obsoleted in 1.91.5

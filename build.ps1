@@ -5,6 +5,9 @@ param(
     [Alias('r')]
     [switch]$Release,
 
+    [Alias('e')]
+    [switch]$Dev,
+
     [Alias('v')]
     [switch]$Verbose,
 
@@ -77,6 +80,9 @@ if ($Debug) {
 if ($Release) {
     $selectedConfigs += 'Release'
 }
+if ($Dev) {
+    $selectedConfigs += 'Dev'
+}
 if ($Configurations) {
     $selectedConfigs += $Configurations
 }
@@ -115,8 +121,12 @@ if (-not (Test-Path $Solution)) {
 $verbosity = if ($Verbose) { 'detailed' } else { 'minimal' }
 
 foreach ($config in $selectedConfigs) {
-    Write-Host "Building $Solution ($config|$Platform)" -ForegroundColor Cyan
-    & $MsbuildPath $Solution /m /t:Build "/p:Configuration=$config;Platform=$Platform" "/v:$verbosity"
+    $buildTarget = $Solution
+    if ($Solution -like '*.slnx' -and $config -eq 'Dev') {
+        $buildTarget = $projectPath
+    }
+    Write-Host "Building $buildTarget ($config|$Platform)" -ForegroundColor Cyan
+    & $MsbuildPath $buildTarget /m /t:Build "/p:Configuration=$config;Platform=$Platform" "/v:$verbosity"
     if ($LASTEXITCODE -ne 0) {
         throw "Build failed for configuration '$config' (exit code $LASTEXITCODE)."
     }

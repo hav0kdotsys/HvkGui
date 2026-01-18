@@ -89,9 +89,10 @@ struct HvkGui_ImplDX11_Data
     int                         VertexBufferSize;
     int                         IndexBufferSize;
     HvkGui_ImplDX11_OutputMode  OutputMode;
+    bool                        ForceEmissiveFromBase;
  
 
-    HvkGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; OutputMode = HvkGui_ImplDX11_OutputMode_MRT; }
+    HvkGui_ImplDX11_Data()       { memset((void*)this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; OutputMode = HvkGui_ImplDX11_OutputMode_MRT; ForceEmissiveFromBase = false; }
 };
 
 struct VERTEX_CONSTANT_BUFFER_DX11
@@ -110,6 +111,12 @@ void HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode mode)
 {
     if (HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData())
         bd->OutputMode = mode;
+}
+
+void HvkGui_ImplDX11_SetForceEmissiveFromBase(bool enable)
+{
+    if (HvkGui_ImplDX11_Data* bd = HvkGui_ImplDX11_GetBackendData())
+        bd->ForceEmissiveFromBase = enable;
 }
 
 // Functions
@@ -312,6 +319,14 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
     int global_vtx_offset = 0;
     HvkVec2 clip_off = draw_data->DisplayPos;
     HvkVec2 clip_scale = draw_data->FramebufferScale;
+    HvkTextureData* font_tex_data = nullptr;
+    HvkTextureID font_tex_id = HvkTextureID_Invalid;
+    if (HvkGui::GetIO().Fonts)
+    {
+        font_tex_data = HvkGui::GetIO().Fonts->TexRef._TexData;
+        font_tex_id = font_tex_data ? font_tex_data->TexID : HvkGui::GetIO().Fonts->TexRef._TexID;
+    }
+
     for (const HvkDrawList* draw_list : draw_data->CmdLists)
     {
         for (int cmd_i = 0; cmd_i < draw_list->CmdBuffer.Size; cmd_i++)
@@ -340,8 +355,19 @@ void HvkGui_ImplDX11_RenderDrawData(HvkDrawData* draw_data)
 
                 // Bind texture, Draw
                 HvkTextureID emissive_id = pcmd->GetEmissiveTexID();
-                if (emissive_id == HvkTextureID_Invalid)
+                if (bd->ForceEmissiveFromBase)
+                {
                     emissive_id = pcmd->GetTexID();
+                }
+                else
+                {
+                    const bool is_font_atlas = (font_tex_data && pcmd->TexRef._TexData == font_tex_data) ||
+                        (font_tex_id != HvkTextureID_Invalid && pcmd->GetTexID() == font_tex_id);
+                    if (is_font_atlas)
+                        emissive_id = pcmd->GetTexID();
+                    else if (emissive_id == HvkTextureID_Invalid)
+                        emissive_id = pcmd->GetTexID();
+                }
                 ID3D11ShaderResourceView* texture_srvs[2] = {
                     (ID3D11ShaderResourceView*)pcmd->GetTexID(),
                     (ID3D11ShaderResourceView*)emissive_id

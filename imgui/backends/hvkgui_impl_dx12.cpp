@@ -120,6 +120,7 @@ struct HvkGui_ImplDX12_Data
     HvkGui_ImplDX12_RenderBuffers* pFrameResources;
     UINT                        frameIndex;
     HvkGui_ImplDX12_OutputMode  OutputMode;
+    bool                        ForceEmissiveFromBase;
 
     HvkGui_ImplDX12_Data()       { memset((void*)this, 0, sizeof(*this)); }
 };
@@ -146,6 +147,12 @@ void HvkGui_ImplDX12_SetLdrFormat(DXGI_FORMAT format)
         return;
     bd->LDRFormat = format;
     HvkGui_ImplDX12_InvalidateDeviceObjects();
+}
+
+void HvkGui_ImplDX12_SetForceEmissiveFromBase(bool enable)
+{
+    if (HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData())
+        bd->ForceEmissiveFromBase = enable;
 }
 
 // Buffers used during the rendering of a frame
@@ -337,6 +344,14 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
     int global_idx_offset = 0;
     HvkVec2 clip_off = draw_data->DisplayPos;
     HvkVec2 clip_scale = draw_data->FramebufferScale;
+    HvkTextureData* font_tex_data = nullptr;
+    HvkTextureID font_tex_id = HvkTextureID_Invalid;
+    if (HvkGui::GetIO().Fonts)
+    {
+        font_tex_data = HvkGui::GetIO().Fonts->TexRef._TexData;
+        font_tex_id = font_tex_data ? font_tex_data->TexID : HvkGui::GetIO().Fonts->TexRef._TexID;
+    }
+
     for (const HvkDrawList* draw_list : draw_data->CmdLists)
     {
         for (int cmd_i = 0; cmd_i < draw_list->CmdBuffer.Size; cmd_i++)
@@ -367,8 +382,19 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
                 D3D12_GPU_DESCRIPTOR_HANDLE texture_handle = {};
                 texture_handle.ptr = (UINT64)pcmd->GetTexID();
                 HvkTextureID emissive_id = pcmd->GetEmissiveTexID();
-                if (emissive_id == HvkTextureID_Invalid)
+                if (bd->ForceEmissiveFromBase)
+                {
                     emissive_id = pcmd->GetTexID();
+                }
+                else
+                {
+                    const bool is_font_atlas = (font_tex_data && pcmd->TexRef._TexData == font_tex_data) ||
+                        (font_tex_id != HvkTextureID_Invalid && pcmd->GetTexID() == font_tex_id);
+                    if (is_font_atlas)
+                        emissive_id = pcmd->GetTexID();
+                    else if (emissive_id == HvkTextureID_Invalid)
+                        emissive_id = pcmd->GetTexID();
+                }
                 D3D12_GPU_DESCRIPTOR_HANDLE emissive_handle = {};
                 emissive_handle.ptr = (UINT64)emissive_id;
                 command_list->SetGraphicsRootDescriptorTable(1, texture_handle);
@@ -1107,6 +1133,7 @@ bool HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* init_info)
     bd->numFramesInFlight = init_info->NumFramesInFlight;
     bd->pd3dSrvDescHeap = init_info->SrvDescriptorHeap;
     bd->tearingSupport = false;
+    bd->ForceEmissiveFromBase = false;
 
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "HvkGui_impl_dx12";

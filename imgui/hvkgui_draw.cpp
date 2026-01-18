@@ -5762,6 +5762,8 @@ begin:
     unsigned int vtx_index = draw_list->_VtxCurrentIdx;
     const int cmd_count = draw_list->CmdBuffer.Size;
     const bool cpu_fine_clip = (flags & HvkDrawTextFlags_CpuFineClip) != 0;
+    const float emissive_strength = draw_list->_EmissiveStrength;
+    const HvkU32 emissive_col = draw_list->_EmissiveColor;
 
     const HvkU32 col_untinted = col | ~Hvk_COL32_A_MASK;
     const char* word_wrap_eol = NULL;
@@ -5862,10 +5864,10 @@ begin:
 
                 // We are NOT calling PrimRectUV() here because non-inlined causes too much overhead in a debug builds. Inlined here:
                 {
-                    vtx_write[0].pos.x = x1; vtx_write[0].pos.y = y1; vtx_write[0].col = glyph_col; vtx_write[0].uv.x = u1; vtx_write[0].uv.y = v1;
-                    vtx_write[1].pos.x = x2; vtx_write[1].pos.y = y1; vtx_write[1].col = glyph_col; vtx_write[1].uv.x = u2; vtx_write[1].uv.y = v1;
-                    vtx_write[2].pos.x = x2; vtx_write[2].pos.y = y2; vtx_write[2].col = glyph_col; vtx_write[2].uv.x = u2; vtx_write[2].uv.y = v2;
-                    vtx_write[3].pos.x = x1; vtx_write[3].pos.y = y2; vtx_write[3].col = glyph_col; vtx_write[3].uv.x = u1; vtx_write[3].uv.y = v2;
+                    vtx_write[0].pos.x = x1; vtx_write[0].pos.y = y1; vtx_write[0].col = glyph_col; vtx_write[0].uv.x = u1; vtx_write[0].uv.y = v1; vtx_write[0].emissive = emissive_strength; vtx_write[0].emissive_col = emissive_col;
+                    vtx_write[1].pos.x = x2; vtx_write[1].pos.y = y1; vtx_write[1].col = glyph_col; vtx_write[1].uv.x = u2; vtx_write[1].uv.y = v1; vtx_write[1].emissive = emissive_strength; vtx_write[1].emissive_col = emissive_col;
+                    vtx_write[2].pos.x = x2; vtx_write[2].pos.y = y2; vtx_write[2].col = glyph_col; vtx_write[2].uv.x = u2; vtx_write[2].uv.y = v2; vtx_write[2].emissive = emissive_strength; vtx_write[2].emissive_col = emissive_col;
+                    vtx_write[3].pos.x = x1; vtx_write[3].pos.y = y2; vtx_write[3].col = glyph_col; vtx_write[3].uv.x = u1; vtx_write[3].uv.y = v2; vtx_write[3].emissive = emissive_strength; vtx_write[3].emissive_col = emissive_col;
                     idx_write[0] = (HvkDrawIdx)(vtx_index); idx_write[1] = (HvkDrawIdx)(vtx_index + 1); idx_write[2] = (HvkDrawIdx)(vtx_index + 2);
                     idx_write[3] = (HvkDrawIdx)(vtx_index); idx_write[4] = (HvkDrawIdx)(vtx_index + 2); idx_write[5] = (HvkDrawIdx)(vtx_index + 3);
                     vtx_write += 4;

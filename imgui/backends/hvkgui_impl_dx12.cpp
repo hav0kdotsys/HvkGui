@@ -63,6 +63,11 @@
 #include <d3d12.h>
 #include <dxgi1_5.h>
 #include <d3dcompiler.h>
+#ifdef _DEBUG
+#include <windows.h>
+#include <cstdarg>
+#include <cstdio>
+#endif
 #ifdef _MSC_VER
 #pragma comment(lib, "d3dcompiler") // Automatically link with d3dcompiler.lib as we are using D3DCompile() below.
 #endif
@@ -119,6 +124,9 @@ struct HvkGui_ImplDX12_Data
 
     HvkGui_ImplDX12_RenderBuffers* pFrameResources;
     UINT                        frameIndex;
+    int                         LastFrameCount;
+    int                         RenderCallIndex;
+    int                         MaxRenderCalls;
     HvkGui_ImplDX12_OutputMode  OutputMode;
     bool                        ForceEmissiveFromBase;
 
@@ -168,6 +176,24 @@ struct VERTEX_CONSTANT_BUFFER_DX12
 {
     float   mvp[4][4];
 };
+
+#ifdef _DEBUG
+static void HvkGui_ImplDX12_DebugLog(const char* fmt, ...)
+{
+    char buffer[2048];
+    va_list args;
+    va_start(args, fmt);
+    _vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, fmt, args);
+    va_end(args);
+    OutputDebugStringA(buffer);
+}
+
+static int g_dx12DebugRenderCall = 0;
+static bool g_dx12DebugBreakOnce = true;
+#define DX12_DEBUG_LOG(...) HvkGui_ImplDX12_DebugLog(__VA_ARGS__)
+#else
+#define DX12_DEBUG_LOG(...) ((void)0)
+#endif
 
 // Functions
 static void HvkGui_ImplDX12_SetupRenderState(HvkDrawData* draw_data, ID3D12GraphicsCommandList* command_list, HvkGui_ImplDX12_RenderBuffers* fr)
@@ -253,10 +279,39 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
             if (tex->Status != HvkTextureStatus_OK)
                 HvkGui_ImplDX12_UpdateTexture(tex);
 
-    // FIXME: We are assuming that this only gets called once per frame!
     HvkGui_ImplDX12_Data* bd = HvkGui_ImplDX12_GetBackendData();
-    bd->frameIndex = bd->frameIndex + 1;
-    HvkGui_ImplDX12_RenderBuffers* fr = &bd->pFrameResources[bd->frameIndex % bd->numFramesInFlight];
+    int frame_count = HvkGui::GetFrameCount();
+    if (bd->LastFrameCount != frame_count)
+    {
+        bd->LastFrameCount = frame_count;
+        bd->frameIndex = bd->frameIndex + 1;
+        bd->RenderCallIndex = 0;
+    }
+    int frame_slot = (int)(bd->frameIndex % bd->numFramesInFlight);
+    int render_call_index = bd->RenderCallIndex++;
+    if (render_call_index >= bd->MaxRenderCalls)
+    {
+        render_call_index = bd->MaxRenderCalls - 1;
+#ifdef _DEBUG
+        Hvk_ASSERT(0 && "Exceeded MaxRenderCalls in HvkGui_ImplDX12_RenderDrawData()");
+#endif
+    }
+    HvkGui_ImplDX12_RenderBuffers* fr = &bd->pFrameResources[frame_slot * bd->MaxRenderCalls + render_call_index];
+
+#ifdef _DEBUG
+    g_dx12DebugRenderCall++;
+    if (g_dx12DebugRenderCall <= 4)
+    {
+        DX12_DEBUG_LOG("[DX12] RenderDrawData call=%d CmdLists=%d OutputMode=%d ForceEmissiveFromBase=%d frame=%u frameCount=%d renderCall=%d\n",
+            g_dx12DebugRenderCall,
+            draw_data->CmdListsCount,
+            (int)bd->OutputMode,
+            bd->ForceEmissiveFromBase ? 1 : 0,
+            bd->frameIndex,
+            frame_count,
+            render_call_index);
+    }
+#endif
 
     // Create and grow vertex/index buffers if needed
     if (fr->VertexBuffer == nullptr || fr->VertexBufferSize < draw_data->TotalVtxCount)
@@ -351,6 +406,9 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
         font_tex_data = HvkGui::GetIO().Fonts->TexRef._TexData;
         font_tex_id = font_tex_data ? font_tex_data->TexID : HvkGui::GetIO().Fonts->TexRef._TexID;
     }
+#ifdef _DEBUG
+    int debug_cmd_logged = 0;
+#endif
 
     for (const HvkDrawList* draw_list : draw_data->CmdLists)
     {
@@ -397,6 +455,43 @@ void HvkGui_ImplDX12_RenderDrawData(HvkDrawData* draw_data, ID3D12GraphicsComman
                 }
                 D3D12_GPU_DESCRIPTOR_HANDLE emissive_handle = {};
                 emissive_handle.ptr = (UINT64)emissive_id;
+
+#ifdef _DEBUG
+                if (debug_cmd_logged < 12)
+                {
+                    float max_emissive = 0.0f;
+                    int vtx_start = pcmd->VtxOffset;
+                    int vtx_end = vtx_start + pcmd->ElemCount;
+                    if (vtx_start < draw_list->VtxBuffer.Size)
+                    {
+                        if (vtx_end > draw_list->VtxBuffer.Size)
+                            vtx_end = draw_list->VtxBuffer.Size;
+                        for (int v = vtx_start; v < vtx_end; v++)
+                            if (draw_list->VtxBuffer[v].emissive > max_emissive)
+                                max_emissive = draw_list->VtxBuffer[v].emissive;
+                    }
+                    DX12_DEBUG_LOG("[DX12] cmd=%d elem=%d tex=0x%llx emissiveTex=0x%llx maxEmissive=%.3f fontTex=0x%llx\n",
+                        debug_cmd_logged,
+                        pcmd->ElemCount,
+                        (unsigned long long)pcmd->GetTexID(),
+                        (unsigned long long)pcmd->GetEmissiveTexID(),
+                        max_emissive,
+                        (unsigned long long)font_tex_id);
+                    debug_cmd_logged++;
+                }
+
+                if (emissive_handle.ptr == 0 || texture_handle.ptr == 0)
+                {
+                    DX12_DEBUG_LOG("[DX12] INVALID descriptor: tex=0x%llx emissive=0x%llx\n",
+                        (unsigned long long)texture_handle.ptr,
+                        (unsigned long long)emissive_handle.ptr);
+                    if (g_dx12DebugBreakOnce && IsDebuggerPresent())
+                    {
+                        g_dx12DebugBreakOnce = false;
+                        __debugbreak();
+                    }
+                }
+#endif
                 command_list->SetGraphicsRootDescriptorTable(1, texture_handle);
                 command_list->SetGraphicsRootDescriptorTable(2, emissive_handle);
                 command_list->DrawIndexedInstanced(pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
@@ -1083,7 +1178,7 @@ void    HvkGui_ImplDX12_InvalidateDeviceObjects()
         if (tex->RefCount == 1)
             HvkGui_ImplDX12_DestroyTexture(tex);
 
-    for (UINT i = 0; i < bd->numFramesInFlight; i++)
+    for (UINT i = 0; i < bd->numFramesInFlight * (UINT)bd->MaxRenderCalls; i++)
     {
         HvkGui_ImplDX12_RenderBuffers* fr = &bd->pFrameResources[i];
         SafeRelease(fr->IndexBuffer);
@@ -1134,6 +1229,7 @@ bool HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* init_info)
     bd->pd3dSrvDescHeap = init_info->SrvDescriptorHeap;
     bd->tearingSupport = false;
     bd->ForceEmissiveFromBase = false;
+    bd->MaxRenderCalls = 8;
 
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "HvkGui_impl_dx12";
@@ -1148,8 +1244,10 @@ bool HvkGui_ImplDX12_Init(HvkGui_ImplDX12_InitInfo* init_info)
 
     // Create buffers with a default size (they will later be grown as needed)
     bd->frameIndex = UINT_MAX;
-    bd->pFrameResources = new HvkGui_ImplDX12_RenderBuffers[bd->numFramesInFlight];
-    for (int i = 0; i < (int)bd->numFramesInFlight; i++)
+    bd->LastFrameCount = -1;
+    bd->RenderCallIndex = 0;
+    bd->pFrameResources = new HvkGui_ImplDX12_RenderBuffers[bd->numFramesInFlight * bd->MaxRenderCalls];
+    for (int i = 0; i < (int)(bd->numFramesInFlight * bd->MaxRenderCalls); i++)
     {
         HvkGui_ImplDX12_RenderBuffers* fr = &bd->pFrameResources[i];
         fr->IndexBuffer = nullptr;

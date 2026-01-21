@@ -947,6 +947,8 @@ int main(int, char **)
 				g_pd3dCommandList->ResourceBarrier(2, hdr_barriers);
 			}
 
+			// Bloom uses post-process SRVs (g_hdrSrv/g_bloom SRVs).
+			g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dPostSrvDescHeap);
 			RenderBloomDX12(g_pd3dCommandList);
 
 			barrier.Transition.pResource = g_mainRenderTargetResource[backBufferIdx];
@@ -1015,6 +1017,8 @@ int main(int, char **)
 				ui_emissive_barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 				g_pd3dCommandList->ResourceBarrier(1, &ui_emissive_barrier);
 
+				// Bloom uses post-process SRVs (g_hdrEmissive/g_bloom SRVs).
+				g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dPostSrvDescHeap);
 				RenderBloomDX12(g_pd3dCommandList);
 
 				bool do_ui_emissive_add = true;

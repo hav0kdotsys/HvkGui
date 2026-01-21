@@ -23,6 +23,7 @@
 #include <d3d11.h>
 
 #include "../util/util.h"
+#include "settings.h"
 
 #pragma comment(lib, "windowscodecs.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -252,6 +253,30 @@ static void DrawUvScrollX(HvkDrawList *draw_list, HvkTextureRef tex_ref, const H
 		draw_list->AddImage(tex_ref, HvkVec2(p_min.x, p_min.y), HvkVec2(split_x, p_max.y), HvkVec2(uv_split, uv0.y), HvkVec2(uv1.x, uv1.y), col);
 	if (split_x < p_max.x)
 		draw_list->AddImage(tex_ref, HvkVec2(split_x, p_min.y), HvkVec2(p_max.x, p_max.y), HvkVec2(uv0.x, uv0.y), HvkVec2(uv_split, uv1.y), col);
+}
+
+static bool DrawListHasEmissive(const HvkDrawList *draw_list)
+{
+	if (!draw_list)
+		return false;
+	for (int i = 0; i < draw_list->VtxBuffer.Size; i++)
+	{
+		if (draw_list->VtxBuffer[i].emissive > 0.0001f)
+			return true;
+	}
+	return false;
+}
+
+static void InitSingleDrawData(HvkDrawData *out, const HvkDrawData *src, HvkDrawList *draw_list)
+{
+	out->Clear();
+	out->Valid = src->Valid;
+	out->DisplayPos = src->DisplayPos;
+	out->DisplaySize = src->DisplaySize;
+	out->FramebufferScale = src->FramebufferScale;
+	out->OwnerViewport = src->OwnerViewport;
+	out->Textures = src->Textures;
+	out->AddDrawList(draw_list);
 }
 
 static void DrawWaterBackground()
@@ -762,6 +787,19 @@ int main(int, char **)
 #endif
 		HvkGui::End();
 
+		// Style Window
+		if(GetAsyncKeyState(VK_F1) & 1)
+			user_settings->show_style_editor = !user_settings->show_style_editor;
+
+		if (user_settings->show_style_editor) {
+			HvkGui::SetNextWindowSize(HvkVec2(500, 600), HvkGuiCond_Once);
+			HvkGui::SetNextWindowPos(HvkVec2(300, 50), HvkGuiCond_Once);
+			HvkGui::Begin("Style Editor", nullptr);
+			HvkGui::ShowStyleEditor();
+			HvkGui::End();
+		}
+
+		// Emissive text window
 		if (g_showEmissiveTextWindow && g_borderTexture && g_borderTexture->GetTexID() != HvkTextureID_Invalid)
 		{
 			HvkGui::Begin("Emissive Text Test", &g_showEmissiveTextWindow);
@@ -990,62 +1028,70 @@ int main(int, char **)
 
 			if (ui_data && ui_data->CmdListsCount > 0)
 			{
-				HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode_LDR);
-				g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
-				g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
-				HvkGui_ImplDX12_RenderDrawData(ui_data, g_pd3dCommandList);
-			}
-
-			if (ui_data && ui_data->CmdListsCount > 0 && g_hdrEmissiveRenderTargetResource && g_emissiveAddPipelineState)
-			{
-				D3D12_RESOURCE_BARRIER ui_emissive_barrier = {};
-				ui_emissive_barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-				ui_emissive_barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-				ui_emissive_barrier.Transition.pResource = g_hdrEmissiveRenderTargetResource;
-				ui_emissive_barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-				ui_emissive_barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-				ui_emissive_barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-				g_pd3dCommandList->ResourceBarrier(1, &ui_emissive_barrier);
-
-				const float emissive_clear_ui[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-				g_pd3dCommandList->ClearRenderTargetView(g_hdrEmissiveRenderTargetDescriptor, emissive_clear_ui, 0, nullptr);
-				HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode_EmissiveOnly);
-				g_pd3dCommandList->OMSetRenderTargets(1, &g_hdrEmissiveRenderTargetDescriptor, FALSE, nullptr);
-				HvkGui_ImplDX12_RenderDrawData(ui_data, g_pd3dCommandList);
-
-				ui_emissive_barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-				ui_emissive_barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-				g_pd3dCommandList->ResourceBarrier(1, &ui_emissive_barrier);
-
-				// Bloom uses post-process SRVs (g_hdrEmissive/g_bloom SRVs).
-				g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dPostSrvDescHeap);
-				RenderBloomDX12(g_pd3dCommandList);
-
-				bool do_ui_emissive_add = true;
-#ifdef _DEBUG
-				if (g_debugShowEmissive)
-					do_ui_emissive_add = false;
-#endif
-				if (do_ui_emissive_add)
+				for (HvkDrawList *draw_list : ui_data->CmdLists)
 				{
+					HvkDrawData single = {};
+					InitSingleDrawData(&single, ui_data, draw_list);
+
+					HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode_LDR);
+					g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
 					g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
+					HvkGui_ImplDX12_RenderDrawData(&single, g_pd3dCommandList);
+
+					if (!DrawListHasEmissive(draw_list))
+						continue;
+					if (!g_hdrEmissiveRenderTargetResource || !g_emissiveAddPipelineState)
+						continue;
+
+					D3D12_RESOURCE_BARRIER ui_emissive_barrier = {};
+					ui_emissive_barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+					ui_emissive_barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+					ui_emissive_barrier.Transition.pResource = g_hdrEmissiveRenderTargetResource;
+					ui_emissive_barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+					ui_emissive_barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+					ui_emissive_barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+					g_pd3dCommandList->ResourceBarrier(1, &ui_emissive_barrier);
+
+					const float emissive_clear_ui[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+					g_pd3dCommandList->ClearRenderTargetView(g_hdrEmissiveRenderTargetDescriptor, emissive_clear_ui, 0, nullptr);
+					HvkGui_ImplDX12_SetOutputMode(HvkGui_ImplDX12_OutputMode_EmissiveOnly);
+					g_pd3dCommandList->OMSetRenderTargets(1, &g_hdrEmissiveRenderTargetDescriptor, FALSE, nullptr);
+					HvkGui_ImplDX12_RenderDrawData(&single, g_pd3dCommandList);
+
+					ui_emissive_barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+					ui_emissive_barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+					g_pd3dCommandList->ResourceBarrier(1, &ui_emissive_barrier);
+
+					// Bloom uses post-process SRVs (g_hdrEmissive/g_bloom SRVs).
 					g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dPostSrvDescHeap);
-					D3D12_VIEWPORT vp = {};
-					vp.Width = HvkGui::GetIO().DisplaySize.x * HvkGui::GetIO().DisplayFramebufferScale.x;
-					vp.Height = HvkGui::GetIO().DisplaySize.y * HvkGui::GetIO().DisplayFramebufferScale.y;
-					vp.MinDepth = 0.0f;
-					vp.MaxDepth = 1.0f;
-					D3D12_RECT scissor = {0, 0, (LONG)vp.Width, (LONG)vp.Height};
-					g_pd3dCommandList->RSSetViewports(1, &vp);
-					g_pd3dCommandList->RSSetScissorRects(1, &scissor);
-					g_pd3dCommandList->SetGraphicsRootSignature(g_tonemapRootSignature);
-					g_pd3dCommandList->SetPipelineState(g_emissiveAddPipelineState);
-					const float params[8] = {1.0f, g_bloomIntensity, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-					g_pd3dCommandList->SetGraphicsRoot32BitConstants(2, 8, params, 0);
-					g_pd3dCommandList->SetGraphicsRootDescriptorTable(0, g_hdrEmissiveSrvGpuHandle);
-					g_pd3dCommandList->SetGraphicsRootDescriptorTable(1, g_bloomBlurSrvGpu12[0]);
-					g_pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-					g_pd3dCommandList->DrawInstanced(3, 1, 0, 0);
+					RenderBloomDX12(g_pd3dCommandList);
+
+					bool do_ui_emissive_add = true;
+#ifdef _DEBUG
+					if (g_debugShowEmissive)
+						do_ui_emissive_add = false;
+#endif
+					if (do_ui_emissive_add)
+					{
+						g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
+						g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dPostSrvDescHeap);
+						D3D12_VIEWPORT vp = {};
+						vp.Width = HvkGui::GetIO().DisplaySize.x * HvkGui::GetIO().DisplayFramebufferScale.x;
+						vp.Height = HvkGui::GetIO().DisplaySize.y * HvkGui::GetIO().DisplayFramebufferScale.y;
+						vp.MinDepth = 0.0f;
+						vp.MaxDepth = 1.0f;
+						D3D12_RECT scissor = {0, 0, (LONG)vp.Width, (LONG)vp.Height};
+						g_pd3dCommandList->RSSetViewports(1, &vp);
+						g_pd3dCommandList->RSSetScissorRects(1, &scissor);
+						g_pd3dCommandList->SetGraphicsRootSignature(g_tonemapRootSignature);
+						g_pd3dCommandList->SetPipelineState(g_emissiveAddPipelineState);
+						const float params[8] = {1.0f, g_bloomIntensity, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+						g_pd3dCommandList->SetGraphicsRoot32BitConstants(2, 8, params, 0);
+						g_pd3dCommandList->SetGraphicsRootDescriptorTable(0, g_hdrEmissiveSrvGpuHandle);
+						g_pd3dCommandList->SetGraphicsRootDescriptorTable(1, g_bloomBlurSrvGpu12[0]);
+						g_pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+						g_pd3dCommandList->DrawInstanced(3, 1, 0, 0);
+					}
 				}
 			}
 
@@ -1105,84 +1151,93 @@ int main(int, char **)
 			RenderTonemapDX11();
 			if (ui_data && ui_data->CmdListsCount > 0 && g_mainRenderTargetView11)
 			{
-				HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode_LDR);
-				g_pd3dDeviceContext11->OMSetRenderTargets(1, &g_mainRenderTargetView11, nullptr);
-				HvkGui_ImplDX11_RenderDrawData(ui_data);
-			}
-			if (ui_data && ui_data->CmdListsCount > 0 && g_hdrEmissiveRTV11 && g_hdrEmissiveSRV11 && g_tonemapAddBlend11)
-			{
-				const float emissive_clear_ui[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-				g_pd3dDeviceContext11->ClearRenderTargetView(g_hdrEmissiveRTV11, emissive_clear_ui);
-				HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode_EmissiveOnly);
-				g_pd3dDeviceContext11->OMSetRenderTargets(1, &g_hdrEmissiveRTV11, nullptr);
-				HvkGui_ImplDX11_RenderDrawData(ui_data);
-
-				RenderBloomDX11();
-
-				bool do_ui_emissive_add = true;
-#ifdef _DEBUG
-				if (g_debugShowEmissive)
-					do_ui_emissive_add = false;
-#endif
-				if (do_ui_emissive_add)
+				for (HvkDrawList *draw_list : ui_data->CmdLists)
 				{
-					ID3D11Texture2D *backBuffer = nullptr;
-					g_pSwapChain11->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-					if (backBuffer)
-					{
-						D3D11_TEXTURE2D_DESC bbDesc = {};
-						backBuffer->GetDesc(&bbDesc);
-						backBuffer->Release();
-						D3D11_VIEWPORT vp = {};
-						vp.Width = (float)bbDesc.Width;
-						vp.Height = (float)bbDesc.Height;
-						vp.MinDepth = 0.0f;
-						vp.MaxDepth = 1.0f;
-						g_pd3dDeviceContext11->RSSetViewports(1, &vp);
-					}
-					ID3D11RenderTargetView *rtv = g_mainRenderTargetView11;
-					g_pd3dDeviceContext11->OMSetRenderTargets(1, &rtv, nullptr);
-					g_pd3dDeviceContext11->RSSetState(g_tonemapRasterizer11);
-					g_pd3dDeviceContext11->OMSetBlendState(g_tonemapAddBlend11, nullptr, 0xffffffff);
-					g_pd3dDeviceContext11->OMSetDepthStencilState(g_tonemapDepth11, 0);
-					g_pd3dDeviceContext11->IASetInputLayout(nullptr);
-					g_pd3dDeviceContext11->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-					g_pd3dDeviceContext11->VSSetShader(g_tonemapVS11, nullptr, 0);
-					g_pd3dDeviceContext11->PSSetShader(g_tonemapPS11, nullptr, 0);
-					g_pd3dDeviceContext11->PSSetSamplers(0, 1, &g_tonemapSampler11);
+					HvkDrawData single = {};
+					InitSingleDrawData(&single, ui_data, draw_list);
 
-					ID3D11ShaderResourceView *srvs_add[2] = {g_hdrEmissiveSRV11, g_bloomBlurSRV11[0]};
-					g_pd3dDeviceContext11->PSSetShaderResources(0, 2, srvs_add);
-					struct TonemapParams
+					HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode_LDR);
+					g_pd3dDeviceContext11->OMSetRenderTargets(1, &g_mainRenderTargetView11, nullptr);
+					HvkGui_ImplDX11_RenderDrawData(&single);
+
+					if (!DrawListHasEmissive(draw_list))
+						continue;
+					if (!g_hdrEmissiveRTV11 || !g_hdrEmissiveSRV11 || !g_tonemapAddBlend11)
+						continue;
+
+					const float emissive_clear_ui[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+					g_pd3dDeviceContext11->ClearRenderTargetView(g_hdrEmissiveRTV11, emissive_clear_ui);
+					HvkGui_ImplDX11_SetOutputMode(HvkGui_ImplDX11_OutputMode_EmissiveOnly);
+					g_pd3dDeviceContext11->OMSetRenderTargets(1, &g_hdrEmissiveRTV11, nullptr);
+					HvkGui_ImplDX11_RenderDrawData(&single);
+
+					RenderBloomDX11();
+
+					bool do_ui_emissive_add = true;
+#ifdef _DEBUG
+					if (g_debugShowEmissive)
+						do_ui_emissive_add = false;
+#endif
+					if (do_ui_emissive_add)
 					{
-						float Exposure;
-						float BloomIntensity;
-						float pad[2];
-					};
-					TonemapParams params = {};
-					params.Exposure = 1.0f;
-					params.BloomIntensity = g_bloomIntensity;
-					ID3D11Buffer *cb = nullptr;
-					D3D11_BUFFER_DESC cbDesc = {};
-					cbDesc.ByteWidth = sizeof(TonemapParams);
-					cbDesc.Usage = D3D11_USAGE_DYNAMIC;
-					cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-					cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-					if (SUCCEEDED(g_pd3dDevice11->CreateBuffer(&cbDesc, nullptr, &cb)))
-					{
-						D3D11_MAPPED_SUBRESOURCE mapped = {};
-						if (SUCCEEDED(g_pd3dDeviceContext11->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+						ID3D11Texture2D *backBuffer = nullptr;
+						g_pSwapChain11->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
+						if (backBuffer)
 						{
-							memcpy(mapped.pData, &params, sizeof(params));
-							g_pd3dDeviceContext11->Unmap(cb, 0);
+							D3D11_TEXTURE2D_DESC bbDesc = {};
+							backBuffer->GetDesc(&bbDesc);
+							backBuffer->Release();
+							D3D11_VIEWPORT vp = {};
+							vp.Width = (float)bbDesc.Width;
+							vp.Height = (float)bbDesc.Height;
+							vp.MinDepth = 0.0f;
+							vp.MaxDepth = 1.0f;
+							g_pd3dDeviceContext11->RSSetViewports(1, &vp);
 						}
-						g_pd3dDeviceContext11->PSSetConstantBuffers(0, 1, &cb);
+						ID3D11RenderTargetView *rtv = g_mainRenderTargetView11;
+						g_pd3dDeviceContext11->OMSetRenderTargets(1, &rtv, nullptr);
+						g_pd3dDeviceContext11->RSSetState(g_tonemapRasterizer11);
+						g_pd3dDeviceContext11->OMSetBlendState(g_tonemapAddBlend11, nullptr, 0xffffffff);
+						g_pd3dDeviceContext11->OMSetDepthStencilState(g_tonemapDepth11, 0);
+						g_pd3dDeviceContext11->IASetInputLayout(nullptr);
+						g_pd3dDeviceContext11->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+						g_pd3dDeviceContext11->VSSetShader(g_tonemapVS11, nullptr, 0);
+						g_pd3dDeviceContext11->PSSetShader(g_tonemapPS11, nullptr, 0);
+						g_pd3dDeviceContext11->PSSetSamplers(0, 1, &g_tonemapSampler11);
+
+						ID3D11ShaderResourceView *srvs_add[2] = {g_hdrEmissiveSRV11, g_bloomBlurSRV11[0]};
+						g_pd3dDeviceContext11->PSSetShaderResources(0, 2, srvs_add);
+						struct TonemapParams
+						{
+							float Exposure;
+							float BloomIntensity;
+							float pad[2];
+						};
+						TonemapParams params = {};
+						params.Exposure = 1.0f;
+						params.BloomIntensity = g_bloomIntensity;
+						ID3D11Buffer *cb = nullptr;
+						D3D11_BUFFER_DESC cbDesc = {};
+						cbDesc.ByteWidth = sizeof(TonemapParams);
+						cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+						cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+						cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+						if (SUCCEEDED(g_pd3dDevice11->CreateBuffer(&cbDesc, nullptr, &cb)))
+						{
+							D3D11_MAPPED_SUBRESOURCE mapped = {};
+							if (SUCCEEDED(g_pd3dDeviceContext11->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+							{
+								memcpy(mapped.pData, &params, sizeof(params));
+								g_pd3dDeviceContext11->Unmap(cb, 0);
+							}
+							g_pd3dDeviceContext11->PSSetConstantBuffers(0, 1, &cb);
+						}
+						g_pd3dDeviceContext11->Draw(3, 0);
+						if (cb)
+							cb->Release();
+						ID3D11ShaderResourceView *null_srvs[2] = {};
+						g_pd3dDeviceContext11->PSSetShaderResources(0, 2, null_srvs);
 					}
-					g_pd3dDeviceContext11->Draw(3, 0);
-					if (cb)
-						cb->Release();
-					ID3D11ShaderResourceView *null_srvs[2] = {};
-					g_pd3dDeviceContext11->PSSetShaderResources(0, 2, null_srvs);
 				}
 			}
 			g_pSwapChain11->Present(1, 0);

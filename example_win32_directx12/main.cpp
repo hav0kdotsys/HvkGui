@@ -9,9 +9,9 @@
 
 #include "hvkgui.h"
 #include "hvkgui_internal.h"
-#include "../imgui/backends/hvkgui_impl_win32.h"
-#include "../imgui/backends/hvkgui_impl_dx11.h"
-#include "../imgui/backends/hvkgui_impl_dx12.h"
+#include "../hvkgui/backends/hvkgui_impl_win32.h"
+#include "../hvkgui/backends/hvkgui_impl_dx11.h"
+#include "../hvkgui/backends/hvkgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_5.h>
 #include <tchar.h>

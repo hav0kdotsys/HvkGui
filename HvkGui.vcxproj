@@ -94,19 +94,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)imgui;$(ProjectDir)imgui\backends;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)hvkgui;$(ProjectDir)hvkgui\backends;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)imgui;$(ProjectDir)imgui\backends;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)hvkgui;$(ProjectDir)hvkgui\backends;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)imgui;$(ProjectDir)imgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)hvkgui;$(ProjectDir)hvkgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)imgui;$(ProjectDir)imgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)hvkgui;$(ProjectDir)hvkgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dev|x64'">
-    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)imgui;$(ProjectDir)imgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)libs\D3D12\DirectX-Headers\include\directx;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22621.0\um;$(ProjectDir)hvkgui;$(ProjectDir)hvkgui\backends;$(ProjectDir)libs\emscripten;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -186,25 +186,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="example_win32_directx12\main.cpp" />
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_dx11.cpp" />
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_dx12.cpp" />
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_win32.cpp" />
-    <ClCompile Include="imgui\\hvkgui.cpp" />
-    <ClCompile Include="imgui\\hvkgui_demo.cpp" />
-    <ClCompile Include="imgui\\hvkgui_draw.cpp" />
-    <ClCompile Include="imgui\\hvkgui_tables.cpp" />
-    <ClCompile Include="imgui\\hvkgui_widgets.cpp" />
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_dx11.cpp" />
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_dx12.cpp" />
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_win32.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui_demo.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui_draw.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui_tables.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_dx11.h" />
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_dx12.h" />
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_win32.h" />
-    <ClInclude Include="imgui\hvkconfig.h" />
-    <ClInclude Include="imgui\hvkgui.h" />
-    <ClInclude Include="imgui\hvkgui_internal.h" />
-    <ClInclude Include="imgui\\hvkstb_rectpack.h" />
-    <ClInclude Include="imgui\\hvkstb_textedit.h" />
-    <ClInclude Include="imgui\\hvkstb_truetype.h" />
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_dx11.h" />
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_dx12.h" />
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_win32.h" />
+    <ClInclude Include="hvkgui\hvkconfig.h" />
+    <ClInclude Include="hvkgui\hvkgui.h" />
+    <ClInclude Include="hvkgui\hvkgui_internal.h" />
+    <ClInclude Include="hvkgui\\hvkstb_rectpack.h" />
+    <ClInclude Include="hvkgui\\hvkstb_textedit.h" />
+    <ClInclude Include="hvkgui\\hvkstb_truetype.h" />
     <ClInclude Include="util\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

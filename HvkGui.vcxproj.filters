@@ -18,60 +18,60 @@
     <ClCompile Include="example_win32_directx12\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\hvkgui.cpp">
+    <ClCompile Include="hvkgui\\hvkgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\hvkgui_demo.cpp">
+    <ClCompile Include="hvkgui\\hvkgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\hvkgui_draw.cpp">
+    <ClCompile Include="hvkgui\\hvkgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\hvkgui_tables.cpp">
+    <ClCompile Include="hvkgui\\hvkgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\hvkgui_widgets.cpp">
+    <ClCompile Include="hvkgui\\hvkgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_dx12.cpp">
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_dx12.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_win32.cpp">
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\\backends\\hvkgui_impl_dx11.cpp">
+    <ClCompile Include="hvkgui\\backends\\hvkgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui\hvkconfig.h">
+    <ClInclude Include="hvkgui\hvkconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\hvkgui.h">
+    <ClInclude Include="hvkgui\hvkgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\hvkgui_internal.h">
+    <ClInclude Include="hvkgui\hvkgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\hvkstb_rectpack.h">
+    <ClInclude Include="hvkgui\\hvkstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\hvkstb_textedit.h">
+    <ClInclude Include="hvkgui\\hvkstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\hvkstb_truetype.h">
+    <ClInclude Include="hvkgui\\hvkstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_dx12.h">
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_dx12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_win32.h">
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\\backends\\hvkgui_impl_dx11.h">
+    <ClInclude Include="hvkgui\\backends\\hvkgui_impl_dx11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

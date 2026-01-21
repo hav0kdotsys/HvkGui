@@ -447,9 +447,11 @@ void HvkDrawList::_ResetForNewFrame()
     // Verify that the HvkDrawCmd fields we want to memcmp() are contiguous in memory to match HvkDrawCmdHeader.
     Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == 0);
     Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == sizeof(HvkVec4));
-    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == sizeof(HvkVec4) + sizeof(HvkTextureRef));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, EmissiveTexRef) == sizeof(HvkVec4) + sizeof(HvkTextureRef));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == sizeof(HvkVec4) + sizeof(HvkTextureRef) + sizeof(HvkTextureRef));
     Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, ClipRect) == offsetof(HvkDrawCmdHeader, ClipRect));
     Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, TexRef) == offsetof(HvkDrawCmdHeader, TexRef));
+    Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, EmissiveTexRef) == offsetof(HvkDrawCmdHeader, EmissiveTexRef));
     Hvk_STATIC_ASSERT(offsetof(HvkDrawCmd, VtxOffset) == offsetof(HvkDrawCmdHeader, VtxOffset));
     if (_Splitter._Count > 1)
         _Splitter.Merge(this);
@@ -458,12 +460,17 @@ void HvkDrawList::_ResetForNewFrame()
     IdxBuffer.resize(0);
     VtxBuffer.resize(0);
     Flags = _Data->InitialFlags;
+    _EmissiveStrength = 0.0f;
+    _EmissiveColor = Hvk_COL32_WHITE;
+    _EmissiveStrengthStack.resize(0);
+    _EmissiveColorStack.resize(0);
     memset(&_CmdHeader, 0, sizeof(_CmdHeader));
     _VtxCurrentIdx = 0;
     _VtxWritePtr = NULL;
     _IdxWritePtr = NULL;
     _ClipRectStack.resize(0);
     _TextureStack.resize(0);
+    _EmissiveTextureStack.resize(0);
     _CallbacksDataBuf.resize(0);
     _Path.resize(0);
     _Splitter.Clear();
@@ -482,6 +489,7 @@ void HvkDrawList::_ClearFreeMemory()
     _IdxWritePtr = NULL;
     _ClipRectStack.clear();
     _TextureStack.clear();
+    _EmissiveTextureStack.clear();
     _CallbacksDataBuf.clear();
     _Path.clear();
     _Splitter.ClearFreeMemory();
@@ -503,6 +511,7 @@ void HvkDrawList::AddDrawCmd()
     HvkDrawCmd draw_cmd;
     draw_cmd.ClipRect = _CmdHeader.ClipRect;    // Same as calling HvkDrawCmd_HeaderCopy()
     draw_cmd.TexRef = _CmdHeader.TexRef;
+    draw_cmd.EmissiveTexRef = _CmdHeader.EmissiveTexRef;
     draw_cmd.VtxOffset = _CmdHeader.VtxOffset;
     draw_cmd.IdxOffset = IdxBuffer.Size;
 
@@ -560,8 +569,8 @@ void HvkDrawList::AddCallback(HvkDrawCallback callback, void* userdata, size_t u
 
 // Compare ClipRect, TexRef and VtxOffset with a single memcmp()
 #define HvkDrawCmd_HeaderSize                            (offsetof(HvkDrawCmd, VtxOffset) + sizeof(unsigned int))
-#define HvkDrawCmd_HeaderCompare(CMD_LHS, CMD_RHS)       (memcmp(CMD_LHS, CMD_RHS, HvkDrawCmd_HeaderSize))    // Compare ClipRect, TexRef, VtxOffset
-#define HvkDrawCmd_HeaderCopy(CMD_DST, CMD_SRC)          (memcpy(CMD_DST, CMD_SRC, HvkDrawCmd_HeaderSize))    // Copy ClipRect, TexRef, VtxOffset
+#define HvkDrawCmd_HeaderCompare(CMD_LHS, CMD_RHS)       (memcmp(CMD_LHS, CMD_RHS, HvkDrawCmd_HeaderSize))    // Compare ClipRect, TexRef, EmissiveTexRef, VtxOffset
+#define HvkDrawCmd_HeaderCopy(CMD_DST, CMD_SRC)          (memcpy(CMD_DST, CMD_SRC, HvkDrawCmd_HeaderSize))    // Copy ClipRect, TexRef, EmissiveTexRef, VtxOffset
 #define HvkDrawCmd_AreSequentialIdxOffset(CMD_0, CMD_1)  (CMD_0->IdxOffset + CMD_0->ElemCount == CMD_1->IdxOffset)
 
 // Try to merge two last draw commands
@@ -624,6 +633,28 @@ void HvkDrawList::_OnChangedTexture()
         return;
     }
     curr_cmd->TexRef = _CmdHeader.TexRef;
+}
+
+void HvkDrawList::_OnChangedEmissiveTexture()
+{
+    Hvk_ASSERT_PARANOID(CmdBuffer.Size > 0);
+    HvkDrawCmd* curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
+    if (curr_cmd->ElemCount != 0 && curr_cmd->EmissiveTexRef != _CmdHeader.EmissiveTexRef)
+    {
+        AddDrawCmd();
+        return;
+    }
+
+    if (curr_cmd->UserCallback != NULL)
+        return;
+
+    HvkDrawCmd* prev_cmd = curr_cmd - 1;
+    if (curr_cmd->ElemCount == 0 && CmdBuffer.Size > 1 && HvkDrawCmd_HeaderCompare(&_CmdHeader, prev_cmd) == 0 && HvkDrawCmd_AreSequentialIdxOffset(prev_cmd, curr_cmd) && prev_cmd->UserCallback == NULL)
+    {
+        CmdBuffer.pop_back();
+        return;
+    }
+    curr_cmd->EmissiveTexRef = _CmdHeader.EmissiveTexRef;
 }
 
 void HvkDrawList::_OnChangedVtxOffset()
@@ -700,6 +731,46 @@ void HvkDrawList::PopTexture()
     _OnChangedTexture();
 }
 
+void HvkDrawList::PushEmissiveTexture(HvkTextureRef tex_ref)
+{
+    _EmissiveTextureStack.push_back(_CmdHeader.EmissiveTexRef);
+    _CmdHeader.EmissiveTexRef = tex_ref;
+    if (tex_ref._TexData != NULL)
+        Hvk_ASSERT(tex_ref._TexData->WantDestroyNextFrame == false);
+    _OnChangedEmissiveTexture();
+}
+
+void HvkDrawList::PopEmissiveTexture()
+{
+    if (_EmissiveTextureStack.Size == 0)
+    {
+        _CmdHeader.EmissiveTexRef = HvkTextureRef();
+    }
+    else
+    {
+        _CmdHeader.EmissiveTexRef = _EmissiveTextureStack.back();
+        _EmissiveTextureStack.pop_back();
+    }
+    _OnChangedEmissiveTexture();
+}
+
+void HvkDrawList::PushEmissive(float strength, HvkU32 emissive_col)
+{
+    _EmissiveStrengthStack.push_back(_EmissiveStrength);
+    _EmissiveColorStack.push_back(_EmissiveColor);
+    _EmissiveStrength = strength;
+    _EmissiveColor = emissive_col;
+}
+
+void HvkDrawList::PopEmissive()
+{
+    Hvk_ASSERT(_EmissiveStrengthStack.Size > 0 && _EmissiveColorStack.Size > 0);
+    _EmissiveStrength = _EmissiveStrengthStack.back();
+    _EmissiveColor = _EmissiveColorStack.back();
+    _EmissiveStrengthStack.pop_back();
+    _EmissiveColorStack.pop_back();
+}
+
 // This is used by HvkGui::PushFont()/PopFont(). It works because we never use _TextureIdStack[] elsewhere than in PushTexture()/PopTexture().
 void HvkDrawList::_SetTexture(HvkTextureRef tex_ref)
 {
@@ -732,6 +803,11 @@ void HvkDrawList::PrimReserve(int idx_count, int vtx_count)
     int vtx_buffer_old_size = VtxBuffer.Size;
     VtxBuffer.resize(vtx_buffer_old_size + vtx_count);
     _VtxWritePtr = VtxBuffer.Data + vtx_buffer_old_size;
+    for (int n = 0; n < vtx_count; n++)
+    {
+        _VtxWritePtr[n].emissive = _EmissiveStrength;
+        _VtxWritePtr[n].emissive_col = _EmissiveColor;
+    }
 
     int idx_buffer_old_size = IdxBuffer.Size;
     IdxBuffer.resize(idx_buffer_old_size + idx_count);
@@ -5686,6 +5762,8 @@ begin:
     unsigned int vtx_index = draw_list->_VtxCurrentIdx;
     const int cmd_count = draw_list->CmdBuffer.Size;
     const bool cpu_fine_clip = (flags & HvkDrawTextFlags_CpuFineClip) != 0;
+    const float emissive_strength = draw_list->_EmissiveStrength;
+    const HvkU32 emissive_col = draw_list->_EmissiveColor;
 
     const HvkU32 col_untinted = col | ~Hvk_COL32_A_MASK;
     const char* word_wrap_eol = NULL;
@@ -5786,10 +5864,10 @@ begin:
 
                 // We are NOT calling PrimRectUV() here because non-inlined causes too much overhead in a debug builds. Inlined here:
                 {
-                    vtx_write[0].pos.x = x1; vtx_write[0].pos.y = y1; vtx_write[0].col = glyph_col; vtx_write[0].uv.x = u1; vtx_write[0].uv.y = v1;
-                    vtx_write[1].pos.x = x2; vtx_write[1].pos.y = y1; vtx_write[1].col = glyph_col; vtx_write[1].uv.x = u2; vtx_write[1].uv.y = v1;
-                    vtx_write[2].pos.x = x2; vtx_write[2].pos.y = y2; vtx_write[2].col = glyph_col; vtx_write[2].uv.x = u2; vtx_write[2].uv.y = v2;
-                    vtx_write[3].pos.x = x1; vtx_write[3].pos.y = y2; vtx_write[3].col = glyph_col; vtx_write[3].uv.x = u1; vtx_write[3].uv.y = v2;
+                    vtx_write[0].pos.x = x1; vtx_write[0].pos.y = y1; vtx_write[0].col = glyph_col; vtx_write[0].uv.x = u1; vtx_write[0].uv.y = v1; vtx_write[0].emissive = emissive_strength; vtx_write[0].emissive_col = emissive_col;
+                    vtx_write[1].pos.x = x2; vtx_write[1].pos.y = y1; vtx_write[1].col = glyph_col; vtx_write[1].uv.x = u2; vtx_write[1].uv.y = v1; vtx_write[1].emissive = emissive_strength; vtx_write[1].emissive_col = emissive_col;
+                    vtx_write[2].pos.x = x2; vtx_write[2].pos.y = y2; vtx_write[2].col = glyph_col; vtx_write[2].uv.x = u2; vtx_write[2].uv.y = v2; vtx_write[2].emissive = emissive_strength; vtx_write[2].emissive_col = emissive_col;
+                    vtx_write[3].pos.x = x1; vtx_write[3].pos.y = y2; vtx_write[3].col = glyph_col; vtx_write[3].uv.x = u1; vtx_write[3].uv.y = v2; vtx_write[3].emissive = emissive_strength; vtx_write[3].emissive_col = emissive_col;
                     idx_write[0] = (HvkDrawIdx)(vtx_index); idx_write[1] = (HvkDrawIdx)(vtx_index + 1); idx_write[2] = (HvkDrawIdx)(vtx_index + 2);
                     idx_write[3] = (HvkDrawIdx)(vtx_index); idx_write[4] = (HvkDrawIdx)(vtx_index + 2); idx_write[5] = (HvkDrawIdx)(vtx_index + 3);
                     vtx_write += 4;

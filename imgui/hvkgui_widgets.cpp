@@ -1138,6 +1138,166 @@ void HvkGui::HvkageWithBg(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, con
     window->DrawList->AddImage(tex_ref, bb.Min + padding, bb.Max - padding, uv0, uv1, GetColorU32(tint_col));
 }
 
+static void HvkGui_CalcRotatedUV(const HvkVec2& uv0, const HvkVec2& uv1, const HvkVec2& uv_center, float angle, HvkVec2 out_uv[4])
+{
+    const float c = HvkCos(angle);
+    const float s = HvkSin(angle);
+    const HvkVec2 center(HvkLerp(uv0.x, uv1.x, uv_center.x), HvkLerp(uv0.y, uv1.y, uv_center.y));
+    const HvkVec2 corners[4] = {
+        HvkVec2(uv0.x, uv0.y),
+        HvkVec2(uv1.x, uv0.y),
+        HvkVec2(uv1.x, uv1.y),
+        HvkVec2(uv0.x, uv1.y)
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+        const HvkVec2 d = corners[i] - center;
+        out_uv[i] = HvkVec2(center.x + d.x * c - d.y * s, center.y + d.x * s + d.y * c);
+    }
+}
+
+void HvkGui::HvkageUVRotated(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, float angle_radians, const HvkVec2& uv0, const HvkVec2& uv1, const HvkVec2& uv_center, const HvkVec4& bg_col, const HvkVec4& tint_col)
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    const HvkVec2 padding(g.Style.HvkageBorderSize, g.Style.HvkageBorderSize);
+    const HvkRect bb(window->DC.CursorPos, window->DC.CursorPos + Hvkage_size + padding * 2.0f);
+    ItemSize(bb);
+    if (!ItemAdd(bb, 0))
+        return;
+
+    if (g.Style.HvkageBorderSize > 0.0f)
+        window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(HvkGuiCol_Border), 0.0f, HvkDrawFlags_None, g.Style.HvkageBorderSize);
+    if (bg_col.w > 0.0f)
+        window->DrawList->AddRectFilled(bb.Min + padding, bb.Max - padding, GetColorU32(bg_col));
+
+    HvkVec2 uv[4];
+    HvkGui_CalcRotatedUV(uv0, uv1, uv_center, angle_radians, uv);
+    const HvkVec2 p_min = bb.Min + padding;
+    const HvkVec2 p_max = bb.Max - padding;
+    window->DrawList->AddImageQuad(tex_ref,
+        HvkVec2(p_min.x, p_min.y),
+        HvkVec2(p_max.x, p_min.y),
+        HvkVec2(p_max.x, p_max.y),
+        HvkVec2(p_min.x, p_max.y),
+        uv[0], uv[1], uv[2], uv[3],
+        GetColorU32(tint_col));
+}
+
+void HvkGui::HvkageUVScrollX(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, float scroll_speed, double time, float scroll_offset, const HvkVec2& uv0, const HvkVec2& uv1, const HvkVec4& bg_col, const HvkVec4& tint_col)
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    const HvkVec2 padding(g.Style.HvkageBorderSize, g.Style.HvkageBorderSize);
+    const HvkRect bb(window->DC.CursorPos, window->DC.CursorPos + Hvkage_size + padding * 2.0f);
+    ItemSize(bb);
+    if (!ItemAdd(bb, 0))
+        return;
+
+    if (g.Style.HvkageBorderSize > 0.0f)
+        window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(HvkGuiCol_Border), 0.0f, HvkDrawFlags_None, g.Style.HvkageBorderSize);
+    if (bg_col.w > 0.0f)
+        window->DrawList->AddRectFilled(bb.Min + padding, bb.Max - padding, GetColorU32(bg_col));
+
+    if (time < 0.0)
+        time = HvkGui::GetTime();
+
+    const float uv_range_x = uv1.x - uv0.x;
+    const float width = (bb.Max.x - padding.x) - (bb.Min.x + padding.x);
+    if (uv_range_x <= 0.0f || width <= 0.0f)
+        return;
+
+    float offset = scroll_offset + scroll_speed * (float)time;
+    offset = HvkFmod(offset, 1.0f);
+    if (offset < 0.0f)
+        offset += 1.0f;
+
+    if (offset <= 0.0001f)
+    {
+        window->DrawList->AddImage(tex_ref, bb.Min + padding, bb.Max - padding, uv0, uv1, GetColorU32(tint_col));
+        return;
+    }
+
+    const float uv_split = uv0.x + uv_range_x * offset;
+    const float split_ratio = (uv1.x - uv_split) / uv_range_x;
+    const float split_x = (bb.Min.x + padding.x) + width * split_ratio;
+    const HvkVec2 p_min = bb.Min + padding;
+    const HvkVec2 p_max = bb.Max - padding;
+
+    if (split_x > p_min.x)
+        window->DrawList->AddImage(tex_ref, HvkVec2(p_min.x, p_min.y), HvkVec2(split_x, p_max.y), HvkVec2(uv_split, uv0.y), HvkVec2(uv1.x, uv1.y), GetColorU32(tint_col));
+    if (split_x < p_max.x)
+        window->DrawList->AddImage(tex_ref, HvkVec2(split_x, p_min.y), HvkVec2(p_max.x, p_max.y), HvkVec2(uv0.x, uv0.y), HvkVec2(uv_split, uv1.y), GetColorU32(tint_col));
+}
+
+int HvkGui::CalcAnimFrameIndex(const HvkTextureAnimation& anim, double time)
+{
+    const int frames_x = (anim.FramesX > 0) ? anim.FramesX : 1;
+    const int frames_y = (anim.FramesY > 0) ? anim.FramesY : 1;
+    const int max_frames = frames_x * frames_y;
+    const int frame_count = (anim.FrameCount > 0) ? HvkClamp(anim.FrameCount, 1, max_frames) : max_frames;
+
+    if (frame_count <= 1 || anim.FrameRate <= 0.0f)
+        return HvkClamp(anim.StartFrame, 0, frame_count - 1);
+
+    if (time < 0.0)
+        time = HvkGui::GetTime();
+
+    const double t = time - anim.StartTime;
+    int frame = anim.StartFrame + (int)HvkFloor((float)(t * (double)anim.FrameRate));
+    if (anim.Loop)
+    {
+        if (frame_count > 0)
+            frame = anim.StartFrame + ((frame - anim.StartFrame) % frame_count + frame_count) % frame_count;
+    }
+    else
+    {
+        frame = HvkClamp(frame, anim.StartFrame, anim.StartFrame + frame_count - 1);
+    }
+
+    return HvkClamp(frame, 0, frame_count - 1);
+}
+
+void HvkGui::CalcAnimFrameUV(const HvkTextureAnimation& anim, int frame_index, HvkVec2* uv0, HvkVec2* uv1)
+{
+    const int frames_x = (anim.FramesX > 0) ? anim.FramesX : 1;
+    const int frames_y = (anim.FramesY > 0) ? anim.FramesY : 1;
+    const int max_frames = frames_x * frames_y;
+    const int frame_count = (anim.FrameCount > 0) ? HvkClamp(anim.FrameCount, 1, max_frames) : max_frames;
+    const int clamped = HvkClamp(frame_index, 0, frame_count - 1);
+
+    const int fx = clamped % frames_x;
+    const int fy = clamped / frames_x;
+    const float inv_x = 1.0f / (float)frames_x;
+    const float inv_y = 1.0f / (float)frames_y;
+    if (uv0)
+        *uv0 = HvkVec2((float)fx * inv_x, (float)fy * inv_y);
+    if (uv1)
+        *uv1 = HvkVec2((float)(fx + 1) * inv_x, (float)(fy + 1) * inv_y);
+}
+
+void HvkGui::HvkageAnimated(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkTextureAnimation& anim, double time, const HvkVec4& bg_col, const HvkVec4& tint_col)
+{
+    HvkVec2 uv0, uv1;
+    const int frame = CalcAnimFrameIndex(anim, time);
+    CalcAnimFrameUV(anim, frame, &uv0, &uv1);
+    HvkageWithBg(tex_ref, Hvkage_size, uv0, uv1, bg_col, tint_col);
+}
+
+void HvkGui::HvkageEmissive(HvkTextureRef diffuse_tex_ref, HvkTextureRef emissive_tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0, const HvkVec2& uv1)
+{
+    PushEmissiveTexture(emissive_tex_ref);
+    Hvkage(diffuse_tex_ref, Hvkage_size, uv0, uv1);
+    PopEmissiveTexture();
+}
+
 void HvkGui::Hvkage(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0, const HvkVec2& uv1)
 {
     HvkageWithBg(tex_ref, Hvkage_size, uv0, uv1);

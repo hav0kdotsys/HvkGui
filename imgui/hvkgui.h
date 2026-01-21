@@ -174,7 +174,7 @@ struct HvkDrawData;                  // All draw command lists required to rende
 struct HvkDrawList;                  // A single draw command list (generally one per window, conceptually you may see this as a dynamic "mesh" builder)
 struct HvkDrawListSharedData;        // Data shared among multiple draw lists (typically owned by parent HvkGui context, but you may create one yourself)
 struct HvkDrawListSplitter;          // Helper to split a draw list into different layers which can be drawn into out of order, then flattened back.
-struct HvkDrawVert;                  // A single vertex (pos + uv + col = 20 bytes by default. Override layout with HvkGui_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
+struct HvkDrawVert;                  // A single vertex (pos + uv + col + emissive = 28 bytes by default. Override layout with HvkGui_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
 struct HvkFont;                      // Runtime data for a single font within a parent HvkFontAtlas
 struct HvkFontAtlas;                 // Runtime data for multiple fonts, bake multiple fonts into a single texture, TTF/OTF font loader
 struct HvkFontAtlasBuilder;          // Opaque storage for building a HvkFontAtlas
@@ -186,6 +186,8 @@ struct HvkFontGlyphRangesBuilder;    // Helper to build glyph ranges from text/s
 struct HvkFontLoader;                // Opaque interface to a font loading backend (stb_truetype, FreeType etc.).
 struct HvkTextureData;               // Specs and pixel storage for a texture used by Dear HvkGui.
 struct HvkTextureRect;               // Coordinates of a rectangle within a texture.
+struct HvkTextureAnimation;          // Settings for sprite-sheet texture animations.
+struct HvkTexturedBorderStyle;       // Settings for textured borders.
 struct HvkColor;                     // Helper functions to create a color that can be converted to either u32 or float4 (*OBSOLETE* please avoid using)
 
 // Forward declarations: HvkGui layer
@@ -479,6 +481,7 @@ namespace HvkGui
     HvkGui_API void          SetNextWindowFocus();                                                       // set next window to be focused / top-most. call before Begin()
     HvkGui_API void          SetNextWindowScroll(const HvkVec2& scroll);                                  // set next window scrolling value (use < 0.0f to not affect a given axis).
     HvkGui_API void          SetNextWindowBgAlpha(float alpha);                                          // set next window background color alpha. helper to easily override the Alpha component of HvkGuiCol_WindowBg/ChildBg/PopupBg. you may also use HvkGuiWindowFlags_NoBackground.
+    HvkGui_API void          SetNextWindowTexturedBorder(HvkTextureRef border_tex, const HvkTexturedBorderStyle* border_style = NULL); // set next window textured border (outer border).
     HvkGui_API void          SetWindowPos(const HvkVec2& pos, HvkGuiCond cond = 0);                        // (not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
     HvkGui_API void          SetWindowSize(const HvkVec2& size, HvkGuiCond cond = 0);                      // (not recommended) set current window size - call within Begin()/End(). set to HvkVec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects.
     HvkGui_API void          SetWindowCollapsed(bool collapsed, HvkGuiCond cond = 0);                     // (not recommended) set current window collapsed state. prefer using SetNextWindowCollapsed().
@@ -625,7 +628,10 @@ namespace HvkGui
     HvkGui_API void          BulletText(const char* fmt, ...)                                Hvk_FMTARGS(1); // shortcut for Bullet()+Text()
     HvkGui_API void          BulletTextV(const char* fmt, va_list args)                      Hvk_FMTLIST(1);
     HvkGui_API void          SeparatorText(const char* label);                               // currently: formatted text with a horizontal line
-
+    HvkGui_API void          PushEmissive(float strength, const HvkVec4& tint = HvkVec4(1, 1, 1, 1));
+    HvkGui_API void          PopEmissive();
+    HvkGui_API void          PushEmissiveTexture(HvkTextureRef tex_ref);
+    HvkGui_API void          PopEmissiveTexture();
     // Widgets: Main
     // - Most widgets return true when the value has been changed or when pressed/selected
     // - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
@@ -650,8 +656,15 @@ namespace HvkGui
     // - HvkageButton() draws a background based on regular Button() color + optionally an inner background if specified.
     // - An obsolete version of Hvkage(), before 1.91.9 (March 2025), had a 'tint_col' parameter which is now supported by the HvkageWithBg() function.
     HvkGui_API void          Hvkage(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1));
+    HvkGui_API void          HvkageEmissive(HvkTextureRef diffuse_tex_ref, HvkTextureRef emissive_tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1));
     HvkGui_API void          HvkageWithBg(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1), const HvkVec4& bg_col = HvkVec4(0, 0, 0, 0), const HvkVec4& tint_col = HvkVec4(1, 1, 1, 1));
     HvkGui_API bool          HvkageButton(const char* str_id, HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1), const HvkVec4& bg_col = HvkVec4(0, 0, 0, 0), const HvkVec4& tint_col = HvkVec4(1, 1, 1, 1));
+    HvkGui_API void          HvkageUVRotated(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, float angle_radians, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1), const HvkVec2& uv_center = HvkVec2(0.5f, 0.5f), const HvkVec4& bg_col = HvkVec4(0, 0, 0, 0), const HvkVec4& tint_col = HvkVec4(1, 1, 1, 1));
+    HvkGui_API void          HvkageUVScrollX(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, float scroll_speed, double time = -1.0, float scroll_offset = 0.0f, const HvkVec2& uv0 = HvkVec2(0, 0), const HvkVec2& uv1 = HvkVec2(1, 1), const HvkVec4& bg_col = HvkVec4(0, 0, 0, 0), const HvkVec4& tint_col = HvkVec4(1, 1, 1, 1));
+    HvkGui_API int           CalcAnimFrameIndex(const HvkTextureAnimation& anim, double time = -1.0);
+    HvkGui_API void          CalcAnimFrameUV(const HvkTextureAnimation& anim, int frame_index, HvkVec2* uv0, HvkVec2* uv1);
+    HvkGui_API void          HvkageAnimated(HvkTextureRef tex_ref, const HvkVec2& Hvkage_size, const HvkTextureAnimation& anim, double time = -1.0, const HvkVec4& bg_col = HvkVec4(0, 0, 0, 0), const HvkVec4& tint_col = HvkVec4(1, 1, 1, 1));
+    HvkGui_API bool          tBegin(const char* name, HvkTextureRef border_tex, const HvkTexturedBorderStyle* border_style = NULL, bool* p_open = NULL, HvkGuiWindowFlags flags = 0); // Begin() + textured border
 
     // Widgets: Combo Box (Dropdown)
     // - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items.
@@ -2275,7 +2288,7 @@ struct HvkGuiStyle
     float       DisabledAlpha;              // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
     HvkVec2      WindowPadding;              // Padding within a window.
     float       WindowRounding;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
-    float       WindowBorderSize;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+    float       WindowBorderSize;           // Thickness of border around windows (drawn outside the window rect). Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     float       WindowBorderHoverPadding;   // Hit-testing extent outside/inside resizing border. Also extend determination of hovered window. Generally meaningfully larger than WindowBorderSize to make it easy to reach borders.
     HvkVec2      WindowMinSize;              // Minimum window size. This is a global setting. If you want to constrain individual windows, use SetNextWindowSizeConstraints().
     HvkVec2      WindowTitleAlign;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
@@ -3145,6 +3158,7 @@ struct HvkDrawCmd
 {
     HvkVec4          ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract HvkDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates
     HvkTextureRef    TexRef;             // 16   // Reference to a font/texture atlas (where backend called HvkTextureData::SetTexID()) or to a user-provided texture ID (via e.g. HvkGui::Hvkage() calls). Both will lead to a HvkTextureID value.
+    HvkTextureRef    EmissiveTexRef;     // 16   // Optional emissive texture reference (paired with TexRef).
     unsigned int    VtxOffset;          // 4    // Start offset in vertex buffer. HvkGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.
     unsigned int    IdxOffset;          // 4    // Start offset in index buffer.
     unsigned int    ElemCount;          // 4    // Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee HvkDrawList's vtx_buffer[] array, indices in idx_buffer[].
@@ -3157,7 +3171,8 @@ struct HvkDrawCmd
 
     // Since 1.83: returns HvkTextureID associated with this draw call. Warning: DO NOT assume this is always same as 'TextureId' (we will change this function for an upcoming feature)
     // Since 1.92: removed HvkDrawCmd::TextureId field, the getter function must be used!
-    inline HvkTextureID GetTexID() const;    // == (TexRef._TexData ? TexRef._TexData->TexID : TexRef._TexID)
+    inline HvkTextureID GetTexID() const;          // == (TexRef._TexData ? TexRef._TexData->TexID : TexRef._TexID)
+    inline HvkTextureID GetEmissiveTexID() const;  // == (EmissiveTexRef._TexData ? EmissiveTexRef._TexData->TexID : EmissiveTexRef._TexID)
 };
 
 // Vertex layout
@@ -3167,6 +3182,8 @@ struct HvkDrawVert
     HvkVec2  pos;
     HvkVec2  uv;
     HvkU32   col;
+    float   emissive;
+    HvkU32   emissive_col;
 };
 #else
 // You can override the vertex format layout by defining HvkGui_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in Hvkconfig.h
@@ -3181,6 +3198,7 @@ struct HvkDrawCmdHeader
 {
     HvkVec4          ClipRect;
     HvkTextureRef    TexRef;
+    HvkTextureRef    EmissiveTexRef;
     unsigned int    VtxOffset;
 };
 
@@ -3267,6 +3285,11 @@ struct HvkDrawList
     HvkVector<HvkVec4>        _ClipRectStack;     // [Internal]
     HvkVector<HvkTextureRef>  _TextureStack;      // [Internal]
     HvkVector<HvkU8>          _CallbacksDataBuf;  // [Internal]
+    HvkVector<float>         _EmissiveStrengthStack; // [Internal]
+    HvkVector<HvkU32>         _EmissiveColorStack;    // [Internal]
+    float                   _EmissiveStrength;   // [Internal]
+    HvkU32                   _EmissiveColor;     // [Internal]
+    HvkVector<HvkTextureRef>  _EmissiveTextureStack; // [Internal]
     float                   _FringeScale;       // [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content
     const char*             _OwnerName;         // Pointer to owner window's name for debugging
 
@@ -3280,6 +3303,10 @@ struct HvkDrawList
     HvkGui_API void  PopClipRect();
     HvkGui_API void  PushTexture(HvkTextureRef tex_ref);
     HvkGui_API void  PopTexture();
+    HvkGui_API void  PushEmissive(float strength, HvkU32 emissive_col = Hvk_COL32_WHITE);
+    HvkGui_API void  PopEmissive();
+    HvkGui_API void  PushEmissiveTexture(HvkTextureRef tex_ref);
+    HvkGui_API void  PopEmissiveTexture();
     inline HvkVec2   GetClipRectMin() const { const HvkVec4& cr = _ClipRectStack.back(); return HvkVec2(cr.x, cr.y); }
     inline HvkVec2   GetClipRectMax() const { const HvkVec4& cr = _ClipRectStack.back(); return HvkVec2(cr.z, cr.w); }
 
@@ -3373,7 +3400,7 @@ struct HvkDrawList
     HvkGui_API void  PrimRect(const HvkVec2& a, const HvkVec2& b, HvkU32 col);      // Axis aligned rectangle (composed of two triangles)
     HvkGui_API void  PrimRectUV(const HvkVec2& a, const HvkVec2& b, const HvkVec2& uv_a, const HvkVec2& uv_b, HvkU32 col);
     HvkGui_API void  PrimQuadUV(const HvkVec2& a, const HvkVec2& b, const HvkVec2& c, const HvkVec2& d, const HvkVec2& uv_a, const HvkVec2& uv_b, const HvkVec2& uv_c, const HvkVec2& uv_d, HvkU32 col);
-    inline    void  PrimWriteVtx(const HvkVec2& pos, const HvkVec2& uv, HvkU32 col)    { _VtxWritePtr->pos = pos; _VtxWritePtr->uv = uv; _VtxWritePtr->col = col; _VtxWritePtr++; _VtxCurrentIdx++; }
+    inline    void  PrimWriteVtx(const HvkVec2& pos, const HvkVec2& uv, HvkU32 col)    { _VtxWritePtr->pos = pos; _VtxWritePtr->uv = uv; _VtxWritePtr->col = col; _VtxWritePtr->emissive = _EmissiveStrength; _VtxWritePtr->emissive_col = _EmissiveColor; _VtxWritePtr++; _VtxCurrentIdx++; }
     inline    void  PrimWriteIdx(HvkDrawIdx idx)                                     { *_IdxWritePtr = idx; _IdxWritePtr++; }
     inline    void  PrimVtx(const HvkVec2& pos, const HvkVec2& uv, HvkU32 col)         { PrimWriteIdx((HvkDrawIdx)_VtxCurrentIdx); PrimWriteVtx(pos, uv, col); } // Write vertex with unique index
 
@@ -3396,6 +3423,7 @@ struct HvkDrawList
     HvkGui_API void  _TryMergeDrawCmds();
     HvkGui_API void  _OnChangedClipRect();
     HvkGui_API void  _OnChangedTexture();
+    HvkGui_API void  _OnChangedEmissiveTexture();
     HvkGui_API void  _OnChangedVtxOffset();
     HvkGui_API void  _SetTexture(HvkTextureRef tex_ref);
     HvkGui_API int   _CalcCircleAutoSegmentCount(float radius) const;
@@ -3508,6 +3536,46 @@ struct HvkTextureData
     // - A backend may decide to destroy a texture that we did not request to destroy, which is fine (e.g. freeing resources), but we immediately set the texture back in _WantCreate mode.
     void    SetTexID(HvkTextureID tex_id)            { TexID = tex_id; }
     void    SetStatus(HvkTextureStatus status)       { Status = status; if (status == HvkTextureStatus_Destroyed && !WantDestroyNextFrame) Status = HvkTextureStatus_WantCreate; }
+};
+
+// Settings for sprite-sheet animations (multi-frame textures).
+struct HvkTextureAnimation
+{
+    int     FramesX;        // Columns in the sprite sheet.
+    int     FramesY;        // Rows in the sprite sheet.
+    int     FrameCount;     // Total frames (<= FramesX*FramesY). If <= 0, uses FramesX*FramesY.
+    float   FrameRate;      // Frames per second. If <= 0, animation is static.
+    bool    Loop;           // Loop animation when reaching the end.
+    int     StartFrame;     // First frame index.
+    double  StartTime;      // Time offset (seconds). Defaults to 0.
+
+    HvkTextureAnimation()
+    {
+        FramesX = 1;
+        FramesY = 1;
+        FrameCount = 1;
+        FrameRate = 0.0f;
+        Loop = true;
+        StartFrame = 0;
+        StartTime = 0.0;
+    }
+};
+
+// Settings for textured borders without emissive.
+struct HvkTexturedBorderStyle
+{
+    float   Thickness;   // Border thickness in pixels.
+    float   Rounding;    // Corner rounding radius in pixels.
+    HvkVec4 InnerColor;  // Fill color for the inner rect (typically window bg).
+    HvkVec4 BorderTint;  // Tint for the border texture.
+
+    HvkTexturedBorderStyle()
+    {
+        Thickness = 4.0f;
+        Rounding = 8.0f;
+        InnerColor = HvkVec4(0.0f, 0.0f, 0.0f, 0.0f);
+        BorderTint = HvkVec4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -3889,6 +3957,14 @@ inline HvkTextureID HvkDrawCmd::GetTexID() const
     HvkTextureID tex_id = TexRef._TexData ? TexRef._TexData->TexID : TexRef._TexID; // == TexRef.GetTexID() above.
     if (TexRef._TexData != NULL)
         Hvk_ASSERT(tex_id != HvkTextureID_Invalid && "HvkDrawCmd is referring to HvkTextureData that wasn't uploaded to graphics system. Backend must call HvkTextureData::SetTexID() after handling HvkTextureStatus_WantCreate request!");
+    return tex_id;
+}
+
+inline HvkTextureID HvkDrawCmd::GetEmissiveTexID() const
+{
+    HvkTextureID tex_id = EmissiveTexRef._TexData ? EmissiveTexRef._TexData->TexID : EmissiveTexRef._TexID;
+    if (EmissiveTexRef._TexData != NULL)
+        Hvk_ASSERT(tex_id != HvkTextureID_Invalid && "HvkDrawCmd is referring to EmissiveTexRef that wasn't uploaded to graphics system.");
     return tex_id;
 }
 

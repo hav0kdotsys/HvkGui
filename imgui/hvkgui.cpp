@@ -6724,7 +6724,7 @@ static void CalcResizePosSizeFromAnyCorner(HvkGuiWindow* window, const HvkVec2& 
         HvkGuiWindow* parent_window = window->ParentWindow;
         HvkGuiWindowFlags parent_flags = parent_window->Flags;
         HvkRect limit_rect = parent_window->InnerRect;
-        limit_rect.Expand(HvkVec2(-Immax(parent_window->WindowPadding.x, parent_window->WindowBorderSize), -Immax(parent_window->WindowPadding.y, parent_window->WindowBorderSize)));
+        limit_rect.Expand(HvkVec2(-parent_window->WindowPadding.x, -parent_window->WindowPadding.y));
         if ((parent_flags & (HvkGuiWindowFlags_HorizontalScrollbar | HvkGuiWindowFlags_AlwaysHorizontalScrollbar)) == 0 || (parent_flags & HvkGuiWindowFlags_NoScrollbar))
             corner_target.x = HvkClamp(corner_target.x, limit_rect.Min.x, limit_rect.Max.x);
         if (parent_flags & HvkGuiWindowFlags_NoScrollbar)
@@ -6775,6 +6775,8 @@ static const HvkGuiResizeBorderDef resize_border_def[4] =
 static HvkRect GetResizeBorderRect(HvkGuiWindow* window, int border_n, float perp_padding, float thickness)
 {
     HvkRect rect = window->Rect();
+    if (window->WindowBorderSize > 0.0f)
+        rect.Expand(HvkVec2(window->WindowBorderSize, window->WindowBorderSize));
     if (thickness == 0.0f)
         rect.Max -= HvkVec2(1, 1);
     if (border_n == HvkGuiDir_Left)  { return HvkRect(rect.Min.x - thickness,    rect.Min.y + perp_padding, rect.Min.x + thickness,    rect.Max.y - perp_padding); }
@@ -7037,11 +7039,9 @@ static void HvkGui::RenderWindowOuterBorders(HvkGuiWindow* window)
     HvkGuiContext& g = *GHvkGui;
     const float border_size = window->WindowBorderSize;
     const HvkU32 border_col = GetColorU32(HvkGuiCol_Border);
-    if (border_size > 0.0f && (window->Flags & HvkGuiWindowFlags_NoBackground) == 0)
-        window->DrawList->AddRect(window->Pos, window->Pos + window->Size, border_col, window->WindowRounding, 0, window->WindowBorderSize);
-    else if (border_size > 0.0f)
+    if (border_size > 0.0f && (window->Flags & HvkGuiWindowFlags_NoBackground) != 0)
     {
-        if (window->ChildFlags & HvkGuiChildFlags_ResizeX) // Similar code as 'resize_border_mask' computation in UpdateWindowManualResize() but we specifically only always draw explicit child resize border.
+        if (window->ChildFlags & HvkGuiChildFlags_ResizeX)
             RenderWindowOuterSingleBorder(window, 1, border_col, border_size);
         if (window->ChildFlags & HvkGuiChildFlags_ResizeY)
             RenderWindowOuterSingleBorder(window, 3, border_col, border_size);
@@ -7076,11 +7076,23 @@ void HvkGui::RenderWindowDecorations(HvkGuiWindow* window, const HvkRect& title_
     // As we highlight the title bar when want_focus is set, multiple reappearing windows will have their title bar highlighted on their reappearing frame.
     const float window_rounding = window->WindowRounding;
     const float window_border_size = window->WindowBorderSize;
+    const bool has_textured_border = window->BorderHasTexture;
+
+    if (window_border_size > 0.0f && (flags & HvkGuiWindowFlags_NoBackground) == 0)
+    {
+        HvkRect outer_rect = window->Rect();
+        outer_rect.Expand(HvkVec2(window_border_size, window_border_size));
+        const float outer_rounding = window_rounding + window_border_size;
+        if (has_textured_border)
+            window->DrawList->AddImageRounded(window->BorderTexRef, outer_rect.Min, outer_rect.Max, HvkVec2(0.0f, 0.0f), HvkVec2(1.0f, 1.0f), GetColorU32(window->BorderStyle.BorderTint), outer_rounding);
+        else
+            window->DrawList->AddRectFilled(outer_rect.Min, outer_rect.Max, GetColorU32(HvkGuiCol_Border), outer_rounding);
+    }
     if (window->Collapsed)
     {
         // Title bar only
         const float backup_border_size = style.FrameBorderSize;
-        g.Style.FrameBorderSize = window->WindowBorderSize;
+        g.Style.FrameBorderSize = 0.0f;
         HvkU32 title_bar_col = GetColorU32((title_bar_is_highlight && g.NavCursorVisible) ? HvkGuiCol_TitleBgActive : HvkGuiCol_TitleBgCollapsed);
         RenderFrame(title_bar_rect.Min, title_bar_rect.Max, title_bar_col, true, window_rounding);
         g.Style.FrameBorderSize = backup_border_size;
@@ -7090,7 +7102,9 @@ void HvkGui::RenderWindowDecorations(HvkGuiWindow* window, const HvkRect& title_
         // Window background
         if (!(flags & HvkGuiWindowFlags_NoBackground))
         {
-            HvkU32 bg_col = GetColorU32(GetWindowBgColorIdx(window));
+            HvkU32 bg_col = has_textured_border && window->BorderStyle.InnerColor.w >= 0.0f
+                ? GetColorU32(window->BorderStyle.InnerColor)
+                : GetColorU32(GetWindowBgColorIdx(window));
             bool override_alpha = false;
             float alpha = 1.0f;
             if (g.NextWindowData.HasFlags & HvkGuiNextWindowDataFlags_HasBgAlpha)
@@ -7117,7 +7131,7 @@ void HvkGui::RenderWindowDecorations(HvkGuiWindow* window, const HvkRect& title_
             menu_bar_rect.ClipWith(window->Rect());  // Soft clipping, in particular child window don't have minimum size covering the menu bar so this is useful for them.
             window->DrawList->AddRectFilled(menu_bar_rect.Min, menu_bar_rect.Max, GetColorU32(HvkGuiCol_MenuBarBg), (flags & HvkGuiWindowFlags_NoTitleBar) ? window_rounding : 0.0f, HvkDrawFlags_RoundCornersTop);
             if (style.FrameBorderSize > 0.0f && menu_bar_rect.Max.y < window->Pos.y + window->Size.y)
-                window->DrawList->AddLine(menu_bar_rect.GetBL() + HvkVec2(window_border_size * 0.5f, 0.0f), menu_bar_rect.GetBR() - HvkVec2(window_border_size * 0.5f, 0.0f), GetColorU32(HvkGuiCol_Border), style.FrameBorderSize);
+                window->DrawList->AddLine(menu_bar_rect.GetBL(), menu_bar_rect.GetBR(), GetColorU32(HvkGuiCol_Border), style.FrameBorderSize);
         }
 
         // Scrollbars
@@ -7136,7 +7150,7 @@ void HvkGui::RenderWindowDecorations(HvkGuiWindow* window, const HvkRect& title_
                     continue;
                 const HvkGuiResizeGripDef& grip = resize_grip_def[resize_grip_n];
                 const HvkVec2 corner = HvkLerp(window->Pos, window->Pos + window->Size, grip.CornerPosN);
-                const float border_inner = Hvk_ROUND(window_border_size * 0.5f);
+                const float border_inner = 0.0f;
                 window->DrawList->PathLineTo(corner + grip.InnerDir * ((resize_grip_n & 1) ? HvkVec2(border_inner, resize_grip_draw_size) : HvkVec2(resize_grip_draw_size, border_inner)));
                 window->DrawList->PathLineTo(corner + grip.InnerDir * ((resize_grip_n & 1) ? HvkVec2(resize_grip_draw_size, border_inner) : HvkVec2(border_inner, resize_grip_draw_size)));
                 window->DrawList->PathArcToFast(HvkVec2(corner.x + grip.InnerDir.x * (window_rounding + border_inner), corner.y + grip.InnerDir.y * (window_rounding + border_inner)), window_rounding, grip.AngleMin12, grip.AngleMax12);
@@ -7548,6 +7562,18 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
             window->WindowBorderSize = style.ChildBorderSize;
         else
             window->WindowBorderSize = ((flags & (HvkGuiWindowFlags_Popup | HvkGuiWindowFlags_Tooltip)) && !(flags & HvkGuiWindowFlags_Modal)) ? style.PopupBorderSize : style.WindowBorderSize;
+        window->BorderTexRef = HvkTextureRef();
+        window->BorderStyle = HvkTexturedBorderStyle();
+        window->BorderHasTexture = false;
+        if (g.NextWindowData.HasFlags & HvkGuiNextWindowDataFlags_HasTexturedBorder)
+        {
+            window->BorderTexRef = g.NextWindowData.BorderTexRef;
+            window->BorderStyle = g.NextWindowData.BorderStyle;
+            window->BorderHasTexture = (window->BorderTexRef._TexData != NULL || window->BorderTexRef._TexID != HvkTextureID_Invalid);
+            window->WindowBorderSize = window->BorderStyle.Thickness;
+            if (window->BorderStyle.InnerColor.w < 0.0f)
+                window->BorderStyle.InnerColor = style.Colors[HvkGuiCol_WindowBg];
+        }
         window->WindowPadding = style.WindowPadding;
         if ((flags & HvkGuiWindowFlags_ChildWindow) && !(flags & HvkGuiWindowFlags_Popup) && !(window->ChildFlags & HvkGuiChildFlags_AlwaysUseWindowPadding) && window->WindowBorderSize == 0.0f)
             window->WindowPadding = HvkVec2(0.0f, (flags & HvkGuiWindowFlags_MenuBar) ? style.WindowPadding.y : 0.0f);
@@ -7691,6 +7717,8 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
         // Lock window rounding for the frame (so that altering them doesn't cause inconsistencies)
         // Large values tend to lead to variety of artifacts and are not recommended.
         window->WindowRounding = (flags & HvkGuiWindowFlags_ChildWindow) ? style.ChildRounding : ((flags & HvkGuiWindowFlags_Popup) && !(flags & HvkGuiWindowFlags_Modal)) ? style.PopupRounding : style.WindowRounding;
+        if (window->BorderHasTexture)
+            window->WindowRounding = window->BorderStyle.Rounding;
 
         // For windows with title bar or menu bar, we clamp to FrameHeight(FontSize + FramePadding.y * 2.0f) to completely hide artifacts.
         //if ((window->Flags & HvkGuiWindowFlags_MenuBar) || !(window->Flags & HvkGuiWindowFlags_NoTitleBar))
@@ -7799,7 +7827,9 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
         // - Begin() initial clipping rect for drawing window background and borders.
         // - Begin() clipping whole child
         const HvkRect host_rect = ((flags & HvkGuiWindowFlags_ChildWindow) && !(flags & HvkGuiWindowFlags_Popup) && !window_is_child_tooltip) ? parent_window->ClipRect : viewport_rect;
-        const HvkRect outer_rect = window->Rect();
+        HvkRect outer_rect = window->Rect();
+        if (window->WindowBorderSize > 0.0f)
+            outer_rect.Expand(HvkVec2(window->WindowBorderSize, window->WindowBorderSize));
         const HvkRect title_bar_rect = window->TitleBarRect();
         window->OuterRectClipped = outer_rect;
         window->OuterRectClipped.ClipWith(host_rect);
@@ -7816,23 +7846,16 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
         window->InnerRect.Max.y = window->Pos.y + window->Size.y - window->DecoOuterSizeY2;
 
         // Inner clipping rectangle.
-        // - Extend a outside of normal work region up to borders.
-        // - This is to allow e.g. Selectable or CollapsingHeader or some separators to cover that space.
-        // - It also makes clipped items be more noticeable.
-        // - And is consistent on both axis (prior to 2024/05/03 ClipRect used WindowPadding.x * 0.5f on left and right edge), see #3312
+        // - Outer borders are drawn outside the window rect, so clipping uses the inner rect only.
         // - Force round operator last to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
         // Note that if our window is collapsed we will end up with an inverted (~null) clipping rectangle which is the correct behavior.
         // Affected by window/frame border size. Used by:
         // - Begin() initial clip rect
-        float top_border_size = (((flags & HvkGuiWindowFlags_MenuBar) || !(flags & HvkGuiWindowFlags_NoTitleBar)) ? style.FrameBorderSize : window->WindowBorderSize);
-
-        // Try to match the fact that our border is drawn centered over the window rectangle, rather than inner.
-        // This is why we do a *0.5f here. We don't currently even technically support large values for WindowBorderSize,
-        // see e.g #7887 #7888, but may do after we move the window border to become an inner border (and then we can remove the 0.5f here).
-        window->InnerClipRect.Min.x = HvkFloor(0.5f + window->InnerRect.Min.x + window->WindowBorderSize * 0.5f);
-        window->InnerClipRect.Min.y = HvkFloor(0.5f + window->InnerRect.Min.y + top_border_size * 0.5f);
-        window->InnerClipRect.Max.x = HvkFloor(window->InnerRect.Max.x - window->WindowBorderSize * 0.5f);
-        window->InnerClipRect.Max.y = HvkFloor(window->InnerRect.Max.y - window->WindowBorderSize * 0.5f);
+        float top_border_size = (((flags & HvkGuiWindowFlags_MenuBar) || !(flags & HvkGuiWindowFlags_NoTitleBar)) ? style.FrameBorderSize : 0.0f);
+        window->InnerClipRect.Min.x = HvkFloor(0.5f + window->InnerRect.Min.x);
+        window->InnerClipRect.Min.y = HvkFloor(0.5f + window->InnerRect.Min.y + top_border_size);
+        window->InnerClipRect.Max.x = HvkFloor(window->InnerRect.Max.x);
+        window->InnerClipRect.Max.y = HvkFloor(window->InnerRect.Max.y);
         window->InnerClipRect.ClipWithFull(host_rect);
 
         // SCROLLING
@@ -7893,8 +7916,8 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
         const bool allow_scrollbar_y = !(flags & HvkGuiWindowFlags_NoScrollbar);
         const float work_rect_size_x = (window->ContentSizeExplicit.x != 0.0f ? window->ContentSizeExplicit.x : Immax(allow_scrollbar_x ? window->ContentSize.x : 0.0f, window->Size.x - window->WindowPadding.x * 2.0f - (window->DecoOuterSizeX1 + window->DecoOuterSizeX2)));
         const float work_rect_size_y = (window->ContentSizeExplicit.y != 0.0f ? window->ContentSizeExplicit.y : Immax(allow_scrollbar_y ? window->ContentSize.y : 0.0f, window->Size.y - window->WindowPadding.y * 2.0f - (window->DecoOuterSizeY1 + window->DecoOuterSizeY2)));
-        window->WorkRect.Min.x = HvkTrunc(window->InnerRect.Min.x - window->Scroll.x + Immax(window->WindowPadding.x, window->WindowBorderSize));
-        window->WorkRect.Min.y = HvkTrunc(window->InnerRect.Min.y - window->Scroll.y + Immax(window->WindowPadding.y, window->WindowBorderSize));
+        window->WorkRect.Min.x = HvkTrunc(window->InnerRect.Min.x - window->Scroll.x + window->WindowPadding.x);
+        window->WorkRect.Min.y = HvkTrunc(window->InnerRect.Min.y - window->Scroll.y + window->WindowPadding.y);
         window->WorkRect.Max.x = window->WorkRect.Min.x + work_rect_size_x;
         window->WorkRect.Max.y = window->WorkRect.Min.y + work_rect_size_y;
         window->ParentWorkRect = window->WorkRect;
@@ -7981,7 +8004,7 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
 
         // Title bar
         if (!(flags & HvkGuiWindowFlags_NoTitleBar))
-            RenderWindowTitleBarContents(window, HvkRect(title_bar_rect.Min.x + window->WindowBorderSize, title_bar_rect.Min.y, title_bar_rect.Max.x - window->WindowBorderSize, title_bar_rect.Max.y), name, p_open);
+            RenderWindowTitleBarContents(window, title_bar_rect, name, p_open);
 
         // Clear hit test shape every frame
         window->HitTestHoleSize.x = window->HitTestHoleSize.y = 0;
@@ -8101,6 +8124,12 @@ bool HvkGui::Begin(const char* name, bool* p_open, HvkGuiWindowFlags flags)
 #endif
 
     return !window->SkipItems;
+}
+
+bool HvkGui::tBegin(const char* name, HvkTextureRef border_tex, const HvkTexturedBorderStyle* border_style, bool* p_open, HvkGuiWindowFlags flags)
+{
+    SetNextWindowTexturedBorder(border_tex, border_style);
+    return Begin(name, p_open, flags);
 }
 
 void HvkGui::End()
@@ -8597,6 +8626,60 @@ void HvkGui::SetNextWindowBgAlpha(float alpha)
     HvkGuiContext& g = *GHvkGui;
     g.NextWindowData.HasFlags |= HvkGuiNextWindowDataFlags_HasBgAlpha;
     g.NextWindowData.BgAlphaVal = alpha;
+}
+
+void HvkGui::SetNextWindowTexturedBorder(HvkTextureRef border_tex, const HvkTexturedBorderStyle* border_style)
+{
+    HvkGuiContext& g = *GHvkGui;
+    g.NextWindowData.HasFlags |= HvkGuiNextWindowDataFlags_HasTexturedBorder;
+    g.NextWindowData.BorderTexRef = border_tex;
+    if (border_style)
+    {
+        g.NextWindowData.BorderStyle = *border_style;
+    }
+    else
+    {
+        HvkTexturedBorderStyle style;
+        style.InnerColor = HvkVec4(0.0f, 0.0f, 0.0f, -1.0f);
+        g.NextWindowData.BorderStyle = style;
+    }
+}
+
+void HvkGui::PushEmissive(float strength, const HvkVec4& tint)
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = g.CurrentWindow;
+    if (window == NULL)
+        return;
+    const HvkU32 col = ColorConvertFloat4ToU32(tint);
+    window->DrawList->PushEmissive(strength, col);
+}
+
+void HvkGui::PushEmissiveTexture(HvkTextureRef tex_ref)
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = g.CurrentWindow;
+    if (window == NULL)
+        return;
+    window->DrawList->PushEmissiveTexture(tex_ref);
+}
+
+void HvkGui::PopEmissive()
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = g.CurrentWindow;
+    if (window == NULL)
+        return;
+    window->DrawList->PopEmissive();
+}
+
+void HvkGui::PopEmissiveTexture()
+{
+    HvkGuiContext& g = *GHvkGui;
+    HvkGuiWindow* window = g.CurrentWindow;
+    if (window == NULL)
+        return;
+    window->DrawList->PopEmissiveTexture();
 }
 
 // This is experimental and meant to be a toy for exploring a future/wider range of features.

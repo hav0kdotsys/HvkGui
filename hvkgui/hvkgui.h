@@ -4244,6 +4244,8 @@ typedef HvkFontAtlasRect HvkFontAtlasCustomRect;
 #pragma warning (pop)
 #endif
 
+#include "hvkgui_modern.h"
+
 // Include HvkGui_user.h at the end of HvkGui.h
 // May be convenient for some users to only explicitly include vanilla HvkGui.h and have extra stuff included.
 #ifdef HvkGui_INCLUDE_HvkGui_USER_H

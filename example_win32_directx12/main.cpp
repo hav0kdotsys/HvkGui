@@ -12,6 +12,7 @@
 #include "../hvkgui/backends/hvkgui_impl_win32.h"
 #include "../hvkgui/backends/hvkgui_impl_dx11.h"
 #include "../hvkgui/backends/hvkgui_impl_dx12.h"
+#include "../hvkgui/fonts.h"
 #include <d3d12.h>
 #include <dxgi1_5.h>
 #include <tchar.h>
@@ -507,7 +508,7 @@ int main(int, char **)
 	io.ConfigFlags |= HvkGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
 	// Setup Dear HvkGui style
-	HvkGui::StyleColorsDark();
+	HvkGui::ApplyStyleModern22();
 	// HvkGui::StyleColorsLight();
 
 	// Setup scaling
@@ -582,14 +583,18 @@ int main(int, char **)
 	// - Use '#define HvkGui_ENABLE_FREETYPE' in your Hvkconfig file to use Freetype for higher quality font rendering.
 	// - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
 	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-	// style.FontSizeBase = 20.0f;
-	// io.Fonts->AddFontDefault();
-	// io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
-	// HvkFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
-	// Hvk_ASSERT(font != nullptr);
+	io.Fonts->Clear();
+	HvkFontConfig font_cfg;
+	font_cfg.FontDataOwnedByAtlas = false;
+	font_cfg.PixelSnapH = true;
+
+	const HvkWchar* glyph_ranges = io.Fonts->GetGlyphRangesCyrillic();
+	HvkFont* font_semibold = io.Fonts->AddFontFromMemoryTTF(inter_semibold.data(), (int)inter_semibold.size(), 12.0f, &font_cfg, glyph_ranges);
+	HvkFont* font_medium = io.Fonts->AddFontFromMemoryTTF(inter_medium.data(), (int)inter_medium.size(), 11.0f, &font_cfg, glyph_ranges);
+	HvkFont* font_icons = io.Fonts->AddFontFromMemoryTTF(icon_font.data(), (int)icon_font.size(), 12.0f, &font_cfg, glyph_ranges);
+	if (font_medium != nullptr)
+		io.FontDefault = font_medium;
+	HvkGui::SetModernFonts(font_semibold, font_medium, font_icons);
 
 	// Ensure font texture is built and uploaded.
 	unsigned char *font_pixels = nullptr;
@@ -607,10 +612,12 @@ int main(int, char **)
 		LOGF("Font tex update end");
 	}
 
+	
+	
+
 	// Our state
 	HvkVec4 clear_color = HvkVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	{
-		const wchar_t *water_path = L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\water.png";
+	{	const wchar_t *water_path =  L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\water.png";
 		const wchar_t *water_emissive_path = L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\water_E.png";
 		const wchar_t *border_path = L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\Border.png";
 

@@ -195,6 +195,8 @@
     <ClCompile Include="hvkgui\\hvkgui.cpp" />
     <ClCompile Include="hvkgui\\hvkgui_demo.cpp" />
     <ClCompile Include="hvkgui\\hvkgui_draw.cpp" />
+    <ClCompile Include="hvkgui\\hvkgui_modern.cpp" />
+    <ClCompile Include="hvkgui\\misc\\freetype\\HvkGui_freetype.cpp" />
     <ClCompile Include="hvkgui\\hvkgui_tables.cpp" />
     <ClCompile Include="hvkgui\\hvkgui_widgets.cpp" />
   </ItemGroup>
@@ -205,6 +207,9 @@
     <ClInclude Include="hvkgui\hvkconfig.h" />
     <ClInclude Include="hvkgui\hvkgui.h" />
     <ClInclude Include="hvkgui\hvkgui_internal.h" />
+    <ClInclude Include="hvkgui\fonts.h" />
+    <ClInclude Include="hvkgui\hvkgui_modern.h" />
+    <ClInclude Include="hvkgui\\misc\\freetype\\HvkGui_freetype.h" />
     <ClInclude Include="hvkgui\\hvkstb_rectpack.h" />
     <ClInclude Include="hvkgui\\hvkstb_textedit.h" />
     <ClInclude Include="hvkgui\\hvkstb_truetype.h" />

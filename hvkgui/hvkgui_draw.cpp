@@ -183,69 +183,7 @@ using namespace HvkGui_STB_NAMESPACE;
 
 void HvkGui::StyleColorsDark(HvkGuiStyle* dst)
 {
-    HvkGuiStyle* style = dst ? dst : &HvkGui::GetStyle();
-    HvkVec4* colors = style->Colors;
-
-    colors[HvkGuiCol_Text]                   = HvkVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    colors[HvkGuiCol_TextDisabled]           = HvkVec4(0.50f, 0.50f, 0.50f, 1.00f);
-    colors[HvkGuiCol_WindowBg]               = HvkVec4(0.06f, 0.06f, 0.06f, 0.94f);
-    colors[HvkGuiCol_ChildBg]                = HvkVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[HvkGuiCol_PopupBg]                = HvkVec4(0.08f, 0.08f, 0.08f, 0.94f);
-    colors[HvkGuiCol_Border]                 = HvkVec4(0.43f, 0.43f, 0.50f, 0.50f);
-    colors[HvkGuiCol_BorderShadow]           = HvkVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[HvkGuiCol_FrameBg]                = HvkVec4(0.16f, 0.29f, 0.48f, 0.54f);
-    colors[HvkGuiCol_FrameBgHovered]         = HvkVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[HvkGuiCol_FrameBgActive]          = HvkVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[HvkGuiCol_TitleBg]                = HvkVec4(0.04f, 0.04f, 0.04f, 1.00f);
-    colors[HvkGuiCol_TitleBgActive]          = HvkVec4(0.16f, 0.29f, 0.48f, 1.00f);
-    colors[HvkGuiCol_TitleBgCollapsed]       = HvkVec4(0.00f, 0.00f, 0.00f, 0.51f);
-    colors[HvkGuiCol_MenuBarBg]              = HvkVec4(0.14f, 0.14f, 0.14f, 1.00f);
-    colors[HvkGuiCol_ScrollbarBg]            = HvkVec4(0.02f, 0.02f, 0.02f, 0.53f);
-    colors[HvkGuiCol_ScrollbarGrab]          = HvkVec4(0.31f, 0.31f, 0.31f, 1.00f);
-    colors[HvkGuiCol_ScrollbarGrabHovered]   = HvkVec4(0.41f, 0.41f, 0.41f, 1.00f);
-    colors[HvkGuiCol_ScrollbarGrabActive]    = HvkVec4(0.51f, 0.51f, 0.51f, 1.00f);
-    colors[HvkGuiCol_CheckMark]              = HvkVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[HvkGuiCol_SliderGrab]             = HvkVec4(0.24f, 0.52f, 0.88f, 1.00f);
-    colors[HvkGuiCol_SliderGrabActive]       = HvkVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[HvkGuiCol_Button]                 = HvkVec4(0.26f, 0.59f, 0.98f, 0.40f);
-    colors[HvkGuiCol_ButtonHovered]          = HvkVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[HvkGuiCol_ButtonActive]           = HvkVec4(0.06f, 0.53f, 0.98f, 1.00f);
-    colors[HvkGuiCol_Header]                 = HvkVec4(0.26f, 0.59f, 0.98f, 0.31f);
-    colors[HvkGuiCol_HeaderHovered]          = HvkVec4(0.26f, 0.59f, 0.98f, 0.80f);
-    colors[HvkGuiCol_HeaderActive]           = HvkVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[HvkGuiCol_Separator]              = colors[HvkGuiCol_Border];
-    colors[HvkGuiCol_SeparatorHovered]       = HvkVec4(0.10f, 0.40f, 0.75f, 0.78f);
-    colors[HvkGuiCol_SeparatorActive]        = HvkVec4(0.10f, 0.40f, 0.75f, 1.00f);
-    colors[HvkGuiCol_ResizeGrip]             = HvkVec4(0.26f, 0.59f, 0.98f, 0.20f);
-    colors[HvkGuiCol_ResizeGripHovered]      = HvkVec4(0.26f, 0.59f, 0.98f, 0.67f);
-    colors[HvkGuiCol_ResizeGripActive]       = HvkVec4(0.26f, 0.59f, 0.98f, 0.95f);
-    colors[HvkGuiCol_InputTextCursor]        = colors[HvkGuiCol_Text];
-    colors[HvkGuiCol_TabHovered]             = colors[HvkGuiCol_HeaderHovered];
-    colors[HvkGuiCol_Tab]                    = HvkLerp(colors[HvkGuiCol_Header],       colors[HvkGuiCol_TitleBgActive], 0.80f);
-    colors[HvkGuiCol_TabSelected]            = HvkLerp(colors[HvkGuiCol_HeaderActive], colors[HvkGuiCol_TitleBgActive], 0.60f);
-    colors[HvkGuiCol_TabSelectedOverline]    = colors[HvkGuiCol_HeaderActive];
-    colors[HvkGuiCol_TabDimmed]              = HvkLerp(colors[HvkGuiCol_Tab],          colors[HvkGuiCol_TitleBg], 0.80f);
-    colors[HvkGuiCol_TabDimmedSelected]      = HvkLerp(colors[HvkGuiCol_TabSelected],  colors[HvkGuiCol_TitleBg], 0.40f);
-    colors[HvkGuiCol_TabDimmedSelectedOverline] = HvkVec4(0.50f, 0.50f, 0.50f, 0.00f);
-    colors[HvkGuiCol_PlotLines]              = HvkVec4(0.61f, 0.61f, 0.61f, 1.00f);
-    colors[HvkGuiCol_PlotLinesHovered]       = HvkVec4(1.00f, 0.43f, 0.35f, 1.00f);
-    colors[HvkGuiCol_PlotHistogram]          = HvkVec4(0.90f, 0.70f, 0.00f, 1.00f);
-    colors[HvkGuiCol_PlotHistogramHovered]   = HvkVec4(1.00f, 0.60f, 0.00f, 1.00f);
-    colors[HvkGuiCol_TableHeaderBg]          = HvkVec4(0.19f, 0.19f, 0.20f, 1.00f);
-    colors[HvkGuiCol_TableBorderStrong]      = HvkVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[HvkGuiCol_TableBorderLight]       = HvkVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
-    colors[HvkGuiCol_TableRowBg]             = HvkVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[HvkGuiCol_TableRowBgAlt]          = HvkVec4(1.00f, 1.00f, 1.00f, 0.06f);
-    colors[HvkGuiCol_TextLink]               = colors[HvkGuiCol_HeaderActive];
-    colors[HvkGuiCol_TextSelectedBg]         = HvkVec4(0.26f, 0.59f, 0.98f, 0.35f);
-    colors[HvkGuiCol_TreeLines]              = colors[HvkGuiCol_Border];
-    colors[HvkGuiCol_DragDropTarget]         = HvkVec4(1.00f, 1.00f, 0.00f, 0.90f);
-    colors[HvkGuiCol_DragDropTargetBg]       = HvkVec4(0.00f, 0.00f, 0.00f, 0.00f);
-    colors[HvkGuiCol_UnsavedMarker]          = HvkVec4(1.00f, 1.00f, 1.00f, 1.00f);
-    colors[HvkGuiCol_NavCursor]              = HvkVec4(0.26f, 0.59f, 0.98f, 1.00f);
-    colors[HvkGuiCol_NavWindowingHighlight]  = HvkVec4(1.00f, 1.00f, 1.00f, 0.70f);
-    colors[HvkGuiCol_NavWindowingDimBg]      = HvkVec4(0.80f, 0.80f, 0.80f, 0.20f);
-    colors[HvkGuiCol_ModalWindowDimBg]       = HvkVec4(0.80f, 0.80f, 0.80f, 0.35f);
+    StyleColorsModern22(dst);
 }
 
 void HvkGui::StyleColorsClassic(HvkGuiStyle* dst)

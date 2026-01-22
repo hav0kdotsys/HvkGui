@@ -797,7 +797,8 @@ bool HvkGui::ButtonEx(const char* label, const HvkVec2& size_arg, HvkGuiButtonFl
     // Render
     const HvkU32 col = GetColorU32((held && hovered) ? HvkGuiCol_ButtonActive : hovered ? HvkGuiCol_ButtonHovered : HvkGuiCol_Button);
     RenderNavCursor(bb, id);
-    RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+    window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding);
+    window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(HvkGuiCol_Border), style.FrameRounding, 0, 1.0f);
 
     if (g.LogEnabled)
         LogSetNextTextDecoration("[", "]");
@@ -1104,13 +1105,14 @@ bool HvkGui::ScrollbarEx(const HvkRect& bb_frame, HvkGuiID id, HvkGuiAxis axis, 
     // Render
     const HvkU32 bg_col = GetColorU32(HvkGuiCol_ScrollbarBg);
     const HvkU32 grab_col = GetColorU32(held ? HvkGuiCol_ScrollbarGrabActive : hovered ? HvkGuiCol_ScrollbarGrabHovered : HvkGuiCol_ScrollbarGrab, alpha);
-    window->DrawList->AddRectFilled(bb_frame.Min, bb_frame.Max, bg_col, window->WindowRounding, draw_rounding_flags);
+    window->DrawList->AddRectFilled(bb_frame.Min, bb_frame.Max, bg_col, style.ScrollbarRounding, draw_rounding_flags);
     HvkRect grab_rect;
     if (axis == HvkGuiAxis_X)
         grab_rect = HvkRect(HvkLerp(bb.Min.x, bb.Max.x, grab_v_norm), bb.Min.y, HvkLerp(bb.Min.x, bb.Max.x, grab_v_norm) + grab_h_pixels, bb.Max.y);
     else
         grab_rect = HvkRect(bb.Min.x, HvkLerp(bb.Min.y, bb.Max.y, grab_v_norm), bb.Max.x, HvkLerp(bb.Min.y, bb.Max.y, grab_v_norm) + grab_h_pixels);
     window->DrawList->AddRectFilled(grab_rect.Min, grab_rect.Max, grab_col, style.ScrollbarRounding);
+    window->DrawList->AddRect(bb_frame.Min, bb_frame.Max, GetColorU32(HvkGuiCol_Border), style.ScrollbarRounding, draw_rounding_flags, 1.0f);
 
     return held;
 }
@@ -1389,8 +1391,10 @@ bool HvkGui::Checkbox(const char* label, bool* v)
     const HvkVec2 label_size = CalcTextSize(label, NULL, true);
 
     const float square_sz = GetFrameHeight();
+    const float toggle_h = Immax(4.0f, square_sz * 0.55f);
+    const float toggle_w = toggle_h * 1.8f;
     const HvkVec2 pos = window->DC.CursorPos;
-    const HvkRect total_bb(pos, pos + HvkVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+    const HvkRect total_bb(pos, pos + HvkVec2(toggle_w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
     ItemSize(total_bb, style.FramePadding.y);
     const bool is_visible = ItemAdd(total_bb, id);
     const bool is_multi_select = (g.LastItemData.ItemFlags & HvkGuiItemFlags_IsMultiSelect) != 0;
@@ -1422,24 +1426,31 @@ bool HvkGui::Checkbox(const char* label, bool* v)
         MarkItemEdited(id);
     }
 
-    const HvkRect check_bb(pos, pos + HvkVec2(square_sz, square_sz));
+    const HvkVec2 toggle_pos = pos + HvkVec2(0.0f, (square_sz - toggle_h) * 0.5f);
+    const HvkRect check_bb(toggle_pos, toggle_pos + HvkVec2(toggle_w, toggle_h));
     const bool mixed_value = (g.LastItemData.ItemFlags & HvkGuiItemFlags_MixedValue) != 0;
     if (is_visible)
     {
         RenderNavCursor(total_bb, id);
-        RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? HvkGuiCol_FrameBgActive : hovered ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg), true, style.FrameRounding);
-        HvkU32 check_col = GetColorU32(HvkGuiCol_CheckMark);
+        const HvkU32 bg_col = GetColorU32((held && hovered) ? HvkGuiCol_FrameBgActive : hovered ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg);
+        const HvkU32 accent_col = GetColorU32(HvkGuiCol_CheckMark);
+        const HvkU32 knob_col = GetColorU32(HvkGuiCol_WindowBg);
+        const float rounding = check_bb.GetHeight() * 0.5f;
+        const HvkU32 track_col = *v ? accent_col : bg_col;
+        window->DrawList->AddRectFilled(check_bb.Min, check_bb.Max, track_col, rounding);
+        window->DrawList->AddRect(check_bb.Min, check_bb.Max, GetColorU32(HvkGuiCol_Border), rounding, 0, 1.0f);
         if (mixed_value)
         {
             // Undocumented tristate/mixed/indeterminate checkbox (#2644)
             // This may seem awkwardly designed because the aim is to make HvkGuiItemFlags_MixedValue supported by all widgets (not just checkbox)
-            HvkVec2 pad(Immax(1.0f, Hvk_TRUNC(square_sz / 3.6f)), Immax(1.0f, Hvk_TRUNC(square_sz / 3.6f)));
-            window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
+            HvkVec2 pad(Immax(1.0f, Hvk_TRUNC(toggle_h / 3.6f)), Immax(1.0f, Hvk_TRUNC(toggle_h / 3.6f)));
+            window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, accent_col, rounding);
         }
-        else if (*v)
+        else
         {
-            const float pad = Immax(1.0f, Hvk_TRUNC(square_sz / 6.0f));
-            RenderCheckMark(window->DrawList, check_bb.Min + HvkVec2(pad, pad), check_col, square_sz - pad * 2.0f);
+            const float knob_r = check_bb.GetHeight() * 0.45f;
+            const float knob_x = *v ? (check_bb.Max.x - rounding) : (check_bb.Min.x + rounding);
+            window->DrawList->AddCircleFilled(HvkVec2(knob_x, check_bb.GetCenter().y), knob_r, knob_col);
         }
     }
     const HvkVec2 label_pos = HvkVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
@@ -2112,13 +2123,13 @@ bool HvkGui::BeginCombo(const char* label, const char* preview_value, HvkGuiComb
         window->DrawList->AddRectFilled(bb.Min, HvkVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & HvkGuiComboFlags_NoArrowButton) ? HvkDrawFlags_RoundCornersAll : HvkDrawFlags_RoundCornersLeft);
     if (!(flags & HvkGuiComboFlags_NoArrowButton))
     {
-        HvkU32 bg_col = GetColorU32((popup_open || hovered) ? HvkGuiCol_ButtonHovered : HvkGuiCol_Button);
+        HvkU32 bg_col = GetColorU32((popup_open || hovered) ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg);
         HvkU32 text_col = GetColorU32(HvkGuiCol_Text);
         window->DrawList->AddRectFilled(HvkVec2(value_x2, bb.Min.y), bb.Max, bg_col, style.FrameRounding, (w <= arrow_size) ? HvkDrawFlags_RoundCornersAll : HvkDrawFlags_RoundCornersRight);
         if (value_x2 + arrow_size - style.FramePadding.x <= bb.Max.x)
             RenderArrow(window->DrawList, HvkVec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y), text_col, HvkGuiDir_Down, 1.0f);
     }
-    RenderFrameBorder(bb.Min, bb.Max, style.FrameRounding);
+    window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(HvkGuiCol_Border), style.FrameRounding, 0, 1.0f);
 
     // Custom preview
     if (flags & HvkGuiComboFlags_CustomPreview)
@@ -2922,10 +2933,8 @@ bool HvkGui::DragScalar(const char* label, HvkGuiDataType data_type, void* p_dat
     // Draw frame
     const HvkU32 frame_col = GetColorU32(g.ActiveId == id ? HvkGuiCol_FrameBgActive : hovered ? HvkGuiCol_FrameBgHovered : HvkGuiCol_FrameBg);
     RenderNavCursor(frame_bb, id);
-    RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, false, style.FrameRounding);
     if (color_marker != 0 && style.ColorMarkerSize > 0.0f)
         RenderColorComponentMarker(frame_bb, GetColorU32(color_marker), style.FrameRounding);
-    RenderFrameBorder(frame_bb.Min, frame_bb.Max, g.Style.FrameRounding);
 
     // Drag behavior
     const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
@@ -3525,9 +3534,20 @@ bool HvkGui::SliderScalar(const char* label, HvkGuiDataType data_type, void* p_d
     if (value_changed)
         MarkItemEdited(id);
 
-    // Render grab
+    // Render track + grab
+    const float track_h = Immax(4.0f, frame_bb.GetHeight() * 0.35f);
+    const float track_y = frame_bb.GetCenter().y - track_h * 0.5f;
+    HvkRect track_bb(HvkVec2(frame_bb.Min.x, track_y), HvkVec2(frame_bb.Max.x, track_y + track_h));
+    window->DrawList->AddRectFilled(track_bb.Min, track_bb.Max, frame_col, style.FrameRounding);
     if (grab_bb.Max.x > grab_bb.Min.x)
-        window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(g.ActiveId == id ? HvkGuiCol_SliderGrabActive : HvkGuiCol_SliderGrab), style.GrabRounding);
+    {
+        const float grab_center_x = HvkClamp(grab_bb.GetCenter().x, track_bb.Min.x, track_bb.Max.x);
+        HvkRect fill_bb(track_bb.Min, HvkVec2(grab_center_x, track_bb.Max.y));
+        window->DrawList->AddRectFilled(fill_bb.Min, fill_bb.Max, GetColorU32(HvkGuiCol_SliderGrabActive), style.FrameRounding);
+        const float knob_r = track_h * 0.9f;
+        window->DrawList->AddCircleFilled(HvkVec2(grab_center_x, track_bb.GetCenter().y), knob_r, GetColorU32(HvkGuiCol_SliderGrabActive));
+        window->DrawList->AddCircleFilled(HvkVec2(grab_center_x, track_bb.GetCenter().y), knob_r - 2.0f, GetColorU32(HvkGuiCol_WindowBg));
+    }
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];

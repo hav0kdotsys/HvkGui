@@ -1,4 +1,4 @@
-// dear HvkGui, v1.92.6 WIP
+﻿// dear HvkGui, v1.92.6 WIP
 // (demo code)
 
 // Help:
@@ -8332,322 +8332,160 @@ void HvkGui::ShowStyleEditor(HvkGuiStyle* ref)
     if (ref == NULL)
         ref = &ref_saved_style;
 
-    PushItemWidth(GetWindowWidth() * 0.50f);
+    static int section = 0;
 
+#ifndef _DEV
+    if (section == 3)
+        section = 0;
+#endif
+
+    ModernBeginChild("Style Editor", HvkVec2(0.0f, 0.0f), true);
+    ModernBeginChild("Top Tabs", HvkVec2(0.0f, 46.0f), true, HvkGuiWindowFlags_NoScrollbar);
+    if (ModernTopTabButton("Home", "E", section == 0))
+        section = 0;
+    SameLine();
+    if (ModernTopTabButton("User", "F", section == 1))
+        section = 1;
+    SameLine();
+    if (ModernTopTabButton("Config", "B", section == 2))
+        section = 2;
+#ifdef _DEV
+    SameLine();
+    if (ModernTopTabButton("Dev", "C", section == 3))
+        section = 3;
+#endif
+    ModernEndChild();
+    Dummy(HvkVec2(0.0f, 8.0f));
+
+    if (section == 0)
     {
-        // General
         SeparatorText("General");
         if ((GetIO().BackendFlags & HvkGuiBackendFlags_RendererHasTextures) == 0)
-        {
-            BulletText("Warning: Font scaling will NOT be smooth, because\nHvkGuiBackendFlags_RendererHasTextures is not set!");
-            BulletText("For instructions, see:");
-            SameLine();
-            TextLinkOpenURL("docs/BACKENDS.md", "https://github.com/ocornut/HvkGui/blob/master/docs/BACKENDS.md");
-        }
+            TextColored(HvkVec4(1.0f, 0.6f, 0.3f, 1.0f), "Texture rendering disabled (font scaling may look rough).");
 
-        if (ShowStyleSelector("Colors##Selector"))
+        const char* theme_items[] = { "Modern (22)", "Light", "Classic" };
+        static int theme_index = 0;
+        int theme_prev = theme_index;
+        ModernCombo("Theme", "Select a base palette", &theme_index, theme_items, Hvk_ARRAYSIZE(theme_items));
+        if (theme_index != theme_prev)
+        {
+            if (theme_index == 0) HvkGui::ApplyStyleModern22();
+            if (theme_index == 1) HvkGui::StyleColorsLight();
+            if (theme_index == 2) HvkGui::StyleColorsClassic();
             ref_saved_style = style;
-        ShowFontSelector("Fonts##Selector");
-        if (DragFloat("FontSizeBase", &style.FontSizeBase, 0.20f, 5.0f, 100.0f, "%.0f"))
-            style._NextFrameFontSizeBase = style.FontSizeBase; // FIXME: Temporary hack until we finish remaining work.
-        SameLine(0.0f, 0.0f); Text(" (out %.2f)", GetFontSize());
-        DragFloat("FontScaleMain", &style.FontScaleMain, 0.02f, 0.5f, 4.0f);
-        //BeginDisabled(GetIO().ConfigDpiScaleFonts);
-        DragFloat("FontScaleDpi", &style.FontScaleDpi, 0.02f, 0.5f, 4.0f);
-        //SetItemTooltip("When io.ConfigDpiScaleFonts is set, this value is automatically overwritten.");
-        //EndDisabled();
-
-        // Simplified Settings (expose floating-pointer border sizes as boolean representing 0.0f or 1.0f)
-        if (SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f"))
-            style.GrabRounding = style.FrameRounding; // Make GrabRounding always the same value as FrameRounding
-        { bool border = (style.WindowBorderSize > 0.0f); if (Checkbox("WindowBorder", &border)) { style.WindowBorderSize = border ? 1.0f : 0.0f; } }
-        SameLine();
-        { bool border = (style.FrameBorderSize > 0.0f);  if (Checkbox("FrameBorder", &border)) { style.FrameBorderSize = border ? 1.0f : 0.0f; } }
-        SameLine();
-        { bool border = (style.PopupBorderSize > 0.0f);  if (Checkbox("PopupBorder", &border)) { style.PopupBorderSize = border ? 1.0f : 0.0f; } }
-    }
-
-    // Save/Revert button
-    if (Button("Save Ref"))
-        *ref = ref_saved_style = style;
-    SameLine();
-    if (Button("Revert Ref"))
-        style = *ref;
-    SameLine();
-    HelpMarker(
-        "Save/Revert in local non-persistent storage. Default Colors definition are not affected. "
-        "Use \"Export\" below to save them somewhere.");
-
-    SeparatorText("Details");
-    if (BeginTabBar("##tabs", HvkGuiTabBarFlags_None))
-    {
-        if (BeginTabItem("Sizes"))
-        {
-            SeparatorText("Main");
-            SliderFloat2("WindowPadding", (float*)&style.WindowPadding, 0.0f, 20.0f, "%.0f");
-            SliderFloat2("FramePadding", (float*)&style.FramePadding, 0.0f, 20.0f, "%.0f");
-            SliderFloat2("ItemSpacing", (float*)&style.ItemSpacing, 0.0f, 20.0f, "%.0f");
-            SliderFloat2("ItemInnerSpacing", (float*)&style.ItemInnerSpacing, 0.0f, 20.0f, "%.0f");
-            SliderFloat2("TouchExtraPadding", (float*)&style.TouchExtraPadding, 0.0f, 10.0f, "%.0f");
-            SliderFloat("IndentSpacing", &style.IndentSpacing, 0.0f, 30.0f, "%.0f");
-            SliderFloat("GrabMinSize", &style.GrabMinSize, 1.0f, 20.0f, "%.0f");
-
-            SeparatorText("Borders");
-            SliderFloat("WindowBorderSize", &style.WindowBorderSize, 0.0f, 1.0f, "%.0f");
-            SliderFloat("ChildBorderSize", &style.ChildBorderSize, 0.0f, 1.0f, "%.0f");
-            SliderFloat("PopupBorderSize", &style.PopupBorderSize, 0.0f, 1.0f, "%.0f");
-            SliderFloat("FrameBorderSize", &style.FrameBorderSize, 0.0f, 1.0f, "%.0f");
-
-            SeparatorText("Rounding");
-            SliderFloat("WindowRounding", &style.WindowRounding, 0.0f, 12.0f, "%.0f");
-            SliderFloat("ChildRounding", &style.ChildRounding, 0.0f, 12.0f, "%.0f");
-            SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f");
-            SliderFloat("PopupRounding", &style.PopupRounding, 0.0f, 12.0f, "%.0f");
-            SliderFloat("GrabRounding", &style.GrabRounding, 0.0f, 12.0f, "%.0f");
-
-            SeparatorText("Scrollbar");
-            SliderFloat("ScrollbarSize", &style.ScrollbarSize, 1.0f, 20.0f, "%.0f");
-            SliderFloat("ScrollbarRounding", &style.ScrollbarRounding, 0.0f, 12.0f, "%.0f");
-            SliderFloat("ScrollbarPadding", &style.ScrollbarPadding, 0.0f, 10.0f, "%.0f");
-
-            SeparatorText("Tabs");
-            SliderFloat("TabBorderSize", &style.TabBorderSize, 0.0f, 1.0f, "%.0f");
-            SliderFloat("TabBarBorderSize", &style.TabBarBorderSize, 0.0f, 2.0f, "%.0f");
-            SliderFloat("TabBarOverlineSize", &style.TabBarOverlineSize, 0.0f, 3.0f, "%.0f");
-            SameLine(); HelpMarker("Overline is only drawn over the selected tab when HvkGuiTabBarFlags_DrawSelectedOverline is set.");
-            DragFloat("TabMinWidthBase", &style.TabMinWidthBase, 0.5f, 1.0f, 500.0f, "%.0f");
-            DragFloat("TabMinWidthShrink", &style.TabMinWidthShrink, 0.5f, 1.0f, 500.0f, "%0.f");
-            DragFloat("TabCloseButtonMinWidthSelected", &style.TabCloseButtonMinWidthSelected, 0.5f, -1.0f, 100.0f, (style.TabCloseButtonMinWidthSelected < 0.0f) ? "%.0f (Always)" : "%.0f");
-            DragFloat("TabCloseButtonMinWidthUnselected", &style.TabCloseButtonMinWidthUnselected, 0.5f, -1.0f, 100.0f, (style.TabCloseButtonMinWidthUnselected < 0.0f) ? "%.0f (Always)" : "%.0f");
-            SliderFloat("TabRounding", &style.TabRounding, 0.0f, 12.0f, "%.0f");
-
-            SeparatorText("Tables");
-            SliderFloat2("CellPadding", (float*)&style.CellPadding, 0.0f, 20.0f, "%.0f");
-            SliderAngle("TableAngledHeadersAngle", &style.TableAngledHeadersAngle, -50.0f, +50.0f);
-            SliderFloat2("TableAngledHeadersTextAlign", (float*)&style.TableAngledHeadersTextAlign, 0.0f, 1.0f, "%.2f");
-
-            SeparatorText("Trees");
-            bool combo_open = BeginCombo("TreeLinesFlags", GetTreeLinesFlagsName(style.TreeLinesFlags));
-            SameLine();
-            HelpMarker("[Experimental] Tree lines may not work in all situations (e.g. using a clipper) and may incurs slight traversal overhead.\n\nHvkGuiTreeNodeFlags_DrawLinesFull is faster than HvkGuiTreeNodeFlags_DrawLinesToNode.");
-            if (combo_open)
-            {
-                const HvkGuiTreeNodeFlags options[] = { HvkGuiTreeNodeFlags_DrawLinesNone, HvkGuiTreeNodeFlags_DrawLinesFull, HvkGuiTreeNodeFlags_DrawLinesToNodes };
-                for (HvkGuiTreeNodeFlags option : options)
-                    if (Selectable(GetTreeLinesFlagsName(option), style.TreeLinesFlags == option))
-                        style.TreeLinesFlags = option;
-                EndCombo();
-            }
-            SliderFloat("TreeLinesSize", &style.TreeLinesSize, 0.0f, 2.0f, "%.0f");
-            SliderFloat("TreeLinesRounding", &style.TreeLinesRounding, 0.0f, 12.0f, "%.0f");
-
-            SeparatorText("Windows");
-            SliderFloat2("WindowTitleAlign", (float*)&style.WindowTitleAlign, 0.0f, 1.0f, "%.2f");
-            SliderFloat("WindowBorderHoverPadding", &style.WindowBorderHoverPadding, 1.0f, 20.0f, "%.0f");
-            int window_menu_button_position = style.WindowMenuButtonPosition + 1;
-            if (Combo("WindowMenuButtonPosition", (int*)&window_menu_button_position, "None\0Left\0Right\0"))
-                style.WindowMenuButtonPosition = (HvkGuiDir)(window_menu_button_position - 1);
-
-            SeparatorText("Widgets");
-            SliderFloat("ColorMarkerSize", &style.ColorMarkerSize, 0.0f, 8.0f, "%.0f");
-            Combo("ColorButtonPosition", (int*)&style.ColorButtonPosition, "Left\0Right\0");
-            SliderFloat2("ButtonTextAlign", (float*)&style.ButtonTextAlign, 0.0f, 1.0f, "%.2f");
-            SameLine(); HelpMarker("Alignment applies when a button is larger than its text content.");
-            SliderFloat2("SelectableTextAlign", (float*)&style.SelectableTextAlign, 0.0f, 1.0f, "%.2f");
-            SameLine(); HelpMarker("Alignment applies when a selectable is larger than its text content.");
-            SliderFloat("SeparatorTextBorderSize", &style.SeparatorTextBorderSize, 0.0f, 10.0f, "%.0f");
-            SliderFloat2("SeparatorTextAlign", (float*)&style.SeparatorTextAlign, 0.0f, 1.0f, "%.2f");
-            SliderFloat2("SeparatorTextPadding", (float*)&style.SeparatorTextPadding, 0.0f, 40.0f, "%.0f");
-            SliderFloat("LogSliderDeadzone", &style.LogSliderDeadzone, 0.0f, 12.0f, "%.0f");
-            SliderFloat("HvkageBorderSize", &style.HvkageBorderSize, 0.0f, 1.0f, "%.0f");
-
-            SeparatorText("Tooltips");
-            for (int n = 0; n < 2; n++)
-                if (TreeNodeEx(n == 0 ? "HoverFlagsForTooltipMouse" : "HoverFlagsForTooltipNav"))
-                {
-                    HvkGuiHoveredFlags* p = (n == 0) ? &style.HoverFlagsForTooltipMouse : &style.HoverFlagsForTooltipNav;
-                    CheckboxFlags("HvkGuiHoveredFlags_DelayNone", p, HvkGuiHoveredFlags_DelayNone);
-                    CheckboxFlags("HvkGuiHoveredFlags_DelayShort", p, HvkGuiHoveredFlags_DelayShort);
-                    CheckboxFlags("HvkGuiHoveredFlags_DelayNormal", p, HvkGuiHoveredFlags_DelayNormal);
-                    CheckboxFlags("HvkGuiHoveredFlags_Stationary", p, HvkGuiHoveredFlags_Stationary);
-                    CheckboxFlags("HvkGuiHoveredFlags_NoSharedDelay", p, HvkGuiHoveredFlags_NoSharedDelay);
-                    TreePop();
-                }
-
-            SeparatorText("Misc");
-            SliderFloat2("DisplayWindowPadding", (float*)&style.DisplayWindowPadding, 0.0f, 30.0f, "%.0f"); SameLine(); HelpMarker("Apply to regular windows: amount which we enforce to keep visible when moving near edges of your screen.");
-            SliderFloat2("DisplaySafeAreaPadding", (float*)&style.DisplaySafeAreaPadding, 0.0f, 30.0f, "%.0f"); SameLine(); HelpMarker("Apply to every windows, menus, popups, tooltips: amount where we avoid displaying contents. Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).");
-
-            EndTabItem();
         }
 
-        if (BeginTabItem("Colors"))
+        Dummy(HvkVec2(0.0f, 8.0f));
+        ModernBeginChild("Fonts", HvkVec2(0.0f, 74.0f), true, HvkGuiWindowFlags_NoScrollbar);
+        Text("Fonts");
+        TextDisabled("Font family and weights");
+        SetNextItemWidth(GetContentRegionAvail().x);
+        ShowFontSelector("##Fonts");
+        ModernEndChild();
+        Dummy(HvkVec2(0.0f, 4.0f));
+        if (ModernSliderFloat("Font Size", "Base font size", &style.FontSizeBase, 5.0f, 100.0f, "%.0f"))
+            style._NextFrameFontSizeBase = style.FontSizeBase;
+        ModernSliderFloat("Font Scale", "Global UI scale", &style.FontScaleMain, 0.5f, 4.0f, "%.2f");
+        ModernSliderFloat("DPI Scale", "Additional DPI scale", &style.FontScaleDpi, 0.5f, 4.0f, "%.2f");
+
+        ModernSliderFloat("Frame Rounding", "Frame corner radius", &style.FrameRounding, 0.0f, 12.0f, "%.0f");
+        ModernSliderFloat("Window Rounding", "Window corner radius", &style.WindowRounding, 0.0f, 12.0f, "%.0f");
+        style.GrabRounding = style.FrameRounding;
+
         {
-            static int output_dest = 0;
-            static bool output_only_modified = true;
-            if (Button("Export"))
-            {
-                if (output_dest == 0)
-                    LogToClipboard();
-                else
-                    LogToTTY();
-                LogText("HvkVec4* colors = GetStyle().Colors;" Hvk_NEWLINE);
-                for (int i = 0; i < HvkGuiCol_COUNT; i++)
-                {
-                    const HvkVec4& col = style.Colors[i];
-                    const char* name = GetStyleColorName(i);
-                    if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(HvkVec4)) != 0)
-                        LogText("colors[HvkGuiCol_%s]%*s= HvkVec4(%.2ff, %.2ff, %.2ff, %.2ff);" Hvk_NEWLINE,
-                            name, 23 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
-                }
-                LogFinish();
-            }
-            SameLine(); SetNextItemWidth(GetFontSize() * 10); Combo("##output_type", &output_dest, "To Clipboard\0To TTY\0");
-            SameLine(); Checkbox("Only Modified Colors", &output_only_modified);
+            bool border = (style.WindowBorderSize > 0.0f);
+            if (ModernCheckbox("Window Border", "Show window borders", &border))
+                style.WindowBorderSize = border ? 1.0f : 0.0f;
+        }
+        {
+            bool border = (style.FrameBorderSize > 0.0f);
+            if (ModernCheckbox("Frame Border", "Show frame borders", &border))
+                style.FrameBorderSize = border ? 1.0f : 0.0f;
+        }
+        {
+            bool border = (style.PopupBorderSize > 0.0f);
+            if (ModernCheckbox("Popup Border", "Show popup borders", &border))
+                style.PopupBorderSize = border ? 1.0f : 0.0f;
+        }
 
-            static HvkGuiTextFilter filter;
-            filter.Draw("Filter colors", GetFontSize() * 16);
+        if (ModernTabButton("Save Ref", false, HvkVec2(140.0f, 30.0f)))
+            *ref = ref_saved_style = style;
+        SameLine();
+        if (ModernTabButton("Revert Ref", false, HvkVec2(140.0f, 30.0f)))
+            style = *ref;
+    }
+    else if (section == 1)
+    {
+        SeparatorText("Sizing");
+        ModernSliderFloat("Window Padding X", "Horizontal padding", &style.WindowPadding.x, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Window Padding Y", "Vertical padding", &style.WindowPadding.y, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Frame Padding X", "Horizontal frame padding", &style.FramePadding.x, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Frame Padding Y", "Vertical frame padding", &style.FramePadding.y, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Item Spacing X", "Horizontal spacing", &style.ItemSpacing.x, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Item Spacing Y", "Vertical spacing", &style.ItemSpacing.y, 0.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Scrollbar Size", "Scrollbar thickness", &style.ScrollbarSize, 6.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Scrollbar Rounding", "Scrollbar rounding", &style.ScrollbarRounding, 0.0f, 12.0f, "%.0f");
+        ModernSliderFloat("Grab Min Size", "Slider grab size", &style.GrabMinSize, 4.0f, 20.0f, "%.0f");
+        ModernSliderFloat("Child Rounding", "Child corner radius", &style.ChildRounding, 0.0f, 12.0f, "%.0f");
+        ModernSliderFloat("Popup Rounding", "Popup corner radius", &style.PopupRounding, 0.0f, 12.0f, "%.0f");
+    }
+    else if (section == 2)
+    {
+        SeparatorText("Colors");
+        ModernColorPicker("Window", &style.Colors[HvkGuiCol_WindowBg]);
+        ModernColorPicker("Frame", &style.Colors[HvkGuiCol_FrameBg]);
+        ModernColorPicker("Accent", &style.Colors[HvkGuiCol_CheckMark]);
 
-            static HvkGuiColorEditFlags alpha_flags = 0;
-            if (RadioButton("Opaque", alpha_flags == HvkGuiColorEditFlags_AlphaOpaque))       { alpha_flags = HvkGuiColorEditFlags_AlphaOpaque; } SameLine();
-            if (RadioButton("Alpha",  alpha_flags == HvkGuiColorEditFlags_None))              { alpha_flags = HvkGuiColorEditFlags_None; } SameLine();
-            if (RadioButton("Both",   alpha_flags == HvkGuiColorEditFlags_AlphaPreviewHalf))  { alpha_flags = HvkGuiColorEditFlags_AlphaPreviewHalf; } SameLine();
-            HelpMarker(
-                "In the color list:\n"
-                "Left-click on color square to open color picker,\n"
-                "Right-click to open edit options menu.");
-
-            SetNextWindowSizeConstraints(HvkVec2(0.0f, GetTextLineHeightWithSpacing() * 10), HvkVec2(FLT_MAX, FLT_MAX));
-            BeginChild("##colors", HvkVec2(0, 0), HvkGuiChildFlags_Borders | HvkGuiChildFlags_NavFlattened, HvkGuiWindowFlags_AlwaysVerticalScrollbar | HvkGuiWindowFlags_AlwaysHorizontalScrollbar);
-            PushItemWidth(GetFontSize() * -12);
+        static int output_dest = 0;
+        static bool output_only_modified = true;
+        if (Button("Export"))
+        {
+            if (output_dest == 0)
+                LogToClipboard();
+            else
+                LogToTTY();
+            LogText("HvkVec4* colors = GetStyle().Colors;" Hvk_NEWLINE);
             for (int i = 0; i < HvkGuiCol_COUNT; i++)
             {
+                const HvkVec4& col = style.Colors[i];
                 const char* name = GetStyleColorName(i);
-                if (!filter.PassFilter(name))
-                    continue;
-                PushID(i);
-#ifndef HvkGui_DISABLE_DEBUG_TOOLS
-                if (Button("?"))
-                    DebugFlashStyleColor((HvkGuiCol)i);
-                SetItemTooltip("Flash given color to identify places where it is used.");
-                SameLine();
-#endif
-                ColorEdit4("##color", (float*)&style.Colors[i], HvkGuiColorEditFlags_AlphaBar | alpha_flags);
-                if (memcmp(&style.Colors[i], &ref->Colors[i], sizeof(HvkVec4)) != 0)
-                {
-                    // Tips: in a real user application, you may want to merge and use an icon font into the main font,
-                    // so instead of "Save"/"Revert" you'd use icons!
-                    // Read the FAQ and docs/FONTS.md about using icon fonts. It's really easy and super convenient!
-                    SameLine(0.0f, style.ItemInnerSpacing.x); if (Button("Save")) { ref->Colors[i] = style.Colors[i]; }
-                    SameLine(0.0f, style.ItemInnerSpacing.x); if (Button("Revert")) { style.Colors[i] = ref->Colors[i]; }
-                }
-                SameLine(0.0f, style.ItemInnerSpacing.x);
-                TextUnformatted(name);
-                PopID();
+                if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(HvkVec4)) != 0)
+                    LogText("colors[HvkGuiCol_%s]%*s= HvkVec4(%.2ff, %.2ff, %.2ff, %.2ff);" Hvk_NEWLINE,
+                        name, 23 - (int)strlen(name), "", col.x, col.y, col.z, col.w);
             }
-            PopItemWidth();
-            EndChild();
-
-            EndTabItem();
+            LogFinish();
         }
+        SameLine(); SetNextItemWidth(GetFontSize() * 10); Combo("##output_type", &output_dest, "To Clipboard\0To TTY\0");
+        SameLine(); Checkbox("Only Modified Colors", &output_only_modified);
 
-        if (BeginTabItem("Fonts"))
+        static HvkGuiTextFilter filter;
+        filter.Draw("Filter colors", GetFontSize() * 16);
+
+        BeginChild("##colors", HvkVec2(0, 0), true, HvkGuiWindowFlags_AlwaysVerticalScrollbar);
+        for (int i = 0; i < HvkGuiCol_COUNT; i++)
         {
-            HvkGuiIO& io = GetIO();
-            HvkFontAtlas* atlas = io.Fonts;
-            ShowFontAtlas(atlas);
-
-            // Post-baking font scaling. Note that this is NOT the nice way of scaling fonts, read below.
-            // (we enforce hard clamping manually as by default DragFloat/SliderFloat allows Ctrl+Click text to get out of bounds).
-            /*
-            SeparatorText("Legacy Scaling");
-            const float MIN_SCALE = 0.3f;
-            const float MAX_SCALE = 2.0f;
-            HelpMarker(
-                "Those are old settings provided for convenience.\n"
-                "However, the _correct_ way of scaling your UI is currently to reload your font at the designed size, "
-                "rebuild the font atlas, and call style.ScaleAllSizes() on a reference HvkGuiStyle structure.\n"
-                "Using those settings here will give you poor quality results.");
-            PushItemWidth(GetFontSize() * 8);
-            DragFloat("global scale", &io.FontGlobalScale, 0.005f, MIN_SCALE, MAX_SCALE, "%.2f", HvkGuiSliderFlags_AlwaysClamp); // Scale everything
-            //static float window_scale = 1.0f;
-            //if (DragFloat("window scale", &window_scale, 0.005f, MIN_SCALE, MAX_SCALE, "%.2f", HvkGuiSliderFlags_AlwaysClamp)) // Scale only this window
-            //    SetWindowFontScale(window_scale);
-            PopItemWidth();
-            */
-
-            EndTabItem();
+            const char* name = GetStyleColorName(i);
+            if (!filter.PassFilter(name))
+                continue;
+            PushID(i);
+            ColorEdit4("##color", (float*)&style.Colors[i], HvkGuiColorEditFlags_AlphaBar);
+            SameLine(0.0f, style.ItemInnerSpacing.x);
+            TextUnformatted(name);
+            PopID();
         }
-
-        if (BeginTabItem("Rendering"))
-        {
-            Checkbox("Anti-aliased lines", &style.AntiAliasedLines);
-            SameLine();
-            HelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
-
-            Checkbox("Anti-aliased lines use texture", &style.AntiAliasedLinesUseTex);
-            SameLine();
-            HelpMarker("Faster lines using texture data. Require backend to render with bilinear filtering (not point/nearest filtering).");
-
-            Checkbox("Anti-aliased fill", &style.AntiAliasedFill);
-            PushItemWidth(GetFontSize() * 8);
-            DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, 0.02f, 0.10f, 10.0f, "%.2f");
-            if (style.CurveTessellationTol < 0.10f) style.CurveTessellationTol = 0.10f;
-
-            // When editing the "Circle Segment Max Error" value, draw a preview of its effect on auto-tessellated circles.
-            DragFloat("Circle Tessellation Max Error", &style.CircleTessellationMaxError , 0.005f, 0.10f, 5.0f, "%.2f", HvkGuiSliderFlags_AlwaysClamp);
-            const bool show_samples = IsItemActive();
-            if (show_samples)
-                SetNextWindowPos(GetCursorScreenPos());
-            if (show_samples && BeginTooltip())
-            {
-                TextUnformatted("(R = radius, N = approx number of segments)");
-                Spacing();
-                HvkDrawList* draw_list = GetWindowDrawList();
-                const float min_widget_width = CalcTextSize("R: MMM\nN: MMM").x;
-                for (int n = 0; n < 8; n++)
-                {
-                    const float RAD_MIN = 5.0f;
-                    const float RAD_MAX = 70.0f;
-                    const float rad = RAD_MIN + (RAD_MAX - RAD_MIN) * (float)n / (8.0f - 1.0f);
-
-                    BeginGroup();
-
-                    // N is not always exact here due to how PathArcTo() function work internally
-                    Text("R: %.f\nN: %d", rad, draw_list->_CalcCircleAutoSegmentCount(rad));
-
-                    const float canvas_width = Hvk_MAX(min_widget_width, rad * 2.0f);
-                    const float offset_x     = floorf(canvas_width * 0.5f);
-                    const float offset_y     = floorf(RAD_MAX);
-
-                    const HvkVec2 p1 = GetCursorScreenPos();
-                    draw_list->AddCircle(HvkVec2(p1.x + offset_x, p1.y + offset_y), rad, GetColorU32(HvkGuiCol_Text));
-                    Dummy(HvkVec2(canvas_width, RAD_MAX * 2));
-
-                    /*
-                    const HvkVec2 p2 = GetCursorScreenPos();
-                    draw_list->AddCircleFilled(HvkVec2(p2.x + offset_x, p2.y + offset_y), rad, GetColorU32(HvkGuiCol_Text));
-                    Dummy(HvkVec2(canvas_width, RAD_MAX * 2));
-                    */
-
-                    EndGroup();
-                    SameLine();
-                }
-                EndTooltip();
-            }
-            SameLine();
-            HelpMarker("When drawing circle primitives with \"num_segments == 0\" tessellation will be calculated automatically.");
-
-            DragFloat("Global Alpha", &style.Alpha, 0.005f, 0.20f, 1.0f, "%.2f"); // Not exposing zero here so user doesn't "lose" the UI (zero alpha clips all widgets). But application code could have a toggle to switch between zero and non-zero.
-            DragFloat("Disabled Alpha", &style.DisabledAlpha, 0.005f, 0.0f, 1.0f, "%.2f"); SameLine(); HelpMarker("Additional alpha multiplier for disabled items (multiply over current value of Alpha).");
-            PopItemWidth();
-
-            EndTabItem();
-        }
-
-        EndTabBar();
+        EndChild();
     }
-    PopItemWidth();
+#ifdef _DEV
+    else if (section == 3)
+    {
+        SeparatorText("Dev");
+        TextDisabled("Developer-only tuning and diagnostics.");
+        if (Button("Reload Fonts"))
+            GetIO().Fonts->Build();
+    }
+#endif
+
+    ModernEndChild();
 }
 
 //-----------------------------------------------------------------------------
@@ -10903,3 +10741,4 @@ bool HvkGui::ShowStyleSelector(const char*) { return false; }
 #endif // #ifndef HvkGui_DISABLE_DEMO_WINDOWS
 
 #endif // #ifndef HvkGui_DISABLE
+

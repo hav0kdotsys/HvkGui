@@ -27,6 +27,9 @@
     <ClCompile Include="hvkgui\\hvkgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hvkgui\\hvkgui_modern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="hvkgui\\hvkgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hvkgui\hvkgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hvkgui\fonts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hvkgui\hvkgui_modern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hvkgui\\hvkstb_rectpack.h">

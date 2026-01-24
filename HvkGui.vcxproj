@@ -154,6 +154,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "C:\Users\HavoK\vcpkg\packages\freetype_x64-windows\debug\bin\freetyped.dll" "$(OutDir)" &amp; xcopy /Y "C:\Users\HavoK\vcpkg\packages\zlib_x64-windows\debug\bin\zlibd1.dll" "$(OutDir)" &amp; xcopy /Y "C:\Users\HavoK\vcpkg\packages\bzip2_x64-windows\debug\bin\bz2d.dll" "$(OutDir)" &amp; xcopy /Y "C:\Users\HavoK\vcpkg\packages\brotli_x64-windows\debug\bin\brotlidec.dll" "$(OutDir)" &amp; xcopy /Y "C:\Users\HavoK\vcpkg\packages\libpng_x64-windows\debug\bin\libpng16d.dll" "$(OutDir)" &amp; xcopy /Y "C:\Users\HavoK\vcpkg\packages\brotli_x64-windows\debug\bin\brotlicommon.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

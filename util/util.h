@@ -59,6 +59,12 @@ inline bool SupportsDX12()
 	return false;
 }
 
+inline std::string GetModulePath()
+{
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+    return path;
+}
 
 enum class RenderBackend
 {

@@ -111,7 +111,26 @@ if ($availablePlatforms.Count -gt 0 -and ($availablePlatforms -notcontains $Plat
 }
 
 if (-not (Test-Path $MsbuildPath)) {
-    throw "MSBuild not found at '$MsbuildPath'. Provide -MsbuildPath to override."
+    if ($MsbuildPath -eq 'D:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Current\Bin\MSBuild.exe') {
+        $fallbackPaths = @(
+            'C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe',
+            'C:\Program Files\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe'
+        )
+        foreach ($path in $fallbackPaths) {
+            if (Test-Path $path) {
+                $MsbuildPath = $path
+                break
+            }
+        }
+    }
+    if (-not (Test-Path $MsbuildPath)) {
+        throw "MSBuild not found at '$MsbuildPath'. Provide -MsbuildPath to override."
+    }
 }
 
 if (-not (Test-Path $Solution)) {

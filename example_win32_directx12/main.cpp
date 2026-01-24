@@ -37,6 +37,7 @@
 #include <dxgidebug.h>
 #pragma comment(lib, "dxguid.lib")
 #endif
+#include <filesystem>
 
 // Config for example app
 static const int APP_NUM_FRAMES_IN_FLIGHT = 2;
@@ -616,10 +617,19 @@ int main(int, char **)
 	
 
 	// Our state
+	auto exeDir = std::filesystem::path(GetModulePath()).parent_path(); // x64//[Debug|Release|Dev]//
+	auto x64_path   = exeDir.parent_path(); // x64//
+	auto root1       = x64_path.parent_path(); // project root
+	auto root2       = x64_path.parent_path(); // project root
+	auto root3       = x64_path.parent_path(); // project root
+
+	LOGF("Project root: %ls", root1.c_str());
+
+
 	HvkVec4 clear_color = HvkVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	{	const wchar_t *water_path =  L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\water.png";
-		const wchar_t *water_emissive_path = L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\water_E.png";
-		const wchar_t *border_path = L"C:\\Users\\HavoK\\Documents\\Network\\Laptop Shared\\Projects\\HvkGui\\assets\\Border.png";
+	{	const wchar_t *water_path =  root1.append(L"assets\\water.png").c_str();
+		const wchar_t *water_emissive_path = root2.append(L"assets\\water_E.png").c_str();
+		const wchar_t *border_path = root3.append(L"assets\\Border.png").c_str();
 
 		HvkVector<unsigned char> pixels;
 		int tex_width = 0;
